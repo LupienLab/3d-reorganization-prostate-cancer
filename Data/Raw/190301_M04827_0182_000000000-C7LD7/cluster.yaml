@@ -1,0 +1,11 @@
+__default__:
+    params: '-V -cwd -q lupiengroup'
+
+fastqc:
+    params: '-V -cwd -q light.q'
+
+chimeric_align:
+    params: '-V -cwd -q lupiengroup -l h_vmem=16G -l mem_requested=16G'
+
+merge_mates:
+    params: '-V -cwd -q lupiengroup -l h_vmem=16G -l mem_requested=16G'

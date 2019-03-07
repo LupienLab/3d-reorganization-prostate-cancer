@@ -1,0 +1,134 @@
+import pandas as pd
+import os.path as path
+
+# =============================================================================
+# Configuration
+# =============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+
+FASTQ_DIR = 'FASTQs'
+REPORT_DIR = 'Reports'
+ALIGN_DIR = 'Aligned'
+
+SAMPLES = CONFIG['Sample'].tolist()
+
+wildcard_constraints:
+    sample = '[A-Za-z0-9-]+',
+    read = '[1-2]'
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all_fastqc:
+    input:
+        expand(
+            path.join(REPORT_DIR, '{sample}_R{read}_fastqc.html'),
+            sample=SAMPLES,
+            read=[1, 2]
+        )
+
+rule all_align:
+    input:
+        expand(
+            path.join(ALIGN_DIR, '{sample}_R{read}.{ext}'),
+            sample=SAMPLES,
+            read=[1, 2],
+            ext=['name-sorted.bam']
+        ),
+        expand(
+            path.join(ALIGN_DIR, '{sample}.{ext}'),
+            sample=SAMPLES,
+            ext=['bam', 'filtered.bam', 'filtered.dedup.bam']
+        ),
+
+# =============================================================================
+# Rules
+# =============================================================================
+# FastQC
+# -----------------------------------------------------------------------------
+rule fastqc:
+    input:
+        path.join(FASTQ_DIR, '{sample}_R{read}.fastq.gz')
+    output:
+        path.join(REPORT_DIR, '{sample}_R{read}_fastqc.html'),
+        path.join(REPORT_DIR, '{sample}_R{read}_fastqc.zip')
+    params:
+        '-o {}'.format(REPORT_DIR)
+    shell:
+        'fastqc {params} {input}'
+
+
+# Alignment
+# -----------------------------------------------------------------------------
+rule chimeric_align:
+    input:
+        path.join(FASTQ_DIR, '{sample}_R{read}.fastq.gz')
+    output:
+        bam = temp(path.join(ALIGN_DIR, '{sample}_R{read}.bam')),
+        rpt = path.join(REPORT_DIR, '{sample}_R{read}.alignment_report.txt')
+    params:
+        ' '.join([
+            '-t 1',
+            '../../External/hg19_BWAIndex/genome.fa'
+        ])
+    shell:
+        'bwa mem {params} {input} 2> {output.rpt} | samtools view -bS - > {output.bam}'
+
+rule merge_mates:
+    input:
+        path.join(ALIGN_DIR, '{sample}_R1.name-sorted.bam'),
+        path.join(ALIGN_DIR, '{sample}_R2.name-sorted.bam')
+    output:
+        temp(path.join(ALIGN_DIR, '{sample}.merged.bam'))
+    shell:
+        'sambamba merge -p {output} {input}'
+
+rule fix_mates:
+    input:
+        path.join(ALIGN_DIR, '{sample}.merged.bam')
+    output:
+        protected(path.join(ALIGN_DIR, '{sample}.bam'))
+    shell:
+        'samtools fixmate -r -O bam {input} {output}'
+
+
+# Alignment Filtering
+# -----------------------------------------------------------------------------
+rule filter_bam:
+    input:
+        path.join(ALIGN_DIR, '{sample}.bam')
+    output:
+        path.join(ALIGN_DIR, '{sample}.filtered.bam')
+    params:
+        '-F "paired and mapping_quality >= 3" -f bam'
+    shell:
+        'sambamba view {params} -o {output} {input}'
+
+rule dedup:
+    input:
+        path.join(ALIGN_DIR, '{sample}.filtered.bam')
+    output:
+        path.join(ALIGN_DIR, '{sample}.filtered.dedup.bam')
+    shell:
+        'sambamba markdup -r -p {input} {output}'
+
+
+# Miscellaneous
+# -----------------------------------------------------------------------------
+rule sort_bam_name:
+    input:
+        path.join(ALIGN_DIR, '{file}.bam')
+    output:
+        bam = path.join(ALIGN_DIR, '{file}.name-sorted.bam'),
+        idx = path.join(ALIGN_DIR, '{file}.name-sorted.bam.bai')
+    shell:
+        'sambamba sort -n -p -o {output.bam} {input}'
+
+rule sort_bam:
+    input:
+        path.join(ALIGN_DIR, '{file}.bam')
+    output:
+        bam = path.join(ALIGN_DIR, '{file}.sorted.bam'),
+        idx = path.join(ALIGN_DIR, '{file}.sorted.bam.bai')
+    shell:
+        'sambamba sort -p {input}'
