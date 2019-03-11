@@ -89,7 +89,7 @@ rule rename_hicup:
     input:
         path.join(ALIGN_DIR, '{sample}_R1_2.HiCUP_summary_report.html')
     output:
-        path.join(REPORT_DIR, '{sample}_R1_2.HiCUP_summary_report.html')
+        path.join(REPORT_DIR, '{sample}.HiCUP_summary_report.html')
     shell:
         'mv {input} {output}'
 
