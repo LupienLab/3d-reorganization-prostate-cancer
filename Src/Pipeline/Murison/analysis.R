@@ -3,6 +3,8 @@ setwd("/media/mentat/HiC/LowC/HinDIII/100K/aligned/")
 
 library(GenomicRanges)
 
+# Load restriction enzyme sites, convert to GRanges object
+# ------------------------------------------------------------------------------
 DPNFile<-"/media/mentat/HiC/hg19_HindIII_new.txt"
 con=file(DPNFile,open="r")
 line=readLines(con) 
@@ -32,6 +34,8 @@ for(i in 2:length(line)) {
   HINSites<-c(HINSites, GRanges(seqnames=as.character(mymatrix[,1]), IRanges(start=as.numeric(mymatrix[,2]), end=as.numeric(mymatrix[,3]))))
 }
 
+# Merge, filter, and other generic preprocessing steps
+# ------------------------------------------------------------------------------
 setwd("/media/mentat/Prostate/LowC/PCa33173/")
 
 reads<-read.table("merged_nodups.txt", sep=" ", stringsAsFactors = FALSE)
@@ -99,7 +103,10 @@ reads_q1_DiffFrag_Within5Kb<-reads_q1_DiffFrag[which(mindist<5000),]
 
 write.table(reads_q1_DiffFrag_Within5Kb[,-ncol(reads_q1_DiffFrag_Within5Kb)], "merged_nodups_q1_DiffFrag_Within5k.txt", sep=" ", quote=FALSE, row.names=FALSE, col.names=FALSE)
 
-### Take exported file and use Use juicer pre to turn it into a .hic file ( use command "java -jar juicerXXX.jar pre merged_nodups_q1_DiffFrag_Within5k.txt merged_nodups_q1_DiffFrag_Within5k.hic hg19")
+
+# Take exported file and use Use juicer pre to turn it into a .hic file
+# (use command "java -jar juicerXXX.jar pre merged_nodups_q1_DiffFrag_Within5k.txt merged_nodups_q1_DiffFrag_Within5k.hic hg19")
+# ------------------------------------------------------------------------------
 
 ### From exported file use juicer dump to output per-chromosome normalized interaction frequencies at the desired resolution e.g.  java -jar juicer_tools.1.8.9_jcuda.0.8.jar dump observed KR merged_nodups_q1_DiffFrag_Within5k.hic 1 1 BP 100000 chr1_Filtered_KR_100kb.txt
 # Explained bwlow
