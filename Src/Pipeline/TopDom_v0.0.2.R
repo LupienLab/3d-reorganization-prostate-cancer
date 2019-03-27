@@ -503,13 +503,31 @@ Convert.Bin.To.Domain <- function(bins, signal.idx, gap.idx, pvalues=NULL, pvalu
     proc.region = Which.process.region(rmv.idx, n_bins, min.size=0)
     from.coord = bins[proc.region[, "start"], "from.coord"]
     n_procs = nrow(proc.region)
-    gap = data.frame(chr=rep(bins$chr[1], n_procs), from.id=rep(0, n_procs), from.coord=from.coord, to.id=rep(0, n_procs), to.coord=rep(0, n_procs), tag=rep("gap", n_procs), size=rep(0, n_procs), stringsAsFactors=F)
+    gap = data.frame(
+        chr=rep(bins$chr[1], n_procs),
+        from.id=rep(0, n_procs),
+        from.coord=from.coord,
+        to.id=rep(0, n_procs),
+        to.coord=rep(0, n_procs),
+        tag=rep("gap", n_procs),
+        size=rep(0, n_procs),
+        stringsAsFactors=F
+    )
     
     rmv.idx = union(signal.idx, gap.idx)
     proc.region = Which.process.region(rmv.idx, n_bins, min.size=0)
     n_procs = nrow(proc.region)
     from.coord = bins[proc.region[, "start"], "from.coord"]
-    domain = data.frame(chr=rep(bins$chr[1], n_procs), from.id=rep(0, n_procs), from.coord=from.coord, to.id=rep(0, n_procs), to.coord=rep(0, n_procs), tag=rep("domain", n_procs), size=rep(0, n_procs), stringsAsFactors=F)
+    domain = data.frame(
+        chr=rep(bins$chr[1], n_procs),
+        from.id=rep(0, n_procs),
+        from.coord=from.coord,
+        to.id=rep(0, n_procs),
+        to.coord=rep(0, n_procs),
+        tag=rep("domain", n_procs),
+        size=rep(0, n_procs),
+        stringsAsFactors=F
+    )
     
     rmv.idx = setdiff(1:n_bins, signal.idx)
     proc.region = as.data.frame( Which.process.region(rmv.idx, n_bins, min.size=1) )
@@ -517,7 +535,16 @@ Convert.Bin.To.Domain <- function(bins, signal.idx, gap.idx, pvalues=NULL, pvalu
     if(n_procs>0)
     {
         from.coord = bins[proc.region[, "start"]+1, "from.coord"]    
-        boundary = data.frame(chr=rep(bins$chr[1], n_procs), from.id=rep(0, n_procs), from.coord=from.coord, to.id=rep(0, n_procs), to.coord=rep(0, n_procs), tag=rep("boundary", n_procs), size=rep(0, n_procs), stringsAsFactors=F)
+        boundary = data.frame(
+            chr=rep(bins$chr[1], n_procs),
+            from.id=rep(0, n_procs),
+            from.coord=from.coord,
+            to.id=rep(0, n_procs),
+            to.coord=rep(0, n_procs),
+            tag=rep("boundary", n_procs),
+            size=rep(0, n_procs),
+            stringsAsFactors=F
+        )
         ret = rbind(ret, boundary)
     }
     
@@ -543,8 +570,24 @@ Convert.Bin.To.Domain <- function(bins, signal.idx, gap.idx, pvalues=NULL, pvalu
         }
     }
     
-    new.bdr.set = data.frame(chr=character(0), from.id=numeric(0), from.coord=numeric(0), to.id=numeric(0), to.coord=numeric(0), tag=character(0), size=numeric(0))
-    stack.bdr = data.frame(chr=character(0), from.id=numeric(0), from.coord=numeric(0), to.id=numeric(0), to.coord=numeric(0), tag=character(0), size=numeric(0))
+    new.bdr.set = data.frame(
+        chr=character(0),
+        from.id=numeric(0),
+        from.coord=numeric(0),
+        to.id=numeric(0),
+        to.coord=numeric(0),
+        tag=character(0),
+        size=numeric(0)
+    )
+    stack.bdr = data.frame(
+        chr=character(0),
+        from.id=numeric(0),
+        from.coord=numeric(0),
+        to.id=numeric(0),
+        to.coord=numeric(0),
+        tag=character(0),
+        size=numeric(0)
+    )
     
     i=1
     while(i <= nrow(ret))
