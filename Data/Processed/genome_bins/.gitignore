@@ -1,0 +1,3 @@
+Logs/
+.snakemake/
+hg*_*bp.bed
