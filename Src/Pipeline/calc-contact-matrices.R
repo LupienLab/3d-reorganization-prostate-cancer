@@ -35,9 +35,9 @@ if (!interactive()) {
     )
 }
 
-CHRS = paste0("chr", c(1:22, "X", "Y"))
+CHRS = paste0("chr", c(1:22, "X", "Y", "M"))
 # update prefix to include resolution
-ARGS$prefix = paste0(ARGS$prefix, ".", ARGS$res, "bp")
+ARGS$prefix = paste0(ARGS$prefix, ".", as.integer(ARGS$res), "bp")
 
 
 # ==============================================================================
@@ -94,6 +94,23 @@ for (chr in CHRS) {
 domains = as.data.table(tadcalls$domain)
 domains_bed = as.data.table(tadcalls$bed)
 
+# remove chromosomes not processed/completed by TopDom
+'%ni%' = Negate("%in%")
+#   get all chrs calculated successfully
+calculated_chrs = domains[, unique(chr)]
+#   identify unsucessful chromosomes
+bad_chrs = CHRS[CHRS %ni% calculated_chrs]
+for (chr in bad_chrs) {
+    # get matrix indices of bad chromosomes
+    #   should be equal for both raw and normalized matrices, cols and rows
+    bad_chr_idx = grep(chr, dimnames(mtx_raw)$b1)
+    # remove from matrices and bins
+    mtx_raw = mtx_raw[-bad_chr_idx, -bad_chr_idx]
+    mtx_ice = mtx_ice[-bad_chr_idx, -bad_chr_idx]
+    # bins = bins[-bad_chr_idx, ]
+    # bins_bed = bins_bed[-bad_chr_idx, .SD]
+}
+
 # ==============================================================================
 # Save Data
 # ==============================================================================
@@ -133,52 +150,3 @@ fwrite(
     sep = "\t",
     col.names = FALSE
 )
-
-# ==============================================================================
-# Plots
-# ==============================================================================
-
-bin_idx = which(bins$chr == "chr21")
-coord_lims = c(
-    bins[bin_idx, ][1, "pos"],
-    bins[bin_idx, ][length(bin_idx), "pos"] + ARGS$res
-)
-
-domains_tuples = domains[chr == "chr21" & tag == "domain", .(from.id, to.id)]
-
-pdf(
-    paste(ARGS$prefix, "raw", "pdf", sep = "."),
-    height = 12,
-    width = 12
-)
-plot_matrix(
-    mat = mtx_raw[which(bins$chr == "chr21"), which(bins$chr == "chr21")],
-    coord = coord_lims,
-    resolution = ARGS$res
-)
-dev.off()
-
-pdf(
-    paste(ARGS$prefix, "ice-corrected", "pdf", sep = "."),
-    height = 12,
-    width = 12
-)
-plot_matrix(
-    mat = mtx_ice[which(bins$chr == "chr21"), which(bins$chr == "chr21")],
-    coord = coord_lims,
-    resolution = ARGS$res
-)
-dev.off()
-
-pdf(
-    paste(ARGS$prefix, "ice-corrected-with-TADs", "pdf", sep = "."),
-    height = 12,
-    width = 12
-)
-plot_matrix(
-    mat = mtx_ice[which(bins$chr == "chr21"), which(bins$chr == "chr21")],
-    coord = coord_lims,
-    resolution = ARGS$res,
-    tads = domains_tuples
-)
-dev.off()
