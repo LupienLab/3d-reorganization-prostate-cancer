@@ -32,7 +32,8 @@ rule create_digest_ref:
             '--genome {}'.format(wildcards.genome),
             '--re1 "{cutstring},{enzyme}"'.format(
                 enzyme=wildcards.enzyme,
-                cutstring=CONFIG.loc[CONFIG.Enzyme == wildcards.enzyme, 'CutString'].values[0]
+                cutstring=CONFIG.loc[
+                    CONFIG.Enzyme == wildcards.enzyme, 'CutString'].values[0]
             )
         ])
     shell:
