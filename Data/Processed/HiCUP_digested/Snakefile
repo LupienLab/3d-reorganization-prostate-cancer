@@ -1,0 +1,39 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+
+GENOMES = ['hg19', 'hg38']
+
+wildcard_constraints:
+    genome = 'hg[1-9]+',
+    enzyme = '[A-Za-z0-9]+'
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule all_name:
+    input:
+        expand(
+            'Digest_{genome}_{enzyme}_None.txt', 
+            genome=GENOMES, enzyme=CONFIG.Enzyme
+        )
+
+rule create_digest_ref:
+    input:
+        path.join('..', '..', 'External', '{genome}_Bowtie2Index', 'genome.fa')
+    output:
+        'Digest_{genome}_{enzyme}_None.txt'
+    params:
+        lambda wildcards: ' '.join([
+            '--genome {}'.format(wildcards.genome),
+            '--re1 "{cutstring},{enzyme}"'.format(
+                enzyme=wildcards.enzyme,
+                cutstring=CONFIG.loc[CONFIG.Enzyme == wildcards.enzyme, 'CutString'].values[0]
+            )
+        ])
+    shell:
+        'hicup_digester {params} {input}; mv Digest_{wildcards.genome}_{wildcards.enzyme}_None*.txt {output}'
