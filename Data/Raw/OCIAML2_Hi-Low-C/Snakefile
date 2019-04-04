@@ -1,0 +1,169 @@
+import pandas as pd
+import os.path as path
+
+# =============================================================================
+# Configuration
+# =============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+
+FASTQ_DIR = 'FASTQs'
+REPORT_DIR = 'Reports'
+ALIGN_DIR = 'Aligned'
+CONTACT_DIR = 'Contacts'
+
+SAMPLES = CONFIG['Sample'].tolist()
+
+BWT2_IDX = path.join('..', '..', 'External', 'hg19_Bowtie2Index', 'genome')
+
+CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
+
+wildcard_constraints:
+    sample = '[A-Za-z0-9-]+',
+    read = '[1-2]',
+    res = '[0-9]+'
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all_fastqc:
+    input:
+        expand(
+            path.join(REPORT_DIR, '{sample}_R{read}_fastqc.html'),
+            sample=SAMPLES,
+            read=[1, 2]
+        )
+
+rule all_align:
+    input:
+        expand(
+            path.join(ALIGN_DIR, '{sample}_R1_2.hicup.{ext}'),
+            sample=SAMPLES,
+            read=[1, 2],
+            ext=['name-sorted.bam', 'bedpe']
+        )
+
+rule all_tads:
+    input:
+        expand(
+            path.join(CONTACT_DIR, '{sample}.{res}bp.{ext}'),
+            sample=SAMPLES,
+            res=[i * (10 ** j) for j in range(4, 7) for i in range(1, 10)],
+            ext=[
+                'raw.sparse.mtx',
+                'ice-corrected.sparse.mtx',
+                'bins.bed',
+                'bins-signal.tsv',
+                'domains.tsv',
+                'domains.bed'
+                'raw.pdf',
+                'ice-corrected.pdf',
+                'ice-corrected-with-TADs.pdf'
+            ]
+        )
+
+# =============================================================================
+# Rules
+# =============================================================================
+# FastQC
+# -----------------------------------------------------------------------------
+rule fastqc:
+    input:
+        path.join(FASTQ_DIR, '{sample}_R{read}.fastq.gz')
+    output:
+        path.join(REPORT_DIR, '{sample}_R{read}_fastqc.html'),
+        path.join(REPORT_DIR, '{sample}_R{read}_fastqc.zip')
+    params:
+        '-o {}'.format(REPORT_DIR)
+    shell:
+        'fastqc {params} {input}'
+
+
+# Alignment
+# -----------------------------------------------------------------------------
+rule hicup:
+    input:
+        r1 = path.join(FASTQ_DIR, '{sample}_R1.fastq.gz'),
+        r2 = path.join(FASTQ_DIR, '{sample}_R2.fastq.gz'),
+        digest = path.join('..', '..', 'Processed',
+                           'HiCUP_hg19_digested',
+                           'Digest_hg19_HindIII_None.txt')
+    output:
+        protected(path.join(ALIGN_DIR, '{sample}_R1_2.filt.bam')),
+        protected(path.join(ALIGN_DIR, '{sample}_R1_2.pair.bam')),
+        protected(path.join(ALIGN_DIR, '{sample}_R1_2.hicup.bam'))
+    params:
+        ' '.join([
+            '--outdir={}/'.format(ALIGN_DIR),
+            '--temp {}'.format(path.join(ALIGN_DIR, 'HiCUP_temp')),
+            '--index {}'.format(BWT2_IDX),
+            '--bowtie2',
+            '--keep',
+            '--zip'
+        ])
+    shell:
+        'hicup --digest {input.digest} {params} {input.r1} {input.r2}'
+
+rule rename_hicup:
+    input:
+        path.join(ALIGN_DIR, '{sample}_R1_2.HiCUP_summary_report.html')
+    output:
+        path.join(REPORT_DIR, '{sample}.HiCUP_summary_report.html')
+    shell:
+        'mv {input} {output}'
+
+rule call_tads:
+    input:
+        script = path.join('..', '..', '..', 'Src',
+                           'Pipeline', 'calc-contact-matrices.R'),
+        data = path.join(ALIGN_DIR, '{sample}_R1_2.hicup.name-sorted.bam')
+    output:
+        path.join(CONTACT_DIR, '{sample}.{res}bp.raw.sparse.mtx'),
+        path.join(CONTACT_DIR, '{sample}.{res}bp.ice-corrected.sparse.mtx'),
+        path.join(CONTACT_DIR, '{sample}.{res}bp.bins.bed'),
+        path.join(CONTACT_DIR, '{sample}.{res}bp.bins-signal.tsv'),
+        path.join(CONTACT_DIR, '{sample}.{res}bp.domains.tsv'),
+        path.join(CONTACT_DIR, '{sample}.{res}bp.domains.bed')
+    params:
+        prefix = lambda wildcards: path.join(CONTACT_DIR, wildcards.sample)
+    shell:
+        'Rscript {input.script} {input.data} {wildcards.res} -p {params.prefix}'
+
+rule plot_tads:
+    input:
+        script = path.join('..', '..', '..', 'Src',
+                           'Pipeline', 'plot-contact-matrices.R'),
+        raw = path.join(CONTACT_DIR, '{sample}.{res}bp.raw.sparse.mtx'),
+        norm = path.join(CONTACT_DIR, '{sample}.{res}bp.ice-corrected.sparse.mtx'),
+        binsig = path.join(CONTACT_DIR, '{sample}.{res}bp.bins-signal.tsv'),
+        doms = path.join(CONTACT_DIR, '{sample}.{res}bp.domains.tsv'),
+    output:
+        expand(
+            path.join(CONTACT_DIR, '{{sample}}.{{res}}bp.{chr}.{plot}.pdf'),
+            chr=CHRS,
+            plot=['raw', 'ice-corrected', 'ice-corrected-with-TADs']
+        )
+    params:
+        prefix = lambda wildcards: path.join(CONTACT_DIR, wildcards.sample)
+    shell:
+        'Rscript {input} {wildcards.res} -p {params.prefix}'
+
+
+# Miscellaneous
+# -----------------------------------------------------------------------------
+rule sort_bam_name:
+    input:
+        path.join(ALIGN_DIR, '{file}.bam')
+    output:
+        bam = path.join(ALIGN_DIR, '{file}.name-sorted.bam'),
+        idx = path.join(ALIGN_DIR, '{file}.name-sorted.bam.bai')
+    shell:
+        'sambamba sort -n -p -o {output.bam} {input}'
+
+rule sort_bam:
+    input:
+        path.join(ALIGN_DIR, '{file}.bam')
+    output:
+        bam = path.join(ALIGN_DIR, '{file}.sorted.bam'),
+        idx = path.join(ALIGN_DIR, '{file}.sorted.bam.bai')
+    shell:
+        'sambamba sort -p {input}'

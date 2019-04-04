@@ -1,0 +1,11 @@
+Sample	Filename	File type	Encoding	Total Sequences	Sequences flagged as poor quality	Sequence length	%GC	total_deduplicated_percentage	avg_sequence_length	basic_statistics	per_base_sequence_quality	per_tile_sequence_quality	per_sequence_quality_scores	per_base_sequence_content	per_sequence_gc_content	per_base_n_content	sequence_length_distribution	sequence_duplication_levels	overrepresented_sequences	adapter_content
+CTRL_R1	CTRL_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	39645714.0	0.0	150.0	43.0	77.42416395201225	150.0	pass	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+CTRL_R2	CTRL_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	39645714.0	0.0	150.0	44.0	79.046112181712	150.0	pass	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+LT_R1	LT_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	17646272.0	0.0	150.0	44.0	83.18676980721916	150.0	pass	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+LT_R2	LT_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	17646272.0	0.0	150.0	44.0	83.71245903340916	150.0	pass	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+NPM1WT_R1	NPM1WT_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	59866249.0	0.0	150.0	47.0	74.67349727853389	150.0	pass	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+NPM1WT_R2	NPM1WT_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	59866249.0	0.0	150.0	48.0	77.01413926210493	150.0	pass	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+NPM1c_R1	NPM1c_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	35350853.0	0.0	150.0	48.0	51.984374263499554	150.0	pass	pass	pass	pass	warn	fail	pass	pass	warn	fail	pass
+NPM1c_R2	NPM1c_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	35350853.0	0.0	150.0	49.0	55.797199905192095	150.0	pass	pass	pass	pass	pass	fail	pass	pass	warn	fail	pass
+ST_R1	ST_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	18625396.0	0.0	150.0	42.0	84.83025777495486	150.0	pass	pass	pass	pass	warn	warn	pass	pass	pass	warn	pass
+ST_R2	ST_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	18625396.0	0.0	150.0	42.0	84.68488748119523	150.0	pass	pass	pass	pass	warn	warn	pass	pass	pass	fail	pass
