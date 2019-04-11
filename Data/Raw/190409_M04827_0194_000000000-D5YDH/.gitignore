@@ -1,0 +1,4 @@
+.snakemake/
+Logs/
+*.mtx
+*.bed

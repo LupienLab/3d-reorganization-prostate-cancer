@@ -1,0 +1,11 @@
+PASS	Basic Statistics	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Per base sequence quality	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Per tile sequence quality	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Per sequence quality scores	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+WARN	Per base sequence content	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Per sequence GC content	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Per base N content	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Sequence Length Distribution	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Sequence Duplication Levels	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Overrepresented sequences	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz
+PASS	Adapter Content	LNCaP-50K-Thruplex-Rep1_S2_L001_R2.fastq.gz

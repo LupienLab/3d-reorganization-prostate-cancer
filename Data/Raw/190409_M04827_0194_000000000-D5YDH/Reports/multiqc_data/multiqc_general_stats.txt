@@ -1,0 +1,5 @@
+Sample	FastQC_mqc-generalstats-fastqc-percent_duplicates	FastQC_mqc-generalstats-fastqc-percent_gc	FastQC_mqc-generalstats-fastqc-avg_sequence_length	FastQC_mqc-generalstats-fastqc-percent_fails	FastQC_mqc-generalstats-fastqc-total_sequences
+LNCaP-50K-NEB-Rep1_S1_L001_R1	13.485036397934863	43.0	150.0	18.181818181818183	432199.0
+LNCaP-50K-NEB-Rep1_S1_L001_R2	5.465902781322697	44.0	150.0	0.0	432199.0
+LNCaP-50K-Thruplex-Rep1_S2_L001_R1	0.6750454433700668	42.0	150.0	0.0	347274.0
+LNCaP-50K-Thruplex-Rep1_S2_L001_R2	0.6689280135641837	42.0	150.0	0.0	347274.0

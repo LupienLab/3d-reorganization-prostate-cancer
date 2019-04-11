@@ -1,0 +1,8 @@
+__default__:
+    params: '-V -cwd -q lupiengroup'
+
+fastqc:
+    params: '-V -cwd -q light.q'
+
+hicup:
+    params: '-V -cwd -q lupiengroup -l h_vmem=16G -l mem_requested=16G'

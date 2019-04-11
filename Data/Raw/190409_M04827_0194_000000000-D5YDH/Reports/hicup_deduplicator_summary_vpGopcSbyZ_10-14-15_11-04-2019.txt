@@ -1,0 +1,2 @@
+File	Read_pairs_processed	Unique_di-tags	Cis_<10kbp_of_uniques	Cis_>10kbp_of_uniques	Trans_of_uniques
+LNCaP-50K-NEB-Rep1_S1_L001_R1_2.filt.bam	208232	204953	10523	111328	83102

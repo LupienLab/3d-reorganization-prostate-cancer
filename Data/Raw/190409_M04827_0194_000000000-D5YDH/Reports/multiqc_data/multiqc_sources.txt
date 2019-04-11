@@ -1,0 +1,5 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	LNCaP-50K-NEB-Rep1_S1_L001_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190409_M04827_0194_000000000-D5YDH/Reports/LNCaP-50K-NEB-Rep1_S1_L001_R1_fastqc/fastqc_data.txt
+FastQC	all_sections	LNCaP-50K-Thruplex-Rep1_S2_L001_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190409_M04827_0194_000000000-D5YDH/Reports/LNCaP-50K-Thruplex-Rep1_S2_L001_R2_fastqc/fastqc_data.txt
+FastQC	all_sections	LNCaP-50K-NEB-Rep1_S1_L001_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190409_M04827_0194_000000000-D5YDH/Reports/LNCaP-50K-NEB-Rep1_S1_L001_R2_fastqc/fastqc_data.txt
+FastQC	all_sections	LNCaP-50K-Thruplex-Rep1_S2_L001_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190409_M04827_0194_000000000-D5YDH/Reports/LNCaP-50K-Thruplex-Rep1_S2_L001_R1_fastqc/fastqc_data.txt
