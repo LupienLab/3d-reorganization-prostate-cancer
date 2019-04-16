@@ -1,6 +1,6 @@
 Sample ID	Patient ID	T2E Status	BCR Status	PGA %	LowC	H3K27ac	RNAseq	Protein	Whole-Genome Sequencing
 13848	CPCG0366	Yes	No	4.4	Yes	Yes	Yes	Yes	Yes
-57294	CPCG0365	No	No	0.99	Yes	Yes	Yes	Yes	Yes	
+57294	CPCG0365	No	No	0.99	Yes	Yes	Yes	Yes	Yes
 53687	CPCG0339	No	No	3.23	Yes	Yes	Yes	Yes	Yes
 33173	CPCG0246	No	Yes	1.73	Yes	Yes	Yes	Yes	Yes
 19121	CPCG0258	Yes	No	2.3	Yes	Yes	Yes	Yes	Yes
