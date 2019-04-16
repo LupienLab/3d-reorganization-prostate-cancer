@@ -72,8 +72,10 @@ tadcalls = list(
     domain = NULL,
     bed = NULL
 )
+
+# iterate over chromosomes and remove variables between chroms to reduce memory
 for (chr in CHRS) {
-    cat(chr, "\n")
+    cat("\n\n", chr, "\n")
     # get all bins on current chromosome
     bin_idx = which(bins$chr == chr)
     # convert sparse matrix to dense for processing
@@ -82,7 +84,8 @@ for (chr in CHRS) {
     calls = TopDom(
         matrix.data = mtx_ice_dense,
         bins = bins_bed[bin_idx],
-        window.size = 5
+        window.size = 5,
+        verbose = FALSE
     )
     # concatenate results
     tadcalls$binSignal = rbind(tadcalls$binSignal, calls$binSignal)
@@ -107,8 +110,8 @@ for (chr in bad_chrs) {
     # remove from matrices and bins
     mtx_raw = mtx_raw[-bad_chr_idx, -bad_chr_idx]
     mtx_ice = mtx_ice[-bad_chr_idx, -bad_chr_idx]
-    # bins = bins[-bad_chr_idx, ]
-    # bins_bed = bins_bed[-bad_chr_idx, .SD]
+    bins = bins[-bad_chr_idx, ]
+    bins_bed = bins_bed[-bad_chr_idx, .SD]
 }
 
 # ==============================================================================
