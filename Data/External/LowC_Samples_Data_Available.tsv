@@ -11,4 +11,4 @@ Sample ID	Patient ID	T2E Status	BCR Status	PGA %	LowC	H3K27ac	RNAseq	Protein	Who
 40507	CPCG0342	Yes	No	2.24	Yes	Yes	Yes	Yes	Yes
 14121	CPCG0255	No	No	4.22	Yes	Yes	Yes	Yes	Yes
 57054	CPCG0346	Yes	No	6.33	Yes	Yes	Yes	Yes	Yes
-56413 CPCG0331  Yes No  4.99  Yes Yes Yes Yes Yes
+56413	CPCG0331	Yes	No	4.99	Yes	Yes	Yes	Yes	Yes
