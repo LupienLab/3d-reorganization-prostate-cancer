@@ -1,0 +1,26 @@
+import pandas as pd
+import os.path as path
+
+CONFIG = pd.read_csv(path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'))
+
+# SAMPLES = CONFIG['Patient ID']
+SAMPLES = [
+    'CPCG0246',
+    'CPCG0258',
+    'CPCG0339',
+    'CPCG0342',
+    'CPCG0365',
+    'CPCG0366'
+]
+
+rule all:
+    input:
+        expand('{sample}.closest-peaks.bed', sample=SAMPLES)
+
+rule closest:
+    input:
+        '{sample}.peaks.bed'
+    output:
+        '{sample}.closest-peaks.bed'
+    shell:
+        'bedtools closest -d -io -a {input} -b {input} > {output}'
