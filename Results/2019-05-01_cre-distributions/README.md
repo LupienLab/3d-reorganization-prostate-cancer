@@ -1,6 +1,6 @@
 # Summary
 
-Using the hg19 H3K27ac peaks for the set of samples that were previously published, we'll need to achieve a 5kbp resolution to distinguish peaks and often have them in separate bins.
+Using the H3K27ac peaks (re-aligned to hg38) for these primary samples, we'd like to know what resolution is required to distinguish peaks and often have them in separate bins, on average.
 
 ## Results
 
