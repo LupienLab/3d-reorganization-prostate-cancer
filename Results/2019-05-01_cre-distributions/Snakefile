@@ -1,26 +1,32 @@
 import pandas as pd
 import os.path as path
 
-CONFIG = pd.read_csv(path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'))
+CONFIG = pd.read_csv(
+    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
+    sep='\t'
+)
 
-# SAMPLES = CONFIG['Patient ID']
-SAMPLES = [
-    'CPCG0246',
-    'CPCG0258',
-    'CPCG0339',
-    'CPCG0342',
-    'CPCG0365',
-    'CPCG0366'
-]
+PEAK_DIR = path.join('..', '..', 'Data', 'Processed', '2019-05-03_PCa-H3K27ac-peaks')
+SAMPLES = ['Pca' + str(i) for i in CONFIG['Sample ID']]
 
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
 rule all:
     input:
-        expand('{sample}.closest-peaks.bed', sample=SAMPLES)
+        expand(path.join('Closest', '{sample}.closest-peaks.bed'), sample=SAMPLES),
+        path.join('Stats', 'peak-counts.tsv')
 
+# ==============================================================================
+# Rules
+# ==============================================================================
 rule closest:
     input:
-        '{sample}.peaks.bed'
+        path.join(PEAK_DIR, '{sample}_peaks.narrowPeak')
     output:
-        '{sample}.closest-peaks.bed'
+        path.join('Closest', '{sample}.closest-peaks.bed')
+    conda:
+        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/HiC.yaml'
     shell:
         'bedtools closest -d -io -a {input} -b {input} > {output}'
+
