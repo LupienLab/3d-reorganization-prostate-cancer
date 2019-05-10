@@ -35,10 +35,22 @@ Black line is median expression for that protein, and the grey shaded region is 
 
 All samples lie within this shaded region except for:
 
-* CTCF in CPCG0246 (could not be measured, was `NA` in data)
+* CTCF in CPCG0246 (was `NA` in data)
 * CTCF in CPCG0339
 * STAG1 in CPCG0346
 * WAPAL in CPCG0342 and CPCG0365
+
+We discussed the topic of `NA`s with Dr. Kislinger:
+
+> NA means that no peptides were detected for this protein in a given samples. Basically a missing value and a caveat with current proteomics technologies.
+> This could mean that indeed that protein is not present or that it was missed by the MS.
+> This is more common for lower abundant proteins.
+> Basically we still have false negatives.
+
+It is unclear whether CTCF on CPC0246 is absent, or just wasn't detected.
+Moreover, it is unclear whether 5 proteins not present in the table (SMC1B, REC8, STAG3, CDC5A, and ZNF143) were absent in all samples or undetected (76 in the original study).
+
+If there are issues with these particular proteins, we'll address it in the future.
 
 ## Conclusions
 

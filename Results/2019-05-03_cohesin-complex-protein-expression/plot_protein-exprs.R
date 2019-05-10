@@ -71,7 +71,7 @@ gg = (
     + geom_col(aes(y = Protein_Level, fill = Patient_ID))
     + geom_rect(aes(xmin = -Inf, xmax = Inf, ymin = Lower, ymax = Upper), alpha = 0.1)
     + geom_hline(aes(yintercept =  Median), linetype = "dashed")
-    + labs(x = "Patient ID", y = "Protein Level", title = "Protein expression levels of loop-forming factors")
+    + labs(x = "Patient ID", y = "log2(Protein Intensity)", title = "Protein expression levels of loop-forming factors")
     + facet_wrap(~ Gene)
     + guides(fill = FALSE)
     + theme(
