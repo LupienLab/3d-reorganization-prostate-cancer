@@ -1,2 +1,0 @@
-File	Read_pairs_processed	Unique_di-tags	Cis_<10kbp_of_uniques	Cis_>10kbp_of_uniques	Trans_of_uniques
-PCa40507_R1_2.filt.sam	2247199	898262	27273	541853	329136

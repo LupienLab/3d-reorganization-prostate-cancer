@@ -1,3 +1,0 @@
-File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
-LNCaP-50K-Thruplex-Rep1_S2_L001_R1.trunc.fastq.gz	347274	8986	2.6	282838	81.4	44139	12.7	11311	3.3	236033	68.0
-LNCaP-50K-Thruplex-Rep1_S2_L001_R2.trunc.fastq.gz	347274	8592	2.5	278726	80.3	45976	13.2	13980	4.0	236033	68.0

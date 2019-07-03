@@ -1,2 +1,0 @@
-File	Read_pairs_processed	Unique_di-tags	Cis_<10kbp_of_uniques	Cis_>10kbp_of_uniques	Trans_of_uniques
-LNCaP-50K-Thruplex-Rep1_S2_L001_R1_2.filt.bam	229443	229266	11369	125676	92221

@@ -44,14 +44,39 @@ if (!interactive()) {
         default = "contacts"
     )
     PARSER$add_argument(
-        "-c", "--chr",
+        "-l", "--locus",
         type = "character",
-        help = "Specific chromosome to plot. Otherwise, a plot will be made for each."
+        help = "Specific genomic locus to plot. Format {chr}:{start}-{end}. If not specificed, a plot will be made for each chromosome, separately."
     )
     ARGS <- PARSER$parse_args()
+} else {
+    ARGS = list(
+        raw = "PCa13848.50000bp.raw.sparse.mtx",
+        norm = "PCa13848.50000bp.ice-corrected.sparse.mtx",
+        bin_signal = "PCa13848.50000bp.bins-signal.tsv",
+        domains = "PCa13848.50000bp.domains.tsv",
+        res = 50000,
+        locus = "chr21:38350000-41550000"
+    )
 }
 
-CHRS = paste0("chr", c(1:22, "X", "Y"))
+# check that locus format meets specification
+if (!is.null(ARGS$locus)) {
+    locus_split = unlist(strsplit(ARGS$locus, "[:-]"))
+    plot_locus = data.table(
+        chr = locus_split[1],
+        start = as.integer(locus_split[2]),
+        end = as.integer(locus_split[3])
+    )
+} else {
+    plot_locus == NULL
+}
+
+CHRS = data.table(
+    chr = paste0("chr", c(1:22, "X", "Y")),
+    start = 0,
+    end = 1e9
+)
 
 # update prefix to include resolution
 ARGS$prefix = paste0(ARGS$prefix, ".", as.integer(ARGS$res), "bp")
@@ -73,21 +98,24 @@ dimnames(mtx_norm) = list(bin_names, bin_names)
 # ==============================================================================
 # Plots
 # ==============================================================================
-if (!is.null(ARGS$chr)) {
-    chrs_to_plot = ARGs$chr
+if (!is.null(plot_locus)) {
+    locus_to_plot = plot_locus
 } else {
-    chrs_to_plot = CHRS
+    locus_to_plot = CHRS
 }
 
 cat("Plotting\n")
-for (plot_chr in chrs_to_plot) {
-    cat("  ", plot_chr, "\n")
-    bin_idx = bins[, which(chr == plot_chr)]
+for (i in 1:dim(locus_to_plot)[1]) {
+    plot_chr = locus_to_plot[i, chr]
+    plot_start = locus_to_plot[i, start]
+    plot_end = locus_to_plot[i, end]
+    cat("  ", paste0(plot_chr, ":", plot_start, "-", plot_end), "\n")
+    bin_idx = bins[, which(chr == plot_chr & from.coord >= plot_start & to.coord <= plot_end)]
     coord_lims = c(
         bins[bin_idx, ][1, from.coord],
         bins[bin_idx, ][length(bin_idx), from.coord] + ARGS$res
     )
-    domains_tuples = domains[chr == plot_chr & tag == "domain", .(from.id, to.id)]
+    domains_tuples = domains[chr == plot_chr & from.coord >= plot_start & from.coord <= plot_end & tag == "domain", .(from.id, to.id)]
     pdf(
         paste(ARGS$prefix, plot_chr, "raw", "pdf", sep = "."),
         height = 12,

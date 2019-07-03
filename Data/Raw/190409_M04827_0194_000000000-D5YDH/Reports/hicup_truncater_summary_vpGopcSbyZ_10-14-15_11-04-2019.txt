@@ -1,3 +1,0 @@
-File	Total_Reads_Processed	Truncated	%Truncated	Not_truncated	%Not_truncated	Average_length_truncated_sequence
-LNCaP-50K-NEB-Rep1_S1_L001_R1.fastq.gz	432199	229259	53.04	202940	46.96	72.48
-LNCaP-50K-NEB-Rep1_S1_L001_R2.fastq.gz	432199	204373	47.29	227826	52.71	73.30

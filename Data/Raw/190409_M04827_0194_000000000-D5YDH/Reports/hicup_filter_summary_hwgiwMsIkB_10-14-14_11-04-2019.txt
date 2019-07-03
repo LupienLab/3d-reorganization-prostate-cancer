@@ -1,2 +1,0 @@
-File	Total_pairs	Valid_pairs	Cis_<10kbp	Cis_>10kbp	Trans	Invalid_pairs	Same_circularised	Same_dangling_ends	Same_internal	Re-ligation	Contiguous_sequence	Wrong_size
-LNCaP-50K-Thruplex-Rep1_S2_L001_R1_2.pair.bam	236033	229443	11387	125768	92288	6590	365	818	3125	2282	0	0

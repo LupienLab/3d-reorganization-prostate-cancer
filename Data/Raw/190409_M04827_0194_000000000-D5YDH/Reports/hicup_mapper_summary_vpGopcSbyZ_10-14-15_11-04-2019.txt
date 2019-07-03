@@ -1,3 +1,0 @@
-File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
-LNCaP-50K-NEB-Rep1_S1_L001_R1.trunc.fastq.gz	432199	16462	3.8	295438	68.4	53464	12.4	66835	15.5	218078	50.5
-LNCaP-50K-NEB-Rep1_S1_L001_R2.trunc.fastq.gz	432199	14447	3.3	268511	62.1	53461	12.4	95780	22.2	218078	50.5

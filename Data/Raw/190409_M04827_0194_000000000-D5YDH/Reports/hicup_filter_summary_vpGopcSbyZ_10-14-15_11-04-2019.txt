@@ -1,2 +1,0 @@
-File	Total_pairs	Valid_pairs	Cis_<10kbp	Cis_>10kbp	Trans	Invalid_pairs	Same_circularised	Same_dangling_ends	Same_internal	Re-ligation	Contiguous_sequence	Wrong_size
-LNCaP-50K-NEB-Rep1_S1_L001_R1_2.pair.bam	218078	208232	10705	113089	84438	9846	444	954	5437	3011	0	0

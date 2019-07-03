@@ -1,3 +1,0 @@
-File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
-PCa47048_R1.trunc.fastq	5344479	54475	1.0	4588577	85.9	415228	7.8	286199	5.4	4066439	76.1
-PCa47048_R2.trunc.fastq	5344479	39167	0.7	4521364	84.6	431303	8.1	352645	6.6	4066439	76.1
