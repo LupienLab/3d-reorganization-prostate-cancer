@@ -15,18 +15,35 @@ SAMPLES = ['Pca' + str(i) for i in CONFIG['Sample ID']]
 rule all:
     input:
         expand(path.join('Closest', '{sample}.closest-peaks.bed'), sample=SAMPLES),
-        path.join('Stats', 'peak-counts.tsv')
+        path.join('Stats', 'peak-counts.png'),
+        path.join('Stats', 'peak-sizes.png'),
+        path.join('Stats', 'peak-dists.png'),
+        path.join('Stats', 'peak-dists-centres.png')
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule closest:
     input:
-        path.join(PEAK_DIR, '{sample}_peaks.narrowPeak')
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
     output:
         path.join('Closest', '{sample}.closest-peaks.bed')
     conda:
         '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/HiC.yaml'
     shell:
         'bedtools closest -d -io -a {input} -b {input} > {output}'
+
+
+rule calc_stats:
+    input:
+        'calc-peak-stats.R'
+    output:
+        path.join('Stats', 'peak-counts.png'),
+        path.join('Stats', 'peak-sizes.png'),
+        path.join('Stats', 'peak-dists.png'),
+        path.join('Stats', 'peak-dists-centres.png')
+    conda:
+        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/HiC.yaml'
+    shell:
+        'Rscript {input}'
 

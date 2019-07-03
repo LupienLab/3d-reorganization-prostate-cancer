@@ -4,11 +4,6 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
-
-# ==============================================================================
-# Functions
-# ==============================================================================
-
 # ==============================================================================
 # Data
 # ==============================================================================
@@ -29,7 +24,7 @@ peaks = rbindlist(lapply(
     function(s) {
         print(s)
         dt = fread(
-            paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/", s, "_peaks.narrowPeak"),
+            paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/", s, "_peaks.filtered.narrowPeak"),
             sep = "\t",
             select = c(1:3, 9),
             col.names = c("chr", "start", "end", "log10q")
