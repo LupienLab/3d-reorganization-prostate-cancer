@@ -1,0 +1,38 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+LOCI = pd.read_csv('interesting-loci.bedpe', index_col=False, sep='\t', names=['chrom1', 'start1', 'end1', 'chrom2', 'start2', 'end2', 'PatientID'])
+LOCI = LOCI.loc[~LOCI.chrom1.str.startswith('#'), :]
+
+# Patient IDs
+SAMPLES = LOCI.PatientID.tolist()
+
+# folder where cooler files are
+CONTACT_DIR = path.join('..', '..', 'Data', 'Processed', '2019-07-02_LowC-contact-matrices')
+
+# string format for loci to plot
+LOCI1 = [chrom + ':' + str(posstart) + '-' + str(posend) for chrom, posstart, posend in zip(LOCI.chrom1, LOCI.start1, LOCI.end1)]
+LOCI2 = [chrom + ':' + str(posstart) + '-' + str(posend) for chrom, posstart, posend in zip(LOCI.chrom2, LOCI.start2, LOCI.end2)]
+LOCI_PAIRS = [l1 + '.' + l2 for l1, l2 in zip(LOCI1, LOCI2)]
+print(LOCI_PAIRS)
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            '{sample}.40000bp.{locus_pair}.png',
+            sample=SAMPLES,
+            locus_pair=LOCI_PAIRS
+        )
+
+rule show_locus:
+    input:
+        path.join(CONTACT_DIR, '{sample}.multi-res.cool')
+    output:
+        '{sample}.40000bp.{locus1}.{locus2}.png'
+    shell:
+        'cooler show -b -o {output} -r2 {wildcards.locus2} {input}::/resolutions/40000 {wildcards.locus1}'
