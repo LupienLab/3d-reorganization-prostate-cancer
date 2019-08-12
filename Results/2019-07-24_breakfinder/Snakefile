@@ -1,0 +1,91 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(
+    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
+    sep='\t',
+    index_col=False
+)
+# SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
+SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
+
+BAM_DIR = path.join(
+    '/cluster', 'projects', 'lupiengroup', 'Projects', 'RawData',
+    'Chromosome_Capture', '190605_A00827_0009_BHLGJ3DSXX_Lupien_James_Elias',
+    'Aligned'
+)
+BREAK_DIR = 'Breakpoints'
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join(BREAK_DIR, '{param}', '{sample}.breaks.txt'),
+            sample=SAMPLES,
+            param=['Default', 'Min_1kbp']
+        )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule breakfinder_default:
+    input:
+        bam = path.join(BAM_DIR, '{sample}.agg.hicup.sorted.bam'),
+        inter = 'inter_expect_1Mb.hg38.txt',
+        intra = 'intra_expect_100kb.hg38.txt'
+    output:
+        path.join(BREAK_DIR, 'Default', '{sample}_100kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_100kb.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_100kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_100kb.SR.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_100kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_100kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_10kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_10kb.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_10kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_10kb.SR.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_10kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_10kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.SR.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.super_matrix.norm.eig.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Default', '{sample}.breaks.txt'),
+    shell:
+        'pushd {BREAK_DIR}/Default; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample}; popd;'
+
+rule breakfinder_1kb:
+    input:
+        bam = path.join(BAM_DIR, '{sample}.agg.hicup.sorted.bam'),
+        inter = 'inter_expect_1Mb.hg38.txt',
+        intra = 'intra_expect_100kb.hg38.txt'
+    output:
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.breaks.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.SR.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.breaks.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.SR.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.breaks.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.SR.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.super_matrix.norm.eig.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Min_1kbp', '{sample}.breaks.txt'),
+    shell:
+        'pushd {BREAK_DIR}/Min_1kbp; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample} --min-1kb; popd;'
+
