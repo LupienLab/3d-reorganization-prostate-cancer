@@ -1,2 +1,7 @@
 .snakemake/
 Logs/
+TMP/
+TADs/
+Plots/
+myc.bed
+ar.bed
