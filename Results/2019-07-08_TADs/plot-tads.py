@@ -39,27 +39,32 @@ def tads_to_patches(tads):
     paths = []
     colours = []
     for i, t in tads.iterrows():
+        a = t['from.coord']
+        b = t['to.coord']
         if t.tag == 'gap':
             coords = [
-                (t['from.coord'], t['from.coord']),
-                (t['to.coord'], t['to.coord'])
+                (a, b),
+                (b, b)
             ]
             codes = (Path.MOVETO, Path.LINETO)
             paths.append(Path(coords, codes))
             colours.append('#bdbdbd')
         elif t.tag == 'boundary':
             coords = [
-                (t['from.coord'], t['to.coord']),
-                (t['to.coord'], t['from.coord'])
+                (a, a),
+                ((a + b) / 2, (a + b) / 2),
+                (a, b),
+                ((a + b) / 2, (a + b) / 2),
+                (b, b)
             ]
-            codes = (Path.MOVETO, Path.LINETO)
+            codes = (Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.LINETO)
             paths.append(Path(coords, codes))
             colours.append('#263238')
         elif t.tag == 'domain':
             coords = [
-                (t['from.coord'], t['from.coord']),
-                (t['from.coord'], t['to.coord']),
-                (t['to.coord'], t['to.coord'])
+                (a, a),
+                (b, a),
+                (b, b)
             ]
             codes = (Path.MOVETO, Path.LINETO, Path.LINETO)
             paths.append(Path(coords, codes))
@@ -157,23 +162,16 @@ def show(
         tads_data = filter_tad_range(tads_data, row_lo, row_hi, col_lo, col_hi)
         tad_patches = tads_to_patches(tads_data)
         if verbose is not None:
-            print('Plotting')
-        for p in tad_patches:
-            ax.add_patch(p)
+            print('\tPlotting')
 
-            
+    # transform data images if `--rotate` option
     if rotate:
         shift_coords = ax.transData.transform([col_hi, row_lo])
-        x1, x2, y1, y2 = im.get_extent()
-        print(x1, x2, y1, y2)
-        print(col_lo, col_hi, row_hi, row_lo)
         tr = (
             mtransforms.Affine2D()
             .rotate_deg(-45)
             .scale(1 / np.sqrt(2))
             .translate(0, row_hi)
-            # .rotate_deg_around(coords[0], coords[1], 5)
-            # .rotate_deg_around(0, 0, 5)
         ) + ax.transData
         # hide axes
         ax.spines['top'].set_visible(False)
@@ -183,7 +181,14 @@ def show(
         ax.axes.get_yaxis().set_visible(False)
     else:
         tr = ax.transData
+    # apply transformation to all plotted objects
+    #   the contact matrix
     im.set_transform(tr)
+    #   TAD calls
+    for p in tad_patches:
+        p.set_transform(tr)
+        ax.add_patch(p)
+    
 
     # If plotting into a file, plot and quit
     plt.ylabel('{} coordinate'.format(row_chrom))
