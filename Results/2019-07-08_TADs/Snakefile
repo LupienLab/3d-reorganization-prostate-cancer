@@ -1,0 +1,91 @@
+import pandas as pd
+import os.path as path
+
+# =============================================================================
+# Configuration
+# =============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
+
+CONTACT_DIR = path.join('..', '..', 'Data', 'Processed', '2019-07-02_LowC-contact-matrices')
+TMP_DIR = 'TMP'
+TAD_DIR = 'TADs'
+PLOT_DIR = 'Plots'
+
+# SAMPLES = CONFIG['Sample'].tolist()
+SAMPLES = ['PCa3023']
+
+CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
+RESOLUTIONS = [
+    # 1000, 2000, 3000, 4000, 5000,
+    # 5000,
+    # 10000, 20000, 30000, 40000, 50000,
+    100000
+]
+WINDOWS = [
+    2, 3, 4, 5, 6, 7, 8, 9, 10
+    # 10, 20, 30, 40, 50, 60, 70, 80, 90,
+]
+
+wildcard_constraints:
+    sample = 'PCa[0-9]+',
+    lane = '[1-4]',
+    read = '[1-2]',
+    res = '[0-9]+'
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+    input:
+        expand(
+            path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.bed'),
+            window=WINDOWS,
+            sample=SAMPLES,
+            res=RESOLUTIONS,
+            chrom='chr22'
+        ),
+        expand(
+            path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.png'),
+            window=WINDOWS,
+            sample=SAMPLES,
+            res=RESOLUTIONS,
+            chrom='chr22'
+        ),
+
+# =============================================================================
+# Rules
+# =============================================================================
+rule dump_mat:
+    input:
+        path.join(CONTACT_DIR, '{sample}.mcool')
+    output:
+        path.join(TMP_DIR, '{sample}.{res}bp.{chrom}.annotated.mtx')
+    params:
+        '-H -b --one-based-ids --annotate chrom,start,end'
+    shell:
+        'cooler dump {params} -r {wildcards.chrom} -o {output} {input}::/resolutions/{wildcards.res}'
+
+rule call_tads:
+    input:
+        script = 'calc-tads.R',
+        topdom = 'topdom.R',
+        data = path.join(TMP_DIR, '{sample}.{res}bp.{chrom}.annotated.mtx')
+    output:
+        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.bins-signal.tsv'),
+        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.tsv'),
+        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.bed')
+    params:
+        prefix = lambda wildcards: path.join(TAD_DIR, 'w_{}'.format(wildcards.window), '.'.join([wildcards.sample, wildcards.res + 'bp', wildcards.chrom]))
+    shell:
+        'Rscript {input.script} {input.data} -p {params.prefix} -w {wildcards.window}'
+
+rule plot_tads:
+    input:
+        script = 'plot-tads.py',
+        cool = path.join(CONTACT_DIR, '{sample}.mcool'),
+        data = path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.tsv')
+    output:
+        data = path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.png')
+    shell:
+        'python {input.script} {input.cool}::/resolutions/{wildcards.res} {wildcards.chrom} -t {input.data} -o {output}'
