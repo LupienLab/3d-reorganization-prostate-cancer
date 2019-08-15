@@ -26,12 +26,14 @@ def load_matrix(c, row_region, col_region, field, balanced, scale):
         mat = np.log10(mat)
     return mat
 
+
 def filter_tad_range(tads, row_lo, row_hi, col_lo, col_hi):
     # ensure tads fit within row and col boundaries
     row_idx = (row_lo < tads['from.coord']) & (tads['to.coord'] < row_hi)
     col_idx = (col_lo < tads['from.coord']) & (tads['to.coord'] < col_hi)
     idx = row_idx & col_idx
     return tads.loc[idx, :]
+
 
 def tads_to_patches(tads):
     from matplotlib.path import Path
@@ -57,7 +59,8 @@ def tads_to_patches(tads):
                 ((a + b) / 2, (a + b) / 2),
                 (b, b)
             ]
-            codes = (Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.LINETO)
+            codes = (Path.MOVETO, Path.LINETO,
+                     Path.LINETO, Path.LINETO, Path.LINETO)
             paths.append(Path(coords, codes))
             colours.append('#263238')
         elif t.tag == 'domain':
@@ -69,8 +72,10 @@ def tads_to_patches(tads):
             codes = (Path.MOVETO, Path.LINETO, Path.LINETO)
             paths.append(Path(coords, codes))
             colours.append('#1565c0')
-    tad_patches = [patches.PathPatch(p, edgecolor=c, facecolor='none', lw=3) for p, c in zip(paths, colours)]
+    tad_patches = [patches.PathPatch(p, edgecolor=c, facecolor='none', lw=2)
+                   for p, c in zip(paths, colours)]
     return tad_patches
+
 
 def show(
     cool_uri, range, balanced=True, out=None, dpi=300, scale='log10',
@@ -126,11 +131,12 @@ def show(
     # types of scaling before plotting
     scale_types = {
         'linear': 'relative contact frequency',
-        'log2'  : 'log 2 ( relative contact frequency )',
-        'log10' : 'log 10 ( relative contact frequency )'
+        'log2': 'log 2 ( relative contact frequency )',
+        'log10': 'log 10 ( relative contact frequency )'
     }
     if scale not in scale_types:
-        raise ValueError("Invalid scale. Expected one of: %s" % scale_types.dict_keys())
+        raise ValueError("Invalid scale. Expected one of: %s" %
+                         scale_types.dict_keys())
 
     # load contact matri
     if verbose is not None:
@@ -161,8 +167,6 @@ def show(
         tads_data = pd.read_csv(tads, sep='\t', header=[0])
         tads_data = filter_tad_range(tads_data, row_lo, row_hi, col_lo, col_hi)
         tad_patches = tads_to_patches(tads_data)
-        if verbose is not None:
-            print('\tPlotting')
 
     # transform data images if `--rotate` option
     if rotate:
@@ -187,8 +191,8 @@ def show(
     #   TAD calls
     for p in tad_patches:
         p.set_transform(tr)
+        # p.set_clip_path()
         ax.add_patch(p)
-    
 
     # If plotting into a file, plot and quit
     plt.ylabel('{} coordinate'.format(row_chrom))
@@ -196,6 +200,7 @@ def show(
     cb = fig.colorbar(im, cmap=cmap)
     cb.set_label(scale_types[scale])
     fig.savefig(out, dpi=dpi)
+
 
 if __name__ == '__main__':
     PARSER = argparse.ArgumentParser(
@@ -212,12 +217,12 @@ if __name__ == '__main__':
         help='Genomic range to plot (UCSC format)'
     )
     PARSER.add_argument(
-        '-t' ,'--tads',
+        '-t', '--tads',
         type=str,
         help='TSV containing information about TADs'
     )
     PARSER.add_argument(
-        '-r' ,'--rotate',
+        '-r', '--rotate',
         action='store_true',
         help='Rotate contact matrix by 45 degrees in plot'
     )
@@ -239,5 +244,3 @@ if __name__ == '__main__':
         ARGS.cool, ARGS.range, balanced=True, out=ARGS.output, dpi=300,
         tads=ARGS.tads, rotate=ARGS.rotate, verbose=ARGS.verbose
     )
-
-
