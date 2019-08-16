@@ -42,7 +42,8 @@ All samples lie within this shaded region except for:
 
 We discussed the topic of `NA`s with Dr. Kislinger:
 
-> NA means that no peptides were detected for this protein in a given samples. Basically a missing value and a caveat with current proteomics technologies.
+> NA means that no peptides were detected for this protein in a given samples.
+> Basically a missing value and a caveat with current proteomics technologies.
 > This could mean that indeed that protein is not present or that it was missed by the MS.
 > This is more common for lower abundant proteins.
 > Basically we still have false negatives.
