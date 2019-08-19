@@ -1,7 +1,7 @@
 .snakemake/
 Logs/
 TMP/
-TADs/
+TADs/w_*/PCa*.bins-signal.tsv
 Plots/
 myc.bed
 ar.bed
