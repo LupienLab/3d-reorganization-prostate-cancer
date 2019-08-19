@@ -1,0 +1,12 @@
+__default__:
+    params: "-V -d . -q himem -l vmem=60gb -l nodes=1:ppn=8"
+
+fastqc:
+    params: "-V -d . -q all"
+
+call_tads:
+    params: "-V -d . -q long -l vmem=30gb"
+
+plot_t2e:
+    params: "-V -d . -q long -l vmem=30gb"
+
