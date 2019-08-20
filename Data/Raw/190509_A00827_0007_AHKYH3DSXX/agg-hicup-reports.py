@@ -109,6 +109,13 @@ def main(cfg):
         for indiv, pair in zip(individual_map_cols, pair_map_cols):
             r[pair + '_1'] = sample_map.loc[:, indiv].values[0]
             r[pair + '_2'] = sample_map.loc[:, indiv].values[1]
+        # aggregate filtering data
+        individual_filt_cols = [
+            'Valid_pairs', 'Invalid_pairs', 'Same_circularised', 'Same_dangling_ends', 'Same_internal', 'Re-ligation', 'Contiguous_sequence', 'Wrong_size'
+        ]
+        agg_filt_cols = [
+            'Valid_Pairs', 'Invalid_Pairs', 'Same_Circularised', 'Same_Dangling_Ends', 'Same_Internal', 'Re_Ligation', 'Contiguous_Sequence', 'Wrong_Size'
+        ]
     return agg_data
 
 
