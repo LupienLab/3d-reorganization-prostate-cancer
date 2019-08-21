@@ -86,6 +86,15 @@ def main(cfg):
             'Total_Reads_Processed', 'Truncated', 'Not_truncated',
             'Average_length_truncated_sequence'
         ]
+        # what are the relevant names in the aggregated file
+        pair_trunc_cols = [
+            'Total_Reads', 'Truncated_Read', 'Not_Truncated_Reads',
+            'Average_Length_Truncated'
+        ]
+        # bring column data together for truncation data
+        for indiv, pair in zip(individual_trunc_cols, pair_trunc_cols):
+            r[pair + '_1'] = sample_trunc.loc[:, indiv].values[0]
+            r[pair + '_2'] = sample_trunc.loc[:, indiv].values[1]
         # what are the column names in the mapping file
         individual_map_cols = [
             'Reads_too_short_to_map',
@@ -93,29 +102,41 @@ def main(cfg):
             'Paired'
         ]
         # what are the relevant names in the aggregated file
-        pair_trunc_cols = [
-            'Total_Reads', 'Truncated_Read', 'Not_Truncated_Reads',
-            'Average_Length_Truncated'
-        ]
         pair_map_cols = [
             'Too_Short_To_Map_Read', 'Unique_Alignments_Read',
             'Multiple_Alignments_Read', 'Failed_To_Align_Read', 'Paired_Read'
         ]
-        # bring column data together for truncation data
-        for indiv, pair in zip(individual_trunc_cols, pair_trunc_cols):
-            r[pair + '_1'] = sample_trunc.loc[:, indiv].values[0]
-            r[pair + '_2'] = sample_trunc.loc[:, indiv].values[1]
         # bring column data together for mapping data
         for indiv, pair in zip(individual_map_cols, pair_map_cols):
             r[pair + '_1'] = sample_map.loc[:, indiv].values[0]
             r[pair + '_2'] = sample_map.loc[:, indiv].values[1]
         # aggregate filtering data
         individual_filt_cols = [
-            'Valid_pairs', 'Invalid_pairs', 'Same_circularised', 'Same_dangling_ends', 'Same_internal', 'Re-ligation', 'Contiguous_sequence', 'Wrong_size'
+            'Valid_pairs', 'Invalid_pairs', 'Same_circularised',
+            'Same_dangling_ends', 'Same_internal', 'Re-ligation',
+            'Contiguous_sequence', 'Wrong_size'
         ]
         agg_filt_cols = [
-            'Valid_Pairs', 'Invalid_Pairs', 'Same_Circularised', 'Same_Dangling_Ends', 'Same_Internal', 'Re_Ligation', 'Contiguous_Sequence', 'Wrong_Size'
+            'Valid_Pairs', 'Invalid_Pairs', 'Same_Circularised',
+            'Same_Dangling_Ends', 'Same_Fragment_Internal', 'Re_Ligation',
+            'Contiguous_Sequence', 'Wrong_Size'
         ]
+        for indiv, pair in zip(individual_filt_cols, agg_filt_cols):
+            r[pair] = sample_filter.loc[:, indiv].values[0]
+        # aggregate deduplication data
+        individual_dedup_cols = [
+            'Unique_di-tags', 'Cis_<10kbp_of_uniques', 'Cis_>10kbp_of_uniques',
+            'Trans_of_uniques'
+        ]
+        agg_dedup_cols = [
+            'Deduplication_Read_Pairs_Uniques',
+            'Deduplication_Cis_Close_Uniques', 'Deduplication_Cis_Far_Uniques',
+            'Deduplication_Trans_Uniques'
+        ]
+        for indiv, pair in zip(individual_dedup_cols, agg_dedup_cols):
+            r[pair] = sample_dedup.loc[:, indiv].values[0]
+        # calculate percentages based on column values
+        # r['Percentage_Mapped'] =
     return agg_data
 
 
