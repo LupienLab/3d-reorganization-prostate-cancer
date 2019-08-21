@@ -45,7 +45,7 @@ AGG_COLS = [
 # ==============================================================================
 
 
-def main(cfg):
+def main(cfg, outdir):
     '''
     Main
     '''
@@ -137,11 +137,19 @@ def main(cfg):
             r[pair] = sample_dedup.loc[:, indiv].values[0]
         # calculate percentages based on column values
         r['Percentage_Mapped'] = np.round(100 * (r['Paired_Read_1'] + r['Paired_Read_2']) / (r['Total_Reads_1'] + r['Total_Reads_2']), decimals=2)
-        r['Percentage_Valid'] = np.round(r['Valid_Pairs'] / (r['Valid_Pairs'] + r['Invalid_Pairs']), decimals=2)
-        r['Percentage_Uniques'] = np.round(r['Deduplication_Read_Pairs_Uniques'] / r['Valid_Pairs'], decimals=2)
-        r['Percentage_Unique_Trans'] = np.round(r['Deduplication_Trans_Uniques'] / r['Deduplication_Read_Pairs_Uniques'], decimals=2)
+        r['Percentage_Valid'] = np.round(100 * r['Valid_Pairs'] / (r['Valid_Pairs'] + r['Invalid_Pairs']), decimals=2)
+        r['Percentage_Uniques'] = np.round(100 * r['Deduplication_Read_Pairs_Uniques'] / r['Valid_Pairs'], decimals=2)
+        r['Percentage_Unique_Trans'] = np.round(100 * r['Deduplication_Trans_Uniques'] / r['Deduplication_Read_Pairs_Uniques'], decimals=2)
         r['Percentage_Ditags_Passed_Through_HiCUP'] = np.round(200 * r['Deduplication_Read_Pairs_Uniques'] / (r['Total_Reads_1'] + r['Total_Reads_2']), decimals=2)
-    return agg_data
+    # save data to output directory
+    agg_data.to_csv(
+        path.join(outdir, 'HiCUP_summary_report.tsv'), index=False, sep='\t'
+    )
+    for i, r in agg_data.iterrows():
+        agg_data.loc[[i]].to_csv(
+            path.join(outdir, 'HiCUP_summary_report_{}.txt'.format(r.File)),
+            index=False, sep='\t', header=True
+        )
 
 
 if __name__ == '__main__':
@@ -151,11 +159,13 @@ if __name__ == '__main__':
     PARSER.add_argument(
         'cfg',
         type=str,
-        help='Configuration metadata file',
-        default='config.tsv'
+        help='Configuration metadata file'
+    )
+    PARSER.add_argument(
+        '-o', '--outdir',
+        type=str,
+        help='Output directory for summary files',
+        default='.'
     )
     ARGS = PARSER.parse_args()
-    # calculate aggregated stats
-    agg_data = main(ARGS.cfg)
-    # save aggregated stats
-    agg_data.to_csv('HiCUP_summary_report.tsv', index_col=False, sep='\t')
+    main(ARGS.cfg, ARGS.outdir)

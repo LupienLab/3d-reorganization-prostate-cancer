@@ -1,0 +1,3 @@
+File	Total_Reads_Processed	Truncated	%Truncated	Not_truncated	%Not_truncated	Average_length_truncated_sequence
+PCa40507_R1.fastq.gz	255498351	114471994	44.80	141026357	55.20	75.66
+PCa40507_R2.fastq.gz	255498351	113144540	44.28	142353811	55.72	76.04

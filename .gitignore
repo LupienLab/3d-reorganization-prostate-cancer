@@ -105,8 +105,8 @@ venv.bak/
 
 
 # Metadata and processing files
-**/Logs/*
-**/.snakemake/*
+Logs/
+.snakemake/
 ._*
 
 # HTS files

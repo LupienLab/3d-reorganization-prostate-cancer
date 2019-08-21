@@ -1,0 +1,3 @@
+File	Total_Reads_Processed	Truncated	%Truncated	Not_truncated	%Not_truncated	Average_length_truncated_sequence
+PCa13266_R1.fastq.gz	285283451	158712059	55.63	126571392	44.37	73.69
+PCa13266_R2.fastq.gz	285283451	156391999	54.82	128891452	45.18	74.02

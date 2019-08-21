@@ -37,11 +37,14 @@ rule all:
             sample=SAMPLES,
             read=READS
         ),
-        expand(
-            path.join(ALIGN_DIR, '{sample}.hicup.sorted.bam'),
-            sample=SAMPLES,
-            read=READS
-        )
+        # expand(
+        #     path.join(ALIGN_DIR, '{sample}.hicup.sorted.bam'),
+        #     sample=SAMPLES,
+        #     read=READS
+        # ),
+        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        path.join(REPORT_DIR, 'multiqc_report.html')
+
 
 # =============================================================================
 # Rules
@@ -146,3 +149,33 @@ rule sort_bam:
         idx = '{file}.sorted.bam.bai'
     shell:
         'sambamba sort -p {input}'
+
+rule hicup_summary:
+    input:
+        script = 'agg-hicup-reports.py',
+        data = 'config.tsv',
+        trunc = path.join(REPORT_DIR, 'hicup_truncater_summary.tsv'),
+        mapper = path.join(REPORT_DIR, 'hicup_mapper_summary.tsv'),
+        filt = path.join(REPORT_DIR, 'hicup_filter_summary.tsv'),
+        dedup = path.join(REPORT_DIR, 'hicup_deduplicator_summary.tsv')
+    output:
+        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        expand(
+            path.join(REPORT_DIR, 'HiCUP_summary_report_{sample}.txt'),
+            sample=SAMPLES
+        )
+    shell:
+        'python {input.script} {input.data} -o {REPORT_DIR}'
+
+rule multiqc:
+    input:
+        cfg = path.join(REPORT_DIR, 'multiqc_config.yaml'),
+        hicup = path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        samples = expand(
+            path.join(REPORT_DIR, 'HiCUP_summary_report_{sample}.txt'),
+            sample=SAMPLES
+        )
+    output:
+        path.join(REPORT_DIR, 'multiqc_report.html')
+    shell:
+        'multiqc -f -c {input.cfg} -o {REPORT_DIR} {REPORT_DIR}'
