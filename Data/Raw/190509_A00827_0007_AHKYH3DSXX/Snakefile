@@ -37,11 +37,11 @@ rule all:
             sample=SAMPLES,
             read=READS
         ),
-        # expand(
-        #     path.join(ALIGN_DIR, '{sample}.hicup.sorted.bam'),
-        #     sample=SAMPLES,
-        #     read=READS
-        # ),
+        expand(
+            path.join(ALIGN_DIR, '{sample}.hicup.sorted.bam'),
+            sample=SAMPLES,
+            read=READS
+        ),
         path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
         path.join(REPORT_DIR, 'multiqc_report.html')
 
