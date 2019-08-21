@@ -1,0 +1,2 @@
+File	Read_pairs_processed	Unique_di-tags	Cis_<10kbp_of_uniques	Cis_>10kbp_of_uniques	Trans_of_uniques
+PCa13848_L004_R1_2.filt.bam	98733327	88106970	3746172	43729057	40631741

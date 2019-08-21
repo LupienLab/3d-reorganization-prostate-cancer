@@ -1,0 +1,3 @@
+File	Total_Reads_Processed	Truncated	%Truncated	Not_truncated	%Not_truncated	Average_length_truncated_sequence
+PCa19121_L004_R1.fastq.gz	180669809	107147229	59.31	73522580	40.69	74.04
+PCa19121_L004_R2.fastq.gz	180669809	106025237	58.68	74644572	41.32	74.42

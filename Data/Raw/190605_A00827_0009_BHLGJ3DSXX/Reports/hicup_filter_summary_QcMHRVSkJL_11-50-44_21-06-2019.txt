@@ -1,0 +1,2 @@
+File	Total_pairs	Valid_pairs	Cis_<10kbp	Cis_>10kbp	Trans	Invalid_pairs	Same_circularised	Same_dangling_ends	Same_internal	Re-ligation	Contiguous_sequence	Wrong_size
+PCa56413_L003_R1_2.pair.bam	131678353	129965672	3036596	57504390	69424686	1712681	153077	405627	648960	505017	0	0

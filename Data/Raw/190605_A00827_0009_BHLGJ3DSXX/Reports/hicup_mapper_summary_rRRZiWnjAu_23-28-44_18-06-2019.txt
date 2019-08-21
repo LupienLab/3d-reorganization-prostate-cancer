@@ -1,0 +1,3 @@
+File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
+PCa3023_L004_R1.trunc.fastq.gz	180089422	5892716	3.3	145353514	80.7	25292234	14.0	3550958	2.0	118455243	65.8
+PCa3023_L004_R2.trunc.fastq.gz	180089422	5667845	3.1	143639371	79.8	26159512	14.5	4622694	2.6	118455243	65.8
