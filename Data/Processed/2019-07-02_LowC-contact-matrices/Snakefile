@@ -1,0 +1,54 @@
+import pandas as pd
+import os.path as path
+import itertools
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(
+    path.join('../../External/LowC_Samples_Data_Available.tsv'),
+    index_col=False, sep='\t'
+)
+SAMPLES = ['PCa' + str(pid) for pid in CONFIG['Sample ID'].tolist()]
+CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
+
+# create all combinations of chromosomes
+CHR_PAIRS = ['{}-{}'.format(i, j) for i, j in itertools.combinations(CHRS, 2)]
+COOL_DIR = path.join('..', '2019-06-18_PCa-LowC-sequencing', 'Contacts')
+
+wildcard_constraints:
+    chrom = 'chr[MXY0-9]+',
+    chrom_pair = 'chr[MXY0-9]+-chr[MXY0-9]+',
+    sample = 'PCa[0-9]+'
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join('Plots', 'cis', '{sample}.40000.{chrom}.png'),
+            sample=SAMPLES,
+            chrom=CHRS
+        ),
+        expand(
+            path.join('Plots', 'trans', '{sample}.40000.{chrom_pair}.png'),
+            sample=SAMPLES,
+            chrom_pair=CHR_PAIRS
+        )
+
+rule plot_mtx_cis:
+    input:
+        path.join(COOL_DIR, '{sample}.mcool')
+    output:
+        path.join('Plots', 'cis', '{sample}.{res}.{chrom}.png')
+    shell:
+        'cooler show -b -o {output} --dpi 300 {input}::/resolutions/{wildcards.res} {wildcards.chrom}'
+
+rule plot_mtx_trans:
+    input:
+        '{sample}.multi-res.cool'
+    output:
+        path.join('Plots', 'trans', '{sample}.{res}.{chrom1}-{chrom2}.png')
+    shell:
+        'cooler show -b -o {output} --dpi 300 -r2 {wildcards.chrom2} {input}::/resolutions/{wildcards.res} {wildcards.chrom1}'
