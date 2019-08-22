@@ -1,0 +1,158 @@
+import pandas as pd
+import os.path as path
+
+# =============================================================================
+# Configuration
+# =============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
+
+REPORT_DIR = 'Reports'
+ALIGN_DIR = 'Aligned'
+CONTACT_DIR = 'Contacts'
+TAD_DIR = 'TADs'
+PLOT_DIR = 'Plots'
+RAW_DATA_DIR = path.join('..', '..', 'Raw')
+BATCHES = ['190509_A00827_0007_AHKYH3DSXX', '190605_A00827_0009_BHLGJ3DSXX']
+
+SAMPLES = CONFIG['Sample'].tolist()
+READS = [1, 2]
+LANES = [1, 2, 3, 4]
+
+BWT2_IDX = '/cluster/tools/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome'
+
+CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
+
+RESOLUTIONS = [
+    2000, 3000, 4000, 5000, 10000, 20000, 30000, 40000, 50000, 100000
+]
+
+wildcard_constraints:
+    sample = 'PCa[0-9]+',
+    lane = '[1-4]',
+    read = '[1-2]',
+    res = '[0-9]+'
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+    input:
+        expand(
+            path.join(CONTACT_DIR, '{sample}.mcool'),
+            sample=SAMPLES
+        ),
+        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        path.join(REPORT_DIR, 'multiqc_report.html'),
+
+# =============================================================================
+# Rules
+# =============================================================================
+rule merge_bams:
+    # aggregate data from this run and previous flow cell
+    input:
+        path.join(
+            RAW_DATA_DIR, BATCHES[0], ALIGN_DIR,
+            '{{sample}}.hicup.sorted.bam'
+        ),
+        expand(
+            path.join(
+                RAW_DATA_DIR, BATCHES[1], ALIGN_DIR,
+                '{{sample}}_L00{lane}.hicup.sorted.bam'
+            ),
+            lane=LANES
+        )
+    output:
+        path.join(ALIGN_DIR, '{sample}.agg.hicup.bam')
+    shell:
+        'sambamba merge -t 8 -p {output} {input}'
+
+# Contact matrices
+# ------------------------------------------------------------------------------
+rule create_pairs:
+    input:
+        genome = 'hg38.sizes.txt',
+        bam = path.join(ALIGN_DIR, '{sample}.agg.hicup.sorted.bam')
+    output:
+        temp(path.join(CONTACT_DIR, '{sample}.pairs.gz'))
+    shell:
+        'pairtools parse -c {input.genome} --assembly hg38 -o {output} {input.bam}'
+
+rule create_cooler:
+    input:
+        genome = 'hg38.sizes.txt',
+        pairs = path.join(CONTACT_DIR, '{sample}.pairs.gz')
+    output:
+        path.join(CONTACT_DIR, '{sample}.cool')
+    params:
+        '--assembly hg38 -c1 2 -p1 3 -c2 4 -p2 5'
+    shell:
+        'cooler cload pairs {params} {input.genome}:1000 {input.pairs} {output}'
+
+rule balance:
+    input:
+        expand(path.join(CONTACT_DIR, '{sample}.cool'), sample=SAMPLES)
+    output:
+        path.join(REPORT_DIR, 'balanced_report.txt')
+    shell:
+        'for c in {{ {input} }}; do cooler balance $c >>{output} 2>&1; done'
+
+rule adjust_res:
+    input:
+        path.join(CONTACT_DIR, '{sample}.cool')
+    output:
+        path.join(CONTACT_DIR, '{sample}.mcool')
+    params:
+        '--balance -p 8 -r {}'.format(','.join([str(r) for r in RESOLUTIONS]))
+    shell:
+        'cooler zoomify {params} -o {output} {input}'
+
+# Miscellaneous
+# -----------------------------------------------------------------------------
+rule sort_bam_name:
+    input:
+        '{file}.bam'
+    output:
+        '{file}.name-sorted.bam',
+    shell:
+        'sambamba sort -t 8 --tmpdir . -n -p -o {output} {input}'
+
+rule sort_bam:
+    input:
+        '{file}.bam'
+    output:
+        bam = '{file}.sorted.bam',
+        idx = '{file}.sorted.bam.bai'
+    shell:
+        'sambamba sort -t 8 --tmpdir . -p {input}'
+
+
+# Summaries
+# ------------------------------------------------------------------------------
+rule hicup_summary:
+    input:
+        script = 'agg-hicup-reports.py',
+        data = 'config.tsv',
+    output:
+        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        expand(
+            path.join(
+                REPORT_DIR, 'HiCUP_summary_report_{sample}.txt'),
+            sample=SAMPLES
+        )
+    shell:
+        'python {input.script} {input.data} -o {REPORT_DIR}'
+
+rule multiqc:
+    input:
+        cfg = path.join(REPORT_DIR, 'multiqc_config.yaml'),
+        hicup = path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        samples = expand(
+            path.join(
+                REPORT_DIR, 'HiCUP_summary_report_{sample}.txt'),
+            sample=SAMPLES
+        )
+    output:
+        path.join(REPORT_DIR, 'multiqc_report.html')
+    shell:
+        'multiqc -f -c {input.cfg} -o {REPORT_DIR} {REPORT_DIR}'
