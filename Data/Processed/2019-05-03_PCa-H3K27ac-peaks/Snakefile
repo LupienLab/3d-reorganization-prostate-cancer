@@ -1,0 +1,84 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+
+BAM_DIR = 'BAMs'
+PEAK_DIR = 'Peaks'
+REPORT_DIR = 'Reports'
+
+SAMPLES = ['Pca' + str(i) for i in CONFIG['Sample ID'].tolist()]
+CHIPS = CONFIG['ChIP Type'].tolist()
+
+GENOMES = ['hg38']
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join(BAM_DIR, '{sample}_{chip}.sorted.dedup.bam'),
+            zip,
+            sample=SAMPLES,
+            chip=CHIPS
+        ),
+        expand(
+            path.join(PEAK_DIR, '{sample}_peaks.narrowPeak'),
+            sample=SAMPLES
+        ),
+        expand(
+            path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak'),
+            sample=SAMPLES
+        ),
+        expand(
+            path.join(PEAK_DIR, '{sample}_peaks.filtered.bedGraph'),
+            sample=SAMPLES
+        )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule call_peaks:
+    input:
+        chip = path.join(BAM_DIR, '{sample}_H3K27ac.sorted.dedup.bam'),
+        input = path.join(BAM_DIR, '{sample}_input.sorted.dedup.bam'),
+    output:
+        path.join(PEAK_DIR, '{sample}_peaks.xls'),
+        path.join(PEAK_DIR, '{sample}_peaks.narrowPeak'),
+        path.join(PEAK_DIR, '{sample}_summits.bed')
+    params:
+        lambda wildcards:
+            ' '.join([
+                '-g hs',
+                '-f BAM',
+                '-q 0.005',
+                '-B',
+                '-n {}'.format(path.join(PEAK_DIR, wildcards.sample))
+            ])
+    conda:
+        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/MACS.yaml'
+    shell:
+        'macs2 callpeak {params} -t {input.chip} -c {input.input}'
+
+rule filter_blacklist:
+    input:
+        blacklist = 'ENCODE-blacklist.bed',
+        peaks = path.join(PEAK_DIR, '{sample}_peaks.narrowPeak')
+    output:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+    shell:
+        'bedtools intersect -v -a {input.peaks} -b {input.blacklist} > {output}'
+
+rule narrowpeak_to_bdg:
+    input:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+    output:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.bedGraph')
+    params:
+        '-v FS="\t" -v OFS="\t"'
+    shell:
+        'awk {params} \'{{print $1, $2, $3, $5}}\' {input} > {output}'
