@@ -20,13 +20,12 @@ CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
 RESOLUTIONS = [
     # 1000, 2000, 3000, 4000, 5000,
     # 5000,
-    # 10000, 20000, 30000, 40000, 50000,
-    100000
+    # 10000, 20000, 30000,
+    40000
+    # , 50000,
+    # 100000
 ]
-WINDOWS = [
-    2, 3, 4, 5, 6, 7, 8, 9, 10
-    # 10, 20, 30, 40, 50, 60, 70, 80, 90,
-]
+WINDOWS = range(3, 31)
 
 wildcard_constraints:
     sample = 'PCa[0-9]+',
@@ -47,14 +46,24 @@ rule all:
             res=RESOLUTIONS,
             chrom='chr22'
         ),
+        # expand(
+        #     path.join(TAD_DIR, 'w_{window}',
+        #               '{sample}.{res}bp.{chrom}.domains.png'),
+        #     window=WINDOWS,
+        #     sample=SAMPLES,
+        #     res=RESOLUTIONS,
+        #     chrom='chr22'
+        # ),
         expand(
-            path.join(TAD_DIR, 'w_{window}',
-                      '{sample}.{res}bp.{chrom}.domains.png'),
-            window=WINDOWS,
+            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
+            w=WINDOWS,
             sample=SAMPLES,
-            res=RESOLUTIONS,
-            chrom='chr22'
+            res=RESOLUTIONS
         ),
+        path.join(TAD_DIR, 'tad-call-stats.tsv'),
+        path.join(TAD_DIR, 'tad-calls.tsv'),
+        path.join(PLOT_DIR, 'tad-counts.png'),
+        path.join(PLOT_DIR, 'tad-sizes.png')
 
 # =============================================================================
 # Rules
@@ -82,10 +91,13 @@ rule call_tads:
         path.join(TAD_DIR, 'w_{window}',
                   '{sample}.{res}bp.{chrom}.domains.bed')
     params:
-        def prefix(wildcards): return path.join(TAD_DIR, 'w_{}'.format(
-            wildcards.window), '.'.join([wildcards.sample, wildcards.res + 'bp', wildcards.chrom]))
+        lambda wildcards: path.join(
+            TAD_DIR,
+            'w_{}'.format(wildcards.window),
+            '.'.join([wildcards.sample, wildcards.res + 'bp', wildcards.chrom])
+        )
     shell:
-        'Rscript {input.script} {input.data} -p {params.prefix} -w {wildcards.window}'
+        'Rscript {input.script} {input.data} -p {params} -w {wildcards.window}'
 
 rule plot_tads:
     input:
@@ -98,3 +110,34 @@ rule plot_tads:
                          '{sample}.{res}bp.{chrom}.domains.png')
     shell:
         'python {input.script} {input.cool}::/resolutions/{wildcards.res} {wildcards.chrom} -t {input.data} -o {output}'
+
+rule combine:
+    input:
+        script = 'combine-tad-calls.R'
+    output:
+        path.join(TAD_DIR, 'tad-call-stats.tsv'),
+        path.join(TAD_DIR, 'tad-calls.tsv')
+    shell:
+        'Rscript {input.script}'
+
+rule plot_stats:
+    input:
+        script = 'plot-tad-stats.R',
+        data = path.join(TAD_DIR, 'tad-call-stats.tsv')
+    output:
+        path.join(PLOT_DIR, 'tad-counts.png'),
+        path.join(PLOT_DIR, 'tad-sizes.png')
+    shell:
+        'Rscript {input.script}'
+
+rule combine_tad_beds:
+    input:
+        expand(
+            path.join(TAD_DIR, 'w_{{w}}',
+                      '{{sample}}.{{res}}bp.{chrom}.domains.bed'),
+            chrom=CHRS
+        )
+    output:
+        path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed')
+    shell:
+        'cat {input} > {output}'
