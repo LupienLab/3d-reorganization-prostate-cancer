@@ -18,6 +18,7 @@ BAM_DIR = path.join(
     'Aligned'
 )
 BREAK_DIR = 'Breakpoints'
+SCRIPT_DIR = 'Scripts'
 
 # ==============================================================================
 # Meta Rules
@@ -28,7 +29,12 @@ rule all:
             path.join(BREAK_DIR, '{param}', '{sample}.breaks.txt'),
             sample=SAMPLES,
             param=['Default', 'Min_1kbp', 'Low_Thresh']
-        )
+        ),
+        expand(
+            path.join(BREAK_DIR, '{param}', 'breakpoints.{ext}'),
+            param=['Default', 'Min_1kbp', 'Low_Thresh'],
+            ext=['bedpe', 'tsv']
+        ),
 
 # ==============================================================================
 # Rules
@@ -153,3 +159,16 @@ rule breakfinder_low_thresh:
         ]
         command_str = '; '.join(commands)
         shell(command_str)
+
+rule agg_breaks:
+    input:
+        script = path.join(SCRIPT_DIR, 'agg-breaks.R'),
+        data = expand(
+            path.join(BREAK_DIR, '{{calltype}}', '{sample}.breaks.txt'),
+            sample=SAMPLES
+        )
+    output:
+        path.join(BREAK_DIR, '{calltype}', 'breakpoints.bedpe'),
+        path.join(BREAK_DIR, '{calltype}', 'breakpoints.tsv'),
+    shell:
+        'Rscript {input.script} {input.data} -p {BREAK_DIR}/{wildcards.calltype}/breakpoints'
