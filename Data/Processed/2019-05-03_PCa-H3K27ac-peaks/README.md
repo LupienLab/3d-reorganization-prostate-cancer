@@ -6,7 +6,14 @@ See the folders for specific flowcells to see how they were aligned.
 
 The ENCODE Blacklist [1] was downloaded from https://www.encodeproject.org/annotations/ENCSR636HFF/.
 
+> Note: Since MACS requires Python 2.7 and all other analyses in this project use Python 3, a separate conda environment needed to be created to accommodate this tool.
+> You can find the YAML file for this environment in `macs.yaml`.
+> Use this environment before running the peak calling in this folder.
+> In the `Snakefile`, the `conda` keyword is used, and the `--use-conda` flag is used in the command-line execution of this folder.
+
 ## Results
+
+
 
 ## References
 
