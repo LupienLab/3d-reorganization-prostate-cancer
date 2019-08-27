@@ -60,7 +60,7 @@ rule call_peaks:
                 '-n {}'.format(path.join(PEAK_DIR, wildcards.sample))
             ])
     conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/MACS.yaml'
+        'macs.yaml'
     shell:
         'macs2 callpeak {params} -t {input.chip} -c {input.input}'
 
