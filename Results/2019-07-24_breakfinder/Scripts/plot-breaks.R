@@ -67,3 +67,21 @@ for (s in unique(breakpoints$Sample)) {
     )
     dev.off()
 }
+
+# number of SVs detected per patient
+gg = (
+    ggplot(data = breakpoints[, .N, by = Sample])
+    + geom_col(aes(x = Sample, y = N, fill = Sample))
+    + labs(x = "Patient", y = "Number of SVs")
+    + guides(fill = FALSE)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
+    )
+)
+ggsave(
+    "Plots/sv-counts.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
