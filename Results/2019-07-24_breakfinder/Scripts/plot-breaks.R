@@ -2,10 +2,9 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
-suppressMessages(library("ggplot2"))
 suppressMessages(library("argparse"))
 suppressMessages(library("RCircos"))
-suppressMessages(library("ggbio"))
+suppressMessages(library("ggplot2"))
 
 if (!interactive()) {
     PARSER <- argparse::ArgumentParser(
@@ -61,7 +60,7 @@ hg38 = data.table(
         57227415
     )
 )
-hg38[, Bins := round(Length / 10^6) + 1]
+hg38[, Bins := ceiling(Length / 10^6)]
 
 # ==============================================================================
 # Data
@@ -88,7 +87,7 @@ breakpoints_melted[, Strand2:= NULL]
 #   fix column names
 colnames(breakpoints_melted) = c(
     "Sample", "Chrom", "Start", "End",
-    "Strand", "LogOdds", "Resolution"
+    "Strand", "Odds", "Resolution"
 )
 # convert Chrom to ordered factor
 breakpoints_melted[, Chrom := factor(Chrom, levels = CHRS, ordered = TRUE)]
@@ -100,8 +99,8 @@ data(UCSC.HG38.Human.CytoBandIdeogram)
 # Analysis
 # ==============================================================================
 # convert breakpoints into Mbp bins and counts the rearrangements
-breakpoints_melted[, StartBin := round(Start / 10^6)]
-breakpoints_melted[, EndBin := round(End / 10^6)]
+breakpoints_melted[, StartBin := floor(Start / 10^6)]
+breakpoints_melted[, EndBin := floor(End / 10^6)]
 
 # convert breakpoints in genomic regions into bins
 breakpoints_binned = rbindlist(lapply(
@@ -178,6 +177,24 @@ ggsave(
     "Plots/sv-counts.png",
     height = 12,
     width = 20,
+    units = "cm"
+)
+
+gg = (
+    ggplot(data = breakpoints_melted[, .N, by = c("Sample", "Chrom")])
+    + geom_col(aes(x = Sample, y = N, fill = Sample))
+    + labs(x = "Patient", y = "Number of SVs")
+    + guides(fill = FALSE)
+    + facet_grid(. ~ Chrom)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
+    )
+)
+ggsave(
+    "Plots/sv-counts-by-chrom.png",
+    height = 12,
+    width = 40,
     units = "cm"
 )
 
