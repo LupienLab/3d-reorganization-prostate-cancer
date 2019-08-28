@@ -35,9 +35,13 @@ rule all:
             sample=SAMPLES
         ),
         expand(
-            path.join(PEAK_DIR, '{sample}_peaks.filtered.bedGraph'),
+            path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bedGraph'),
             sample=SAMPLES
-        )
+        ),
+        expand(
+            path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.tdf'),
+            sample=SAMPLES
+        ),
 
 # ==============================================================================
 # Rules
@@ -64,7 +68,7 @@ rule call_peaks:
     shell:
         'macs2 callpeak {params} -t {input.chip} -c {input.input}'
 
-rule filter_blacklist:
+rule filter_blacklist_narrowpeak:
     input:
         blacklist = 'ENCODE-blacklist.bed',
         peaks = path.join(PEAK_DIR, '{sample}_peaks.narrowPeak')
@@ -73,12 +77,19 @@ rule filter_blacklist:
     shell:
         'bedtools intersect -v -a {input.peaks} -b {input.blacklist} > {output}'
 
-rule narrowpeak_to_bdg:
+rule filter_blacklist_bdg:
     input:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+        blacklist = 'ENCODE-blacklist.bed',
+        bdg = path.join(PEAK_DIR, '{sample}_treat_pileup.bdg')
     output:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.bedGraph')
-    params:
-        '-v FS="\t" -v OFS="\t"'
+        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bedGraph')
     shell:
-        'awk {params} \'{{print $1, $2, $3, $5}}\' {input} > {output}'
+        'bedtools intersect -v -a {input.bdg} -b {input.blacklist} > {output}'
+
+rule bdg_to_tdf:
+    input:
+        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bedGraph')
+    output:
+        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.tdf')
+    shell:
+        'igvtools toTDF {input} {output} hg38'

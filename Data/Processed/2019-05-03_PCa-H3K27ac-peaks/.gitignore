@@ -1,3 +1,5 @@
 *.bam
 *.bdg
+*.bedGraph
+*.tdf
 *.xls
