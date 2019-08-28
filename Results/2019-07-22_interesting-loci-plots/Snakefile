@@ -4,19 +4,31 @@ import os.path as path
 # ==============================================================================
 # Configuration
 # ==============================================================================
-LOCI = pd.read_csv('interesting-loci.bedpe', index_col=False, sep='\t', names=['chrom1', 'start1', 'end1', 'chrom2', 'start2', 'end2', 'PatientID'])
-LOCI = LOCI.loc[~LOCI.chrom1.str.startswith('#'), :]
+CONFIG = pd.read_csv(
+    path.join('../../Data/External/LowC_Samples_Data_Available.tsv'),
+    index_col=False, sep='\t'
+)
 
 # Patient IDs
-SAMPLES = LOCI.PatientID.tolist()
+SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
 
 # folder where cooler files are
-CONTACT_DIR = path.join('..', '..', 'Data', 'Processed', '2019-07-02_LowC-contact-matrices')
+CONTACT_DIR = path.join('..', '..', 'Data', 'Processed',
+                        '2019-06-18_PCa-LowC-sequencing', 'Contacts')
+TAD_DIR = path.join('..', '2019-07-08_TADs', 'TADs')
 
-# string format for loci to plot
-LOCI1 = [chrom + ':' + str(posstart) + '-' + str(posend) for chrom, posstart, posend in zip(LOCI.chrom1, LOCI.start1, LOCI.end1)]
-LOCI2 = [chrom + ':' + str(posstart) + '-' + str(posend) for chrom, posstart, posend in zip(LOCI.chrom2, LOCI.start2, LOCI.end2)]
-LOCI_PAIRS = [l1 + '.' + l2 for l1, l2 in zip(LOCI1, LOCI2)]
+# loci to plot from a single sample
+SINGLE_SAMPLE_LOCI = pd.read_csv(
+    'single-sample-loci.bedpe', index_col=False, sep='\t',
+    names=['chrom1', 'start1', 'end1', 'chrom2', 'start2', 'end2', 'PatientID']
+)
+SINGLE_SAMPLE_LOCI = SINGLE_SAMPLE_LOCI.loc[
+    ~ SINGLE_SAMPLE_LOCI.chrom1.str.startswith('#'), :
+]
+
+# locai to plot for all samples
+# ALL_SAMPLE_LOCI =
+
 
 # ==============================================================================
 # Rules
@@ -24,18 +36,48 @@ LOCI_PAIRS = [l1 + '.' + l2 for l1, l2 in zip(LOCI1, LOCI2)]
 rule all:
     input:
         expand(
-            '{sample}.40000bp.{locus_pair}.png',
+            path.join(
+                'single-sample-loci',
+                '.'.join(['{sample}', '40000bp', '{chrom1}_{start1}_{end1}',
+                          '{chrom2}_{start2}_{end2}', 'png'])),
             zip,
-            sample=SAMPLES,
-            locus_pair=LOCI_PAIRS
-        )
+            sample=SINGLE_SAMPLE_LOCI.PatientID.tolist(),
+            chrom1=SINGLE_SAMPLE_LOCI.chrom1.tolist(),
+            start1=SINGLE_SAMPLE_LOCI.start1.tolist(),
+            end1=SINGLE_SAMPLE_LOCI.end1.tolist(),
+            chrom2=SINGLE_SAMPLE_LOCI.chrom2.tolist(),
+            start2=SINGLE_SAMPLE_LOCI.start2.tolist(),
+            end2=SINGLE_SAMPLE_LOCI.end2.tolist()
+        ),
+        # expand(
+        #     path.join('all-sample-loci', '{gene}',
+        #               '{sample}.40000bp.png'),
+        #     gene=['AR', 'FOXA1', 'SPOP', 'MYC'],
+        #     sample=SAMPLES
+        # )
 
-rule show_locus:
+rule show_locus_pair:
     input:
-        path.join(CONTACT_DIR, '{sample}.multi-res.cool')
+        path.join(CONTACT_DIR, '{sample}.mcool')
     output:
-        '{sample}.40000bp.{locus1}.{locus2}.png'
+        path.join(
+            'single-sample-loci',
+            '{sample}.{res}bp.{chrom1}_{start1}_{end1}.{chrom2}_{start2}_{end2}.png'
+        )
     params:
         '-b --dpi 300'
     shell:
-        'cooler show {params} -o {output} -r2 {wildcards.locus2} {input}::/resolutions/40000 {wildcards.locus1}'
+        'cooler show {params} -o {output} -r2 {wildcards.chrom2}:{wildcards.start2}-{wildcards.end2} {input}::/resolutions/{wildcards.res} {wildcards.chrom1}:{wildcards.start1}-{wildcards.end1}'
+
+# rule show_locus:
+#     input:
+#         path.join(CONTACT_DIR, '{sample}.mcool')
+#     output:
+#         path.join(
+#             'all-sample-loci',
+#             '{name}', '{sample}.{res}bp.{chrom1}_{start1}_{end1}.png'
+#         )
+#     params:
+#         '-b --dpi 300'
+#     shell:
+#         'cooler show {params} -o {output} {input}::/resolutions/{wildcards.res} {wildcards.chrom1}:{wildcards.start1}-{wildcards.end1}'
