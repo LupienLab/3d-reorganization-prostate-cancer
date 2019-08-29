@@ -34,6 +34,7 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
+        'rulegraph.png',
         # FastQC on original FASTQs
         expand(
             path.join(REPORT_DIR, '{sample}_L00{lane}_R{read}_fastqc.html'),
@@ -42,13 +43,19 @@ rule all:
             read=READS
         ),
         expand(
-            path.join(ALIGN_DIR, '{sample}_L00{lane}.hicup.bam'),
+            path.join(ALIGN_DIR, '{sample}_L00{lane}.hicup.sorted.bam'),
             sample=SAMPLES,
             lane=LANES,
             read=READS
         ),
         path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
         path.join(REPORT_DIR, 'multiqc_report.html')
+
+rule rulegraph:
+    output:
+        'rulegraph.png',
+    shell:
+        'snakemake --rulegraph | dot -Tpng > {output}'
 
 # =============================================================================
 # Rules

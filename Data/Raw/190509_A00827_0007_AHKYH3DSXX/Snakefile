@@ -32,6 +32,7 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
+        'rulegraph.png',
         expand(
             path.join(REPORT_DIR, '{sample}_R{read}_fastqc.html'),
             sample=SAMPLES,
@@ -45,6 +46,11 @@ rule all:
         path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
         path.join(REPORT_DIR, 'multiqc_report.html')
 
+rule rulegraph:
+    output:
+        'rulegraph.png',
+    shell:
+        'snakemake --rulegraph | dot -Tpng > {output}'
 
 # =============================================================================
 # Rules
