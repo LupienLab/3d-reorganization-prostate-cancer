@@ -10,8 +10,6 @@ CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
 REPORT_DIR = 'Reports'
 ALIGN_DIR = 'Aligned'
 CONTACT_DIR = 'Contacts'
-TAD_DIR = 'TADs'
-PLOT_DIR = 'Plots'
 RAW_DATA_DIR = path.join('..', '..', 'Raw')
 BATCHES = ['190509_A00827_0007_AHKYH3DSXX', '190605_A00827_0009_BHLGJ3DSXX']
 
@@ -38,12 +36,23 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
+        'rulegraph.png',
         expand(
             path.join(CONTACT_DIR, '{sample}.mcool'),
             sample=SAMPLES
         ),
+        expand(
+            path.join(REPORT_DIR, 'balanced_report.txt'),
+            sample=SAMPLES
+        ),
         path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
         path.join(REPORT_DIR, 'multiqc_report.html'),
+
+rule rulegraph:
+    output:
+        'rulegraph.png',
+    shell:
+        'snakemake --rulegraph | dot -Tpng > {output}'
 
 # =============================================================================
 # Rules
@@ -91,11 +100,11 @@ rule create_cooler:
 
 rule balance:
     input:
-        expand(path.join(CONTACT_DIR, '{sample}.cool'), sample=SAMPLES)
+        path.join(CONTACT_DIR, '{sample}.cool')
     output:
-        path.join(REPORT_DIR, 'balanced_report.txt')
+        path.join(REPORT_DIR, '{sample}.balanced_report.txt')
     shell:
-        'for c in {{ {input} }}; do cooler balance $c >>{output} 2>&1; done'
+        'cooler balance {input} >> {output} 2>&1'
 
 rule adjust_res:
     input:
