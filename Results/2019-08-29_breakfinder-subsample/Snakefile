@@ -1,0 +1,127 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+REPORT_DIR = 'Reports'
+SUBSAMPLE_DIR = 'Subsamples'
+BREAK_DIR = 'Breakpoints'
+
+BF_PATH = path.join(
+    '..', '2019-07-24_breakfinder', 'hic_breakfinder', 'bin', 'hic_breakfinder')
+
+REPS = range(1, 6)
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        # path.join(REPORT_DIR, 'rulegraph.png'),
+        # path.join(REPORT_DIR, 'snakemake_report.html'),
+        expand(path.join(SUBSAMPLE_DIR,
+                         'PCa51852.sample-{rep}.bam'), rep=REPS),
+        expand(path.join(BREAK_DIR, 'Default', 'S{rep}.breaks.txt'), rep=REPS),
+
+rule rulegraph:
+    output:
+        path.join(REPORT_DIR, 'rulegraph.png'),
+    shell:
+        'snakemake --rulegraph | dot -Tpng > {output}'
+
+rule snkmk_report:
+    output:
+        path.join(REPORT_DIR, 'snakemake_report.html'),
+    shell:
+        'snakemake --report {output}'
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule subsample:
+    input:
+        path.join('..', '..', 'Data', 'Processed', '2019-06-18_PCa-LowC-sequencing',
+                  'Aligned', 'PCa51852.agg.hicup.sorted.bam')
+    output:
+        path.join(SUBSAMPLE_DIR, 'PCa51852.sample-{seed}.bam')
+    shell:
+        # 453.8 M / 782.6 M ~= 0.579
+        'samtools view -bs {wildcards.seed}.58 {input} > {output}'
+
+rule breakfinder_low_thresh:
+    input:
+        bam = path.join(SUBSAMPLE_DIR, 'PCa51852.sample-{seed}.bam'),
+        inter = path.join('..', '2019-07-24_breakfinder',
+                          'inter_expect_1Mb.hg38.txt'),
+        intra = path.join('..', '2019-07-24_breakfinder',
+                          'intra_expect_100kb.hg38.txt')
+    output:
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_100kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_100kb.breaks.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_100kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_100kb.SR.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}',
+                  'S{seed}_100kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_100kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_10kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_10kb.breaks.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_10kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_10kb.SR.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}',
+                  'S{seed}_10kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_10kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_1Mb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_1Mb.breaks.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_1Mb.SR.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}',
+                  'S{seed}_1Mb.super_matrix.norm.eig.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}',
+                  'S{seed}_1Mb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}_1Mb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'thresh_{t}', 'S{seed}.breaks.txt')
+    run:
+        commands = [
+            'pushd {BREAK_DIR}/thresh_{wildcards.t}',
+            '{BF_PATH} --name {wildcards.sample} --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --thresh {wildcards.t}',
+            'popd'
+        ]
+        command_str = '; '.join(commands)
+        shell(command_str)
+
+rule breakfinder_default:
+    input:
+        bam = path.join(SUBSAMPLE_DIR, 'PCa51852.sample-{seed}.bam'),
+        inter = path.join('..', '2019-07-24_breakfinder',
+                          'inter_expect_1Mb.hg38.txt'),
+        intra = path.join('..', '2019-07-24_breakfinder',
+                          'intra_expect_100kb.hg38.txt')
+    output:
+        path.join(BREAK_DIR, 'Default', 'S{seed}_100kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_100kb.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_100kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_100kb.SR.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_100kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_100kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_10kb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_10kb.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_10kb_intra.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_10kb.SR.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_10kb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_10kb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_1Mb.bias_vector.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_1Mb.breaks.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_1Mb.SR.txt'),
+        path.join(BREAK_DIR, 'Default',
+                  'S{seed}_1Mb.super_matrix.norm.eig.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_1Mb.super_matrix.norm.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}_1Mb.super_matrix.txt'),
+        path.join(BREAK_DIR, 'Default', 'S{seed}.breaks.txt')
+    run:
+        commands = [
+            'pushd {BREAK_DIR}/Default',
+            '../../{BF_PATH} --name S{wildcards.seed} --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra}',
+            'popd'
+        ]
+        command_str = '; '.join(commands)
+        shell(command_str)

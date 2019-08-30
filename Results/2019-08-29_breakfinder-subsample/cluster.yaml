@@ -1,0 +1,3 @@
+__default__:
+    params: "--export=ALL --chdir=. -p veryhimem --mem=120G -t 1-00:00:00"
+
