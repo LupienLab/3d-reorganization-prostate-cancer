@@ -1,0 +1,2 @@
+__default__:
+  params: "-q lupiengroup -V -cwd"

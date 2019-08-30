@@ -26,12 +26,36 @@ SINGLE_SAMPLE_LOCI = SINGLE_SAMPLE_LOCI.loc[
     ~ SINGLE_SAMPLE_LOCI.chrom1.str.startswith('#'), :
 ]
 
-# locai to plot for all samples
-# ALL_SAMPLE_LOCI =
+# loci to plot for all samples
+ALL_SAMPLE_LOCI = pd.read_csv(
+    'all-sample-loci.bed', index_col=False, sep='\t',
+    names=['chrom', 'start', 'end', 'name']
+)
+ALL_SAMPLE_LOCI = ALL_SAMPLE_LOCI.loc[
+    ~ ALL_SAMPLE_LOCI.chrom.str.startswith('#'), :
+]
+ALL_LOCI_STRING = ['_'.join([c, str(s), str(e), n]) for c, s, e, n in zip(
+    ALL_SAMPLE_LOCI.chrom.tolist(),
+    ALL_SAMPLE_LOCI.start.tolist(),
+    ALL_SAMPLE_LOCI.end.tolist(),
+    ALL_SAMPLE_LOCI.name.tolist()
+)]
 
+# wildcard_constraints:
+#     chrom = 'chr[0-9XY]+',
+#     chrom1 = 'chr[0-9XY]+',
+#     chrom2 = 'chr[0-9XY]+',
+#     start = '[0-9]+',
+#     start1 = '[0-9]+',
+#     start2 = '[0-9]+',
+#     end = '[0-9]+',
+#     end1 = '[0-9]+',
+#     end2 = '[0-9]+',
+#     sample = 'PCa[0-9]+',
+#     res = '[0-9]+'
 
 # ==============================================================================
-# Rules
+# Meta Rules
 # ==============================================================================
 rule all:
     input:
@@ -49,13 +73,19 @@ rule all:
             start2=SINGLE_SAMPLE_LOCI.start2.tolist(),
             end2=SINGLE_SAMPLE_LOCI.end2.tolist()
         ),
-        # expand(
-        #     path.join('all-sample-loci', '{gene}',
-        #               '{sample}.40000bp.png'),
-        #     gene=['AR', 'FOXA1', 'SPOP', 'MYC'],
-        #     sample=SAMPLES
-        # )
+        expand(
+            path.join(
+                'all-sample-loci', '{sample}.{res}bp.{locus_string}.{ext}'
+            ),
+            sample=SAMPLES,
+            res=40000,
+            locus_string=ALL_LOCI_STRING,
+            ext=['png']
+        )
 
+# ==============================================================================
+# Rules
+# ==============================================================================
 rule show_locus_pair:
     input:
         path.join(CONTACT_DIR, '{sample}.mcool')
@@ -69,15 +99,18 @@ rule show_locus_pair:
     shell:
         'cooler show {params} -o {output} -r2 {wildcards.chrom2}:{wildcards.start2}-{wildcards.end2} {input}::/resolutions/{wildcards.res} {wildcards.chrom1}:{wildcards.start1}-{wildcards.end1}'
 
-# rule show_locus:
-#     input:
-#         path.join(CONTACT_DIR, '{sample}.mcool')
-#     output:
-#         path.join(
-#             'all-sample-loci',
-#             '{name}', '{sample}.{res}bp.{chrom1}_{start1}_{end1}.png'
-#         )
-#     params:
-#         '-b --dpi 300'
-#     shell:
-#         'cooler show {params} -o {output} {input}::/resolutions/{wildcards.res} {wildcards.chrom1}:{wildcards.start1}-{wildcards.end1}'
+rule show_locus:
+    input:
+        script = path.join('..', '2019-07-08_TADs', 'plot-tads.py'),
+        cool = path.join(CONTACT_DIR, '{sample}.mcool'),
+        tads = path.join(
+            TAD_DIR, 'w_3', '{sample}.40000bp.{chrom}.domains.tsv')
+    output:
+        path.join(
+            'all-sample-loci',
+            '{sample}.{res}bp.{chrom}_{start}_{end}_{name}.{ext}'
+        )
+    params:
+        '--zmin=-4.5 --zmax=-1.5 -r'
+    shell:
+        'python {input.script} {params} -t {input.tads} -o {output} {input.cool}::/resolutions/{wildcards.res} {wildcards.chrom}:{wildcards.start}-{wildcards.end}'
