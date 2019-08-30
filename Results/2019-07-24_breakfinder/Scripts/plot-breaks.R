@@ -197,6 +197,12 @@ ggsave(
     width = 40,
     units = "cm"
 )
+ggsave(
+    "Plots/sv-counts-by-chrom.pdf",
+    height = 12,
+    width = 40,
+    units = "cm"
+)
 
 # number and location of SVs across all patients
 gg = (
@@ -222,5 +228,23 @@ ggsave(
     "Plots/sv-loci.png",
     height = 12,
     width = 40,
+    units = "cm"
+)
+
+gg = (
+    ggplot(data = breakpoints_summed[, length(unique(Sample)), by = c("Chrom", "Bin")])
+    + geom_bar(aes(x = V1))
+    + labs(x = "Number of patients", y = "Number of Mbp bins with a breakpoint")
+    + scale_x_discrete(
+        limits = seq(1, 13),
+        breaks = seq(1, 13, by = 2),
+        labels = seq(1, 13, by = 2)
+    )
+    + theme_minimal()
+)
+ggsave(
+    "Plots/sv-recurrence.png",
+    height = 12,
+    width = 20,
     units = "cm"
 )
