@@ -1,9 +1,5 @@
 from __future__ import division, print_function
-import sys
-
 import numpy as np
-import h5py
-
 import pandas as pd
 import argparse
 
@@ -27,12 +23,26 @@ def load_matrix(c, row_region, col_region, field, balanced, scale):
     return mat
 
 
-def filter_tad_range(tads, row_lo, row_hi, col_lo, col_hi):
+def filter_ranges(ranges, row_lo, row_hi, col_lo, col_hi):
+    '''
+    Filter genomic ranges based on whether they are within the extent being plotted
+
+    Parameters
+    ----------
+    row_lo : int
+        Lower bound on rows
+    row_hi : int
+        Upper bound on rows
+    col_lo : int
+        Lower bound on cols
+    col_hi : int
+        Upper bound on cols
+    '''
     # ensure tads fit within row and col boundaries
-    row_idx = (row_lo < tads['from.coord']) & (tads['to.coord'] < row_hi)
-    col_idx = (col_lo < tads['from.coord']) & (tads['to.coord'] < col_hi)
+    row_idx = (row_lo < ranges['from.coord']) & (ranges['to.coord'] < row_hi)
+    col_idx = (col_lo < ranges['from.coord']) & (ranges['to.coord'] < col_hi)
     idx = row_idx & col_idx
-    return tads.loc[idx, :]
+    return ranges.loc[idx, :]
 
 
 def tads_to_patches(tads):
@@ -77,8 +87,60 @@ def tads_to_patches(tads):
     return tad_patches
 
 
+def parse_highlights(hl_row, hl_col, row_lo, row_hi, col_lo, col_hi, chromsizes):
+    '''
+    Parse highlights supplied as comma-separated UCSC-formatted regions
+
+    Parameters
+    ----------
+    hl_row : str
+        List of rows to highlight
+    hl_col : str
+        List of cols to highlight
+    row_lo : int
+        Lower bound on rows
+    row_hi : int
+        Upper bound on rows
+    col_lo : int
+        Lower bound on cols
+    col_hi : int
+        Upper bound on cols
+    chromsizes : dict(str, int)
+        Chromosome sizes to filter by
+    '''
+    from matplotlib.path import Path
+    import matplotlib.patches as patches
+    paths = []
+    colours = []
+    if hl_row is not None:
+        rows = hl_row.split(',')
+        rows = [util.parse_region(r, chromsizes) for r in hl_row.split(',')]
+    else:
+        rows = None
+    if hl_col is not None:
+        cols = hl_col.split(',')
+        cols = [util.parse_region(c, chromsizes) for c in hl_col.split(',')]
+    else:
+        cols = None
+    # parse rows and columns as pairs for higlighting
+    if len(rows) == len(cols):
+        # :
+        #     coords = [
+        #         (r[1], c[1]), (r[1], c[2]), (r[2], c[2]), (r[2], c[1]), (r[1], c[1])
+        #     ]
+        #     codes = [
+        #         Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.LINETO
+        #     ]
+        #     paths.append(Path(coords, codes))
+        #     colours.append('#1565c0')
+        hl_patches = [patches.Rectangle(xy=(c[1], r[1]), width=(r[2] - r[1]), height=(
+            c[2] - c[1]), edgecolor='#03DAC6', facecolor='none', lw=2) for r, c in zip(rows, cols)]
+    return hl_patches
+
+
 def show(
     cool_uri, range, balanced=True, out=None, dpi=300, scale='log10',
+    hl_row=None, hl_col=None,
     force=False, zmin=None, zmax=None, cmap='YlOrRd', field='count',
     tads=None, rotate=False,
     verbose=None
@@ -99,7 +161,11 @@ def show(
     dpi : int
         Output image resolution
     scale : str
-        Plotting transform function. Must be one of ['linear', 'log2', 'log10'].
+        Plotting transform function. One of ['linear', 'log2', 'log10'].
+    hl_row : str
+        Comma-separated list of row regions to highlight
+    hl_col : str
+        Comma-separated list of col regions to highlight
     force : bool
         Force plotting despite memory conerns
     zmin : float
@@ -123,8 +189,6 @@ def show(
         if out is not None:
             mpl.use('Agg')
         import matplotlib.pyplot as plt
-        from matplotlib.path import Path
-        import matplotlib.patches as patches
         import matplotlib.transforms as mtransforms
     except ImportError:
         raise ImportError("Install matplotlib to use `cooler show`")
@@ -161,16 +225,9 @@ def show(
         vmax=zmax,
         cmap=cmap
     )
-    if tads is not None:
-        if verbose is not None:
-            print('Loading TADs')
-        tads_data = pd.read_csv(tads, sep='\t', header=[0])
-        tads_data = filter_tad_range(tads_data, row_lo, row_hi, col_lo, col_hi)
-        tad_patches = tads_to_patches(tads_data)
-
     # transform data images if `--rotate` option
     if rotate:
-        shift_coords = ax.transData.transform([col_hi, row_lo])
+        # shift_coords = ax.transData.transform([col_hi, row_lo])
         tr = (
             mtransforms.Affine2D()
             .rotate_deg(-45)
@@ -188,11 +245,28 @@ def show(
     # apply transformation to all plotted objects
     #   the contact matrix
     im.set_transform(tr)
-    #   TAD calls
-    for p in tad_patches:
-        p.set_transform(tr)
-        # p.set_clip_path()
-        ax.add_patch(p)
+    # add annotations for TADs if present
+    if tads is not None:
+        if verbose is not None:
+            print('Loading TADs')
+        tads_data = pd.read_csv(tads, sep='\t', header=[0])
+        tads_data = filter_ranges(tads_data, row_lo, row_hi, col_lo, col_hi)
+        tad_patches = tads_to_patches(tads_data)
+        # add TAD calls
+        for p in tad_patches:
+            p.set_transform(tr)
+            ax.add_patch(p)
+    # add annotations for specific regions pairs if present
+    if hl_row is not None or hl_col is not None:
+        highlights = parse_highlights(
+            hl_row, hl_col,
+            row_lo, row_hi, col_lo, col_hi,
+            chromsizes
+        )
+        # add TAD calls
+        for p in highlights:
+            p.set_transform(tr)
+            ax.add_patch(p)
 
     # If plotting into a file, plot and quit
     plt.ylabel('{} coordinate'.format(row_chrom))
@@ -217,6 +291,16 @@ if __name__ == '__main__':
         help='Genomic range to plot (UCSC format)'
     )
     PARSER.add_argument(
+        '--hr',
+        type=str,
+        help='Comma-separated list of rows to highlight (UCSC format). Pair with`--hc` to highlight specific loci.'
+    )
+    PARSER.add_argument(
+        '--hc',
+        type=str,
+        help='Comma-separated list of columns to highlight (UCSC format). Pair with`--hc` to highlight specific loci.'
+    )
+    PARSER.add_argument(
         '-t', '--tads',
         type=str,
         help='TSV containing information about TADs'
@@ -225,6 +309,18 @@ if __name__ == '__main__':
         '-r', '--rotate',
         action='store_true',
         help='Rotate contact matrix by 45 degrees in plot'
+    )
+    PARSER.add_argument(
+        '--zmin',
+        type=float,
+        help='Minimal value on colour scale',
+        default=None
+    )
+    PARSER.add_argument(
+        '--zmax',
+        type=float,
+        help='Maximal value on colour scale',
+        default=None
     )
     PARSER.add_argument(
         '-o', '--output',
@@ -242,5 +338,7 @@ if __name__ == '__main__':
     # plot region
     show(
         ARGS.cool, ARGS.range, balanced=True, out=ARGS.output, dpi=300,
+        hl_row=ARGS.hr, hl_col=ARGS.hc,
+        zmin=ARGS.zmin, zmax=ARGS.zmax,
         tads=ARGS.tads, rotate=ARGS.rotate, verbose=ARGS.verbose
     )
