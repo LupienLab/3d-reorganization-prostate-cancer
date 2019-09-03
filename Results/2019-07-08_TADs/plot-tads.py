@@ -108,33 +108,55 @@ def parse_highlights(hl_row, hl_col, row_lo, row_hi, col_lo, col_hi, chromsizes)
     chromsizes : dict(str, int)
         Chromosome sizes to filter by
     '''
-    from matplotlib.path import Path
     import matplotlib.patches as patches
-    paths = []
-    colours = []
+    hl_patches = []
     if hl_row is not None:
         rows = hl_row.split(',')
         rows = [util.parse_region(r, chromsizes) for r in hl_row.split(',')]
+        n_rows = len(rows)
     else:
         rows = None
+        n_rows = 0
     if hl_col is not None:
         cols = hl_col.split(',')
         cols = [util.parse_region(c, chromsizes) for c in hl_col.split(',')]
+        n_cols = len(cols)
     else:
         cols = None
+        n_cols = 0
     # parse rows and columns as pairs for higlighting
-    if len(rows) == len(cols):
-        # :
-        #     coords = [
-        #         (r[1], c[1]), (r[1], c[2]), (r[2], c[2]), (r[2], c[1]), (r[1], c[1])
-        #     ]
-        #     codes = [
-        #         Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.LINETO
-        #     ]
-        #     paths.append(Path(coords, codes))
-        #     colours.append('#1565c0')
-        hl_patches = [patches.Rectangle(xy=(c[1], r[1]), width=(r[2] - r[1]), height=(
-            c[2] - c[1]), edgecolor='#03DAC6', facecolor='none', lw=2) for r, c in zip(rows, cols)]
+    if n_rows == n_cols:
+        hl_patches = [
+            patches.Rectangle(
+                xy=(c[1], r[1]), height=(r[2] - r[1]), width=(c[2] - c[1]),
+                edgecolor='#03DAC6', facecolor='none', lw=2) for r, c in zip(rows, cols)
+        ]
+    else:
+        # get higlights in pairs
+        m = min(n_rows, n_cols)
+        if m > 0:
+            hl_patches = [
+                patches.Rectangle(
+                    xy=(c[1], r[1]), height=(r[2] - r[1]), width=(c[2] - c[1]),
+                    edgecolor='#03DAC6', facecolor='none', lw=2) for r, c in zip(rows[:m], cols[:m])
+            ]
+        # get highlights not in pairs (only one of these next for loops will run)
+        #   cols first
+        if n_cols > 0:
+            for c in cols[m:]:
+                hl_patches.append(
+                    patches.Rectangle(
+                        xy=(c[1], row_lo), height=(row_hi - row_lo), width=(c[2] - c[1]),
+                        edgecolor='#03DAC6', facecolor='none', lw=2)
+                )
+        #   then rows
+        if n_rows > 0:
+            for r in rows[m:]:
+                hl_patches.append(
+                    patches.Rectangle(
+                        xy=(col_lo, r[1]), height=(r[2] - r[1]), width=(col_hi - col_lo),
+                        edgecolor='#03DAC6', facecolor='none', lw=2)
+                )
     return hl_patches
 
 
