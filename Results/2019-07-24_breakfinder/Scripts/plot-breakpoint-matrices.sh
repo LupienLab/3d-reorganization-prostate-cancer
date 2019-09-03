@@ -35,6 +35,22 @@ declare -A CHROM_SIZES=( \
     ["chrM"]=16569 \
 )
 
+SAMPLES=( \
+    PCa3023 \
+    PCa13266 \
+    PCa13848 \
+    PCa14121 \
+    PCa19121 \
+    PCa33173 \
+    PCa40507 \
+    PCa51852 \
+    PCa53687 \
+    PCa56413 \
+    PCa57054 \
+    PCa57294 \
+    PCa58215 \
+)
+
 # ==================================================================================================
 # Command line interface
 # ==================================================================================================
@@ -128,9 +144,14 @@ while IFS=$'\t' read -r -a row; do
     reg2="${chrom2}:${row_lo}-${row_hi}"
 
     # create output file
-    output="${OUTDIR}/${sample}.${chrom1}_${start1}_${end1}.${chrom2}_${start2}_${end2}.png"
-    python ${PLOTTING_SCRIPT} --zmin=-4.5 --zmax=-1.5 -o ${output} --hc ${hc} --hr ${hr} -r2 ${reg2} ${COOL_DIR}/${sample}.mcool::/resolutions/40000 ${reg1}
-
-    # check that script completed successfully
-    echo -e "${sample}.${chrom1}_${start1}_${end1}.${chrom2}_${start2}_${end2}\t$?"
+    for s in ${SAMPLES[@]}; do
+        echo -e "\t${s}"
+        if [ ! -d "${OUTDIR}/${s}/" ]; then
+            mkdir -p "${OUTDIR}/${s}/"
+        fi
+        output="${OUTDIR}/${s}/${chrom1}_${start1}_${end1}.${chrom2}_${start2}_${end2}.png"
+        python ${PLOTTING_SCRIPT} --zmin=-4.5 --zmax=-1.5 -o ${output} --hc ${hc} --hr ${hr} -r2 ${reg2} ${COOL_DIR}/${s}.mcool::/resolutions/40000 ${reg1}
+        # check that script completed successfully
+        echo -e "${s}\t${chrom1}_${start1}_${end1}.${chrom2}_${start2}_${end2}\t$?"
+    done
 done < ${DATA}
