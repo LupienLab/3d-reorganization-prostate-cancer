@@ -204,6 +204,33 @@ ggsave(
     units = "cm"
 )
 
+for (s in breakpoints_melted[, unique(Sample)]) {
+    cat(s, "\n")
+    gg = (
+        ggplot(data = breakpoints_melted[Sample == s, .N, by = "Chrom"])
+        + geom_col(aes(x = Chrom, y = N))
+        + labs(x = NULL, y = "Number of SVs")
+        + guides(fill = FALSE)
+        + scale_x_discrete(drop=FALSE)
+        + theme_minimal()
+        + theme(
+            axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
+        )
+    )
+    ggsave(
+        paste0("Plots/", s, ".sv-counts-by-chrom.png"),
+        height = 12,
+        width = 40,
+        units = "cm"
+    )
+    ggsave(
+        paste0("Plots/", s, ".sv-counts-by-chrom.pdf"),
+        height = 12,
+        width = 40,
+        units = "cm"
+    )
+}
+
 # number and location of SVs across all patients
 gg = (
     ggplot()
