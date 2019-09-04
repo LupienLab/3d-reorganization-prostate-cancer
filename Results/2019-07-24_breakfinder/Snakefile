@@ -19,6 +19,8 @@ BAM_DIR = path.join(
 )
 BREAK_DIR = 'Breakpoints'
 SCRIPT_DIR = 'Scripts'
+PLOT_DIR = 'Plots'
+REPORT_DIR = 'Reports'
 
 # ==============================================================================
 # Meta Rules
@@ -172,3 +174,13 @@ rule agg_breaks:
         path.join(BREAK_DIR, '{calltype}', 'breakpoints.tsv'),
     shell:
         'Rscript {input.script} {input.data} -p {BREAK_DIR}/{wildcards.calltype}/breakpoints'
+
+rule plot_breakpoints:
+    input:
+        wrapper = path.join(SCRIPT_DIR, 'plot-breakpoint-matrices.sh'),
+        script = path.join('..', '2019-07-08_TADs', 'plot-tads.py'),
+        data = path.join(BREAK_DIR, 'Default', '{sample}.breakspoints.bedpe')
+    output:
+        path.join(REPORT_DIR, 'breakpoint-plots.txt')
+    shell:
+        'bash {input.wrapper} -i {input.data} -p {PLOT_DIR}/Breakpoints/{wildcards.sample} > {output}'
