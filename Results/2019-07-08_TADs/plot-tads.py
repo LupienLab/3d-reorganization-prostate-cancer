@@ -161,11 +161,12 @@ def parse_highlights(hl_row, hl_col, row_lo, row_hi, col_lo, col_hi, chromsizes)
 
 
 def show(
-    cool_uri, range, balanced=True, out=None, dpi=300, scale='log10',
+    cool_uri, range, range2, balanced=True, out=None, dpi=300, scale='log10',
     hl_row=None, hl_col=None,
     force=False, zmin=None, zmax=None, cmap='YlOrRd', field='count',
     tads=None, rotate=False,
-    verbose=None
+    verbose=None,
+    strip_text=False
 ):
     '''
     Plot contact matrix
@@ -175,6 +176,8 @@ def show(
     cool_uri : str
         URI to Cooler file to plot
     range : str
+        UCSC-compatible range to plot (chr:start-end)
+    range2 : str
         UCSC-compatible range to plot (chr:start-end)
     balanced : bool
         Plot balanced or raw contact matrix
@@ -204,6 +207,8 @@ def show(
         Rotate plot by 45 degrees
     verbose : int
         Verbosity level
+    strip_text : bool
+        Strip plot of text and axes labels
     '''
     # import matplotlib package here for faster loading
     try:
@@ -231,8 +236,8 @@ def show(
 
     # parse regions specified to plot
     chromsizes = c.chromsizes
-    row_region = range
     col_region = range
+    row_region = col_region if range2 is None else range2
     row_chrom, row_lo, row_hi = util.parse_region(row_region, chromsizes)
     col_chrom, col_lo, col_hi = util.parse_region(col_region, chromsizes)
 
@@ -290,6 +295,10 @@ def show(
             p.set_transform(tr)
             ax.add_patch(p)
 
+    # remove text and labels if desired
+    if strip_text:
+        ax.axes.get_xaxis().set_visible(False)
+        ax.axes.get_yaxis().set_visible(False)
     # If plotting into a file, plot and quit
     plt.ylabel('{} coordinate'.format(row_chrom))
     plt.xlabel('{} coordinate'.format(col_chrom))
@@ -309,6 +318,11 @@ if __name__ == '__main__':
     )
     PARSER.add_argument(
         'range',
+        type=str,
+        help='Genomic range to plot (UCSC format)'
+    )
+    PARSER.add_argument(
+        '-r2', '--range2',
         type=str,
         help='Genomic range to plot (UCSC format)'
     )
@@ -345,6 +359,11 @@ if __name__ == '__main__':
         default=None
     )
     PARSER.add_argument(
+        '--no-text',
+        action='store_true',
+        help='Strip plots of text and axes'
+    )
+    PARSER.add_argument(
         '-o', '--output',
         type=str,
         help='Path to output image'
@@ -359,8 +378,10 @@ if __name__ == '__main__':
 
     # plot region
     show(
-        ARGS.cool, ARGS.range, balanced=True, out=ARGS.output, dpi=300,
+        cool_uri=ARGS.cool, range=ARGS.range, range2=ARGS.range2, balanced=True, out=ARGS.output,
+        dpi=600,
         hl_row=ARGS.hr, hl_col=ARGS.hc,
         zmin=ARGS.zmin, zmax=ARGS.zmax,
-        tads=ARGS.tads, rotate=ARGS.rotate, verbose=ARGS.verbose
+        tads=ARGS.tads, rotate=ARGS.rotate, verbose=ARGS.verbose,
+        strip_text=ARGS.no_text
     )
