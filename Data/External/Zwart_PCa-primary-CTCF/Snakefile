@@ -1,0 +1,75 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+# CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule all:
+    input:
+        'healthy-consensus.bed',
+        'tumour-consensus.bed',
+        'consensus.bed',
+        'catalogue.bed',
+
+rule int_healthy:
+    input:
+        'Healthy_Patient1_2148.peak.chr.intersect.bed',
+        'Healthy_Patient2_2150.peak.chr.intersect.bed',
+        'Healthy_Patient3_2152.peak.chr.intersect.bed',
+        'Healthy_Patient4_2154.peak.chr.intersect.bed',
+        'Healthy_Patient5_2145.peak.chr.intersect.bed',
+        'Healthy_Patient7_2074.peak.chr.intersect.bed',
+        'Healthy_Patient8_2072.peak.chr.intersect.bed'
+    output:
+        'healthy-consensus.bed'
+    shell:
+        'bedtools multiinter -i {input} > {output}'
+
+rule int_tumour:
+    input:
+        'Tumor_Patient1_2147.peak.chr.intersect.bed',
+        'Tumor_Patient2_2149.peak.chr.intersect.bed',
+        'Tumor_Patient3_2151.peak.chr.intersect.bed',
+        'Tumor_Patient4_2153.peak.chr.intersect.bed',
+        'Tumor_Patient5_2146.peak.chr.intersect.bed',
+        'Tumor_Patient7_2073.peak.chr.intersect.bed',
+        'Tumor_Patient8_2071.peak.chr.intersect.bed'
+    output:
+        'tumour-consensus.bed'
+    shell:
+        'bedtools multiinter -i {input} > {output}'
+
+
+rule int_all:
+    input:
+        'Healthy_Patient1_2148.peak.chr.intersect.bed',
+        'Healthy_Patient2_2150.peak.chr.intersect.bed',
+        'Healthy_Patient3_2152.peak.chr.intersect.bed',
+        'Healthy_Patient4_2154.peak.chr.intersect.bed',
+        'Healthy_Patient5_2145.peak.chr.intersect.bed',
+        'Healthy_Patient7_2074.peak.chr.intersect.bed',
+        'Healthy_Patient8_2072.peak.chr.intersect.bed',
+        'Tumor_Patient1_2147.peak.chr.intersect.bed',
+        'Tumor_Patient2_2149.peak.chr.intersect.bed',
+        'Tumor_Patient3_2151.peak.chr.intersect.bed',
+        'Tumor_Patient4_2153.peak.chr.intersect.bed',
+        'Tumor_Patient5_2146.peak.chr.intersect.bed',
+        'Tumor_Patient7_2073.peak.chr.intersect.bed',
+        'Tumor_Patient8_2071.peak.chr.intersect.bed'
+    output:
+        'consensus.bed'
+    shell:
+        'bedtools multiinter -i {input} > {output}'
+
+rule catalogue:
+    input:
+        'consensus.bed'
+    output:
+        'catalogue.bed'
+    shell:
+        'bedtools merge -i {input} > {output}'
