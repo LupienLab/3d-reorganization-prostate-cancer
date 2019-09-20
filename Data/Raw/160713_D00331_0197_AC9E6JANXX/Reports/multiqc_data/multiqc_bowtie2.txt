@@ -1,0 +1,4 @@
+Sample	total_reads	unpaired_total	unpaired_aligned_none	unpaired_aligned_one	unpaired_aligned_multi	overall_alignment_rate
+Pca_13848_H3K27ac_CTTGTACT_L001.alignment_report	95949379	95949379	550111	77104835	18294433	99.43
+Pca_3023_H3K27ac_ATCACGTT_L001.alignment_report	85262352	85262352	391993	69206242	15664117	99.54
+Pca_56413_H3K27ac_GCCAATGT_L001.alignment_report	90901261	90901261	612423	72764813	17524025	99.33
