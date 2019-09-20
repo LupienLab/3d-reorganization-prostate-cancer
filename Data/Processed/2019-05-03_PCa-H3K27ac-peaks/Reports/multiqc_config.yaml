@@ -1,0 +1,19 @@
+extra_fn_clean_exts:
+  - type: regex
+    pattern: '_R1'
+  - type: regex
+    pattern: '_L00\d'
+  - type: regex
+    pattern: '_CTTGTACT'
+  - type: regex
+    pattern: '_ACAGTGGT'
+  - type: regex
+    pattern: '_ATCACGTT'
+  - type: regex
+    pattern: '_TTAGGCAT'
+  - type: regex
+    pattern: '_GCCAATGT'
+  - type: regex
+    pattern: '_TGACCACT'
+  - type: regex
+    pattern: '^P[Cc]a_?'

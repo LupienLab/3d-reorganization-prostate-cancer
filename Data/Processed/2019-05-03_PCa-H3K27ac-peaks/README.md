@@ -13,7 +13,7 @@ The ENCODE Blacklist [1] was downloaded from https://www.encodeproject.org/annot
 
 ## Results
 
-
+> I may have to re-pick some of the samples that were sequenced multiple times because of the vast difference in duplication rates and sequencing depth.
 
 ## References
 

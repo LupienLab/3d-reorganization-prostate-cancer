@@ -1,0 +1,53 @@
+Module	Section	Sample Name	Source
+Bowtie 2	all_sections	33173_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa33173_input.txt
+Bowtie 2	all_sections	57294_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57294_H3K27ac.txt
+Bowtie 2	all_sections	56413_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa56413_input.txt
+Bowtie 2	all_sections	53687_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa53687_input.txt
+Bowtie 2	all_sections	56413_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa56413_H3K27ac.txt
+Bowtie 2	all_sections	3023_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa3023_input.txt
+Bowtie 2	all_sections	53687_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa53687_H3K27ac.txt
+Bowtie 2	all_sections	14121_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa14121_H3K27ac.txt
+Bowtie 2	all_sections	13266_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13266_input.txt
+Bowtie 2	all_sections	13848_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13848_input.txt
+Bowtie 2	all_sections	14121_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa14121_input.txt
+Bowtie 2	all_sections	3023_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa3023_H3K27ac.txt
+Bowtie 2	all_sections	57054_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57054_H3K27ac.txt
+Bowtie 2	all_sections	19121_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa19121_H3K27ac.txt
+Bowtie 2	all_sections	51852_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa51852_H3K27ac.txt
+Bowtie 2	all_sections	19121_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa19121_input.txt
+Bowtie 2	all_sections	13266_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13266_H3K27ac.txt
+Bowtie 2	all_sections	57294_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57294_input.txt
+Bowtie 2	all_sections	57054_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57054_input.txt
+Bowtie 2	all_sections	40507_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa40507_H3K27ac.txt
+Bowtie 2	all_sections	33173_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa33173_H3K27ac.txt
+Bowtie 2	all_sections	40507_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa40507_input.txt
+Bowtie 2	all_sections	13848_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13848_H3K27ac.txt
+Bowtie 2	all_sections	58215_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa58215_H3K27ac.txt
+Bowtie 2	all_sections	51852_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa51852_input.txt
+Bowtie 2	all_sections	58215_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa58215_input.txt
+FastQC	all_sections	33173_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa33173_H3K27ac_fastqc.zip
+FastQC	all_sections	57294_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57294_input_fastqc.zip
+FastQC	all_sections	58215_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa58215_H3K27ac_fastqc.zip
+FastQC	all_sections	13266_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13266_H3K27ac_fastqc.zip
+FastQC	all_sections	13266_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13266_input_fastqc.zip
+FastQC	all_sections	19121_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa19121_H3K27ac_fastqc.zip
+FastQC	all_sections	57294_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57294_H3K27ac_fastqc.zip
+FastQC	all_sections	51852_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa51852_input_fastqc.zip
+FastQC	all_sections	3023_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa3023_H3K27ac_fastqc.zip
+FastQC	all_sections	53687_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa53687_H3K27ac_fastqc.zip
+FastQC	all_sections	56413_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa56413_H3K27ac_fastqc.zip
+FastQC	all_sections	14121_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa14121_input_fastqc.zip
+FastQC	all_sections	51852_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa51852_H3K27ac_fastqc.zip
+FastQC	all_sections	33173_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa33173_input_fastqc.zip
+FastQC	all_sections	19121_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa19121_input_fastqc.zip
+FastQC	all_sections	57054_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57054_input_fastqc.zip
+FastQC	all_sections	53687_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa53687_input_fastqc.zip
+FastQC	all_sections	56413_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa56413_input_fastqc.zip
+FastQC	all_sections	13848_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13848_H3K27ac_fastqc.zip
+FastQC	all_sections	3023_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa3023_input_fastqc.zip
+FastQC	all_sections	40507_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa40507_H3K27ac_fastqc.zip
+FastQC	all_sections	14121_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa14121_H3K27ac_fastqc.zip
+FastQC	all_sections	40507_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa40507_input_fastqc.zip
+FastQC	all_sections	57054_H3K27ac	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa57054_H3K27ac_fastqc.zip
+FastQC	all_sections	13848_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa13848_input_fastqc.zip
+FastQC	all_sections	58215_input	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Reports/PCa58215_input_fastqc.zip

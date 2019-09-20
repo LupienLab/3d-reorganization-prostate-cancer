@@ -1,0 +1,27 @@
+Sample	Filename	File type	Encoding	Total Sequences	Sequences flagged as poor quality	Sequence length	%GC	total_deduplicated_percentage	avg_sequence_length	basic_statistics	per_base_sequence_quality	per_tile_sequence_quality	per_sequence_quality_scores	per_base_sequence_content	per_sequence_gc_content	per_base_n_content	sequence_length_distribution	sequence_duplication_levels	overrepresented_sequences	adapter_content
+13266_H3K27ac	Pca13266_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	111807518.0	0.0	101.0	48.0	44.994505804437445	101.0	pass	pass	warn	pass	warn	pass	pass	pass	fail	pass	pass
+13266_input	Pca13266_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	41946353.0	0.0	51.0	43.0	14.559460098269025	51.0	pass	pass	warn	pass	warn	warn	pass	pass	fail	warn	pass
+13848_H3K27ac	Pca_13848_H3K27ac_CTTGTACT_L001_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	95949379.0	0.0	51.0	50.0	71.22558978737305	51.0	pass	pass	fail	pass	pass	pass	pass	pass	pass	pass	pass
+13848_input	Pca_13848_input_ACAGTGGT_L008_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	36971437.0	0.0	51.0	43.0	93.76521169801883	51.0	pass	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass
+14121_H3K27ac	Pca14121_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	73638857.0	0.0	101.0	48.0	47.69867823682137	101.0	pass	pass	warn	pass	warn	pass	pass	pass	fail	pass	pass
+14121_input	Pca14121_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	29082311.0	0.0	51.0	38.0	11.38811416332581	51.0	pass	pass	warn	pass	fail	pass	pass	pass	fail	pass	pass
+19121_H3K27ac	Pca19121_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	113110452.0	0.0	51.0	47.0	67.10940706401729	51.0	pass	pass	pass	pass	warn	warn	pass	pass	warn	warn	pass
+19121_input	Pca19121_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	50456821.0	0.0	51.0	41.0	86.52862294752185	51.0	pass	pass	pass	pass	warn	warn	pass	pass	pass	pass	pass
+3023_H3K27ac	Pca_3023_H3K27ac_ATCACGTT_L001_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	85262352.0	0.0	51.0	53.0	73.69579745380021	51.0	pass	pass	fail	pass	pass	pass	pass	pass	pass	pass	pass
+3023_input	Pca_3023_input_TTAGGCAT_L008_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	31409999.0	0.0	51.0	45.0	94.5207716235515	51.0	pass	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass
+33173_H3K27ac	Pca33173_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	114569774.0	0.0	51.0	48.0	56.74360270460204	51.0	pass	pass	pass	pass	pass	pass	pass	pass	warn	warn	pass
+33173_input	Pca33173_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	33857787.0	0.0	51.0	41.0	89.13323983539246	51.0	pass	pass	warn	pass	pass	warn	pass	pass	pass	pass	pass
+40507_H3K27ac	Pca40507_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	139063177.0	0.0	101.0	50.0	47.49252651062461	101.0	pass	pass	fail	pass	warn	warn	pass	pass	fail	warn	pass
+40507_input	Pca40507_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	36817712.0	0.0	51.0	40.0	89.13874430622484	51.0	pass	pass	warn	pass	warn	warn	pass	pass	pass	pass	pass
+51852_H3K27ac	Pca51852_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	67891164.0	0.0	101.0	47.0	83.6181457399401	101.0	pass	pass	warn	pass	warn	pass	pass	pass	pass	pass	pass
+51852_input	Pca51852_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	36686224.0	0.0	51.0	53.0	46.67828490730538	51.0	pass	pass	warn	pass	warn	fail	pass	pass	fail	warn	pass
+53687_H3K27ac	Pca53687_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	80060630.0	0.0	101.0	46.0	76.71806644476897	101.0	pass	pass	warn	pass	warn	pass	pass	pass	pass	pass	pass
+53687_input	Pca53687_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	29407310.0	0.0	51.0	40.0	91.5702517963133	51.0	pass	pass	warn	pass	warn	warn	pass	pass	pass	pass	pass
+56413_H3K27ac	Pca_56413_H3K27ac_GCCAATGT_L001_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	90901261.0	0.0	51.0	51.0	54.15263727723738	51.0	pass	pass	fail	pass	pass	pass	pass	pass	warn	pass	pass
+56413_input	Pca_56413_input_TGACCACT_L008_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	33064162.0	0.0	51.0	43.0	92.02782739226771	51.0	pass	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass
+57054_H3K27ac	Pca57054_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	65016909.0	0.0	101.0	46.0	87.32175000470032	101.0	pass	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass
+57054_input	Pca57054_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	53173584.0	0.0	51.0	39.0	89.37150280295332	51.0	pass	pass	warn	pass	pass	warn	pass	pass	pass	pass	pass
+57294_H3K27ac	Pca57294_H3K27ac_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	50152248.0	0.0	101.0	47.0	76.30562319248513	101.0	pass	pass	warn	pass	warn	pass	pass	pass	pass	pass	pass
+57294_input	Pca57294_input_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	42977193.0	0.0	51.0	41.0	65.6669372865654	51.0	pass	pass	warn	pass	pass	warn	pass	pass	warn	pass	pass
+58215_H3K27ac	Pca_58215_H3K27ac_ATCACGTT_L001_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	104624732.0	0.0	51.0	50.0	69.23950874595278	51.0	pass	pass	warn	pass	pass	pass	pass	pass	warn	pass	pass
+58215_input	Pca_58215_input_TGACCACT_L007_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	31920068.0	0.0	51.0	45.0	92.97588357300032	51.0	pass	pass	pass	pass	pass	fail	pass	pass	pass	pass	pass
