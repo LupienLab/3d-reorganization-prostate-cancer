@@ -1,0 +1,5 @@
+Module	Section	Sample Name	Source
+Bowtie 2	all_sections	Pca57294_input.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150311_SN1068_0180_BC6N5UACXX/Reports/hg38/Pca57294_input.alignment_report.txt
+Bowtie 2	all_sections	Pca57054_input.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150311_SN1068_0180_BC6N5UACXX/Reports/hg38/Pca57054_input.alignment_report.txt
+FastQC	all_sections	Pca57054_input_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150311_SN1068_0180_BC6N5UACXX/Reports/Pca57054_input_R1_fastqc.zip
+FastQC	all_sections	Pca57294_input_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150311_SN1068_0180_BC6N5UACXX/Reports/Pca57294_input_R1_fastqc.zip
