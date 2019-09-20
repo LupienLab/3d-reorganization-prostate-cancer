@@ -1,0 +1,6 @@
+80060630 reads; of these:
+  80060630 (100.00%) were unpaired; of these:
+    460162 (0.57%) aligned 0 times
+    65628677 (81.97%) aligned exactly 1 time
+    13971791 (17.45%) aligned >1 times
+99.43% overall alignment rate
