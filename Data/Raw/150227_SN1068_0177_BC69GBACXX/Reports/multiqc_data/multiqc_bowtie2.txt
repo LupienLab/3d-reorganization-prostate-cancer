@@ -1,0 +1,6 @@
+Sample	total_reads	unpaired_total	unpaired_aligned_none	unpaired_aligned_one	unpaired_aligned_multi	overall_alignment_rate
+Pca13266_input.alignment_report	41946353	41946353	3456578	23428398	15061377	91.76
+Pca14121_input.alignment_report	29082311	29082311	237715	21475884	7368712	99.18
+Pca40507_input.alignment_report	36817712	36817712	357580	26558544	9901588	99.03
+Pca51852_input.alignment_report	36686224	36686224	552743	22650649	13482832	98.49
+Pca53687_input.alignment_report	29407310	29407310	258716	21208000	7940594	99.12
