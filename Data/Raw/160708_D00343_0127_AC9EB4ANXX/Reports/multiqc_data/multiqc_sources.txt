@@ -1,0 +1,11 @@
+Module	Section	Sample Name	Source
+Bowtie 2	all_sections	56413_input_TGACCACT_L008.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/56413_input_TGACCACT_L008.alignment_report.txt
+Bowtie 2	all_sections	58215_H3K27ac_ATCACGTT_L001.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/58215_H3K27ac_ATCACGTT_L001.alignment_report.txt
+Bowtie 2	all_sections	3023_input_TTAGGCAT_L008.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/3023_input_TTAGGCAT_L008.alignment_report.txt
+Bowtie 2	all_sections	13848_input_ACAGTGGT_L008.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/13848_input_ACAGTGGT_L008.alignment_report.txt
+Bowtie 2	all_sections	58215_input_TGACCACT_L007.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/58215_input_TGACCACT_L007.alignment_report.txt
+FastQC	all_sections	Pca_58215_input_TGACCACT_L007_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/Pca_58215_input_TGACCACT_L007_R1_fastqc.zip
+FastQC	all_sections	Pca_13848_input_ACAGTGGT_L008_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/Pca_13848_input_ACAGTGGT_L008_R1_fastqc.zip
+FastQC	all_sections	Pca_56413_input_TGACCACT_L008_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/Pca_56413_input_TGACCACT_L008_R1_fastqc.zip
+FastQC	all_sections	Pca_3023_input_TTAGGCAT_L008_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/Pca_3023_input_TTAGGCAT_L008_R1_fastqc.zip
+FastQC	all_sections	Pca_58215_H3K27ac_ATCACGTT_L001_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/160708_D00343_0127_AC9EB4ANXX/Reports/Pca_58215_H3K27ac_ATCACGTT_L001_R1_fastqc.zip
