@@ -1,0 +1,9 @@
+Module	Section	Sample Name	Source
+Bowtie 2	all_sections	Pca33173_H3K27ac.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/hg38/Pca33173_H3K27ac.alignment_report.txt
+Bowtie 2	all_sections	Pca19121_input.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/hg38/Pca19121_input.alignment_report.txt
+Bowtie 2	all_sections	Pca19121_H3K27ac.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/hg38/Pca19121_H3K27ac.alignment_report.txt
+Bowtie 2	all_sections	Pca33173_input.alignment_report	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/hg38/Pca33173_input.alignment_report.txt
+FastQC	all_sections	Pca19121_H3K27ac_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/Pca19121_H3K27ac_R1_fastqc.zip
+FastQC	all_sections	Pca33173_input_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/Pca33173_input_R1_fastqc.zip
+FastQC	all_sections	Pca33173_H3K27ac_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/Pca33173_H3K27ac_R1_fastqc.zip
+FastQC	all_sections	Pca19121_input_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/140328_SN1068_0144_BC446CACXX/Reports/Pca19121_input_R1_fastqc.zip

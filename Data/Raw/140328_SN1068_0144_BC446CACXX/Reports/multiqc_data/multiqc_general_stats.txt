@@ -1,0 +1,9 @@
+Sample	Bowtie 2_mqc-generalstats-bowtie_2-overall_alignment_rate	FastQC_mqc-generalstats-fastqc-percent_duplicates	FastQC_mqc-generalstats-fastqc-percent_gc	FastQC_mqc-generalstats-fastqc-avg_sequence_length	FastQC_mqc-generalstats-fastqc-percent_fails	FastQC_mqc-generalstats-fastqc-total_sequences
+Pca19121_H3K27ac.alignment_report	98.56					
+Pca19121_H3K27ac_R1		32.89059293598271	47.0	51.0	0.0	113110452.0
+Pca19121_input.alignment_report	98.94					
+Pca19121_input_R1		13.471377052478147	41.0	51.0	0.0	50456821.0
+Pca33173_H3K27ac.alignment_report	97.29					
+Pca33173_H3K27ac_R1		43.25639729539796	48.0	51.0	0.0	114569774.0
+Pca33173_input.alignment_report	98.7					
+Pca33173_input_R1		10.866760164607541	41.0	51.0	0.0	33857787.0
