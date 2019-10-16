@@ -6,7 +6,7 @@ suppressMessages(library("data.table"))
 suppressMessages(library("Matrix"))
 suppressMessages(library("bit64"))
 suppressMessages(library("argparse"))
-source("topdom_orig.R")
+source("topdom.R")
 
 if (!interactive()) {
     PARSER <- argparse::ArgumentParser(

@@ -1,19 +1,4 @@
-#' @author : Hanjun Shin(shanjun@usc.edu)
-#' @credit : Harris Lazaris(Ph.D Stduent, NYU), Dr. Gangqing Hu(Staff Scientist, NIH)
-#' @brief : TopDom.R is a software package to identify topological domains for given Hi-C contact matrix. 
-#' @version 0.0.2
-
-#' TopDom
-#' @param matrix.data : matrix object, skip reading file,
-#' @param bins : data.frame containing coordinate information for the bins the matrix represents,
-#' @param matrixFile : string, matrixFile Address,
-#' - Format = {chromosome, bin start, bin end, N numbers normalized value }
-#' - N * (N + 3), where N is the number of bins
-#' @param window.size :integer, number of bins to extend.
-#' @param out_binSignal : string, binSignal file address to write
-#' @param out_ext : string, ext file address to write
-#' @export
-TopDom <- function(matrix.data=NULL, bins=NULL, matrix.file=NULL, window.size, outFile=NULL, sparse = FALSE, verbose = TRUE)
+TopDom <- function(matrix.data=NULL, bins=NULL, matrix.file=NULL, window.size, outFile=NULL, statFilter=TRUE, sparse = FALSE, verbose = TRUE)
 {
     if (verbose) {
         cat("#########################################################################\n")
@@ -93,50 +78,49 @@ TopDom <- function(matrix.data=NULL, bins=NULL, matrix.file=NULL, window.size, o
         cat("Step 2 : Done !!\n")
         
     }
-
-    if (verbose) {
-        cat("#########################################################################\n")
-        cat("Step 3 : Statistical Filtering of false positive TD boundaries\n")
-        cat("#########################################################################\n")
-        cat("-- Matrix Scaling....\n")
-    }
-
-    ptm = proc.time()
-    # removing this section because the input matrices are already balanced,
-    #   don't need to scale them anymore
-    # # SPARSIFY #
-    # scale.matrix.data = matrix.data
-    # for (i in 1:(2 * window.size)){
-    #     print(i)
-    #     j = seq(1+(n_bins*i), n_bins*n_bins, 1+n_bins)
-    #     print(j)
-    #     scale.matrix.data[j] = scale(matrix.data[j])
-    # }
+    if(statFilter)
+    {
+        if (verbose) {
+            cat("#########################################################################\n")
+            cat("Step 3 : Statistical Filtering of false positive TD boundaries\n")
+            cat("#########################################################################\n")
+            cat("-- Matrix Scaling....\n")
+        }
     
-    if (verbose) cat("-- Compute p-values by Wilcox Ranksum Test\n")
-    for (i in 1:nrow(proc.regions)){
-        start = proc.regions[i, "start"]
-        end = proc.regions[i, "end"]
+        ptm = proc.time()
+        # SPARSIFY #
+        scale.matrix.data = matrix.data
+        for( i in 1:(2*window.size) )
+        {
+            scale.matrix.data[ seq(1+(n_bins*i), n_bins*n_bins, 1+n_bins) ] = scale( matrix.data[ seq(1+(n_bins*i), n_bins*n_bins, 1+n_bins) ] )
+        }
         
-        if (verbose) cat(paste("Process Regions from ", start, "to", end), "\n")
+        if (verbose) cat("-- Compute p-values by Wilcox Ranksum Test\n")
+        for( i in 1:nrow(proc.regions))
+        {
+            start = proc.regions[i, "start"]
+            end = proc.regions[i, "end"]
+            
+            if (verbose) cat(paste("Process Regions from ", start, "to", end), "\n")
+            
+            pvalue[start:end] <- Get.Pvalue(matrix.data=scale.matrix.data[start:end, start:end], size=window.size, scale=1)
+        }
+        if (verbose) {
+            cat("-- Done!\n")
+            cat("-- Filtering False Positives\n")
+        }
         
-        pvalue[start:end] <- Get.Pvalue(matrix.data=matrix.data[start:end, start:end], size=window.size, scale=1)
-    }
-    if (verbose) {
-        cat("-- Done!\n")
-        cat("-- Filtering False Positives\n")
-    }
-    
-    local.ext[intersect( union(which( local.ext==-1), which(local.ext==-1)), which(pvalue<0.05))] = -2
-    local.ext[which(local.ext==-1)] = 0
-    local.ext[which(local.ext==-2)] = -1
-    if (verbose) cat("-- Done!\n")
-    
-    eltm = proc.time() - ptm
-    if (verbose) {
-        cat(paste("Step 3 Running Time : ", eltm[3]), "\n")
-        cat("Step 3 : Done!\n")
-    }
+        local.ext[intersect( union(which( local.ext==-1), which(local.ext==-1)), which(pvalue<0.05))] = -2
+        local.ext[which(local.ext==-1)] = 0
+        local.ext[which(local.ext==-2)] = -1
+        if (verbose) cat("-- Done!\n")
+        
+        eltm = proc.time() - ptm
+        if (verbose) {
+            cat(paste("Step 3 Running Time : ", eltm[3]), "\n")
+            cat("Step 3 : Done!\n")
+        }
+    } else pvalue = 0
 
     domains = Convert.Bin.To.Domain.TMP(
         bins=bins, 
@@ -186,25 +170,23 @@ TopDom <- function(matrix.data=NULL, bins=NULL, matrix.file=NULL, window.size, o
 }
 
 #' Get.Diamond.Matrix
-#' Get size-by-size off-diagonal matrix where the lower left corner is the i-th
-#'  diagonal (excluded from the matrix itself)
 #' @param mat.data : N by N matrix, where each element indicate contact frequency
 #' @param i :integer, bin index
 #' @param size : integer, window size to expand from bin
-#' @return : Matrix
+#' @return : matrix.
 Get.Diamond.Matrix <- function(mat.data, i, size)
 {
-    n_bins = dim(mat.data)[1]
+    # SPARSIFY #
+    n_bins = nrow( mat.data )
     if(i==n_bins) return(NA)
     
-    lowerbound = max(1, i - size + 1)
-    upperbound = min(i + size, n_bins)
+    lowerbound = max( 1, i-size+1 )
+    upperbound = min( i+size, n_bins)
     
     return( mat.data[lowerbound:i, (i+1):upperbound] )
 }
 
 #' Which.process.region
-#' Find contiguous sets of bins that have no gaps between them
 #' @param rmv.idx : vector of idx, remove index vector
 #' @param n_bins : total number of bins
 #' @param min.size : minimum size of bins
@@ -212,7 +194,7 @@ Get.Diamond.Matrix <- function(mat.data, i, size)
 Which.process.region <- function(rmv.idx, n_bins, min.size=3)
 {
     gap.idx = rmv.idx
-
+    
     proc.regions = data.frame(start=numeric(0), end=numeric(0))
     proc.set = setdiff(1:n_bins, gap.idx)
     n_proc.set = length(proc.set)
@@ -253,16 +235,15 @@ Which.process.region <- function(rmv.idx, n_bins, min.size=3)
 Which.Gap.Region <- function(matrix.data, w)
 {
     # SPARSIFY #
-    n_bins = dim(matrix.data)[1]
-    gap = rep(FALSE, n_bins)
+    n_bins = nrow(matrix.data)
+    gap = rep(0, n_bins)
     
-    for (i in 1:n_bins) {
-        if (nnzero(matrix.data[i, max(1, i-w):min(i+w, n_bins)], na.counted = FALSE) == 0){
-            gap[i] = TRUE
-        }
+    for(i in 1:n_bins)
+    {
+        if( sum( matrix.data[i, max(1, i-w):min(i+w, n_bins)], na.rm = TRUE ) == 0 ) gap[i]=-0.5
     }
     
-    idx = which(gap)
+    idx = which(gap == -0.5)
     return(idx)
 }
 
@@ -425,10 +406,9 @@ Get.Upstream.Triangle <- function(mat.data, i, size)
 {
     n_bins = nrow(mat.data)
     
-    lowerbound = max(1, i-size)
-    n_elements = i - lowerbound + 1
-    linear_idx = which(upper.tri(matrix(NA, n_elements, n_elements), diag = FALSE))
-    return(mat.data[linear_idx])
+    lower = max(1, i-size)
+    tmp.mat = mat.data[lower:i, lower:i]
+    return( tmp.mat[ upper.tri( tmp.mat, diag=F ) ] )
 }
 
 #' Get.Downstream.Triangle
@@ -442,13 +422,11 @@ Get.Downstream.Triangle <- function(mat.data, i, size)
     if(i==n_bins) return(NA)
     
     upperbound = min(i+size, n_bins)
-    n_elements = upperbound - i
-    linear_idx = which(upper.tri(matrix(NA, n_elements, n_elements), diag = FALSE))
-    return(mat.data[linear_idx])
+    tmp.mat = mat.data[(i+1):upperbound, (i+1):upperbound]
+    return( tmp.mat[ upper.tri( tmp.mat, diag=F ) ] )
 }
 
 #' Get.Diamond.Matrix2
-#' Same as Get.Diamond.Matrix, except pads rows/columns past matrix.data with NAs
 #' @param mat.data : matrix data
 #' @param i : bin index
 #' @param size : size of window to extend
