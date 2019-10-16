@@ -4,6 +4,7 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("argparse"))
+suppressMessages(library("gtools"))
 
 if (!interactive()) {
     PARSER <- argparse::ArgumentParser(
@@ -12,17 +13,17 @@ if (!interactive()) {
     ARGS <- PARSER$parse_args()
 }
 
-CHRS = paste0("chr", c(1:22, "X", "Y"))
-SAMPLES = paste0("PCa", c(3023,13266,13848,14121,19121,33173,40507,51852,53687,56413,57054,57294,58215))
-WINDOWS = c(30, 20, 10, 3)
-
-# ==============================================================================
-# Functions
-# ==============================================================================
-
 # ==============================================================================
 # Data
 # ==============================================================================
+# load metadata
+metadata = fread("../../Data/External/LowC_Samples_Data_Available.tsv")
+colnames(metadata) = gsub(" ", "_", colnames(metadata))
+
+SAMPLES = metadata[, paste0("PCa", Sample_ID)]
+CHRS = paste0("chr", c(1:22, "X", "Y"))
+WINDOWS = 3:30
+
 # load individual sample TAD calls
 ## apply over samples
 domains = rbindlist(lapply(
@@ -33,22 +34,15 @@ domains = rbindlist(lapply(
             WINDOWS,
             function(w) {
                 ## apply over chromosomes
-                dt2 = rbindlist(lapply(
-                    CHRS,
-                    function(chrom) {
-                        dt3 = fread(
-                            paste0("TADs/w_", w, "/", s, ".40000bp.", chrom, ".domains.bed"),
-                            header = FALSE,
-                            col.names = c("chr", "start", "end", "tag")
-                        )
-                        return(dt3[tag == "domain", .N, by = "chr"])
-                    }
-                ))
-                dt2[, Window := w]
-                dt2[, Resolution := 40000]
-                return(dt2)
+                dt2 = fread(
+                    paste0("TADs/w_", w, "/", s, ".40000bp.domains.bed"),
+                        header = FALSE,
+                        col.names = c("chr", "start", "end", "tag")
+                    )
+                return(dt2[tag == "domain", .(w, 40000, .N), by = "chr"])
             }
         ))
+        colnames(dt1) = c("chr", "w", "res", "N")
         dt1[, Sample := s]
         return(dt1)
     }
@@ -97,9 +91,9 @@ samplewise_intersections = rbindlist(lapply(
             ),
             use.names = FALSE
         )
-        for (w in WINDOWS) {
-            sample_total = domains[Window == w & Sample == s, sum(N)]
-            s_ints[Window == w, Total := sample_total]
+        for (w_size in WINDOWS) {
+            sample_total = domains[w == w_size & Sample == s, sum(N)]
+            s_ints[Window == w_size, Total := sample_total]
         }
         s_ints[, Sample1 := s]
         return(s_ints)
@@ -107,7 +101,7 @@ samplewise_intersections = rbindlist(lapply(
 ))
 samplewise_intersections[, Frac := V1 / Total]
 colnames(samplewise_intersections)[3] = "N_Int"
-samplewise_intersections[, Window := factor(Window, levels = rev(WINDOWS), ordered = TRUE)]
+samplewise_intersections[, Window := factor(Window, levels = WINDOWS, ordered = TRUE)]
 
 # save results
 fwrite(
@@ -120,17 +114,18 @@ fwrite(
 # ==============================================================================
 # Plots
 # ==============================================================================
+
 gg = (
     ggplot(data = samplewise_intersections)
     + geom_boxplot(aes(x = Window, y = 100 * Frac), outlier.shape = NA)
-    + geom_point(aes(x = Window, y = 100 * Frac, colour = Sample1), position=position_jitter(width = 0.5))
+    # + geom_point(aes(x = Window, y = 100 * Frac, colour = Sample1), position=position_jitter(width = 0.5))
     + labs(x = "Window Size", y = "Similar TADs (%)")
     + guides(colour = FALSE)
     + facet_wrap(~ Sample1)
     + theme_minimal()
-    # + theme(
-    #     axis.text.x = element_text(angle=60, hjust = 0.5, vjust = 1)
-    # )
+    + theme(
+        axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 1)
+    )
 )
 ggsave(
     "Plots/tad-similarity-counts.png",

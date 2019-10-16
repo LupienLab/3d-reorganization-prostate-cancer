@@ -49,6 +49,10 @@ rule all:
         path.join(TAD_DIR, 'tad-calls.tsv'),
         path.join(PLOT_DIR, 'tad-counts.png'),
         path.join(PLOT_DIR, 'tad-sizes.png'),
+        expand(path.join(TAD_DIR, 'Comparisons',
+                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES),
+        path.join(TAD_DIR, 'Comparisons', 'comparison-total-counts.tsv'),
+        path.join(PLOT_DIR, 'tad-similarity-counts.png'),
 
 # =============================================================================
 # Rules
@@ -114,3 +118,27 @@ rule plot_stats:
         path.join(PLOT_DIR, 'tad-sizes.png')
     shell:
         'Rscript {input.script}'
+
+rule pairwise_overlap:
+    input:
+        script = 'calc-tad-overlap.sh',
+        tads = expand(path.join(
+            TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'), w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS)
+    output:
+        expand(path.join(TAD_DIR, 'Comparisons',
+                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES)
+    shell:
+        'sh {input.script}'
+
+rule compare_tads:
+    input:
+        script = 'calc-tad-overlap-stats.R',
+        tads = expand(path.join(
+            TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'), w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS),
+        ints = expand(path.join(TAD_DIR, 'Comparisons',
+                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES)
+    output:
+        path.join(TAD_DIR, 'Comparisons', 'comparison-total-counts.tsv'),
+        path.join(PLOT_DIR, 'tad-similarity-counts.png')
+    shell:
+        'Rscript {input.script} -o {output}'
