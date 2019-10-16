@@ -6,6 +6,5 @@ TADs/w_*/*
 TADs/Comparisons/*.bed
 !TADs/w_*/PCa*.40000bp.chr*.domains.tsv
 !TADs/w_*/PCa*.40000bp.domains.bed
-Plots/
 myc.bed
 ar.bed
