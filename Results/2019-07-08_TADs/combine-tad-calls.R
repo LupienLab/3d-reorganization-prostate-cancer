@@ -7,21 +7,11 @@ suppressMessages(library("ggplot2"))
 # ==============================================================================
 # Data
 # ==============================================================================
-SAMPLES = paste0('PCa', c(
-    3023,
-    13266,
-    13848,
-    14121,
-    19121,
-    33173,
-    40507,
-    51852,
-    53687,
-    56413,
-    57054,
-    57294,
-    58215
-))
+# read in metadata
+metadata = fread("../../Data/External/LowC_Samples_Data_Available.tsv")
+colnames(metadata) = gsub(" ", "_", colnames(metadata))
+
+SAMPLES = metadata[, paste0("PCa", Sample_ID)]
 
 CHRS = paste0("chr", c(1:22, "X", "Y"))
 

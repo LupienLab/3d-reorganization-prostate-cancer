@@ -7,7 +7,8 @@ import os.path as path
 CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
 CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
 
-CONTACT_DIR = path.join('..', '..', 'Data', 'Processed', '2019-06-18_PCa-LowC-sequencing', 'Contacts')
+CONTACT_DIR = path.join('..', '..', 'Data', 'Processed',
+                        '2019-06-18_PCa-LowC-sequencing', 'Contacts')
 TMP_DIR = 'TMP'
 TAD_DIR = 'TADs'
 PLOT_DIR = 'Plots'
@@ -31,22 +32,23 @@ wildcard_constraints:
 rule all:
     input:
         expand(
-            path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.bed'),
+            path.join(TAD_DIR, 'w_{window}',
+                      '{sample}.{res}bp.{chrom}.domains.bed'),
             window=WINDOWS,
             sample=SAMPLES,
             res=RESOLUTIONS,
             chrom=CHRS
         ),
-        # expand(
-        #     path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
-        #     w=WINDOWS,
-        #     sample=SAMPLES,
-        #     res=RESOLUTIONS
-        # ),
-        # path.join(TAD_DIR, 'tad-call-stats.tsv'),
-        # path.join(TAD_DIR, 'tad-calls.tsv'),
-        # path.join(PLOT_DIR, 'tad-counts.png'),
-        # path.join(PLOT_DIR, 'tad-sizes.png')
+        expand(
+            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
+            w=WINDOWS,
+            sample=SAMPLES,
+            res=RESOLUTIONS
+        ),
+        path.join(TAD_DIR, 'tad-call-stats.tsv'),
+        path.join(TAD_DIR, 'tad-calls.tsv'),
+        path.join(PLOT_DIR, 'tad-counts.png'),
+        path.join(PLOT_DIR, 'tad-sizes.png'),
 
 # =============================================================================
 # Rules
@@ -67,9 +69,12 @@ rule call_tads:
         topdom = 'topdom.R',
         data = path.join(TMP_DIR, '{sample}.{res}bp.{chrom}.annotated.mtx')
     output:
-        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.bins-signal.tsv'),
-        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.tsv'),
-        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.bed')
+        path.join(TAD_DIR, 'w_{window}',
+                  '{sample}.{res}bp.{chrom}.bins-signal.tsv'),
+        path.join(TAD_DIR, 'w_{window}',
+                  '{sample}.{res}bp.{chrom}.domains.tsv'),
+        path.join(TAD_DIR, 'w_{window}',
+                  '{sample}.{res}bp.{chrom}.domains.bed')
     params:
         lambda wildcards: path.join(
             TAD_DIR,
@@ -88,16 +93,6 @@ rule combine:
     shell:
         'Rscript {input.script}'
 
-rule plot_stats:
-    input:
-        script = 'plot-tad-stats.R',
-        data = path.join(TAD_DIR, 'tad-call-stats.tsv')
-    output:
-        path.join(PLOT_DIR, 'tad-counts.png'),
-        path.join(PLOT_DIR, 'tad-sizes.png')
-    shell:
-        'Rscript {input.script}'
-
 rule combine_tad_beds:
     input:
         expand(
@@ -109,3 +104,13 @@ rule combine_tad_beds:
         path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed')
     shell:
         'cat {input} > {output}'
+
+rule plot_stats:
+    input:
+        script = 'plot-tad-stats.R',
+        data = path.join(TAD_DIR, 'tad-call-stats.tsv')
+    output:
+        path.join(PLOT_DIR, 'tad-counts.png'),
+        path.join(PLOT_DIR, 'tad-sizes.png')
+    shell:
+        'Rscript {input.script}'
