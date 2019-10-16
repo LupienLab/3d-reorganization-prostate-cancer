@@ -7,24 +7,16 @@ import os.path as path
 CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
 CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
 
-CONTACT_DIR = path.join('..', '..', 'Data', 'Processed',
-                        '2019-06-18_PCa-LowC-sequencing', 'Contacts')
+CONTACT_DIR = path.join('..', '..', 'Data', 'Processed', '2019-06-18_PCa-LowC-sequencing', 'Contacts')
 TMP_DIR = 'TMP'
 TAD_DIR = 'TADs'
 PLOT_DIR = 'Plots'
 
-# SAMPLES = CONFIG['Sample'].tolist()
-SAMPLES = ['PCa3023']
+SAMPLES = CONFIG['Sample'].tolist()
+# SAMPLES = ['PCa3023']
 
 CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
-RESOLUTIONS = [
-    # 1000, 2000, 3000, 4000, 5000,
-    # 5000,
-    # 10000, 20000, 30000,
-    40000
-    # , 50000,
-    # 100000
-]
+RESOLUTIONS = [40000]
 WINDOWS = range(3, 31)
 
 wildcard_constraints:
@@ -39,31 +31,22 @@ wildcard_constraints:
 rule all:
     input:
         expand(
-            path.join(TAD_DIR, 'w_{window}',
-                      '{sample}.{res}bp.{chrom}.domains.bed'),
+            path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.bed'),
             window=WINDOWS,
             sample=SAMPLES,
             res=RESOLUTIONS,
-            chrom='chr22'
+            chrom=CHRS
         ),
         # expand(
-        #     path.join(TAD_DIR, 'w_{window}',
-        #               '{sample}.{res}bp.{chrom}.domains.png'),
-        #     window=WINDOWS,
+        #     path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
+        #     w=WINDOWS,
         #     sample=SAMPLES,
-        #     res=RESOLUTIONS,
-        #     chrom='chr22'
+        #     res=RESOLUTIONS
         # ),
-        expand(
-            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
-            w=WINDOWS,
-            sample=SAMPLES,
-            res=RESOLUTIONS
-        ),
-        path.join(TAD_DIR, 'tad-call-stats.tsv'),
-        path.join(TAD_DIR, 'tad-calls.tsv'),
-        path.join(PLOT_DIR, 'tad-counts.png'),
-        path.join(PLOT_DIR, 'tad-sizes.png')
+        # path.join(TAD_DIR, 'tad-call-stats.tsv'),
+        # path.join(TAD_DIR, 'tad-calls.tsv'),
+        # path.join(PLOT_DIR, 'tad-counts.png'),
+        # path.join(PLOT_DIR, 'tad-sizes.png')
 
 # =============================================================================
 # Rules
@@ -84,12 +67,9 @@ rule call_tads:
         topdom = 'topdom.R',
         data = path.join(TMP_DIR, '{sample}.{res}bp.{chrom}.annotated.mtx')
     output:
-        path.join(TAD_DIR, 'w_{window}',
-                  '{sample}.{res}bp.{chrom}.bins-signal.tsv'),
-        path.join(TAD_DIR, 'w_{window}',
-                  '{sample}.{res}bp.{chrom}.domains.tsv'),
-        path.join(TAD_DIR, 'w_{window}',
-                  '{sample}.{res}bp.{chrom}.domains.bed')
+        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.bins-signal.tsv'),
+        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.tsv'),
+        path.join(TAD_DIR, 'w_{window}', '{sample}.{res}bp.{chrom}.domains.bed')
     params:
         lambda wildcards: path.join(
             TAD_DIR,
@@ -98,18 +78,6 @@ rule call_tads:
         )
     shell:
         'Rscript {input.script} {input.data} -p {params} -w {wildcards.window}'
-
-rule plot_tads:
-    input:
-        script = 'plot-tads.py',
-        cool = path.join(CONTACT_DIR, '{sample}.mcool'),
-        data = path.join(TAD_DIR, 'w_{window}',
-                         '{sample}.{res}bp.{chrom}.domains.tsv')
-    output:
-        data = path.join(TAD_DIR, 'w_{window}',
-                         '{sample}.{res}bp.{chrom}.domains.png')
-    shell:
-        'python {input.script} {input.cool}::/resolutions/{wildcards.res} {wildcards.chrom} -t {input.data} -o {output}'
 
 rule combine:
     input:
