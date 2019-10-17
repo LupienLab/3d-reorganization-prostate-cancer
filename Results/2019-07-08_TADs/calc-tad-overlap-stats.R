@@ -121,10 +121,11 @@ gg = (
     # + geom_point(aes(x = Window, y = 100 * Frac, colour = Sample1), position=position_jitter(width = 0.5))
     + labs(x = "Window Size", y = "Similar TADs (%)")
     + guides(colour = FALSE)
+    + scale_x_discrete(breaks = c(3, 10, 20, 30))
     + facet_wrap(~ Sample1)
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 1)
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
     )
 )
 ggsave(
