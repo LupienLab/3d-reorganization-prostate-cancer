@@ -1,5 +1,0 @@
-__default__:
-    params: '-V -d . -q long'
-
-hicup:
-    params: '-V -cwd -q himem -l vmem=60gb'
