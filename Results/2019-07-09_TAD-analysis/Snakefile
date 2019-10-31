@@ -1,0 +1,83 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(
+    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
+    index_col=False, sep='\t'
+)
+
+SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
+
+TAD_DIR = path.join('..', '2019-07-08_TADs', 'TADs')
+PLOT_DIR = 'Plots'
+
+CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
+RESOLUTIONS = [40000]
+WINDOWS = range(3, 31)
+
+wildcard_constraints:
+    sample = 'PCa[0-9]+',
+    lane = '[1-4]',
+    read = '[1-2]',
+    res = '[0-9]+'
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        # expand(
+        #     path.join(TAD_DIR, 'Comparisons', 'w_{w}.{s1}.{s2}.intersected.bed'),
+        #     w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        # ),
+        # path.join(TAD_DIR, 'Comparisons', 'comparison-total-counts.tsv'),
+        # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
+        # expand(
+        #     path.join(TAD_DIR, 'Comparisons', 'w_{w}.{res}bp.similarity.tsv'),
+        #     w=WINDOWS, res=RESOLUTIONS
+        # )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+
+rule pairwise_overlap:
+    input:
+        script = 'calc-tad-overlap.sh',
+        tads = expand(path.join(
+            TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'), w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS)
+    output:
+        expand(path.join(TAD_DIR, 'Comparisons',
+                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES)
+    shell:
+        'sh {input.script}'
+
+rule compare_tads:
+    input:
+        script = 'calc-tad-overlap-stats.R',
+        tads = expand(path.join(
+            TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'), w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS),
+        ints = expand(path.join(TAD_DIR, 'Comparisons',
+                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES)
+    output:
+        path.join(TAD_DIR, 'Comparisons', 'comparison-total-counts.tsv'),
+        path.join(PLOT_DIR, 'tad-similarity-counts.png')
+    shell:
+        'Rscript {input.script} -o {output}'
+
+rule tad_similarity:
+    input:
+        script = 'differential-tad-calls.py',
+        data = expand(
+            path.join(TAD_DIR, 'w_{{w}}', '{sample}.{{res}}bp.domains.bed'),
+            sample=SAMPLES
+        )
+    output:
+        path.join(TAD_DIR, 'Comparisons', 'w_{w}.{res}bp.similarity.tsv'),
+    params:
+        prefix = lambda wildcards: path.join(TAD_DIR, 'Comparisons', 'w_{w}.{res}bp.similarity')
+    shell:
+        'python {input.script} -o {params.prefix} {input.data}'
