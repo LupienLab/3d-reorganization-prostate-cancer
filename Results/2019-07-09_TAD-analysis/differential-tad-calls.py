@@ -267,5 +267,5 @@ if __name__ == "__main__":
     # validate command line arguments
     # import packages after parsing to speed up command line responsiveness
     validated_args = validate(ARGS)
-    # reun genome-interval-similarity function
+    # run genome-interval-similarity function
     gis(**validated_args)
