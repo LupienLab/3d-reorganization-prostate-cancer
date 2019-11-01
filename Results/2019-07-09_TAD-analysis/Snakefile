@@ -12,6 +12,7 @@ CONFIG = pd.read_csv(
 SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
 
 TAD_DIR = path.join('..', '2019-07-08_TADs', 'TADs')
+COMPARISON_DIR = 'TAD-comparisons'
 PLOT_DIR = 'Plots'
 
 CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
@@ -29,16 +30,16 @@ wildcard_constraints:
 # ==============================================================================
 rule all:
     input:
-        # expand(
-        #     path.join(TAD_DIR, 'Comparisons', 'w_{w}.{s1}.{s2}.intersected.bed'),
-        #     w=WINDOWS, s1=SAMPLES, s2=SAMPLES
-        # ),
-        # path.join(TAD_DIR, 'Comparisons', 'comparison-total-counts.tsv'),
-        # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
-        # expand(
-        #     path.join(TAD_DIR, 'Comparisons', 'w_{w}.{res}bp.similarity.tsv'),
-        #     w=WINDOWS, res=RESOLUTIONS
-        # )
+        expand(
+            path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
+            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        ),
+        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+        path.join(PLOT_DIR, 'tad-similarity-counts.png'),
+        expand(
+            path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
+            w=WINDOWS, res=RESOLUTIONS
+        )
 
 # ==============================================================================
 # Rules
@@ -47,23 +48,31 @@ rule all:
 rule pairwise_overlap:
     input:
         script = 'calc-tad-overlap.sh',
-        tads = expand(path.join(
-            TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'), w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS)
+        tads = expand(
+            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
+            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
+        )
     output:
-        expand(path.join(TAD_DIR, 'Comparisons',
-                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES)
+        expand(
+            path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
+            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        )
     shell:
         'sh {input.script}'
 
 rule compare_tads:
     input:
         script = 'calc-tad-overlap-stats.R',
-        tads = expand(path.join(
-            TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'), w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS),
-        ints = expand(path.join(TAD_DIR, 'Comparisons',
-                         'w_{w}.{s1}.{s2}.intersected.bed'), w=WINDOWS, s1=SAMPLES, s2=SAMPLES)
+        tads = expand(
+            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
+            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
+        ),
+        ints = expand(
+            path.join(TAD_DIR, 'Comparisons', 'w_{w}.{s1}.{s2}.intersected.bed'),
+            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        )
     output:
-        path.join(TAD_DIR, 'Comparisons', 'comparison-total-counts.tsv'),
+        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
         path.join(PLOT_DIR, 'tad-similarity-counts.png')
     shell:
         'Rscript {input.script} -o {output}'
@@ -76,8 +85,8 @@ rule tad_similarity:
             sample=SAMPLES
         )
     output:
-        path.join(TAD_DIR, 'Comparisons', 'w_{w}.{res}bp.similarity.tsv'),
+        path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
     params:
-        prefix = lambda wildcards: path.join(TAD_DIR, 'Comparisons', 'w_{w}.{res}bp.similarity')
+        prefix = lambda wildcards: path.join(COMPARISON_DIR, 'w_{}.{}bp.similarity'.format(wildcards.w, wildcards.res))
     shell:
         'python {input.script} -o {params.prefix} {input.data}'

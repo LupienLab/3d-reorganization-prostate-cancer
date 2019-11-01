@@ -19,5 +19,3 @@ There is a monotonic reduction in mean similar TAD percentage for $w < 10$ for a
 These results suggest that large scale organization (on lengths scales of 400 kbp or larger) are largely similar across all samples, whereas small scale organization (< 400 kbp) differentiates samples, and may be where individual differences in etiology occur.
 
 ### Finding patient subsets with differential TADs
-
-Our first approach to determining sets of TADs that are unique to a particular subset of patients
