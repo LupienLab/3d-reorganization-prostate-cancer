@@ -35,7 +35,7 @@ domains = rbindlist(lapply(
             function(w) {
                 ## apply over chromosomes
                 dt2 = fread(
-                    paste0("TADs/w_", w, "/", s, ".40000bp.domains.bed"),
+                    paste0("../2019-07-08_TADs/TADs/w_", w, "/", s, ".40000bp.domains.bed"),
                         header = FALSE,
                         col.names = c("chr", "start", "end", "tag")
                     )
@@ -61,7 +61,7 @@ intersections = rbindlist(apply(
             WINDOWS,
             function(w) {
                 ## apply over chromosomes
-                fname = paste0("TADs/Comparisons/w_", w, ".", combo[1], ".", combo[2], ".intersected.bed")
+                fname = paste0("TAD-comparisons/intersections/w_", w, ".", combo[1], ".", combo[2], ".intersected.bed")
                 dt2 = fread(
                         fname,
                         header = FALSE,
@@ -106,7 +106,7 @@ samplewise_intersections[, Window := factor(Window, levels = WINDOWS, ordered = 
 # save results
 fwrite(
     samplewise_intersections[, .(Sample1, Sample2, Window, N_Int, Total, Frac)],
-    "TADs/Comparisons/comparison-total-counts.tsv",
+    "TADs-comparisons/comparison-total-counts.tsv",
     col.names = TRUE,
     sep = "\t"
 )
@@ -117,20 +117,24 @@ fwrite(
 
 gg = (
     ggplot(data = samplewise_intersections)
-    + geom_boxplot(aes(x = Window, y = 100 * Frac), outlier.shape = NA)
+    + geom_boxplot(aes(x = Window, y = 100 * Frac, fill = Window), outlier.shape = NA)
     # + geom_point(aes(x = Window, y = 100 * Frac, colour = Sample1), position=position_jitter(width = 0.5))
     + labs(x = "Window Size", y = "Similar TADs (%)")
-    + guides(colour = FALSE)
+    + guides(colour = FALSE, fill = FALSE)
     + scale_x_discrete(breaks = c(3, 10, 20, 30))
-    + facet_wrap(~ Sample1)
+    + facet_wrap(~ Sample1, ncol = 7)
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        # panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        # panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank()
     )
 )
 ggsave(
     "Plots/tad-similarity-counts.png",
-    height = 20,
-    width = 20,
+    height = 12,
+    width = 30,
     units = "cm"
 )
