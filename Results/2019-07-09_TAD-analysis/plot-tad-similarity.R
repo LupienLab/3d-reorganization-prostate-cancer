@@ -20,7 +20,7 @@ mpss[, chr_nat := factor(chr, levels = CHRS)]
 # ==============================================================================
 gg = (
     ggplot(data = mpss)
-    + geom_segment(aes(x = start, y = similarity, xend = end, yend = similarity))
+    + geom_rect(aes(xmin = start, ymin = 0, xmax = end, ymax = similarity))
     + labs(x = "Position", y = "Min. Sym. Pairwise Similarity")
     + facet_grid(. ~ chr_nat, switch = "x", scales = "free_x", space = "free")
     + theme_minimal()
