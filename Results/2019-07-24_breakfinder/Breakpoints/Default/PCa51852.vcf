@@ -1,0 +1,52 @@
+##fileformat=VCFv4.3
+##fileDate=2019-11-28
+##contig=<ID=chr1,length=248956422>
+##contig=<ID=chr2,length=242193529>
+##contig=<ID=chr3,length=198295559>
+##contig=<ID=chr4,length=190214555>
+##contig=<ID=chr5,length=181538259>
+##contig=<ID=chr6,length=170805979>
+##contig=<ID=chr7,length=159345973>
+##contig=<ID=chr8,length=145138636>
+##contig=<ID=chr9,length=138394717>
+##contig=<ID=chr10,length=133797422>
+##contig=<ID=chr11,length=135086622>
+##contig=<ID=chr12,length=133275309>
+##contig=<ID=chr13,length=114364328>
+##contig=<ID=chr14,length=107043718>
+##contig=<ID=chr15,length=101991189>
+##contig=<ID=chr16,length=90338345>
+##contig=<ID=chr17,length=83257441>
+##contig=<ID=chr18,length=80373285>
+##contig=<ID=chr19,length=58617616>
+##contig=<ID=chr20,length=64444167>
+##contig=<ID=chr21,length=46709983>
+##contig=<ID=chr22,length=50818468>
+##contig=<ID=chrX,length=156040895>
+##contig=<ID=chrY,length=57227415>
+##contig=<ID=chrM,length=16569>
+##ALT=<ID=DEL,Description="Deletion">
+##ALT=<ID=DUP,Description="Duplication">
+##ALT=<ID=INV,Description="Inversion">
+##ALT=<ID=TRA,Description="Translocation">
+##ALT=<ID=INS,Description="Insertion">
+##INFO=<ID=CHR2,Number=1,Type=String,Description="Chromosome for END coordinate in case of a translocation">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of the structural variant">
+##INFO=<ID=SVLEN,Number=1,Type=Integer,Description="Length of the SV">
+##INFO=<ID=SVRES,Number=1,Type=Integer,Description="Resolution of SV call in kbp">
+##INFO=<ID=LO,Number=1,Type=Float,Description="Log10 odds ratio for SV call">
+##INFO=<ID=CT,Number=1,Type=String,Description="Paired-end signature induced connection type">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr17	41980000	.	N	<TRA>	.	PASS	CHR2=chr19;END=50770000;SVRES=10;SVLEN=210000;LO=97.491
+chr17	41910000	.	N	<TRA>	.	PASS	CHR2=chr19;END=50880000;SVRES=10;SVLEN=70000;LO=94.918
+chr12	6680000	.	N	<TRA>	.	PASS	CHR2=chr2;END=11230000;SVRES=10;SVLEN=100000;LO=116.81
+chr12	6780000	.	N	<TRA>	.	PASS	CHR2=chr2;END=11070000;SVRES=10;SVLEN=60000;LO=78.867
+chr12	58200000	.	N	<TRA>	.	PASS	CHR2=chr16;END=23700000;SVRES=100;SVLEN=1200000;LO=202.721
+chr15	43800000	.	N	<TRA>	.	PASS	CHR2=chr7;END=128300000;SVRES=100;SVLEN=900000;LO=189.572
+chr3	179000000	.	N	<TRA>	.	PASS	CHR2=chr15;END=28000000;SVRES=1000;SVLEN=2000000;LO=25.094
+chr16	15000000	.	N	<TRA>	.	PASS	CHR2=chr13;END=84000000;SVRES=1000;SVLEN=3000000;LO=38.722
+chr21	38400000	.	N	.	.	PASS	CHR2=chr21;END=41500000;SVRES=10;SVLEN=100000;LO=140.037
+chr1	125100000	.	N	.	.	PASS	CHR2=chr1;END=157500000;SVRES=100;SVLEN=18600000;LO=33.093
+chr1	125100000	.	N	.	.	PASS	CHR2=chr1;END=152500000;SVRES=100;SVLEN=18600000;LO=30.341
+chr8	60800000	.	N	.	.	PASS	CHR2=chr8;END=113100000;SVRES=100;SVLEN=300000;LO=37.147
+chrY	12900000	.	N	.	.	PASS	CHR2=chrY;END=16500000;SVRES=100;SVLEN=2500000;LO=46.345
