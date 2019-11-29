@@ -51,8 +51,8 @@ def plot_counts(count_dist, output):
     count_dist : pandas.DataFrame
         1-column DataFrame with 'Distance (bp)' as the index and 'Count' and the column
     """
-    g = sns.scatterplot(data=count_dist, x="Distance (bp)", y="Count")
-    g.set(xscale="log", yscale="log")
+    g = sns.scatterplot(data=count_dist, x="Distance (bp)", y="Count", linewidth=0)
+    g.set(xscale="log", yscale="log", xlim=(1000, None))
     g.get_figure().savefig(output)
 
 
@@ -61,7 +61,7 @@ def plot_counts(count_dist, output):
 # ==============================================================================
 
 
-def main(cool, prefix, counts=None, verbose=0):
+def main(cool, table="counts.tsv", image="counts.png", counts=None, verbose=0):
     """
     Main
     """
@@ -72,14 +72,15 @@ def main(cool, prefix, counts=None, verbose=0):
         count_dist = count(cool)
         # save as file
         count_dist.columns = ["Distance (bp)", "Count"]
-        count_dist.to_csv(prefix + ".tsv", sep="\t", index=True)
+        if 
+        count_dist.to_csv(table, sep="\t", index=True)
     else:
         if verbose > 0:
             print("Loading count data")
         count_dist = pd.read_csv(counts, sep="\t")
     if verbose > 0:
         print("Plotting contact distance distribution")
-    plot_counts(count_dist, prefix + ".png")
+    plot_counts(count_dist, image)
     if verbose > 0:
         print("Done")
     return
@@ -91,7 +92,10 @@ if __name__ == "__main__":
     )
     PARSER.add_argument("cool", type=str, help="Cooler file URI")
     PARSER.add_argument(
-        "-p", "--prefix", type=str, help="Prefix for output files", default="counts"
+        "-t", "--table", type=str, help="Output count table file", default="counts.tsv"
+    )
+    PARSER.add_argument(
+        "-p", "--image", type=str, help="Output image file", default="counts.png"
     )
     PARSER.add_argument(
         "-c",
@@ -104,4 +108,4 @@ if __name__ == "__main__":
         "-v", "--verbose", action="count", help="Verbosity level", default=0
     )
     ARGS = PARSER.parse_args()
-    main(ARGS.cool, ARGS.prefix, ARGS.counts, ARGS.verbose)
+    main(ARGS.cool, ARGS.table, ARGS.image, ARGS.counts, ARGS.verbose)
