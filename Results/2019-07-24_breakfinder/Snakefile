@@ -33,7 +33,7 @@ rule all:
             param=['Default', 'Min_1kbp', 'Low_Thresh']
         ),
         expand(
-            path.join(BREAK_DIR, 'Default', '{sample}.vcf'),
+            path.join(BREAK_DIR, 'Default', '{sample}.sorted.vcf'),
             sample=SAMPLES
         ),
         expand(
@@ -197,3 +197,11 @@ rule bf2vcf:
         path.join(BREAK_DIR, "Default", "{sample}.vcf")
     shell:
         'python {input.script} {input.data} -o {output}'
+
+rule sort_vcf:
+    input:
+        "{file}.vcf"
+    output:
+        "{file}.sorted.vcf"
+    shell:
+        "awk '/^#/ {{print $0; next}} {{print $0 | \"sort -k1,1 -V -k2,2n\"}}' {input} > {output}"
