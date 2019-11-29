@@ -38,7 +38,6 @@ def count(cool):
         count_dist = (
             pd.concat([count_dist, p_counts], sort=True).groupby(["Distance"]).sum()
         )
-        print(count_dist)
     return count_dist
 
 
@@ -71,9 +70,9 @@ def main(cool, table="counts.tsv", image="counts.png", counts=None, verbose=0):
             print("Calculating contact distance distribution")
         count_dist = count(cool)
         # save as file
+        count_dist.reset_index(level=0, inplace=True)
         count_dist.columns = ["Distance (bp)", "Count"]
-        if 
-        count_dist.to_csv(table, sep="\t", index=True)
+        count_dist.to_csv(table, sep="\t", index=False)
     else:
         if verbose > 0:
             print("Loading count data")
