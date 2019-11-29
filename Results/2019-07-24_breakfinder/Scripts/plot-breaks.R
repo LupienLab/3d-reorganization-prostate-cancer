@@ -212,9 +212,11 @@ for (s in breakpoints_melted[, unique(Sample)]) {
         + labs(x = NULL, y = "Number of SVs")
         + guides(fill = FALSE)
         + scale_x_discrete(drop=FALSE)
+        + ylim(0, 31)
         + theme_minimal()
         + theme(
-            axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
+            axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5),
+            panel.grid.major.x = element_blank()
         )
     )
     ggsave(
