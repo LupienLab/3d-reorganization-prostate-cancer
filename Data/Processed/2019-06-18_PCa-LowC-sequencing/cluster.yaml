@@ -1,0 +1,20 @@
+__default__:
+    params: "--export=ALL -p long"
+
+merge_bams:
+    params: '--export=ALL -p veryhimem --mem=60G -c 8 -t 4-00:00:00'
+
+sort_bam:
+    params: '--export=ALL -p veryhimem --mem=100G -c 8 -t 2-00:00:00'
+
+sort_bam_name:
+    params: '--export=ALL -p veryhimem --mem=100G -c 8 -t 2-00:00:00'
+
+create_pairs:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+create_cooler:
+    params: "--export=ALL -p himem --mem=30G -c 8"
+
+adjust_res:
+    params: "--export=ALL -p himem --mem=30G -c 8"
