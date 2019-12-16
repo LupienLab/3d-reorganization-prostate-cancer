@@ -1,4 +1,4 @@
-SampleID	Primary Treatment	Gleason Score	T-Category	PreTreatment PSA	Age at Treatment	BCR	Time to BCR (years)	PGA	Pathologic Cellularity	Qpure Cellularity	ASCAT Cellularity	ASCAT Ploidy	LUMP Cellularity	Methylation Included	WGS Included	mRNA included	ETS  consensus	LaLonde cluster	CPCG cluster	Methylation cluster	WGSvsOS accuracy
+SampleID	Primary Treatment	Gleason Score	T-Category	PreTreatment PSA	Age at Treatment	BCR	Time to BCR (years)	PGA	Pathologic Cellularity	Qpure Cellularity	ASCAT Cellularity	ASCAT Ploidy	LUMP Cellularity	Methylation Included	WGS Included	mRNA included	ETS consensus	LaLonde cluster	CPCG cluster	Methylation cluster	WGSvsOS accuracy
 CPCG0001-F1	IGRT	3+4	T2b	7.7	69.4	Yes	9.5775	7.04	0.9	0.85	NA	NA	NA	No	Yes	No	Positive	4	3	NA	0.987485939
 CPCG0002-F1	IGRT	4+4	T2a	19	65.26	NA	NA	14.18	NA	NA	0.62	2.03	NA	No	No	No	NA	2	1	NA	NA
 CPCG0003-F1	IGRT	3+4	T2a	10	71.77	Yes	4.925833333	18.02	0.9	0.76	0.52	2.13	NA	No	Yes	No	Negative	2	3	NA	0.98619574
