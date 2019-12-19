@@ -122,7 +122,8 @@ gg = (
     + guides(colour = FALSE, fill = FALSE)
     + scale_x_discrete(
         breaks = c(3, 10, 20, 30),
-        labels = c(3, 10, 20, 30)
+        labels = c(3, 10, 20, 30),
+        limits = c(3, 10, 20, 30)
     )
     + scale_fill_viridis_c()
     + facet_wrap(~ Sample1, ncol = 7)
