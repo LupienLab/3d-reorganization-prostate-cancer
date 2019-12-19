@@ -117,11 +117,14 @@ fwrite(
 
 gg = (
     ggplot(data = samplewise_intersections)
-    + geom_boxplot(aes(x = Window, y = 100 * Frac, fill = Window), outlier.shape = NA)
-    # + geom_point(aes(x = Window, y = 100 * Frac, colour = Sample1), position=position_jitter(width = 0.5))
-    + labs(x = "Window Size", y = "Similar TADs (%)")
+    + geom_boxplot(aes(x = Window, y = 100 * Frac, fill = Window, group = Window), outlier.shape = NA)
+    + labs(x = "Window Size (x 40 kbp)", y = "Similar TADs (%)")
     + guides(colour = FALSE, fill = FALSE)
-    + scale_x_discrete(breaks = c(3, 10, 20, 30))
+    + scale_x_discrete(
+        breaks = c(3, 10, 20, 30),
+        labels = c(3, 10, 20, 30)
+    )
+    + scale_fill_viridis_c()
     + facet_wrap(~ Sample1, ncol = 7)
     + theme_minimal()
     + theme(
