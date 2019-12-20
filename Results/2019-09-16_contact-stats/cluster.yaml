@@ -1,0 +1,2 @@
+__default__:
+  params: "-cwd -V -q lupiengroup -l h_vmem=16G -l mem_requested=16G"
