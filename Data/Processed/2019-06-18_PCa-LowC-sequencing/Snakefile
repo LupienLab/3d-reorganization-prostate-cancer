@@ -40,6 +40,14 @@ wildcard_constraints:
 rule all:
     input:
         'rulegraph.png',
+	expand(
+	    path.join(ALIGN_DIR, '{sample}.agg.hicup.name-sorted.bam'),
+	    sample=SAMPLES
+	),
+	expand(
+	    path.join(ALIGN_DIR, '{sample}.agg.hicup.sorted.bam'),
+	    sample=SAMPLES
+	),
         expand(
             path.join(CONTACT_DIR, '{sample}.cool'),
             sample=SAMPLES
@@ -69,17 +77,17 @@ rule merge_bams:
     input:
         path.join(
             RAW_DATA_DIR, BATCHES[0], ALIGN_DIR,
-            '{{sample}}.hicup.sorted.bam'
+            '{{sample}}.hicup.name-sorted.bam'
         ),
         expand(
             path.join(
                 RAW_DATA_DIR, BATCHES[1], ALIGN_DIR,
-                '{{sample}}_L00{lane}.hicup.sorted.bam'
+                '{{sample}}_L00{lane}.hicup.name-sorted.bam'
             ),
             lane=LANES
         )
     output:
-        path.join(ALIGN_DIR, '{sample}.agg.hicup.bam')
+        path.join(ALIGN_DIR, '{sample}.agg.hicup.name-sorted.bam')
     shell:
         'sambamba merge -t 8 -p {output} {input}'
 
@@ -88,9 +96,9 @@ rule merge_bams:
 rule create_pairs:
     input:
         genome = 'hg38.sizes.txt',
-        bam = path.join(ALIGN_DIR, '{sample}.agg.hicup.sorted.bam')
+        bam = path.join(ALIGN_DIR, '{sample}.agg.hicup.name-sorted.bam')
     output:
-        temp(path.join(CONTACT_DIR, '{sample}.pairs.gz'))
+        path.join(CONTACT_DIR, '{sample}.pairs.gz')
     shell:
         'pairtools parse -c {input.genome} --assembly hg38 -o {output} {input.bam}'
 
@@ -99,7 +107,7 @@ rule create_cooler:
         genome = 'hg38.sizes.txt',
         pairs = path.join(CONTACT_DIR, '{sample}.pairs.gz')
     output:
-        temp(path.join(CONTACT_DIR, '{sample}.cool'))
+        path.join(CONTACT_DIR, '{sample}.cool')
     params:
         '--assembly hg38 -c1 2 -p1 3 -c2 4 -p2 5'
     shell:
@@ -122,25 +130,6 @@ rule adjust_res:
         '--balance -p 8 -r {}'.format(','.join([str(r) for r in RESOLUTIONS]))
     shell:
         'cooler zoomify {params} -o {output} {input}'
-
-# Miscellaneous
-# -----------------------------------------------------------------------------
-rule sort_bam_name:
-    input:
-        '{file}.bam'
-    output:
-        '{file}.name-sorted.bam',
-    shell:
-        'sambamba sort -t 8 --tmpdir . -n -p -o {output} {input}'
-
-rule sort_bam:
-    input:
-        '{file}.bam'
-    output:
-        bam = '{file}.sorted.bam',
-        idx = '{file}.sorted.bam.bai'
-    shell:
-        'sambamba sort -t 8 --tmpdir . -p {input}'
 
 
 # Summaries
