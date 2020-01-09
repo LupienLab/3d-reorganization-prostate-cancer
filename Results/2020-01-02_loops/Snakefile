@@ -1,0 +1,61 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"), sep="\t", index_col=False)
+
+SAMPLE_IDS = CONFIG["Sample ID"].tolist()
+PEAK_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join("Classification", "PCa{sampleid}.{data}.tsv"),
+            sampleid=SAMPLE_IDS,
+            data=["loops", "peaks"]
+        ),
+        expand(
+            path.join("Plots", "loop-CRE-overlap.{sep}.{stat}.png"),
+            sep=["all", "sum"],
+            stat=["count", "proportion"]
+        ),
+        expand(
+            path.join("Classification", "all.loops.{sep}.tsv"),
+            sep=["all", "sum"]
+        )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule classify:
+    input:
+        script = "classify-loops.R",
+        loops = path.join("cLoops_DefaultParameters", "PCa{sampleid}", "hic_loops_juicebox.txt"),
+        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.bedGraph")
+    output:
+        path.join("Classification", "PCa{sampleid}.loops.tsv"),
+        path.join("Classification", "PCa{sampleid}.peaks.tsv")
+    shell:
+        "Rscript {input.script} {input.loops} {input.peaks} -p Classification/PCa{wildcards.sampleid}"
+
+rule plot_classifications:
+    input:
+        script = "plot-loop-classifications.R",
+        data = expand(path.join("Classification", "PCa{sampleid}.{data}.tsv"), sampleid=SAMPLE_IDS, data=["loops", "peaks"])
+    output:
+        expand(
+            path.join("Plots", "loop-CRE-overlap.{sep}.{stat}.png"),
+            sep=["all", "sum"],
+            stat=["count", "proportion"]
+        ),
+        expand(
+            path.join("Classification", "all.loops.{sep}.tsv"),
+            sep=["all", "sum"]
+        )
+    shell:
+        "Rscript {input.script}"
