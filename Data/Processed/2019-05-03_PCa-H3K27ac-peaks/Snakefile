@@ -77,6 +77,14 @@ rule filter_blacklist_narrowpeak:
     shell:
         'bedtools intersect -v -a {input.peaks} -b {input.blacklist} > {output}'
 
+rule narrowPeak2bedGraph:
+    input:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+    output:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.bedGraph')
+    shell:
+        "awk '{{FS=OFS='\t'}}{{print $1, $2, $3, $5}}' {input} > {output}"
+
 rule filter_blacklist_bdg:
     input:
         blacklist = 'ENCODE-blacklist.bed',
