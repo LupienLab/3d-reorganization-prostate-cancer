@@ -24,10 +24,10 @@ We use either the filtered BAM for each sample for Method 1, or the normalzed co
 ### Each sample has the same distribution of contacts at a given distance
 
 We consider the number of filtered _cis_ contacts at a given distance to see if there are overall differences in chromatin interconnectedness.
-We consider the midpoint of each bin (matrix resolution of 1 kbp) to calculate the distance between contacts.
+We consider the midpoint of each bin (matrix resolution of 4 kbp) to calculate the distance between contacts.
 
 ![PCa3023 contacts vs distance plot](Plots/PCa3023.distance-counts.png)
-    
+
 ### Gene promoters contact $N = ?$ active enhancers
 
 ### Active promoters contact $M = ?$ gene promoters

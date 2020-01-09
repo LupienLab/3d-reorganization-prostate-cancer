@@ -21,11 +21,11 @@ CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
 # ==============================================================================
 rule all:
     input:
-        # path.join(REPORT_DIR, 'rulegraph.png'),
-        # path.join(REPORT_DIR, 'snakemake_report.html'),
         # expand('Sparse/{sample}.4000bp.{chrom}.mtx', sample=SAMPLES, chrom=CHRS)
         # expand('Annotations/{sample}.enhancer-bounds.bed', sample=SAMPLES)
-        expand(path.join(PLOT_DIR, '{sample}.distance-counts.png'), sample=SAMPLES)
+        expand(path.join(PLOT_DIR, '{sample}.distance-counts.png'), sample=SAMPLES),
+        path.join("distance-counts", "mean-counts.tsv"),
+        path.join(PLOT_DIR, "sample-contact-distance-distribution.png")
 
 # ==============================================================================
 # Rules
@@ -38,4 +38,14 @@ rule contact_dists:
         table = path.join('distance-counts', '{sample}.tsv'),
         plot = path.join(PLOT_DIR, '{sample}.distance-counts.png')
     shell:
-        "python {input.script} {input.cool}::/resolutions/1000 -t {output.table} -p {output.plot}"
+        "python {input.script} {input.cool}::/resolutions/4000 -t {output.table} -p {output.plot}"
+
+rule mean_dists:
+    input:
+        script = path.join(SCRIPT_DIR, "plot-all-contact-distributions.R"),
+        data = expand(path.join('distance-counts', '{sample}.tsv'), sample=SAMPLES)
+    output:
+        path.join("distance-counts", "mean-counts.tsv"),
+        path.join(PLOT_DIR, "sample-contact-distance-distribution.png")
+    shell:
+        "Rscript {input.script}"
