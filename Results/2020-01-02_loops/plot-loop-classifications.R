@@ -5,10 +5,6 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
 # ==============================================================================
-# Functions
-# ==============================================================================
-
-# ==============================================================================
 # Data
 # ==============================================================================
 # load sample metadata
@@ -52,7 +48,7 @@ invisible(sapply(
 # combine `notx_and_y` and `x_and_noty` together, so the totals are number of loops overlapping 0, 1, or 2 CREs
 loop_counts_by_num_peaks = data.table(
     SampleID = rep(metadata[, Sample_ID], 3),
-    Overlapping_CREs = rep(0:2, each = metadata[, .N]),
+    Overlapping_CREs = rep(0L:2L, each = metadata[, .N]),
     N = 0,
     Frequency = 0
 )
@@ -70,7 +66,7 @@ invisible(sapply(
             count = loop_counts[SampleID == s & CRE_Overlap == "x_and_y", N]
         }
         total = n_loops[SampleID == loop_counts_by_num_peaks[i, SampleID], N]
-        loop_counts_by_num_peaks[i, N := count]
+        loop_counts_by_num_peaks[i, N := as.integer(count)]
         loop_counts_by_num_peaks[i, Frequency := count / total]
 }))
 
@@ -112,11 +108,17 @@ ggsave(
 
 gg = (
     ggplot(data = loop_counts_by_num_peaks)
-    + geom_col(aes(x = SampleID, y = N, fill = Overlapping_CREs), position = "stack")
+    + geom_col(
+        aes(x = SampleID, y = N, fill = Overlapping_CREs),
+        position = "stack"
+    )
+    + scale_fill_continuous(breaks = c(0, 1, 2), labels = c("0", "1", "2"))
     + labs(x = NULL, y = "Number of Loops")
+    + guides(fill = guide_legend(title = "Anchors overlapping CREs"))
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90)
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
     )
 )
 ggsave(
@@ -128,11 +130,17 @@ ggsave(
 
 gg = (
     ggplot(data = loop_counts_by_num_peaks)
-    + geom_col(aes(x = SampleID, y = N, fill = Overlapping_CREs), position = "fill")
+    + geom_col(
+        aes(x = SampleID, y = N, fill = Overlapping_CREs),
+        position = "fill"
+    )
+    + scale_fill_continuous(breaks = c(0, 1, 2), labels = c("0", "1", "2"))
     + labs(x = NULL, y = "Frequency of Loops")
+    + guides(fill = guide_legend(title = "Anchors overlapping CREs"))
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90)
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
     )
 )
 ggsave(
