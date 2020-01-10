@@ -14,6 +14,11 @@ PEAK_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-pe
 # ==============================================================================
 rule all:
     input:
+        # expand(
+        #     path.join("BEDPE", "PCa{sampleid}.agg.hicup.name-sorted.bedpe"),
+        #     sampleid=SAMPLE_IDS
+        # ),
+        path.join("Plots", "loop-stats.png"),
         expand(
             path.join("Classification", "PCa{sampleid}.{data}.tsv"),
             sampleid=SAMPLE_IDS,
@@ -32,6 +37,15 @@ rule all:
 # ==============================================================================
 # Rules
 # ==============================================================================
+rule plot_loop_stats:
+    input:
+        script = "plot-loop-stats.R",
+        data = path.join("Loops", "loop-stats.tsv")
+    output:
+        path.join("Plots", "loop-stats.png")
+    shell:
+        "Rscript {input.script}"
+
 rule classify:
     input:
         script = "classify-loops.R",
