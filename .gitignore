@@ -111,6 +111,7 @@ Logs/
 
 # HTS files
 *.fastq.gz
-*.bam
+*.pairs.gz
+*.ba[im]
 *.zip
 .vscode
