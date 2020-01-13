@@ -59,7 +59,7 @@ rule cloops:
         path.join(LOOP_DIR, "PCa{sampleid}", "hic_loops_washU.txt"),
         path.join(LOOP_DIR, "PCa{sampleid}", "hic.loop")
     params:
-        "-hic -w -j -plot -m 3"
+        "-hic -w -j -plot -eps 4000,5000,7500,10000 -minPts 10,20,30"
     conda:
         "cLoops_env.yaml"
     shell:
