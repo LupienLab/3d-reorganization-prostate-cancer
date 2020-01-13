@@ -15,9 +15,14 @@ The distance cutoff for each sample, DBSCAN parameters, and the number of loops 
 ### Loops overlapping with active cis-regulatory elements
 
 We hypothesize that these loops correspond to promoter-enhancer loops and TAD boundaries, while loops that do not correspond to these features are false detections by `cLoops`.
+We start by seeing how many loops have 0, 1, or 2 endpoints overlapping active cis-regulatory elements (CREs; as defined by H3K27ac peaks).
+We hypothesize that:
 
-We start by seeing how many loops have 0, 1, or 2 endpoints overlapping active cis-regulatory elements (as defined by H3K27ac peaks).
+* loops involving 2 active CREs are promoter-enhancer loops (where both are active in prostate cancer)
+* loops involving 1 active CREs are promoter-enhancer loops (where the enhancer is poised)
+* loops involving 0 active CREs are TAD boundaries
 
-![Loop anchors overlappign active cis-regulatory elements](Plots/loop-CRE-overlap.sum.proportion.png)
+![Loop anchors overlapping active cis-regulatory elements](Plots/loop-CRE-overlap.sum.proportion.png)
 
-Per patient, 75% of loops called involved an active cis-regulatory element, on average.
+
+This suggests that many of the loops being called are in fact loops involved in gene regulation.

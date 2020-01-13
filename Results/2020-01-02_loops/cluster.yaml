@@ -1,0 +1,8 @@
+__default__:
+    params: "--export=ALL -p all --mem=6G -t 1-00:00:00"
+
+bam2bed:
+    params: "--export=ALL -p himem --mem=6G -t 2-00:00:00 -c 1 -N 1 -J BamtoBedPE"
+
+cloops:
+    params: "--export=ALL -p himem --mem=30G -t 7-00:00:00 -N 1 -c 1 -J cLoops"

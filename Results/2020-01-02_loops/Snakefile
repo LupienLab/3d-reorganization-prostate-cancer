@@ -7,17 +7,23 @@ import os.path as path
 CONFIG = pd.read_csv(path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"), sep="\t", index_col=False)
 
 SAMPLE_IDS = CONFIG["Sample ID"].tolist()
+BAM_DIR = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Aligned")
 PEAK_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
+LOOP_DIR = "Loops"
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
 rule all:
     input:
-        # expand(
-        #     path.join("BEDPE", "PCa{sampleid}.agg.hicup.name-sorted.bedpe"),
-        #     sampleid=SAMPLE_IDS
-        # ),
+        expand(
+            path.join("BEDPE", "PCa{sampleid}.agg.hicup.name-sorted.bedpe"),
+            sampleid=SAMPLE_IDS
+        ),
+        expand(
+            path.join("Loops", "PCa{sampleid}", "hic_loops_juicebox.txt"),
+            sampleid=SAMPLE_IDS
+        ),
         path.join("Plots", "loop-stats.png"),
         expand(
             path.join("Classification", "PCa{sampleid}.{data}.tsv"),
@@ -37,10 +43,32 @@ rule all:
 # ==============================================================================
 # Rules
 # ==============================================================================
+rule bam2bed:
+    input:
+        path.join(BAM_DIR, "PCa{sampleid}.agg.hicup.name-sorted.bam")
+    output:
+        path.join("BEDPE", "PCa{sampleid}.agg.hicup.name-sorted.bedpe")
+    shell:
+        "bedtools bamtobed -bedpe -i {input} > {output}"
+
+rule cloops:
+    input:
+        path.join("BEDPE", "PCa{sampleid}.agg.hicup.name-sorted.bedpe")
+    output:
+        path.join(LOOP_DIR, "PCa{sampleid}", "hic_loops_juicebox.txt"),
+        path.join(LOOP_DIR, "PCa{sampleid}", "hic_loops_washU.txt"),
+        path.join(LOOP_DIR, "PCa{sampleid}", "hic.loop")
+    params:
+        "-hic -w -j -plot -m 3"
+    conda:
+        "cLoops_env.yaml"
+    shell:
+        "mkdir -p {LOOP_DIR}/PCa{wildcards.sampleid}; pushd {LOOP_DIR}/PCa{wildcards.sampleid}; cLoops -f {input} -o hic {params}; popd;"
+
 rule plot_loop_stats:
     input:
         script = "plot-loop-stats.R",
-        data = path.join("Loops", "loop-stats.tsv")
+        data = path.join(LOOP_DIR, "loop-stats.tsv")
     output:
         path.join("Plots", "loop-stats.png")
     shell:
@@ -49,7 +77,7 @@ rule plot_loop_stats:
 rule classify:
     input:
         script = "classify-loops.R",
-        loops = path.join("cLoops_DefaultParameters", "PCa{sampleid}", "hic_loops_juicebox.txt"),
+        loops = path.join(LOOP_DIR, "PCa{sampleid}", "hic_loops_juicebox.txt"),
         peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.bedGraph")
     output:
         path.join("Classification", "PCa{sampleid}.loops.tsv"),
