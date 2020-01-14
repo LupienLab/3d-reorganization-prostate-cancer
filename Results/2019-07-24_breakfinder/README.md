@@ -33,7 +33,7 @@ Fixing the threshold at 30, `PCa51852` is still the only sample where the T2E fu
 Fixing the threshold at 20, `PCa56413` has the T2E fusion detected.
 Due to the size of the deleted region leading to the fusion, and the increased detection at a lower log-odds threshold, this suggests that the threshold for reasonably small SVs close to the diagonal is the limiting factor for detecting this SV.
 
-### Refining structural variant calls
+### Refined structural variant calls do not identify new variants
 
 To refine the detected SVs for accurate location, we re-ran `hic_breakfinder` with the `--min-1kb` option.
 Breakpoints can be found in [`Breakpoints/Min_1kbp/`](Breakpoints/Min_1kbp/).
@@ -42,10 +42,24 @@ These detected breakpoints are all the same as the default parameters, with some
 
 Overall, this refinement of SVs may provide a more accurate location for each detection, but does not identify new variants.
 
-### Manual classification of structural variants
+### Detected structural variants still need to be manually annotated
 
 `hic_breakfinder` finds a submatrix that has a local maximum in signal, and returns the row and column coordinates for this submatrix.
 It does not indicate what type of structural variant it has detected, however.
+While [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8) provide heuristics for determining what a given SV will appear like in the contact matrix (see Supplementary Figure X), this is not incorporated into their statistical model.
 
+To address this limitation, we manually curated each SV called by `hic_breakfinder` in each sample to resolve what type of SV each event was and its locus(i) to within 100 kbp.
+
+| Structural variant type | Abbreviation[^2] |
+| ----------------------- | ---------------- |
+| Inversion               | `INV`            |
+| Duplication             | `DUP`            |
+| Insertion               | `INS`            |
+| Deletion                | `DEL`            |
+| Translocation           | `BND`            |
+
+The manually curated SV calls can be found in `Breakpoints/Default/PCa*.breaks.manually-resolved.tsv`.
 
 [^1]: This is not a hypothesis we were explicitly looking for, in the first place. We have yet to find other independent evidence that suggests ERG over-expression leads to chromosomal instability. We wouldn't have tested for this if this result didn't return anything interesting, so in reality this _p_-value is a likelihood and should include a prior on "how likely we were to test this result".
+
+[^2]: These abbreviations are consistent with Delly, a commonly-used tool for detecting SVs from whole genome sequencing data.
