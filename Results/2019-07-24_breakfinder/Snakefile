@@ -13,9 +13,7 @@ CONFIG = pd.read_csv(
 SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
 
 BAM_DIR = path.join(
-    '/cluster', 'projects', 'lupiengroup', 'Projects', 'RawData',
-    'Chromosome_Capture', '190605_A00827_0009_BHLGJ3DSXX_Lupien_James_Elias',
-    'Aligned'
+    '..', '..', 'Data', 'Processed', '2019-06-18_PCa-LowC-sequencing', 'Aligned'
 )
 BREAK_DIR = 'Breakpoints'
 SCRIPT_DIR = 'Scripts'
@@ -30,30 +28,30 @@ rule all:
         expand(
             path.join(BREAK_DIR, '{param}', '{sample}.breaks.txt'),
             sample=SAMPLES,
-            param=['Default', 'Min_1kbp', 'Low_Thresh']
-        ),
-        expand(
-            path.join(BREAK_DIR, 'Default', '{sample}.sorted.vcf'),
-            sample=SAMPLES
+            param=['Default', 'Min_1kbp', 'Low_Thresh_30', 'Low_Thresh_20']
         ),
         expand(
             path.join(BREAK_DIR, '{param}', 'breakpoints.{ext}'),
-            param=['Default', 'Min_1kbp', 'Low_Thresh'],
+            param=['Default'],
             ext=['bedpe', 'tsv']
         ),
+        expand(
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.bed"),
+            sample=SAMPLES
+        )
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule install_breakfinder_dev:
     input:
-        'infile'
+        "hic_breakfinder/configure"
     output:
-        'outfile'
+        "hic_breakfinder/bin/hic_breakfinder"
     params:
         'CPPFLAGS="-I${{CONDA_PREFIX}}/include/bamtools/ -I${{CONDA_PREFIX}}/include/eigen3/"',
         'LDFLAGS="-L${{CONDA_PREFIX}}/lib/"',
-        '--prefix="$HOME/Source/hic_breakfinder/"',
+        '--prefix="."',
         '--host=linux'
     run:
         commands = [
@@ -71,26 +69,6 @@ rule breakfinder_default:
         inter = 'inter_expect_1Mb.hg38.txt',
         intra = 'intra_expect_100kb.hg38.txt'
     output:
-        path.join(BREAK_DIR, 'Default', '{sample}_100kb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_100kb.breaks.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_100kb_intra.breaks.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_100kb.SR.txt'),
-        path.join(BREAK_DIR, 'Default',
-                  '{sample}_100kb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_100kb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_10kb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_10kb.breaks.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_10kb_intra.breaks.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_10kb.SR.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_10kb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_10kb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.breaks.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.SR.txt'),
-        path.join(BREAK_DIR, 'Default',
-                  '{sample}_1Mb.super_matrix.norm.eig.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Default', '{sample}_1Mb.super_matrix.txt'),
         path.join(BREAK_DIR, 'Default', '{sample}.breaks.txt'),
     shell:
         'pushd {BREAK_DIR}/Default; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample}; popd;'
@@ -101,28 +79,7 @@ rule breakfinder_1kb:
         inter = 'inter_expect_1Mb.hg38.txt',
         intra = 'intra_expect_100kb.hg38.txt'
     output:
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.breaks.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb_intra.breaks.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.SR.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp',
-                  '{sample}_100kb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_100kb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.breaks.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb_intra.breaks.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.SR.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp',
-                  '{sample}_10kb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_10kb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.breaks.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.SR.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp',
-                  '{sample}_1Mb.super_matrix.norm.eig.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}_1Mb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Min_1kbp', '{sample}.breaks.txt'),
+        path.join(BREAK_DIR, 'Min_1kb', '{sample}.breaks.txt'),
     shell:
         'pushd {BREAK_DIR}/Min_1kbp; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample} --min-1kb; popd;'
 
@@ -132,35 +89,13 @@ rule breakfinder_low_thresh:
         inter = 'inter_expect_1Mb.hg38.txt',
         intra = 'intra_expect_100kb.hg38.txt'
     output:
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_100kb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_100kb.breaks.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_100kb_intra.breaks.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_100kb.SR.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh',
-                  '{sample}_100kb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_100kb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_10kb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_10kb.breaks.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_10kb_intra.breaks.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_10kb.SR.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh',
-                  '{sample}_10kb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_10kb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_1Mb.bias_vector.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_1Mb.breaks.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_1Mb.SR.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh',
-                  '{sample}_1Mb.super_matrix.norm.eig.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh',
-                  '{sample}_1Mb.super_matrix.norm.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}_1Mb.super_matrix.txt'),
-        path.join(BREAK_DIR, 'Low_Thresh', '{sample}.breaks.txt')
+        path.join(BREAK_DIR, 'Low_Thresh_{thresh}', '{sample}.breaks.txt'),
     params:
-        '--thresh 30'
+        threshold = lambda wildcards: '--thresh {}'.format(wildcards.thresh)
     run:
         commands = [
-            'pushd {BREAK_DIR}/Low_Thresh',
-            '../../hic_breakfinder/bin/hic_breakfinder --name {wildcards.sample} {params} --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra}',
+            'pushd {BREAK_DIR}/Low_Thresh_{wildcards.thresh}',
+            '../../hic_breakfinder/bin/hic_breakfinder --name {wildcards.sample} {params.threshold} --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra}',
             'popd'
         ]
         command_str = '; '.join(commands)
@@ -205,3 +140,13 @@ rule sort_vcf:
         "{file}.sorted.vcf"
     shell:
         "awk '/^#/ {{print $0; next}} {{print $0 | \"sort -k1,1 -V -k2,2n\"}}' {input} > {output}"
+
+rule bf2bed:
+    input:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.txt")
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.bed")
+    params:
+        '-v FS="\t" -v OFS="\t"'
+    shell:
+        'awk {params} \'{{print $2, $3, $4, "SV"NR, "\\n"$6, $7, $8, "SV"NR}}\' {input} > {output}'

@@ -38,6 +38,7 @@ metadata = merge(
     all.x = FALSE,
     all.y = TRUE
 )
+colnames(metadata)[18] = "ERG"
 
 # read in breakpoints called by breakfinder
 breakpoints = fread(
@@ -57,7 +58,7 @@ colnames(breakpoints_counted) = c("PCaID", "Breakpoints")
 metadata_wide = melt(
     metadata,
     id.vars = "PCaID",
-    measure.vars = c("Gleason Score", "BCR", "ETS consensus"),
+    measure.vars = c("Gleason Score", "BCR", "ERG"),
     variable.name = "Feature",
     value.name = "Value"
 )
@@ -87,11 +88,17 @@ gg_meta = (
     + geom_tile(aes(x = PCaID, y = Feature, fill = Value))
     + labs(x = "Sample", y = "Feature")
     + guides(fill = FALSE)
+    + scale_fill_manual(
+        limits = c("Negative", "Positive", "Yes", "No", "3+3", "3+4", "4+3"),
+        values = c("#548235", "#2E75B6", "#000000", "#FFFFFF", "#EDB58F", "#ED985E", "#ED7D31")
+        # name = "Colour",
+        # labels = "",
+        # breaks = 
+    )
     + theme_minimal()
     + theme(
         axis.text.x = element_text(angle = 90),
         panel.grid.major = element_blank()
-
         # axis.text.y = element_blank()
     )
 )
