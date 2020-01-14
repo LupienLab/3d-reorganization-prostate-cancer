@@ -31,16 +31,16 @@ Jesse Dixon created a branch of `hic_breakfinder` that allows a pre-set log-odds
 
 Fixing the threshold at 30, `PCa51852` is still the only sample where the T2E fusion is detected.
 Fixing the threshold at 20, `PCa56413` has the T2E fusion detected.
-This suggests that the log-odds threshold for SVs close to the diagonal (i.e. changes < a few Mbp in size) is what is limiting the detection of this SV.
+Due to the size of the deleted region leading to the fusion, and the increased detection at a lower log-odds threshold, this suggests that the threshold for reasonably small SVs close to the diagonal is the limiting factor for detecting this SV.
 
 ### Refining structural variant calls
 
 To refine the detected SVs for accurate location, we re-ran `hic_breakfinder` with the `--min-1kb` option.
 Breakpoints can be found in [`Breakpoints/Min_1kbp/`](Breakpoints/Min_1kbp/).
 
-Despite setting the threshold lower at 30, PCa51852 remains the only sample where the T2E fusion is explicitly called.
-Again, it is visible in all samples in the contact matrix, but is not completely detectable from this algorithm, we suspect due to its proximity.
-The fusion occurs only within 3 Mbp, so it is difficult to distinguish these from the surrounding contacts.
+These detected breakpoints are all the same as the default parameters, with some of the SVs having their resolution reduced from 10 kbp to 1 kbp, except in 1 case in `PCa56413` where two SVs on chr14 were combined into a single event at 1 kbp resolution.
+
+Overall, this refinement of SVs may provide a more accurate location for each detection, but does not identify new variants.
 
 ### Manual classification of structural variants
 
