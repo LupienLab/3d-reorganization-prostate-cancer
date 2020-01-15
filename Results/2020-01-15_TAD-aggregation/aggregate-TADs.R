@@ -2,6 +2,30 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
+suppressMessages(library("argparse"))
+
+if (!interactive()) {
+    PARSER <- argparse::ArgumentParser(
+        description = "Resolve TAD calls across window sizes"
+    )
+    PARSER$add_argument(
+        "id",
+        type = "character",
+        help = "Sample ID of patient to be processed"
+    )
+    PARSER$add_argument(
+        "-o", "--output",
+        type = "character",
+        help = "Output file name",
+        default = "agg-domains.bedGraph"
+    )
+    ARGS <- PARSER$parse_args()
+} else {
+    ARGS = list(
+        id = "PCa3023",
+        output = "agg-domains.bedGraph"
+    )
+}
 
 # set of window sizes upon which TADs are called
 W = seq(3, 30)
@@ -18,19 +42,6 @@ TAD_DIR = file.path("..", "2019-07-08_TADs", "TADs")
 # ==============================================================================
 # Functions
 # ==============================================================================
-#' Determines whether a vector of integers is contiguous or not
-#'
-#' @param x Vector of integers
-#' @return TRUE/FALSE
-is_contiguous = function(x) {
-    bounds = c(min(x), max(x))
-    y = seq(bounds[1], bounds[2])
-    if (length(x) == length(y)) {
-        return(all(y == x[order(x)]))
-    }
-    return(FALSE)
-}
-
 #' Determin if all values in a are greater than all values in b
 #'
 #' @param a a vector of integers
@@ -43,15 +54,14 @@ all_greater = function(a, b) {
 # ==============================================================================
 # Data
 # ==============================================================================
-# load metadata
-metadata = fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
+cat("Loading data\n")
 
-s = metadata[1, get("Sample ID")]
+# identify all TAD boundaries from all TAD calls across window size parameters
 all_boundaries = rbindlist(lapply(
     W,
     function(w) {
         dt = fread(
-            file.path(TAD_DIR, paste0("w_", w), paste0("PCa", s, ".40000bp.domains.bed")),
+            file.path(TAD_DIR, paste0("w_", w), paste0(ARGS$id, ".40000bp.domains.bed")),
             header = FALSE,
             col.names = c("chr", "start", "end", "type")
         )
@@ -77,6 +87,8 @@ all_boundaries = rbindlist(lapply(
 agg_boundaries = all_boundaries[, lapply(.SD, list), by = c("chr", "pos")]
 agg_boundaries = agg_boundaries[order(chr, pos), .SD]
 
+cat("\t", agg_boundaries[, .N], " unique TAD boundaries\n", sep = "")
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
@@ -85,6 +97,8 @@ agg_boundaries[, Order := lengths(w)]
 
 # 1. Find nearby boundaries that may need to be merged
 # -------------------------------------------------
+cat("Identifying similar boundaries called with different window sizes\n")
+
 boundaries_to_merge = list()
 # keep track of the number of resolutions that need to happen
 n_merges = 0
@@ -97,7 +111,6 @@ for (i in 2:agg_boundaries[, .N - 1]) {
         skip = FALSE
         next
     }
-    if (i %% 100 == 0) print(i)
     # indices of boundaries that need to be resolved
     idx_to_merge = c()
     if (
@@ -122,39 +135,41 @@ for (i in 2:agg_boundaries[, .N - 1]) {
 
 # 2.Ensure that each conflict contains unique row indices
 # -------------------------------------------------------
+
 # e.g. at this point, one conflict might contain boundaries [i, i+1]
 # and the next conflict might contain boundaries [i + 1, i + 2, i + 3]
 # these should all be considered as a single conflict, not as two independent conflicts
 ignored_conflicts = c()
-conflicts = copy(boundaries_to_merge)
-for (i in 2:length(conflicts)) {
-    if (i %% 100 == 0) print (i)
+conflicting_merges = copy(boundaries_to_merge)
+for (i in 2:length(conflicting_merges)) {
     # previous conflicting boundaries
-    b_prev = conflicts[[i - 1]]
+    b_prev = conflicting_merges[[i - 1]]
     # current conflicting boundaries
-    b_curr = conflicts[[i]]
+    b_curr = conflicting_merges[[i]]
     b_merged = sort(union(b_prev, b_curr))
     # if there are boundaries in the previous conflict that are also involved in this conflict
     if (length(intersect(b_curr, b_prev)) > 0) {
         # mark the previous conflict to be ignored
         ignored_conflicts = c(ignored_conflicts, i - 1)
         # bring the previous conflicting boundaries forward
-        conflicts[[i]] = b_merged
+        conflicting_merges[[i]] = b_merged
     }
 }
 
 # remove all the conflicts that can be ignored
-conflicts = conflicts[-ignored_conflicts]
+conflicting_merges = conflicting_merges[-ignored_conflicts]
+
+cat("\t", length(conflicting_merges), " boundaries to resolve\n", sep = "")
 
 # 3. Resolve boundary conflicts
 # -----------------------------
+cat("Resolving conflicting boundary calls\n")
 
 # keep track of resolved indices that can later be removed from agg_boundaries
 resolved_idx_to_remove = c()
 agg_copy = copy(agg_boundaries)
-for (i in 1:length(conflicts)) {
-    if (i %% 100 == 0) print(i)
-    idx = conflicts[[i]]
+for (i in 1:length(conflicting_merges)) {
+    idx = conflicting_merges[[i]]
     # if there are 2 boundaries to merge into 1
     if (length(idx) == 2) {
         # local variables for easier readability of the window sizes for each boundary
@@ -204,7 +219,53 @@ agg_copy = agg_copy[-unique(resolved_idx_to_remove), .SD]
 # recalculate orders based on resolved merges
 agg_copy[, Order := lengths(w)]
 
+cat("\tResolved to ", agg_copy[, .N], "unique TAD boundaries\n")
+
+# 4. Construct hierarchical TADs across orders
+# ------------------------------------------------------------------
+cat("Constructing hierarchical TADs\n")
+
+agg_tads = rbindlist(lapply(
+    rev(W),
+    function(level) {
+        # get all boundaries that are a boundary at this window size
+        idx = which(agg_copy[, sapply(w, function(v) level %in% v)])
+        w_boundaries = agg_copy[idx, .SD]
+        # produce TADs from consecutive boundaries
+        w_tads = rbindlist(lapply(
+            2:w_boundaries[, .N],
+            function(i) {
+                prev = w_boundaries[i - 1]
+                curr = w_boundaries[i]
+                # skip making this TAD if chromosomes aren't equal
+                # empty data.table gets removed in rbindlist
+                if (curr$chr != prev $chr) {
+                    return(data.table())
+                }
+                # create record from previous and current boundary
+                dt = data.table(
+                    chr = curr$chr,
+                    start = prev$pos,
+                    end = curr$pos
+                )
+                return(dt)
+            }
+        ))
+        w_tads[, w := level]
+        return(w_tads)
+    }
+))
 
 # ==============================================================================
-# Plots
+# Save data
 # ==============================================================================
+cat("Saving data\n")
+
+fwrite(
+    agg_tads,
+    ARGS$output,
+    col.names = FALSE,
+    sep = "\t"
+)
+
+cat("Done\n")
