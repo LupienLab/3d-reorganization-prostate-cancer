@@ -60,6 +60,25 @@ To address this limitation, we manually curated each SV called by `hic_breakfind
 
 The manually curated SV calls can be found in `Breakpoints/Default/PCa*.breaks.manually-resolved.tsv`.
 
+### A previously-observed T2E deletion is instead a translocation that affects chromatin topology at the insertion site
+
+Despite the T2E fusion not being detected with default parameters in `PCa13848`, there was an event detected involving the T2E locus and chr14.
+
+![T2E translocation in PCa13848](Plots/PCa13848.T2E.translocation.png)
+
+On the left is `PCa13848`, and on the right is another sample with the T2E fusion, but no evidence of a translocation (`PCa3023`).
+chr21 is along the x-axis, and chr14 along the y-axis.
+The insertion of this fragment from chr21 occurs near `chr14:35000000`.
+The downstream end of the chr21 segment is inserted at the upstream end of the insertion site leading to _TMPRSS2_ being located next to _INSM2_ and _ERG_ being located next to _BRMS1L_.
+
+Previously, this event was only detected as a deletion on chr21 using whole genome sequencing (see Supplementary Table S16 from [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788)).
+Moreover, not only can this SV be reclassified from a deletion to a translocation, this event also affects the local chromatin topology at the insertion site.
+
+![T2E translocation insertion site topology](Plots/PCa13848.T2E.insertion.png)
+
+The TAD in `PCa3023` at `chr14:35040000-35840000` is split into two TADs in `PCa13848` (`chr14:35040000-35720000` and `chr14:35720000-35840000`).
+This corroborates evidence in previous literature, such as [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8), demonstrating SVs can lead to the formation of "neo-TADs".
+
 [^1]: This is not a hypothesis we were explicitly looking for, in the first place. We have yet to find other independent evidence that suggests ERG over-expression leads to chromosomal instability. We wouldn't have tested for this if this result didn't return anything interesting, so in reality this _p_-value is a likelihood and should include a prior on "how likely we were to test this result".
 
 [^2]: These abbreviations are consistent with Delly, a commonly-used tool for detecting SVs from whole genome sequencing data.
