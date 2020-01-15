@@ -26,6 +26,8 @@ For details, see [`../2019-08-29_breakfinder-subsample/`](../2019-08-29_breakfin
 
 ### Differences in structural variant detection likely stems from detection thresholds
 
+Our next hypothesis for why the T2E fusion was not detected in all 6 samples where it is known to exist was due to the detection threshold implicit in `hic_breakfinder`.
+The closeness of the deletion to the diagonal of the matrix may not contrast enough with the local background in the first stage of submatrix finding, leading to it not being detected at the 100 kbp resolution.
 Jesse Dixon created a branch of `hic_breakfinder` that allows a pre-set log-odds ratio threshold to be set with the `--thresh` option.
 `Breakpoints/Low_Thresh_*/` contains breakpoints found by running `hic_breakfinder` with the `--thresh` option, to increase the sensitivity to breakpoint calls.
 
@@ -78,6 +80,17 @@ Moreover, not only can this SV be reclassified from a deletion to a translocatio
 
 The TAD in `PCa3023` at `chr14:35040000-35840000` is split into two TADs in `PCa13848` (`chr14:35040000-35720000` and `chr14:35720000-35840000`).
 This corroborates evidence in previous literature, such as [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8), demonstrating SVs can lead to the formation of "neo-TADs".
+
+### Hi-C tends to detect more inter-chromosomal translocations than whole genome sequencing
+
+Using the previously-published SVs from [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788), we compared the SVs called from each sequencing method on the same samples.
+
+<!-->TODO: Resolve SV calls and compare<-->
+
+One possible source for the difference in SV detection is the different prostate tumour section being sequenced.
+[Boutros _et al_, Nature Genetics, 2015](https://doi.org/10.1038/ng.3315) showed that prostate tumours display spatial intra-tumour genomic heterogeneity.
+While our samples come from the same patients in [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788), the section of the tumour that was sequenced is different.
+This may lead to differences in SV detection due to true differences in SVs in each section of the same tumour.
 
 [^1]: This is not a hypothesis we were explicitly looking for, in the first place. We have yet to find other independent evidence that suggests ERG over-expression leads to chromosomal instability. We wouldn't have tested for this if this result didn't return anything interesting, so in reality this _p_-value is a likelihood and should include a prior on "how likely we were to test this result".
 
