@@ -14,16 +14,16 @@ if (!interactive()) {
         help = "Sample ID of patient to be processed"
     )
     PARSER$add_argument(
-        "-o", "--output",
+        "-p", "--prefix",
         type = "character",
-        help = "Output file name",
-        default = "agg-domains.bedGraph"
+        help = "Prefix for output files (`{prefix}.aggregated-domains.tsv` and `{prefix}.aggregated-boundaries.bedGraph` will be created)",
+        default = "output"
     )
     ARGS <- PARSER$parse_args()
 } else {
     ARGS = list(
         id = "PCa3023",
-        output = "agg-domains.bedGraph"
+        prefix = "output"
     )
 }
 
@@ -261,10 +261,19 @@ agg_tads = rbindlist(lapply(
 # ==============================================================================
 cat("Saving data\n")
 
+# save aggregated TADs in bedGraph format, where the value column is the depth
 fwrite(
     agg_tads,
-    ARGS$output,
+    paste0(ARGS$prefix, ".aggregated-domains.bedGraph"),
     col.names = FALSE,
+    sep = "\t"
+)
+
+# save aggregated boundaries with their order and window sizes
+fwrite(
+    agg_copy,
+    paste0(ARGS$prefix, ".aggregated-boundaries.tsv"),
+    col.names = TRUE,
     sep = "\t"
 )
 

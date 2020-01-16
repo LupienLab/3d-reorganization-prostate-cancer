@@ -19,8 +19,9 @@ WINDOWS = list(range(3, 31))
 rule all:
     input:
         expand(
-            path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
-            sample=SAMPLES
+            path.join("resolved-TADs", "{sample}.40000bp.{ext}"),
+            sample=SAMPLES,
+            ext=["aggregated-domains.bedGraph", "aggregated-boundaries.tsv"]
         )
 
 # ==============================================================================
@@ -34,9 +35,10 @@ rule agg_tads:
             w=WINDOWS
         )
     output:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph")
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
     shell:
-        "Rscript {input.script} {wildcards.sample} -o {output}"
+        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp"
 
 rule sort:
     input:
