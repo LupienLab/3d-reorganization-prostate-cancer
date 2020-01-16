@@ -1,0 +1,47 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t"
+)
+
+SAMPLES = ["PCa" + str(i) for i in CONFIG["Sample ID"].tolist()]
+TAD_DIR = path.join("..", "2019-07-08_TADs", "TADs")
+WINDOWS = list(range(3, 31))
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
+            sample=SAMPLES
+        )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule agg_tads:
+    input:
+        script = "aggregate-TADs.R",
+        tads = expand(
+            path.join(TAD_DIR, "w_{w}", "{{sample}}.40000bp.domains.bed"),
+            w=WINDOWS
+        )
+    output:
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph")
+    shell:
+        "Rscript {input.script} {wildcards.sample} -o {output}"
+
+rule sort:
+    input:
+        "{file}.bedGraph"
+    output:
+        "{file}.sorted.bedGraph"
+    shell:
+        "sort -k1,1 -V -k2,2n {input} > {output}"
