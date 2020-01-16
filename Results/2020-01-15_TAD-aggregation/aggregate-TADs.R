@@ -22,7 +22,7 @@ if (!interactive()) {
     ARGS <- PARSER$parse_args()
 } else {
     ARGS = list(
-        id = "PCa3023",
+        id = "PCa58215",
         prefix = "output"
     )
 }
@@ -169,50 +169,39 @@ cat("Resolving conflicting boundary calls\n")
 resolved_idx_to_remove = c()
 agg_copy = copy(agg_boundaries)
 for (i in 1:length(conflicting_merges)) {
+    # indices of boundaries that are in conflict
     idx = conflicting_merges[[i]]
+    # merged set of window sizes that will eventually be passed to the "resolved boundary"
+    w_merged = unique(sort(unlist(agg_copy[idx, w])))
     # if there are 2 boundaries to merge into 1
     if (length(idx) == 2) {
         # local variables for easier readability of the window sizes for each boundary
         w_1 = agg_copy[idx[1], w][[1]]
         w_2 = agg_copy[idx[2], w][[1]]
-        w_merged = list(sort(c(w_1, w_2)))
         # if the windows sizes are all smaller in one than the other
         # resolve smaller w boundary to the larger w boundary
         if (all_greater(w_1, w_2)) {
             # remove the (idx[2])-th row from `agg_boundaries`
-            resolved_idx_to_remove = c(resolved_idx_to_remove, idx[2])
+            which_idx_to_keep = 2
             # combine set of `w`s together
-            agg_copy[idx[1], w := w_merged]
         } else if (all_greater(w_2, w_1)) {
             # remove the (idx[1])-th row from `agg_boundaries`
-            resolved_idx_to_remove = c(resolved_idx_to_remove, idx[1])
-            # combine set of `w`s together
-            agg_copy[idx[2], w := w_merged]
+            which_idx_to_keep = 1
         # if the window sizes are not completely uniform
         # resolve to the boundary with the larger order
-        } else if (agg_copy[idx[1], Order] > agg_copy[idx[2], Order]) {
-            agg_copy[idx[1], w := w_merged]
-            resolved_idx_to_remove = c(resolved_idx_to_remove, idx[2])
-        } else if (agg_copy[idx[1], Order] > agg_copy[idx[2], Order]) {
-            agg_copy[idx[2], w := w_merged]
-            resolved_idx_to_remove = c(resolved_idx_to_remove, idx[1])
+        } else {
+            which_idx_to_keep = which.max(agg_copy[idx, Order])
         }
     # if there are 3 boundaries to merge, take the middle of the loci
     } else if (length(idx) == 3) {
-        w_1 = agg_copy[idx[1], w][[1]]
-        w_2 = agg_copy[idx[2], w][[1]]
-        w_3 = agg_copy[idx[3], w][[1]]
-        w_merged = list(sort(c(w_1, w_2, w_3)))
-        resolved_idx_to_remove = c(resolved_idx_to_remove, idx[1], idx[3])
-        agg_copy[idx[2], w := w_merged]
+        which_idx_to_keep = 2
     # if more than 3, take the locus with the largest order
     } else {
-        idx_with_max_order = which.max(agg_copy[idx, Order])
-        idx_to_keep = idx[idx_with_max_order]
-        resolved_idx_to_remove = c(resolved_idx_to_remove, idx[-idx_with_max_order])
-        w_merged = unique(sort(unlist(agg_copy[idx, w])))
-        agg_copy[idx_to_keep, w := w_merged]
+        which_idx_to_keep = which.max(agg_copy[idx, Order])
     }
+    kept_index = idx[which_idx_to_keep]
+    resolved_idx_to_remove = c(resolved_idx_to_remove, idx[-which_idx_to_keep])
+    agg_copy[kept_index, w := w_merged]
 }
 # remove boundaries that have been resolved to be ignored
 agg_copy = agg_copy[-unique(resolved_idx_to_remove), .SD]
@@ -220,6 +209,7 @@ agg_copy = agg_copy[-unique(resolved_idx_to_remove), .SD]
 agg_copy[, Order := lengths(w)]
 
 cat("\tResolved to", agg_copy[, .N], "unique TAD boundaries\n")
+print(agg_copy[, summary(Order)])
 
 # 4. Construct hierarchical TADs across orders
 # ------------------------------------------------------------------
