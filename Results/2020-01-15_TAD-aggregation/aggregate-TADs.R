@@ -159,7 +159,7 @@ for (i in 2:length(conflicting_merges)) {
 # remove all the conflicts that can be ignored
 conflicting_merges = conflicting_merges[-ignored_conflicts]
 
-cat("\t", length(conflicting_merges), " boundaries to resolve\n", sep = "")
+cat("\t", length(conflicting_merges), " conflicts to resolve\n", sep = "")
 
 # 3. Resolve boundary conflicts
 # -----------------------------
@@ -219,7 +219,7 @@ agg_copy = agg_copy[-unique(resolved_idx_to_remove), .SD]
 # recalculate orders based on resolved merges
 agg_copy[, Order := lengths(w)]
 
-cat("\tResolved to ", agg_copy[, .N], "unique TAD boundaries\n")
+cat("\tResolved to", agg_copy[, .N], "unique TAD boundaries\n")
 
 # 4. Construct hierarchical TADs across orders
 # ------------------------------------------------------------------
