@@ -76,7 +76,7 @@ for (i in 1:genes[, .N]) {
     curr_gene = genes[i]
     # get the smallest TAD that encapsulates this gene
     parent_tads = tads[chr == curr_gene$chr & start <= curr_gene$start & end >= curr_gene$end]
-    # if this gene straddles domains across all length scales, report NA
+    # if this gene straddles domains across all length scales, remove it
     if (parent_tads[, .N] == 0) {
         genes[i, start_tad := -1]
         genes[i, end_tad := -1]
@@ -89,21 +89,11 @@ for (i in 1:genes[, .N]) {
 # record what percentage of the distance through the TAD the beginning of each gene is
 # ignore genes that straddle boundaries at all window sizes
 genes = genes[start_tad != -1]
-genes[, Fraction := (start - start_tad) / (end_tad - start_tad)]
-
-
-# # stratify gene essentiality scores into quintiles
-# for (cell in colnames(depmap)[-1]) {
-#     escores = depmap[, get(cell)]
-#     quintiles = cut(
-#         escores,
-#         breaks = quantile(escores, probs = 0:5/5),
-#         labels = 1:5,
-#         right = FALSE
-#     )
-#     depmap[]
-# }
-
+genes[, Fraction := ifelse(
+    strand == "+",
+    (start - start_tad) / (end_tad - start_tad),
+    (end_tad - end) / (end_tad - start_tad)
+)]
 
 # ==============================================================================
 # Save data
