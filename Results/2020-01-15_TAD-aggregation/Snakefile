@@ -40,15 +40,13 @@ rule agg_tads:
     shell:
         "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp"
 
-rule sort_bed:
+rule sort_tads:
     input:
-        "{file}.{ext}"
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph")
     output:
-        "{file}.sorted.{ext}"
-    wildcard_constraints:
-        ext="bed(Graph)?"
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
     shell:
-        "sort -k1,1 -V -k2,2n {input} > {output}"
+        "sort -k1,1 -V -k2,2n -k3,3n -k6,6n {input} > {output}"
 
 rule sort_boundaries:
     input:
@@ -56,4 +54,4 @@ rule sort_boundaries:
     output:
         path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph")
     shell:
-        "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $1, $2, $2 + 1, $4}}' {input} | sort -k1,1 -V -k2,2n > {output}"
+        "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $1, $2, $2 + 1, $4, $3}}' {input} | sort -k1,1 -V -k2,2n > {output}"
