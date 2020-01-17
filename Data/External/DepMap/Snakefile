@@ -1,0 +1,17 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule filter:
+    input:
+        script = "filter-depmap.R",
+        meta = "depmap-ids.tsv",
+        crispr = "Achilles_gene_dependency.csv",
+        rnai = "D2_combined_gene_dep_scores.csv"
+    output:
+        "depmap-crispr.tsv",
+        "depmap-rnai.tsv"
+    shell:
+        "Rscript {input.script}"
