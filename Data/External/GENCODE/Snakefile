@@ -1,0 +1,8 @@
+rule filter:
+    input:
+        script = "filter-gencode.R"
+        data = "gencode.v33.annotation.gtf"
+    output:
+        "gencode.v33.genes.bed"
+    shell:
+        "Rscript {input.script}"
