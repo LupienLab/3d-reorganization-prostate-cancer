@@ -182,11 +182,11 @@ for (i in 1:length(conflicting_merges)) {
         # resolve smaller w boundary to the larger w boundary
         if (all_greater(w_1, w_2)) {
             # remove the (idx[2])-th row from `agg_boundaries`
-            which_idx_to_keep = 2
+            which_idx_to_keep = 1
             # combine set of `w`s together
         } else if (all_greater(w_2, w_1)) {
             # remove the (idx[1])-th row from `agg_boundaries`
-            which_idx_to_keep = 1
+            which_idx_to_keep = 2
         # if the window sizes are not completely uniform
         # resolve to the boundary with the larger order
         } else {
