@@ -21,7 +21,7 @@ rule all:
         expand(
             path.join("resolved-TADs", "{sample}.40000bp.{ext}"),
             sample=SAMPLES,
-            ext=["aggregated-domains.bedGraph", "aggregated-boundaries.tsv", "aggregated-boundaries.bedGraph"]
+            ext=["aggregated-domains.sorted.bedGraph", "aggregated-boundaries.tsv", "aggregated-boundaries.bedGraph"]
         )
 
 # ==============================================================================
