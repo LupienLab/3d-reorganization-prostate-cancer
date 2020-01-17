@@ -216,7 +216,7 @@ print(agg_copy[, summary(Order)])
 cat("Constructing hierarchical TADs\n")
 
 agg_tads = rbindlist(lapply(
-    rev(W)[1:3],
+    rev(W),
     function(level) {
         print(level)
         # get all boundaries that are a boundary at this window size
