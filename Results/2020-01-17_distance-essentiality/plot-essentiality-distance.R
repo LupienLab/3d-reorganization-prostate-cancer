@@ -23,7 +23,7 @@ if (!interactive()) {
 } else {
     ARGS = list(
         data = "essential-distance/PCa3023.distance-dependency.tsv",
-        prefix = "Plots/PCa3023"
+        prefix = "output"
     )
 }
 
@@ -32,9 +32,10 @@ if (!interactive()) {
 # ==============================================================================
 # read in data
 genes = fread(ARGS$data, sep = "\t", header = TRUE)
+
 genes_melted = melt(
     genes,
-    measure.vars = c("DU145", "LNCaP", "MDA PCa 2b", "NCI-H660", "PC3", "VCaP"),
+    measure.vars = c("22Rv1", "DU145", "LNCaP", "MDA PCa 2b", "NCI-H660", "PC3", "VCaP"),
     variable.name = "Cell",
     value.name = "Essentiality"
 )
@@ -42,6 +43,19 @@ genes_melted = melt(
 # ==============================================================================
 # Plots
 # ==============================================================================
+gg = (
+    ggplot(data = genes[complete.cases(LNCaP)])
+    + geom_smooth(aes(x = Fraction, y = LNCaP), method = "loess")
+    + labs(x = "TSS distance from boundary", y = "Essentiality in LNCaP")
+    + xlim(c(0, 0.5))
+    + theme_minimal()
+)
+ggsave(
+    paste0(ARGS$prefix, ".proximity.png"),
+    height = 12,
+    width = 20,
+    units = "cm"
+)
 gg = (
     ggplot(data = genes_melted[complete.cases(genes_melted)])
     + geom_smooth(aes(x = Fraction, y = Essentiality), method = "loess")

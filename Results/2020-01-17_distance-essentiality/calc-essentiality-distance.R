@@ -91,8 +91,8 @@ for (i in 1:genes[, .N]) {
 genes = genes[start_tad != -1]
 genes[, Fraction := ifelse(
     strand == "+",
-    (start - start_tad) / (end_tad - start_tad),
-    (end_tad - end) / (end_tad - start_tad)
+    0.5 - abs(start - (start_tad + end_tad) / 2) / (end_tad - start_tad),
+    0.5 - abs(end - (start_tad + end_tad) / 2) / (end_tad - start_tad)
 )]
 
 # ==============================================================================
