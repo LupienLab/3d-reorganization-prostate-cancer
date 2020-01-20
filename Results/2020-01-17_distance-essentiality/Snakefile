@@ -18,20 +18,21 @@ WINDOWS = list(range(3, 31))
 # ==============================================================================
 rule all:
     input:
-        expand(path.join("Closest", "{sample}.genes-closest-boundaries.bed"), sample=SAMPLES)
+        expand(path.join("Closest", "{sample}.closest-boundaries.bed"), sample=SAMPLES),
+        expand(path.join("essential-distance", "{sample}.distance-dependency.tsv"), sample=SAMPLES),
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule gene_closest_boundary:
     input:
-        genes = path.join("../../Data/External/GENCODE/gencode.v33.genes.sorted.bed"),
+        genes = path.join("../../Data/External/GENCODE/gencode.v33.tss.sorted.bed"),
         bounds = path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph")
     output:
-        path.join("Closest", "{sample}.genes-closest-boundaries.bed")
+        path.join("Closest", "{sample}.closest-boundaries.bed")
     params:
-        # get distance, ignore direct overlaps
-        "-d -io"
+        # get distance with up-/down-stream defined by strand of the gene, ignore direct overlaps
+        "-D a -io"
     shell:
         # ignore genes in mitochondrial DNA
         "bedtools closest {params} -a <(grep -v \"chrM\" {input.genes}) -b <(awk '{{FS=OFS=\"\t\"}}{{print $1, $2, $2 + 1, $4, $5}}' {input.bounds}) > {output}"
@@ -41,11 +42,12 @@ rule calc_essentiality_dist:
         script = "calc-essentiality-distance.R",
         essentiality = path.join("..", "..", "Data", "External", "DepMap", "depmap-rnai.tsv"),
         tads = path.join(TAD_DIR, "{sample}.40000bp.aggregated-domains.sorted.bedGraph"),
-        genes = path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.genes.sorted.bed")
+        boundaries = path.join("Closest", "{sample}.closest-boundaries.bed"),
+        genes = path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.tss.sorted.bed")
     output:
         path.join("essential-distance", "{sample}.distance-dependency.tsv")
     shell:
-        "Rscript {input.script} {input.tads}, -p essential-distance/{wildcards.sample}"
+        "Rscript {input.script} {input.tads} -p essential-distance/{wildcards.sample}"
 
 rule plot_essentiality_dist:
     input:
