@@ -1,8 +1,28 @@
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        "gencode.v33.genes.sorted.bed",
+        "gencode.v33.tss.sorted.bed",
+
+# ==============================================================================
+# Rules
+# ==============================================================================
 rule filter:
     input:
-        script = "filter-gencode.R"
+        script = "filter-gencode.R",
         data = "gencode.v33.annotation.gtf"
     output:
-        "gencode.v33.genes.bed"
+        "gencode.v33.genes.bed",
+        "gencode.v33.tss.bed",
     shell:
         "Rscript {input.script}"
+
+rule sort:
+    input:
+        "{file}.bed"
+    output:
+        "{file}.sorted.bed"
+    shell:
+        "sort -k 1,1 -V -k2,2n {input} > {output}"

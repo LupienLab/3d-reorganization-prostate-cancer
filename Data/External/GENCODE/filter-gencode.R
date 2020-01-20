@@ -41,6 +41,10 @@ gencode_genes[, value := NULL]
 gencode_genes[, name := value_data$Name]
 gencode_genes[, Ensembl_ID := value_data$Ensembl]
 
+# only keep TSS based on the strand
+gencode_genes[, TSS_start := ifelse(strand == "+", start, end - 1)]
+gencode_genes[, TSS_end := TSS_start + 1]
+
 # ==============================================================================
 # Save data
 # ==============================================================================
@@ -50,6 +54,13 @@ gencode_genes[, Ensembl_ID := value_data$Ensembl]
 fwrite(
     gencode_genes[, .SD, .SDcols= c("chr", "start", "end", "name", "score", "strand", "Ensembl_ID")],
     "gencode.v33.genes.bed",
+    sep = "\t",
+    col.names = FALSE
+)
+
+fwrite(
+    gencode_genes[, .SD, .SDcols= c("chr", "TSS_start", "TSS_end", "name", "score", "strand", "Ensembl_ID")],
+    "gencode.v33.tss.bed",
     sep = "\t",
     col.names = FALSE
 )
