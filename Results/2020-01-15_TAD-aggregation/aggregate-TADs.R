@@ -172,7 +172,7 @@ for (i in 1:length(conflicting_merges)) {
     # indices of boundaries that are in conflict
     idx = conflicting_merges[[i]]
     # merged set of window sizes that will eventually be passed to the "resolved boundary"
-    w_merged = unique(sort(unlist(agg_copy[idx, w])))
+    w_merged = list(unique(sort(unlist(agg_copy[idx, w]))))
     # if there are 2 boundaries to merge into 1
     if (length(idx) == 2) {
         # local variables for easier readability of the window sizes for each boundary
