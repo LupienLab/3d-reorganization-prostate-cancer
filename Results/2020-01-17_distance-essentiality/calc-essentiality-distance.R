@@ -14,6 +14,17 @@ if (!interactive()) {
         help = "Aggregated TAD calls"
     )
     PARSER$add_argument(
+        "bounds",
+        type = "character",
+        help = "Boundaries nearest to each gene's TSS"
+    )
+    PARSER$add_argument(
+        "-r",, "--resolution",
+        type = "integer",
+        help = "Contact matrix resolution in bp",
+        default = 40000
+    )
+    PARSER$add_argument(
         "-p", "--prefix",
         type = "character",
         help = "Prefix for output files",
@@ -23,6 +34,8 @@ if (!interactive()) {
 } else {
     ARGS = list(
         TADs = "../2020-01-15_TAD-aggregation/resolved-TADs/PCa3023.40000bp.aggregated-domains.sorted.bedGraph",
+        nearest = "Closest/PCa3023.closest-boundaries.bed",
+        resolution = 40000,
         prefix = "essential-distance/PCa3023"
     )
 }
@@ -44,13 +57,13 @@ tads = fread(
 # load genes and their nearest boundaries
 # `w` column is a list of integers, separated by "|"
 genes = fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.genes.sorted.bed"),
+    ARGS$nearest,
     sep = "\t",
     sep2 = "|", # not implemented in data.table yet
     header = FALSE,
-    drop = 5, # drop score column
     col.names = c(
-        "chr", "start", "end", "name", "strand", "Ensembl_ID"
+        "chr", "start", "end", "name", "score", "strand", "Ensembl_ID",
+        "chr_TAD", "start_TAD", "end_TAD", "order", "w", "distance"
     )
 )
 
@@ -72,19 +85,44 @@ genes_copy = copy(genes)
 genes = genes_copy
 for (i in 1:genes[, .N]) {
     if (i %% 1000 == 0) cat(".")
-    # a local copy of the row (changes to curr_gene != changes to genes[i])
-    curr_gene = genes[i]
     # get the smallest TAD that encapsulates this gene
-    parent_tads = tads[chr == curr_gene$chr & start <= curr_gene$start & end >= curr_gene$end]
+    parent_tads = tads[chr == genes[i, chr] & start <= genes[i, start] & end >= genes[i, end]]
     # if this gene straddles domains across all length scales, remove it
     if (parent_tads[, .N] == 0) {
         genes[i, start_tad := -1]
         genes[i, end_tad := -1]
-    } else {
-        smallest_parent_tad = parent_tads[which.min(w), .SD]
-        genes[i, start_tad := smallest_parent_tad$start]
-        genes[i, end_tad := smallest_parent_tad$end]
+        next
     }
+    # select the parent TAD with a boundary that is closest to the gene
+    closest_parent_tad = parent_tads[start == genes[i, start_TAD] | end == genes[i, start_TAD], .SD]
+    # if none of the parents match the closest boundary, check +/- a bin to resolve this
+    if (closest_parent_tad[, .N] == 0 ) {
+        # if (closest_parent_tad$start != genes[i, start_TAD] & closest_parent_tad$end != genes[i, start_TAD] & abs(genes[i, distance]) < ARGS$resolution) {
+        # } else {
+        # }
+        cat("Gene\n")
+        print(genes[i, .(chr, start, end, name, strand, start_TAD, end_TAD, order)])
+        cat("\nAll Parents\n")
+        print(parent_tads)
+        cat("\nClosest Parent\n")
+        print(closest_parent_tad)
+        dn_near_tads = tads[chr == genes[i, chr] & end == genes[i, start_TAD] & order_upper == genes[i, order]]
+        up_near_tads = tads[chr == genes[i, chr] & start == genes[i, start_TAD] & order_lower == genes[i, order]]
+        cat("\nNearby\n")
+        print(dn_near_tads)
+        print(up_near_tads)
+        cat("\n\n")
+        Sys.sleep(2)
+    # if there's no singular TAD with the closest boundary (possible with calls at multiple windows)
+    } else if (closest_parent_tad[, .N] > 1) {
+        # pick the smallest in size
+        # not using which.min here, since multiple w's are possible and this returns the first
+        closest_parent_tad = closest_parent_tad[(end - start) == min(end - start), .SD]
+        closest_parent_tad = closest_parent_tad[which.min(w), .SD]
+    }
+    if (closest_parent_tad[, .N] > 1) print("help")
+    genes[i, start_tad := closest_parent_tad$start]
+    genes[i, end_tad := closest_parent_tad$end]
 }
 # record what percentage of the distance through the TAD the beginning of each gene is
 # ignore genes that straddle boundaries at all window sizes
