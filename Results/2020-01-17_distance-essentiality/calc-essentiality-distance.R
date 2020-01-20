@@ -19,7 +19,7 @@ if (!interactive()) {
         help = "Boundaries nearest to each gene's TSS"
     )
     PARSER$add_argument(
-        "-r",, "--resolution",
+        "-r", "--resolution",
         type = "integer",
         help = "Contact matrix resolution in bp",
         default = 40000

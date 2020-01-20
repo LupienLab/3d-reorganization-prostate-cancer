@@ -47,7 +47,7 @@ rule calc_essentiality_dist:
     output:
         path.join("essential-distance", "{sample}.distance-dependency.tsv")
     shell:
-        "Rscript {input.script} {input.tads} -p essential-distance/{wildcards.sample}"
+        "Rscript {input.script} {input.tads} {input.boundaries} -p essential-distance/{wildcards.sample}"
 
 rule plot_essentiality_dist:
     input:
