@@ -14,7 +14,7 @@ if (!interactive()) {
         help = "Aggregated TAD calls"
     )
     PARSER$add_argument(
-        "bounds",
+        "nearest",
         type = "character",
         help = "Boundaries nearest to each gene's TSS"
     )
