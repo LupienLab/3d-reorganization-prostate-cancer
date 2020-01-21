@@ -19,7 +19,7 @@ WINDOWS = list(range(3, 31))
 rule all:
     input:
         expand(path.join("Closest", "{sample}.closest-boundaries.bed"), sample=SAMPLES),
-        expand(path.join("essential-distance", "{sample}.distance-dependency.tsv"), sample=SAMPLES),
+        expand(path.join("Closest", "{sample}.distance-dependency.tsv"), sample=SAMPLES),
 
 # ==============================================================================
 # Rules
@@ -37,13 +37,22 @@ rule gene_closest_boundary:
         # ignore genes in mitochondrial DNA
         "bedtools closest {params} -a <(grep -v \"chrM\" {input.genes}) -b <(awk '{{FS=OFS=\"\t\"}}{{print $1, $2, $2 + 1, $4, $5}}' {input.bounds}) > {output}"
 
-rule calc_essentiality_dist:
+rule map_genes2tads:
     input:
-        script = "calc-essentiality-distance.R",
-        essentiality = path.join("..", "..", "Data", "External", "DepMap", "depmap-rnai.tsv"),
+        script = "map-genes-to-parent-tad.R",
         tads = path.join(TAD_DIR, "{sample}.40000bp.aggregated-domains.sorted.bedGraph"),
         boundaries = path.join("Closest", "{sample}.closest-boundaries.bed"),
-        genes = path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.tss.sorted.bed")
+    output:
+        path.join("Closest", "{sample}.distance-dependency.tsv")
+    shell:
+        "Rscript {input.script} {input.tads} {input.boundaries} -p Closest/{wildcards.sample}"
+
+rule calc_exprs_dist:
+    input:
+        script = "calc-expression-distance.R",
+        exprs = path.join("..", "..", "Data", "External", "CPC-GENE", "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv"),
+        tads = path.join(TAD_DIR, "{sample}.40000bp.aggregated-domains.sorted.bedGraph"),
+        boundaries = path.join("Closest", "{sample}.closest-boundaries.bed"),
     output:
         path.join("essential-distance", "{sample}.distance-dependency.tsv")
     shell:
