@@ -25,6 +25,15 @@ More than 50% of TSSs are located within the first 20% of a TAD, with a mode nea
 ![Gene TSS locations across TADs](Plots/distance-density.png)
 ![Gene TSS locations across TADs CDF](Plots/distance-ecdf.png)
 
+### Highly expressed genes are preferentially located near TAD boundaries
+
+By stratifying genes according to their expression, we observe that genes with higher expression are more predominantly found near TAD boundaries compared to more lowly-expressed genes.
+
+![Proximity to boundaries stratified by expression](Plots/distance-density-by-expression.png)
+
+This is not to say that highly expressed genes are only located near boundaries, just that they are "enriched" near boundaries, compared to other genes.
+This fits with previous observations of cohesin being found near highly expressed genes, even in the absence of _Ctcf_ [2], or the enrichment of highly-expressed housekeeping genes near boundaries [1].
+
 ## Conclusions
 
 ## References
