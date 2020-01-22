@@ -47,6 +47,16 @@ rule map_genes2tads:
     shell:
         "Rscript {input.script} {input.tads} {input.boundaries} -p Closest/{wildcards.sample}"
 
+rule plot_distance_density:
+    input:
+        script = "analyze-distance-distribution.R",
+        data = expand(path.join("Closest", "{sample}.distance-dependency.tsv"), sample=SAMPLES)
+    output:
+        path.join("Plots", "distance-density.png"),
+        path.join("Plots", "distance-ecdf.png"),
+    shell:
+        "Rscript {input.script}"
+
 rule calc_exprs_dist:
     input:
         script = "calc-expression-distance.R",
