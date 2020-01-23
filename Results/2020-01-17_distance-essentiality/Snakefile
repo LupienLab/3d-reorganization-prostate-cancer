@@ -49,7 +49,7 @@ rule map_genes2tads:
 
 rule plot_distance_density:
     input:
-        script = "analyze-distance-distribution.R",
+        script = "plot-distance-distribution.R",
         data = expand(path.join("Closest", "{sample}.distance-dependency.tsv"), sample=SAMPLES)
     output:
         path.join("Plots", "distance-density.png"),
@@ -57,22 +57,22 @@ rule plot_distance_density:
     shell:
         "Rscript {input.script}"
 
-rule calc_exprs_dist:
+rule plot_distance_exprs:
     input:
-        script = "calc-expression-distance.R",
-        exprs = path.join("..", "..", "Data", "External", "CPC-GENE", "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv"),
-        tads = path.join(TAD_DIR, "{sample}.40000bp.aggregated-domains.sorted.bedGraph"),
-        boundaries = path.join("Closest", "{sample}.closest-boundaries.bed"),
+        script = "plot-distance-expression.R",
+        near = expand(path.join("Closest", "{sample}.distance-dependency.tsv"), sample=SAMPLES),
+        expression = path.join("..", "..", "Data", "External", "CPC-GENE", "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv")
     output:
-        path.join("essential-distance", "{sample}.distance-dependency.tsv")
+        path.join("Plots", "distance-density-by-expression.png"),
     shell:
-        "Rscript {input.script} {input.tads} {input.boundaries} -p essential-distance/{wildcards.sample}"
+        "Rscript {input.script}"
 
-rule plot_essentiality_dist:
+rule plot_distance_essentiality:
     input:
-        script = "plot-essentiality-distance.R",
-        data = path.join("essential-distance", "{sample}.distance-dependency.tsv")
+        script = "plot-distance-essentiality.R",
+        near = expand(path.join("Closest", "{sample}.distance-dependency.tsv"), sample=SAMPLES),
+        expression = path.join("..", "..", "Data", "External", "DepMap", "depmap-rnai.tsv")
     output:
-        path.join("Plots", "{sample}.promixity.png")
+        path.join("Plots", "distance-density-by-essentiality.png"),
     shell:
-        "Rscript {input.script} -p Plots/{wildcards.sample}"
+        "Rscript {input.script}"

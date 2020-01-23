@@ -12,8 +12,8 @@ This folder contains the work that attempts to address that hypothesis.
 
 ## Materials & Methods
 
-We use gene essentiality data from the [DepMap Project](https://depmap.org) for 5 prostate cancer cell lines (LNCaP, DU145, V16A, PC-3, and 22Rv1) to identify genes essential for prostate cancer.
-We use the aggregated TAD boundaries from [`../2020-01-15_TAD-aggregation/`](../2020-01-15_TAD-aggregation/) from primary prostate cancer tumours.
+We use the aggregated TAD boundaries from [`../2020-01-15_TAD-aggregation/`](../2020-01-15_TAD-aggregation/) from primary prostate cancer tumours to calculate the distance from gene transcription start sites (TSSs from GENCODE v33).
+We also use matched total RNA-seq for these 13 patients from [Chen _et al._, 2019] and gene essentiality data from the [DepMap Project](https://depmap.org)[3] for 7 prostate cancer cell lines to identify genes essential for prostate cancer.
 
 ## Results
 
@@ -32,7 +32,17 @@ By stratifying genes according to their expression, we observe that genes with h
 ![Proximity to boundaries stratified by expression](Plots/distance-density-by-expression.png)
 
 This is not to say that highly expressed genes are only located near boundaries, just that they are "enriched" near boundaries, compared to other genes.
-This fits with previous observations of cohesin being found near highly expressed genes, even in the absence of _Ctcf_ [2], or the enrichment of highly-expressed housekeeping genes near boundaries [1].
+This fits with previous observations of cohesin being found near highly expressed genes, even in the absence of _Ctcf_ [2].
+
+### Highly essential genes are preferentially located near TAD boundaries
+
+Similarly to expression, we can stratify genes by their essentiality, as determined through RNAi screen assays [3].
+And again, similarly to expression, we observe that more essential genes are more predominantly found near TAD boundaries compared to less essential genes.
+
+![Proximity to boundaries stratified by essentiality](Plots/distance-density-by-essentiality.png)
+
+This is not to say that essential genes are only located near boundaries, just that they are "enriched" near boundaries, compared to other genes, although the enrichment is not as strong as it is for expression.
+This fits with previous observations of the enrichment of highly-expressed housekeeping genes near boundaries [1].
 
 ## Conclusions
 
@@ -41,3 +51,5 @@ This fits with previous observations of cohesin being found near highly expresse
 [1] Chen, Ke, Wu, Zhao, _et al._, Nature, 2019. doi: [10.1038/s41586-019-1812-0](https://doi.org/10.1038/s41586-019-1812-0)
 
 [2] Busslinger _et al._, Nature, 2017. doi: [10.1038/nature22063](https://doi.org/10.1038/nature22063)
+
+[3] James M. McFarland, Zandra V. Ho, Guillaume Kugener, Joshua M. Dempster, Phillip G. Montgomery, Jordan G. Bryan, John M. Krill-Burger, Thomas M. Green, Francisca Vazquez, Jesse S. Boehm, Todd R. Golub, William C. Hahn, David E. Root, Aviad Tsherniak. "Improved estimation of cancer dependencies from large-scale RNAi screens using model-based normalization and data integration". _Nature Communications_ (2018). [doi:10.1038/s41467-018-06916-5](https://doi.org/10.1038/s41467-018-06916-5)
