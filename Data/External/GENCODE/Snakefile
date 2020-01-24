@@ -9,6 +9,12 @@ rule all:
 # ==============================================================================
 # Rules
 # ==============================================================================
+rule download_annotation:
+    output:
+        temp("gencode.v33.annotation.gtf.gz")
+    shell:
+        "curl -O ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_33/gencode.v33.annotation.gtf.gz"
+
 rule filter:
     input:
         script = "filter-gencode.R",
