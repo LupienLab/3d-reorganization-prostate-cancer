@@ -1,0 +1,37 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+SAMPLES = ["PCa" + str(i) for i in [
+    3023, 13266, 13848, 14121, 19121, 33173, 40507, 51852, 53687, 56413, 57054, 57294, 58215
+]]
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand("{sample}.tsv", sample=SAMPLES),
+        expand("{sample}.bed", sample=SAMPLES),
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule vcf2tsv:
+    input:
+        '{sample}_filtered_somatic.bnd-updated.vcf'
+    output:
+        '{sample}.tsv'
+    shell:
+        './svprops/src/svprops {input} > {output}'
+
+rule tsv2bed:
+    input:
+        script = "delly-tsv-to-bed.awk",
+        data = '{sample}.tsv'
+    output:
+        '{sample}.bed'
+    shell:
+        'grep -v "^#" {input.data} | awk -f {input.script} > {output}'
