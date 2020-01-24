@@ -15,13 +15,14 @@ rule all:
     input:
         expand("{sample}.tsv", sample=SAMPLES),
         expand("{sample}.bed", sample=SAMPLES),
+        expand("{sample}.hg38.bed", sample=SAMPLES),
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule vcf2tsv:
     input:
-        '{sample}_filtered_somatic.bnd-updated.vcf'
+        '{sample}_filtered_somatic.bnd-updated.hg38.vcf'
     output:
         '{sample}.tsv'
     shell:
@@ -35,3 +36,14 @@ rule tsv2bed:
         '{sample}.bed'
     shell:
         'grep -v "^#" {input.data} | awk -f {input.script} > {output}'
+
+rule liftover:
+    input:
+        script = "liftover.R",
+        vcf = "{sample}.bed",
+        chain = "../../hg19ToHg38.over.chain",
+    output:
+        "{sample}.hg38.bed"
+    shell:
+        "Rscript {input.script} {input.vcf} {output}"
+    

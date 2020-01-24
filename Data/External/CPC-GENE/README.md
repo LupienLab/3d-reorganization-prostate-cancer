@@ -24,3 +24,16 @@ For the protein data, the columns are as follows:
 
 All genome coordinates from these data are listed in hg19, unless otherwise specified.
 The rest of this work is in hg38, so we've made sure to convert or liftover to hg38 coordinates where needed.
+
+## Tools for pre-processing structural variants
+
+[`svprops`](https://github.com/dellytools/svprops) is needed.
+
+```shell
+pushd structural-variants-vcfs/
+git clone --recursive https://github.com/dellytools/svprops.git
+cd svprops/
+make all
+```
+
+`snakemake` can then be run after this to generate the VCFs and other files in hg38 coordinates.
