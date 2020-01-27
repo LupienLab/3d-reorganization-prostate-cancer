@@ -48,20 +48,17 @@ rule all:
 	    path.join(ALIGN_DIR, '{sample}.agg.hicup.sorted.bam'),
 	    sample=SAMPLES
 	),
-        expand(
-            path.join(CONTACT_DIR, '{sample}.cool'),
-            sample=SAMPLES
-        ),
-        # expand(
-        #     path.join(REPORT_DIR, 'balanced_report.txt'),
-        #     sample=SAMPLES
-        # ),
-        expand(
-            path.join(CONTACT_DIR, '{sample}.mcool'),
-            sample=SAMPLES
-        ),
-        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
-        path.join(REPORT_DIR, 'multiqc_report.html'),
+    expand(
+        path.join(CONTACT_DIR, '{sample}.cool'),
+        sample=SAMPLES
+    ),
+    expand(
+        path.join(CONTACT_DIR, '{sample}.mcool'),
+        sample=SAMPLES
+    ),
+    path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+    path.join(REPORT_DIR, 'multiqc_report.html'),
+    path.join(REPORT_DIR, "hicup_class.png")
 
 rule rulegraph:
     output:
@@ -161,3 +158,12 @@ rule multiqc:
         path.join(REPORT_DIR, 'multiqc_report.html')
     shell:
         'multiqc -f -c {input.cfg} -o {REPORT_DIR} {REPORT_DIR}'
+
+rule plot_contact_class:
+    input:
+        script = "plot-unique.R",
+        data = path.join(REPORT_DIR, "hicup_dedup_plot.tsv")
+    output:
+        path.join(REPORT_DIR, "hicup_class.png")
+    shell:
+        "Rscript {input.script}"
