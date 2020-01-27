@@ -20,7 +20,7 @@ metadata[, Sample_ID := paste0("PCa", Sample_ID)]
 contact_dists = rbindlist(lapply(
     metadata[, Sample_ID],
     function(id) {
-        dt = fread(file.path("Contacts", paste0(id, ".tsv"))
+        dt = fread(file.path("Contacts", paste0(id, ".tsv")))
         colnames(dt) = c("Distance", "Count")
         dt[, SampleID := id]
         return(dt)
@@ -38,11 +38,11 @@ colnames(mean_dists) = c("Distance", "Count")
 # ==============================================================================
 gg = (
     ggplot()
-    + geom_path(
-        data = contact_dists,
-        mapping = aes(x = Distance, y = Count, group = SampleID, colour = SampleID)
-    )
-    + geom_path(
+    # + geom_path(
+    #     data = contact_dists,
+    #     mapping = aes(x = Distance, y = Count, group = SampleID, colour = SampleID)
+    # )
+    + geom_smooth(
         data = mean_dists,
         mapping = aes(x = Distance, y = Count)
     )
