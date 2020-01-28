@@ -36,3 +36,11 @@ rule merge:
         "-s -c 6,7 -o distinct"
     shell:
         "bedtools merge {params} -i {input} > {output}"
+
+rule keep_canonical:
+    input:
+        "ctcf_motifs.hg38.merged.bed"
+    output:
+        "ctcf_motifs.hg38.merged.canonical.bed"
+    shell:
+        "grep -P '^(chr)?[XYM]?[0-9]{0,2}\\t' {input} | sort -k1,1 -V -k2,2n > {output}"
