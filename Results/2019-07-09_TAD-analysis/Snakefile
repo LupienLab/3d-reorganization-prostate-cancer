@@ -44,6 +44,8 @@ rule all:
         path.join(PLOT_DIR, "jaccard.png"),
         path.join(COMPARISON_DIR, "intersection.bedGraph"),
         path.join(COMPARISON_DIR, "intersection.extended-20000bp.bedGraph"),
+        path.join("Proximal", "nearest-motif.bed"),
+
 
 # ==============================================================================
 # Rules
@@ -118,3 +120,14 @@ rule multi_jaccard:
         path.join(PLOT_DIR, "jaccard.png")
     shell:
         "jtools multi-jaccard -o {PLOT_DIR}/jaccard {input}"
+
+rule nearby_ctcf_motifs:
+    input:
+        boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
+        motifs = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed")
+    output:
+        path.join("Proximal", "nearest-motif.bed")
+    params:
+        "-d"
+    shell:
+        "bedtools closest {params} -a {input.boundaries} -b {input.motifs} > {output}"
