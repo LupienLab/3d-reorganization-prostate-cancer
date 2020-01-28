@@ -42,7 +42,6 @@ rule all:
         #     w=WINDOWS, res=RESOLUTIONS
         # ),
         path.join(PLOT_DIR, "jaccard.png"),
-        path.join(PLOT_DIR, "jaccard.extended-20000bp.png"),
         path.join(COMPARISON_DIR, "intersection.bedGraph"),
         path.join(COMPARISON_DIR, "intersection.extended-20000bp.bedGraph"),
 
@@ -119,11 +118,3 @@ rule multi_jaccard:
         path.join(PLOT_DIR, "jaccard.png")
     shell:
         "jtools multi-jaccard -o {PLOT_DIR}/jaccard {input}"
-
-rule multi_jaccard_extended:
-    input:
-        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.extended-{{dist}}bp.bedGraph"), sample=SAMPLES)
-    output:
-        path.join(PLOT_DIR, "jaccard.extended-{dist}bp.png")
-    shell:
-        "jtools multi-jaccard -o {PLOT_DIR}/jaccard.extended-{wildcards.dist}bp {input}"
