@@ -1,0 +1,46 @@
+rule all:
+    input:
+        "ctcf_motifs.hg38.merged.bed"
+
+rule reorder_ren:
+    input:
+        "ren_hg38.motifs.txt"
+    output:
+        "ctcf.hg38.ren.bed"
+    shell:
+        "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $2, $3, $4, \".\", \".\", $5, $1}}' {input} | sort -k1,1 -V -k2,2n > {output}"
+
+rule reorder_m1:
+    input:
+        "hg38.motifs.txt"
+    output:
+        "ctcf.hg38.m1.bed"
+    shell:
+        "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $2, $3, $4, \".\", \".\", $5, $1}}' {input} | sort -k1,1 -V -k2,2n > {output}"
+
+rule combine_motifs:
+    input:
+        "ctcf.hg38.m1.bed",
+        "ctcf.hg38.ren.bed",
+    output:
+        "ctcf_motifs.hg38.bed"
+    shell:
+        "cat {input} | sort -k1,1 -V -k2,2n > {output}"
+
+rule merge:
+    input:
+        "ctcf_motifs.hg38.bed"
+    output:
+        "ctcf_motifs.hg38.merged.bed"
+    params:
+        "-s -c 6,7 -o distinct"
+    shell:
+        "bedtools merge {params} -i {input} > {output}"
+
+rule keep_canonical:
+    input:
+        "ctcf_motifs.hg38.merged.bed"
+    output:
+        "ctcf_motifs.hg38.merged.canonical.bed"
+    shell:
+        "grep -P '^(chr)?[XYM]?[0-9]{0,2}\\t' {input} | sort -k1,1 -V -k2,2n > {output}"

@@ -24,7 +24,7 @@ peaks = rbindlist(lapply(
     function(s) {
         print(s)
         dt = fread(
-            paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/", s, "_peaks.filtered.narrowPeak"),
+            paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/Peaks/", s, "_peaks.filtered.narrowPeak"),
             sep = "\t",
             select = c(1:3, 9),
             col.names = c("chr", "start", "end", "log10q")
@@ -66,8 +66,9 @@ n_peaks[, SampleID := factor(SampleID, levels = sample_order, ordered  = TRUE)]
 gg = (
     ggplot(data = n_peaks)
     + geom_col(aes(x = SampleID, y = N / 1000, fill = SampleID))
-    + labs(x = "Patient Sample", y = expression("Number of Peaks (" * 10^3 * ")"), title = "H3K27ac peak counts")
+    + labs(x = "Patient", y = expression("Number of Peaks (" * 10^3 * ")"), title = "H3K27ac peak counts")
     + guides(fill = FALSE)
+    + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
 ggsave(
@@ -88,8 +89,9 @@ gg = (
     ggplot(data = peaks)
     + geom_violin(aes(x = SampleID, y = log10(end - start), fill = SampleID))
     + geom_boxplot(aes(x = SampleID, y = log10(end - start)), width = 0.2)
-    + labs(x = "Patient Sample", y = "log10(Peak Size)", title = "H3K27ac peak sizes")
+    + labs(x = "Patient", y = "log10(Peak Size)", title = "H3K27ac peak sizes")
     + guides(fill = FALSE)
+    + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
 ggsave(
@@ -111,8 +113,9 @@ gg = (
     ggplot(data = peak_dists)
     + geom_violin(aes(x = SampleID, y = log10(dist), fill = SampleID))
     + geom_boxplot(aes(x = SampleID, y = log10(dist)), width = 0.2)
-    + labs(x = "Patient Sample", y = "log10(Distance)", title = "H3K27ac distance between peaks")
+    + labs(x = "Patient", y = "log10(Distance (bp))", title = "H3K27ac distance between peaks")
     + guides(fill = FALSE)
+    + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
 ggsave(
@@ -129,9 +132,10 @@ dist_centres[, Type := rep(c("Median", "Mean"), each = metadata[, .N])]
 gg = (
     ggplot(data = dist_centres)
     + geom_col(aes(x = SampleID, y = Size, fill = SampleID))
-    + labs(x = "Patient Sample", y = "Size (bp)", title = "H3K27ac centres of distance between peaks")
-    + facet_grid(. ~ Type, scales = "free")
+    + labs(x = "Patient", y = "Size (bp)", title = "H3K27ac centres of distance between peaks")
+    + facet_wrap(. ~ Type, scales = "free_y")
     + guides(fill = FALSE)
+    + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
 ggsave(

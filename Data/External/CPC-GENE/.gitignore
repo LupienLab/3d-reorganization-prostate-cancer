@@ -1,1 +1,3 @@
-structural-variant-vcfs/
+structural-variant-vcfs/*.vcf
+structural-variant-vcfs/*.bed
+structural-variant-vcfs/*.tsv

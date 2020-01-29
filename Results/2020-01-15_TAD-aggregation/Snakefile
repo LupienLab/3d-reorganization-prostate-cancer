@@ -21,7 +21,12 @@ rule all:
         expand(
             path.join("resolved-TADs", "{sample}.40000bp.{ext}"),
             sample=SAMPLES,
-            ext=["aggregated-domains.sorted.bedGraph", "aggregated-boundaries.tsv", "aggregated-boundaries.bedGraph"]
+            ext=[
+                "aggregated-domains.sorted.bedGraph",
+                "aggregated-boundaries.tsv",
+                "aggregated-boundaries.bedGraph",
+                "aggregated-boundaries.extended-20000bp.bedGraph",
+            ]
         )
 
 # ==============================================================================
@@ -55,3 +60,13 @@ rule sort_boundaries:
         path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph")
     shell:
         "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $1, $2, $2 + 1, $4, $3}}' {input} | sort -k1,1 -V -k2,2n > {output}"
+
+rule extend_boundaries:
+    input:
+        bed = path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph"),
+    output:
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.extended-{dist}bp.bedGraph")
+    wildcard_constraints:
+        dist="\d+"
+    shell:
+        "awk '{{FS=OFS=\"\\t\"}}{{ if ($2-{wildcards.dist} < 0) {{print $1, 0, $3+{wildcards.dist}, $4, $5}} else {{print $1, $2-{wildcards.dist}, $3+{wildcards.dist}, $4, $5}} }}' {input} > {output}"

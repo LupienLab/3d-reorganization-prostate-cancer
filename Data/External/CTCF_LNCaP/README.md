@@ -6,6 +6,7 @@ This folder contains the filtered BAMs and other associated files for LNCaP CTCF
 * [ENCSR000DMF](https://www.encodeproject.org/experiments/ENCSR000DMF/)
 
 These are the only two experiments (as of 2019-08-26) that have CTCF ChIP-seq data for LNCaP cells on GRCh38, without drug treatments.
+Due to the ENCODE download links changing, I manually downloaded these before running `snakemake`.
 
 | Experiment Accession                                                  | File Type           | Source                                                                                       |
 | --------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------- |

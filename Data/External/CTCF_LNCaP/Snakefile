@@ -22,12 +22,6 @@ rule all:
         'ENCFF058ZMC.bigBed',
         'ENCFF957KCI.bigBed'
 
-rule rulegraph:
-    output:
-        'rulegraph.png',
-    shell:
-        'snakemake --rulegraph | dot -Tpng > {output}'
-
 # ==============================================================================
 # Rules
 # ==============================================================================

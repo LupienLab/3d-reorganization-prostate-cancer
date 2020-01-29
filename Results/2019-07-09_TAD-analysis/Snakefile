@@ -11,7 +11,7 @@ CONFIG = pd.read_csv(
 
 SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
 
-TAD_DIR = path.join('..', '2019-07-08_TADs', 'TADs')
+TAD_DIR = path.join('..', '2020-01-15_TAD-aggregation', 'resolved-TADs')
 COMPARISON_DIR = 'TAD-comparisons'
 PLOT_DIR = 'Plots'
 
@@ -23,23 +23,29 @@ wildcard_constraints:
     sample = 'PCa[0-9]+',
     lane = '[1-4]',
     read = '[1-2]',
-    res = '[0-9]+'
+    res = '[0-9]+',
+    dist = "\d+"
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
 rule all:
     input:
-        expand(
-            path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
-            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
-        ),
-        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
-        path.join(PLOT_DIR, 'tad-similarity-counts.png'),
-        expand(
-            path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
-            w=WINDOWS, res=RESOLUTIONS
-        )
+        # expand(
+        #     path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
+        #     w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        # ),
+        # path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+        # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
+        # expand(
+        #     path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
+        #     w=WINDOWS, res=RESOLUTIONS
+        # ),
+        path.join(PLOT_DIR, "jaccard.png"),
+        path.join(COMPARISON_DIR, "intersection.bedGraph"),
+        path.join(COMPARISON_DIR, "intersection.extended-20000bp.bedGraph"),
+        path.join("Proximal", "nearest-motif.bed"),
+
 
 # ==============================================================================
 # Rules
@@ -90,3 +96,38 @@ rule tad_similarity:
         prefix = lambda wildcards: path.join(COMPARISON_DIR, 'w_{}.{}bp.similarity'.format(wildcards.w, wildcards.res))
     shell:
         'python {input.script} -o {params.prefix} {input.data}'
+
+rule inter:
+    input:
+        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph"), sample=SAMPLES)
+    output:
+        path.join(COMPARISON_DIR, "intersection.bedGraph")
+    shell:
+        "bedtools multiinter -i {input} > {output}"
+
+rule inter_extended:
+    input:
+        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.extended-{{dist}}bp.bedGraph"), sample=SAMPLES)
+    output:
+        path.join(COMPARISON_DIR, "intersection.extended-{dist}bp.bedGraph")
+    shell:
+        "bedtools multiinter -i {input} > {output}"
+
+rule multi_jaccard:
+    input:
+        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph"), sample=SAMPLES)
+    output:
+        path.join(PLOT_DIR, "jaccard.png")
+    shell:
+        "jtools multi-jaccard -o {PLOT_DIR}/jaccard {input}"
+
+rule nearby_ctcf_motifs:
+    input:
+        boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
+        motifs = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed")
+    output:
+        path.join("Proximal", "nearest-motif.bed")
+    params:
+        "-d"
+    shell:
+        "bedtools closest {params} -a {input.boundaries} -b {input.motifs} > {output}"

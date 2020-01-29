@@ -2,3 +2,4 @@ hg19_BWAIndex
 hg19_Bowtie2Index
 hg38_Bowtie2Index
 restriction-enzyme-sites
+CPC-GENE/structural-variant-vcfs/svprops/

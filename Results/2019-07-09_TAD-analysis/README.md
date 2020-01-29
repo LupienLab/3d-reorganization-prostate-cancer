@@ -1,8 +1,32 @@
 # Summary
 
-This folder contains the analyses and interpretation of the TAD calls on all 13 prostate cancer samples done in `../2019-07-08_TADs/`.
+This folder contains the analyses and interpretation of the TAD calls on all 13 prostate cancer samples done in [`../2020-01-15_TAD-aggregation/`](../2020-01-15_TAD-aggregation/).
 
 ## Results
+
+### Boundary similarity
+
+Due to the hierarchical nature of TADs, we compare the boundaries between patients to assess their similarity.
+50-60% of boundaries overlap exactly between any pair of samples, leading to a set of 4998 boundaries universally shared across all prostate tumours and a consensus set of 31 465 boundaries in total.
+A heatmap showing the Jaccard index between all pairs of samples is below, where each boundary is a single base pair.
+
+![Multi Jaccard comparison of TAD boundaries](Plots/jaccard.png)
+
+```shell
+> snakemake -p TAD-comparisons/intersection.bedGraph
+> awk '{if ($4 == 13) print}' TAD-comparisons/intersection.bedGraph | wc -l
+    4998
+```
+
+To account for minor differences in distance, we find that extending each boundary by +/- 20 kbp leads to 5863 universally-shared boundaries.
+
+### Boundary proximity to CTCF binding sites
+
+We hypothesize that these boundaries are biologically meaningful boundaries, and, as TADs are hypothesized to form via loop extrusion \Cref{Belghan2020}, will be located proximal to CTCF binding sites.
+We first test whether the majority of these boundaries are near CTCF motifs.
+
+
+
 
 ### TAD similarity
 
