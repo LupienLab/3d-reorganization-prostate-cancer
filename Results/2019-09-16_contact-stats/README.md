@@ -21,6 +21,31 @@ We use either the filtered BAM for each sample for Method 1, or the normalzed co
 
 ## Results
 
+### Map resolution
+
+Map resolution is defined by the matrix resolution (in bp) such that 80% of bins
+have at least 1000 contacts.
+See Rao _et al._, Cell, 2014 for this definition.
+For each sample we get the following percentage of bins with >= 1000 contacts:
+
+| Sample ID | Percentage at 10 kbp | Percentage at 5 kbp |
+| --------- | -------------------- | ------------------- |
+| PCa13266  | 87.95                | 65.37               |
+| PCa13848  | 79.03                | 27.17               |
+| PCa14121  | 86.00                | 60.86               |
+| PCa19121  | 83.01                | 44.98               |
+| PCa3023   | 82.38                | 39.11               |
+| PCa33173  | 89.38                | 64.27               |
+| PCa40507  | 79.14                | 37.74               |
+| PCa51852  | 87.14                | 65.80               |
+| PCa53687  | 80.61                | 38.87               |
+| PCa56413  | 85.28                | 45.93               |
+| PCa57054  | 89.15                | 68.51               |
+| PCa57294  | 86.71                | 59.37               |
+| PCa58215  | 83.42                | 47.18               |
+
+Thus, each sample approximately has a map resolution of 10 kbp across all samples.
+
 ### Each sample has the same distribution of contacts at a given distance
 
 We consider the number of filtered _cis_ contacts at a given distance to see if there are overall differences in chromatin interconnectedness.
