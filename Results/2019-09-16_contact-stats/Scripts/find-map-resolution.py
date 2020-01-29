@@ -10,8 +10,6 @@ See Rao _et al._, Cell, 2014 for this definition.
 
 from __future__ import division, absolute_import, print_function
 import argparse
-import os.path as path
-import numpy as np
 import pandas as pd
 import cooler
 from tqdm import tqdm
