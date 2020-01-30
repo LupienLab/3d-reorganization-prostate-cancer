@@ -1,0 +1,43 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            "{cell}_{factor}_{peakset}.bed",
+            zip,
+            cell=CONFIG["Cell"].tolist(),
+            factor=CONFIG["Factor"].tolist(),
+            peakset=CONFIG["Peakset"].tolist()
+        )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule rename:
+    input:
+        lambda wildcards: "{acc}.bed".format(
+            acc=CONFIG.loc[
+                (CONFIG["Cell"] == wildcards.cell) & (CONFIG["Factor"] == wildcards.factor) & (CONFIG["Peakset"] == wildcards.peakset),
+                "Accession"
+            ].values[0])
+    output:
+        "{cell}_{factor}_{peakset}.bed"
+    shell:
+        "mv {input} {output}"
+
+rule bam_to_tdf:
+    input:
+        '{acn}.bam'
+    output:
+        '{acn}.tdf'
+    shell:
+        'igvtools count {input} {output} hg38'

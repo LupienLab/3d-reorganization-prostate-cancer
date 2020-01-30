@@ -1,9 +1,0 @@
-Experiment	Accession	File	File Type	Source
-ENCSR315NAC	ENCFF500VJD	ENCFF500VJD.bam	Filtered BAM (Rep1)	https://www.encodeproject.org/files/ENCFF500VJD/@@download/ENCFF500VJD.bam
-ENCSR315NAC	ENCFF117GZZ	ENCFF117GZZ.bam	Filtered BAM (Rep2)	https://www.encodeproject.org/files/ENCFF117GZZ/@@download/ENCFF117GZZ.bam
-ENCSR315NAC	ENCFF292WTB	ENCFF292WTB.bigBed	Conservative peaks	https://www.encodeproject.org/files/ENCFF292WTB/@@download/ENCFF292WTB.bigBed
-ENCSR315NAC	ENCFF700QXT	ENCFF700QXT.bigBed	Optimal peaks	https://www.encodeproject.org/files/ENCFF700QXT/@@download/ENCFF700QXT.bigBed
-ENCSR000DMF	ENCFF925XUX	ENCFF925XUX.bam	Filtered BAM (Rep1)	https://www.encodeproject.org/files/ENCFF925XUX/@@download/ENCFF925XUX.bam
-ENCSR000DMF	ENCFF265TUU	ENCFF265TUU.bam	Filtered BAM (Rep2)	https://www.encodeproject.org/files/ENCFF265TUU/@@download/ENCFF265TUU.bam
-ENCSR000DMF	ENCFF058ZMC	ENCFF058ZMC.bigBed	Conservative peaks	https://www.encodeproject.org/files/ENCFF058ZMC/@@download/ENCFF058ZMC.bigBed
-ENCSR000DMF	ENCFF957KCI	ENCFF957KCI.bigBed	Optimal peaks	https://www.encodeproject.org/files/ENCFF957KCI/@@download/ENCFF957KCI.bigBed
