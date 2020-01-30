@@ -45,6 +45,11 @@ rule all:
         path.join(COMPARISON_DIR, "intersection.bedGraph"),
         path.join(COMPARISON_DIR, "intersection.extended-20000bp.bedGraph"),
         path.join("Proximal", "nearest-motif.bed"),
+        path.join("Proximal", "nearest-peak.bed"),
+        path.join("Plots", "boundary-motif-distance.png"),
+        path.join("Plots", "boundary-motif-distance.stratified.png"),
+        path.join("Plots", "boundary-peak-distance.png"),
+        path.join("Plots", "boundary-peak-distance.stratified.png"),
 
 
 # ==============================================================================
@@ -124,7 +129,7 @@ rule multi_jaccard:
 rule nearby_ctcf_motifs:
     input:
         boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
-        motifs = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed"),
+        sites = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed"),
         genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
         path.join("Proximal", "nearest-motif.bed")
@@ -132,4 +137,30 @@ rule nearby_ctcf_motifs:
         "-d"
     shell:
         # sort the genome to make sure chromosomes chr[MXY] are in the same order
-        "bedtools closest {params} -a {input.boundaries} -b {input.motifs} -g <(sort -k1,1 -V -k2,2n {input.genome}) > {output}"
+        "bedtools closest {params} -a {input.boundaries} -b {input.sites} -g <(sort -k1,1 -V -k2,2n {input.genome}) > {output}"
+
+rule nearby_ctcf_peaks:
+    input:
+        boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
+        sites = path.join("..", "..", "Data", "External", "ENCODE_ChIP", "22Rv1_CTCF_Optimal.canonical.sorted.bed"),
+        genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
+    output:
+        path.join("Proximal", "nearest-peak.bed")
+    params:
+        "-d"
+    shell:
+        # sort the genome to make sure chromosomes chr[MXY] are in the same order
+        "bedtools closest {params} -a {input.boundaries} -b {input.sites} -g <(sort -k1,1 -V -k2,2n {input.genome}) > {output}"
+
+rule plot_distances:
+    input:
+        script = "plot-ctcf-distances.R",
+        motifs = path.join("Proximal", "nearest-motif.bed"),
+        peaks = path.join("Proximal", "nearest-peak.bed")
+    output:
+        path.join("Plots", "boundary-motif-distance.png"),
+        path.join("Plots", "boundary-motif-distance.stratified.png"),
+        path.join("Plots", "boundary-peak-distance.png"),
+        path.join("Plots", "boundary-peak-distance.stratified.png"),
+    shell:
+        "Rscript {input.script}"

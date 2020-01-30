@@ -23,15 +23,20 @@ To account for minor differences in distance, we find that extending each bounda
 ### Boundary proximity to CTCF binding sites
 
 We hypothesize that these boundaries are biologically meaningful boundaries, and, as TADs are hypothesized to form via loop extrusion \Cref{Belghan2020}, will be located proximal to CTCF binding sites.
-We first test whether the majority of these boundaries are near CTCF motifs.
-
-The majority of TAD boundaries are within a few kbp of CTCF motifs.
+The majority of TAD boundaries are within a few hundred bp of CTCF motifs.
 
 ![TAD boundary distance to CTCF motifs](Plots/boundary-motif-distance.png)
 
 This appears to be independent of whether the boundary is shared across patients or not.
 
 ![TAD boundary distance to CTCF motifs stratified by uniqueness across patients](Plots/boundary-motif-distance.stratified.png)
+
+We can further support this by considering the distance to CTCF binding site peaks from ChIP-seq data in prostate cancer cell lines from ENCODE (see [`../../Data/External/ENCODE_ChIP/`](../../Data/External/ENCODE_ChIP/)).
+
+![TAD boundary distance to CTCF binding sites in 22Rv1 cells](Plots/boundary-peak-distance.png)
+
+The mode of peaks being within 10 kbp of TAD boundaries fits with observations of increased CTCF binding sites near boundaries (see \Cref{Dixon2012} Fig. 2b).
+Thus, we observe TAD boundaries in close proximity to CTCF binding site peaks, as expected.
 
 ### TAD similarity
 
@@ -48,3 +53,9 @@ There is a monotonic reduction in mean similar TAD percentage for $w < 10$ for a
 These results suggest that large scale organization (on lengths scales of 400 kbp or larger) are largely similar across all samples, whereas small scale organization (< 400 kbp) differentiates samples, and may be where individual differences in etiology occur.
 
 ### Finding patient subsets with differential TADs
+
+## Conclusions
+
+## References
+
+\Cref{Dixon2012}: J. R. Dixon et al., “Topological domains in mammalian genomes identified by analysis of chromatin interactions,” Nature, vol. 485, no. 7398, pp. 376–380, May 2012, doi: [10.1038/nature11082](https://doi.org/10.1038/nature11082).
