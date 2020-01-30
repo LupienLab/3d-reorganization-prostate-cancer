@@ -1,2 +1,2 @@
-*.bigBed
-*.tdf
+*.bed
+!*.sorted.bed

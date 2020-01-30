@@ -12,7 +12,7 @@ CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
 rule all:
     input:
         expand(
-            "{cell}_{factor}_{peakset}.bed",
+            "{cell}_{factor}_{peakset}.canonical.sorted.bed",
             zip,
             cell=CONFIG["Cell"].tolist(),
             factor=CONFIG["Factor"].tolist(),
@@ -34,10 +34,18 @@ rule rename:
     shell:
         "mv {input} {output}"
 
-rule bam_to_tdf:
+rule sort:
     input:
-        '{acn}.bam'
+        "{file}.bed"
     output:
-        '{acn}.tdf'
+        "{file}.sorted.bed"
     shell:
-        'igvtools count {input} {output} hg38'
+        "sort -k1,1 -V -k2,2n {input} > {output}"
+
+rule keep_canonical:
+    input:
+        "{file}.bed"
+    output:
+        "{file}.canonical.bed"
+    shell:
+        "grep -P '^chr[XYM]?[0-9]{{0,2}}\\t' {input} > {output}"
