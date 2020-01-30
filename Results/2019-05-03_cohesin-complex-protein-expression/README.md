@@ -2,7 +2,7 @@
 
 This folder contains data showing the protein expression levels of various proteins relating to the cohesin complex, to see if there are patient-specific differences in the formation of this complex.
 
-According to [Peter _et al._, Genes & Dev, 2008](http://genesdev.cshlp.org/content/22/22/3089.full), the following are cohesin complex subunits:
+The following are cohesin complex subunits \Cref{Peter2008}:
 
 * SMC1A
 * SMC1B
@@ -51,8 +51,13 @@ We discussed the topic of `NA`s with Dr. Kislinger:
 It is unclear whether CTCF on CPC0246 is absent, or just wasn't detected.
 Moreover, it is unclear whether 5 proteins not present in the table (SMC1B, REC8, STAG3, CDC5A, and ZNF143) were absent in all samples or undetected (76 in the original study).
 
-If there are issues with these particular proteins, we'll address it in the future.
+Given that there are not drastic global differences in chromatin organization in any of the samples, we suspect that the `NA` in CPCG0246 is a false negative, and the other factors outside the 95th quantile range, do not appear to have a substantially differential effect.
 
 ## Conclusions
 
-Cohesin complex subunits and other chromatin loop associated factors are almost always equally expressed in the 13 patients in this study, with minor exceptions.
+Cohesin complex subunits and other chromatin loop associated factors are almost equally expressed in the 13 patients in this study, with minor exceptions.
+Given the contact matrices for each patient in other folders, they don't appear to be drastically affected by any differences in protein abundances.
+
+## References
+
+\Cref{Peters2008}: [Peter _et al._, Genes & Dev, 2008](http://genesdev.cshlp.org/content/22/22/3089.full)
