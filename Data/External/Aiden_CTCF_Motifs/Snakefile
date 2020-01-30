@@ -43,4 +43,4 @@ rule keep_canonical:
     output:
         "ctcf_motifs.hg38.merged.canonical.bed"
     shell:
-        "grep -P '^chr[XYM]?[0-9]{0,2}\\t' {input} | sort -k1,1 -V -k2,2n > {output}"
+        "grep -P '^chr[XYM]?[0-9]{{0,2}}\\t' {input} | sort -k1,1 -V -k2,2n > {output}"
