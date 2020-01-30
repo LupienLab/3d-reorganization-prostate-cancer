@@ -24,5 +24,8 @@ We hypothesize that:
 
 ![Loop anchors overlapping active cis-regulatory elements](Plots/loop-CRE-overlap.sum.proportion.png)
 
+This suggests that many of the loops being called are in fact loops directly involved in promoter-enhancer interactions, but not all.
 
-This suggests that many of the loops being called are in fact loops involved in gene regulation.
+### Loops overlapping with TAD boundaries
+
+The remaining loops, we hypothesize, overlap TAD boundaries.
