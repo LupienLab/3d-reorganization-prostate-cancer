@@ -5,7 +5,8 @@ import os.path as path
 # Configuration
 # ==============================================================================
 CONFIG = pd.read_csv(
-    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
+    path.join('..', '..', 'Data', 'External',
+              'LowC_Samples_Data_Available.tsv'),
     index_col=False, sep='\t'
 )
 
@@ -31,16 +32,6 @@ wildcard_constraints:
 # ==============================================================================
 rule all:
     input:
-        # expand(
-        #     path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
-        #     w=WINDOWS, s1=SAMPLES, s2=SAMPLES
-        # ),
-        # path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
-        # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
-        # expand(
-        #     path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
-        #     w=WINDOWS, res=RESOLUTIONS
-        # ),
         path.join(PLOT_DIR, "jaccard.png"),
         path.join(COMPARISON_DIR, "intersection.bedGraph"),
         path.join(COMPARISON_DIR, "intersection.extended-20000bp.bedGraph"),
@@ -50,61 +41,25 @@ rule all:
         path.join("Plots", "boundary-motif-distance.stratified.png"),
         path.join("Plots", "boundary-peak-distance.png"),
         path.join("Plots", "boundary-peak-distance.stratified.png"),
+        # expand(
+        #     path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
+        #     w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        # ),
+        expand(
+            path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
+            w=WINDOWS, res=RESOLUTIONS
+        ),
+        # path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+        # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
 
 
 # ==============================================================================
 # Rules
 # ==============================================================================
-
-rule pairwise_overlap:
-    input:
-        script = 'calc-tad-overlap.sh',
-        tads = expand(
-            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
-            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
-        )
-    output:
-        expand(
-            path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
-            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
-        )
-    shell:
-        'sh {input.script}'
-
-rule compare_tads:
-    input:
-        script = 'calc-tad-overlap-stats.R',
-        tads = expand(
-            path.join(TAD_DIR, 'w_{w}', '{sample}.{res}bp.domains.bed'),
-            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
-        ),
-        ints = expand(
-            path.join(TAD_DIR, 'Comparisons', 'w_{w}.{s1}.{s2}.intersected.bed'),
-            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
-        )
-    output:
-        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
-        path.join(PLOT_DIR, 'tad-similarity-counts.png')
-    shell:
-        'Rscript {input.script} -o {output}'
-
-rule tad_similarity:
-    input:
-        script = 'differential-tad-calls.py',
-        data = expand(
-            path.join(TAD_DIR, 'w_{{w}}', '{sample}.{{res}}bp.domains.bed'),
-            sample=SAMPLES
-        )
-    output:
-        path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
-    params:
-        prefix = lambda wildcards: path.join(COMPARISON_DIR, 'w_{}.{}bp.similarity'.format(wildcards.w, wildcards.res))
-    shell:
-        'python {input.script} -o {params.prefix} {input.data}'
-
 rule inter:
     input:
-        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph"), sample=SAMPLES)
+        expand(path.join(
+            TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph"), sample=SAMPLES)
     output:
         path.join(COMPARISON_DIR, "intersection.bedGraph")
     shell:
@@ -112,7 +67,8 @@ rule inter:
 
 rule inter_extended:
     input:
-        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.extended-{{dist}}bp.bedGraph"), sample=SAMPLES)
+        expand(path.join(
+            TAD_DIR, "{sample}.40000bp.aggregated-boundaries.extended-{{dist}}bp.bedGraph"), sample=SAMPLES)
     output:
         path.join(COMPARISON_DIR, "intersection.extended-{dist}bp.bedGraph")
     shell:
@@ -120,7 +76,8 @@ rule inter_extended:
 
 rule multi_jaccard:
     input:
-        expand(path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph"), sample=SAMPLES)
+        expand(path.join(
+            TAD_DIR, "{sample}.40000bp.aggregated-boundaries.bedGraph"), sample=SAMPLES)
     output:
         path.join(PLOT_DIR, "jaccard.png")
     shell:
@@ -129,8 +86,10 @@ rule multi_jaccard:
 rule nearby_ctcf_motifs:
     input:
         boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
-        sites = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed"),
-        genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
+        sites = path.join("..", "..", "Data", "External",
+                          "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed"),
+        genome = path.join("..", "..", "Data", "Processed",
+                           "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
         path.join("Proximal", "nearest-motif.bed")
     params:
@@ -142,8 +101,10 @@ rule nearby_ctcf_motifs:
 rule nearby_ctcf_peaks:
     input:
         boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
-        sites = path.join("..", "..", "Data", "External", "ENCODE_ChIP", "22Rv1_CTCF_Optimal.canonical.sorted.bed"),
-        genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
+        sites = path.join("..", "..", "Data", "External",
+                          "ENCODE_ChIP", "22Rv1_CTCF_Optimal.canonical.sorted.bed"),
+        genome = path.join("..", "..", "Data", "Processed",
+                           "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
         path.join("Proximal", "nearest-peak.bed")
     params:
@@ -164,3 +125,53 @@ rule plot_distances:
         path.join("Plots", "boundary-peak-distance.stratified.png"),
     shell:
         "Rscript {input.script}"
+
+rule pairwise_overlap:
+    input:
+        script = 'calc-tad-overlap.sh',
+        tads = expand(
+            path.join(
+                TAD_DIR, '{sample}.{res}bp.aggregated-domains.sorted.bedGraph'),
+            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
+        )
+    output:
+        expand(
+            path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
+            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        )
+    shell:
+        'sh {input.script}'
+
+rule compare_tads:
+    input:
+        script = 'calc-tad-overlap-stats.R',
+        tads = expand(
+            path.join(
+                TAD_DIR, '{sample}.{res}bp.aggregated-domains.sorted.bedGraph'),
+            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
+        ),
+        ints = expand(
+            path.join(TAD_DIR, 'Comparisons', 'w_{w}.{s1}.{s2}.intersected.bed'),
+            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        )
+    output:
+        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+        path.join(PLOT_DIR, 'tad-similarity-counts.png')
+    shell:
+        'Rscript {input.script} -o {output}'
+
+rule tad_similarity:
+    input:
+        script = 'differential-tad-calls.py',
+        data = expand(
+            path.join(TAD_DIR, '{sample}.{{res}}bp.aggregated-domains.sorted.bedGraph'),
+            sample=SAMPLES
+        )
+    output:
+        path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
+    params:
+        prefix = lambda wildcards: path.join(
+            COMPARISON_DIR,
+            'w_{}.{}bp.similarity'.format(wildcards.w, wildcards.res))
+    shell:
+        'python {input.script} -o {params.prefix} {input.data}'
