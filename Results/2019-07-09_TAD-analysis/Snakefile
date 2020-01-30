@@ -124,10 +124,12 @@ rule multi_jaccard:
 rule nearby_ctcf_motifs:
     input:
         boundaries = path.join(COMPARISON_DIR, "intersection.bedGraph"),
-        motifs = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed")
+        motifs = path.join("..", "..", "Data", "External", "Aiden_CTCF_Motifs", "ctcf_motifs.hg38.merged.canonical.bed"),
+        genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
         path.join("Proximal", "nearest-motif.bed")
     params:
         "-d"
     shell:
-        "bedtools closest {params} -a {input.boundaries} -b {input.motifs} > {output}"
+        # sort the genome to make sure chromosomes chr[MXY] are in the same order
+        "bedtools closest {params} -a {input.boundaries} -b {input.motifs} -g <(sort -k1,1 -V -k2,2n {input.genome}) > {output}"

@@ -25,8 +25,13 @@ To account for minor differences in distance, we find that extending each bounda
 We hypothesize that these boundaries are biologically meaningful boundaries, and, as TADs are hypothesized to form via loop extrusion \Cref{Belghan2020}, will be located proximal to CTCF binding sites.
 We first test whether the majority of these boundaries are near CTCF motifs.
 
+The majority of TAD boundaries are within a few kbp of CTCF motifs.
 
+![TAD boundary distance to CTCF motifs](Plots/boundary-motif-distance.png)
 
+This appears to be independent of whether the boundary is shared across patients or not.
+
+![TAD boundary distance to CTCF motifs stratified by uniqueness across patients](Plots/boundary-motif-distance.stratified.png)
 
 ### TAD similarity
 
