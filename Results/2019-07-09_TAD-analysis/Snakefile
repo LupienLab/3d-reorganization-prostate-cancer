@@ -42,12 +42,9 @@ rule all:
         path.join(PLOT_DIR, "boundary-motif-distance.stratified.png"),
         path.join(PLOT_DIR, "boundary-peak-distance.png"),
         path.join(PLOT_DIR, "boundary-peak-distance.stratified.png"),
-        # expand(
-        #     path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
-        #     w=WINDOWS, res=RESOLUTIONS
-        # ),
         path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
         path.join(PLOT_DIR, 'tad-similarity-counts.png'),
+        path.join(PLOT_DIR, 'tad-similarity-track.png'),
 
 
 # ==============================================================================
@@ -167,14 +164,26 @@ rule tad_similarity:
     input:
         script = 'differential-tad-calls.py',
         data = expand(
-            path.join(TAD_DIR, '{sample}.{{res}}bp.aggregated-domains.sorted.bedGraph'),
+            path.join(TAD_DIR, "separated-TADs", "{sample}.{{res}}bp.w_{{w}}.domains.bed"),
             sample=SAMPLES
         )
     output:
-        path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
+        path.join(COMPARISON_DIR, "similarity", "w_{w}.{res}bp.similarity.tsv"),
     params:
         prefix = lambda wildcards: path.join(
             COMPARISON_DIR,
             'w_{}.{}bp.similarity'.format(wildcards.w, wildcards.res))
     shell:
         'python {input.script} -o {params.prefix} {input.data}'
+
+rule plot_similarity:
+    input:
+        script = "plot-tad-similarity.R",
+        data = expand(
+            path.join(COMPARISON_DIR, "similarity", "w_{w}.{res}bp.similarity.tsv"),
+            w=WINDOWS, res=RESOLUTIONS
+        )
+    output:
+        path.join(PLOT_DIR, "tad-similarity-track.png")
+    shell:
+        "Rscript {input.script}"

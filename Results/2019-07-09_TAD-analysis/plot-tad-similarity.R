@@ -12,7 +12,14 @@ CHRS = factor(CHRS, levels = CHRS, ordered = TRUE)
 # Data
 # ==============================================================================
 # read minimum pairwise symmetric similarity
-mpss = fread("TAD-comparisons/w_30.40000bp.similarity.tsv")
+mpss = rbindlist(lapply(
+    3:30,
+    function(w) {
+        dt = fread(paste0("TAD-comparisons/similarity/w_", w, ".40000bp.similarity.tsv"))
+        dt[, Window := w]
+        return(dt)
+    }
+))
 mpss[, chr_nat := factor(chr, levels = CHRS)]
 
 # ==============================================================================
@@ -23,7 +30,11 @@ gg = (
     # 0.5 minimum since that's the minimum cutoff for similarity
     + geom_rect(aes(xmin = start, ymin = 0.5, xmax = end, ymax = similarity))
     + labs(x = "Position", y = "Min. Sym. Pairwise Similarity")
-    + facet_grid(. ~ chr_nat, switch = "x", scales = "free_x", space = "free")
+    + scale_y_continuous(
+        limits = c(0.5, 1),
+        breaks = c(0.75, 1)
+    )
+    + facet_grid(Window ~ chr_nat, switch = "x", scales = "free_x", space = "free")
     + theme_minimal()
     + theme(
         panel.spacing = unit(0, "lines"),
@@ -37,7 +48,7 @@ gg = (
 
 ggsave(
     "Plots/tad-similarity-track.png",
-    height = 12,
-    width = 20,
+    height = 40,
+    width = 40,
     units = "cm"
 )

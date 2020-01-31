@@ -5,6 +5,7 @@ import pandas as pd
 from natsort import natsorted
 import os.path as path
 import argparse
+from tqdm import tqdm
 
 # =============================================================================================================================
 # Classes
@@ -104,6 +105,8 @@ def similarity(a, b):
     """
     if a.chr == b.chr:
         intersection = a.interval & b.interval
+        if intersection == interval():
+            return 0
         a_int_b = GenomicInterval(a.chr, intersection[0].inf, intersection[0].sup)
         if len(a_int_b) == 0:
             return 0
@@ -151,7 +154,9 @@ def gis(bedfiles, names=None, prefix="similarity", sim_thresh=0.5):
     # records to keep for printing
     records = []
     # iterate over intervals from the sorted BED files
+    pbar = tqdm()
     while True:
+        pbar.update()
         minsim_set = min([ms["s"] for ms in minsim])
         chrom = intvls[0].chr
         # skip if not all intervals are on the same chromosome
