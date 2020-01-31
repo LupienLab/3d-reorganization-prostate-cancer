@@ -1,5 +1,6 @@
 import pandas as pd
 import os.path as path
+import itertools
 
 # ==============================================================================
 # Configuration
@@ -11,6 +12,9 @@ CONFIG = pd.read_csv(
 )
 
 SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
+SAMPLE_COMBOS = itertools.combinations(SAMPLES, 2)
+SAMPLE_COMBOS_1 = [i for (i, j) in SAMPLE_COMBOS]
+SAMPLE_COMBOS_2 = [j for (i, j) in SAMPLE_COMBOS]
 
 TAD_DIR = path.join('..', '2020-01-15_TAD-aggregation', 'resolved-TADs')
 COMPARISON_DIR = 'TAD-comparisons'
@@ -37,19 +41,15 @@ rule all:
         path.join(COMPARISON_DIR, "intersection.extended-20000bp.bedGraph"),
         path.join("Proximal", "nearest-motif.bed"),
         path.join("Proximal", "nearest-peak.bed"),
-        path.join("Plots", "boundary-motif-distance.png"),
-        path.join("Plots", "boundary-motif-distance.stratified.png"),
-        path.join("Plots", "boundary-peak-distance.png"),
-        path.join("Plots", "boundary-peak-distance.stratified.png"),
+        path.join(PLOT_DIR, "boundary-motif-distance.png"),
+        path.join(PLOT_DIR, "boundary-motif-distance.stratified.png"),
+        path.join(PLOT_DIR, "boundary-peak-distance.png"),
+        path.join(PLOT_DIR, "boundary-peak-distance.stratified.png"),
         # expand(
-        #     path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
-        #     w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+        #     path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
+        #     w=WINDOWS, res=RESOLUTIONS
         # ),
-        expand(
-            path.join(COMPARISON_DIR, 'w_{w}.{res}bp.similarity.tsv'),
-            w=WINDOWS, res=RESOLUTIONS
-        ),
-        # path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
         # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
 
 
@@ -119,10 +119,10 @@ rule plot_distances:
         motifs = path.join("Proximal", "nearest-motif.bed"),
         peaks = path.join("Proximal", "nearest-peak.bed")
     output:
-        path.join("Plots", "boundary-motif-distance.png"),
-        path.join("Plots", "boundary-motif-distance.stratified.png"),
-        path.join("Plots", "boundary-peak-distance.png"),
-        path.join("Plots", "boundary-peak-distance.stratified.png"),
+        path.join(PLOT_DIR, "boundary-motif-distance.png"),
+        path.join(PLOT_DIR, "boundary-motif-distance.stratified.png"),
+        path.join(PLOT_DIR, "boundary-peak-distance.png"),
+        path.join(PLOT_DIR, "boundary-peak-distance.stratified.png"),
     shell:
         "Rscript {input.script}"
 
@@ -130,14 +130,13 @@ rule pairwise_overlap:
     input:
         script = 'calc-tad-overlap.sh',
         tads = expand(
-            path.join(
-                TAD_DIR, '{sample}.{res}bp.aggregated-domains.sorted.bedGraph'),
+            path.join(TAD_DIR, "separated-TADs", '{sample}.{res}bp.w_{w}.domains.bed'),
             w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
         )
     output:
         expand(
-            path.join(COMPARISON_DIR, 'w_{w}.{s1}.{s2}.intersected.bed'),
-            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+            path.join(COMPARISON_DIR, "intersected", 'w_{w}.{s1}.{s2}.intersected.bed'),
+            w=WINDOWS, s1=SAMPLE_COMBOS_1, s2=SAMPLE_COMBOS_2
         )
     shell:
         'sh {input.script}'
@@ -151,14 +150,22 @@ rule compare_tads:
             w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
         ),
         ints = expand(
-            path.join(TAD_DIR, 'Comparisons', 'w_{w}.{s1}.{s2}.intersected.bed'),
-            w=WINDOWS, s1=SAMPLES, s2=SAMPLES
+            path.join(COMPARISON_DIR, "intersected", "w_{w}.{s1}.{s2}.intersected.bed"),
+            w=WINDOWS, s1=SAMPLE_COMBOS_1, s2=SAMPLE_COMBOS_2
         )
     output:
         path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
-        path.join(PLOT_DIR, 'tad-similarity-counts.png')
     shell:
         'Rscript {input.script} -o {output}'
+
+rule plot_comparison:
+    input:
+        script = "plot-tad-overlap-stats.R",
+        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+    output:
+        path.join(PLOT_DIR, 'tad-similarity-counts.png'),
+    shell:
+        "Rscript {input.script}"
 
 rule tad_similarity:
     input:

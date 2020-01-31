@@ -17,10 +17,9 @@ do
             bedtools intersect \
                 -f 0.6 \
                 -r \
-                -a <(awk -v w=${w} '{if ($6 == w) print}' ../2020-01-15_TAD-aggregation/resolved-TADs/${s1}.40000bp.aggregated-domains.sorted.bedGraph) \
-                -b <(awk -v w=${w} '{if ($6 == w) print}' ../2020-01-15_TAD-aggregation/resolved-TADs/${s2}.40000bp.aggregated-domains.sorted.bedGraph) \
-                > TAD-comparisons/w_${w}.${s1}.${s2}.intersected.bed
-            cp TAD-comparisons/w_${w}.${s1}.${s2}.intersected.bed TAD-comparisons/w_${w}.${s2}.${s1}.intersected.bed
+                -a ../2020-01-15_TAD-aggregation/resolved-TADs/separated-TADs/${s1}.40000bp.w_${w}.domains.bed \
+                -b ../2020-01-15_TAD-aggregation/resolved-TADs/separated-TADs/${s2}.40000bp.w_${w}.domains.bed \
+                > TAD-comparisons/intersected/w_${w}.${s1}.${s2}.intersected.bed
         done
     done
 done
