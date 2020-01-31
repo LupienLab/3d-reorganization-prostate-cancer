@@ -97,4 +97,4 @@ rule separate_by_window_size:
             w=WINDOWS
         )
     shell:
-        "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $3, $5 > \"resolved-TADs/separated-TADs/{wildcards.sample}.40000bp.w_\"w\".domains.bed}} {input}"
+        "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $4, $5 > \"resolved-TADs/separated-TADs/{wildcards.sample}.40000bp.w_\"$6\".domains.bed\"}}' {input}"
