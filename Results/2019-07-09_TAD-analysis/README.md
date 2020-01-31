@@ -41,7 +41,7 @@ Thus, we observe TAD boundaries in close proximity to CTCF binding site peaks, a
 ### TAD similarity
 
 To see whether TADs are called similarly in different samples, we calculate which TADs are consistent in pairwise comparisons.
-We do this by considering TADs called in a given sample and counting whether that region is called as a TAD in at least one other sample with at least 60% bi-directional overlap (i.e. ${(a, b) : a,b \in A \cap B, \frac{|a \cap b|}{|b|} \ge 0.6, \frac{|a \cap b|}{|a|} \ge 0.6}$, where $A$ and $B$ are the regions in both samples).
+We do this by considering TADs called in a given sample and counting whether that region is called as a TAD in at least one other sample with at least 60% symmetric overlap (i.e. ${(a, b) : a,b \in A \cap B, \frac{|a \cap b|}{|b|} \ge 0.6, \frac{|a \cap b|}{|a|} \ge 0.6}$, where $A$ and $B$ are the regions in both samples).
 
 We find that on average, ~68% of TADs are consistently called in other samples for small TADs ($w = 3$), whereas ~ 77% of TADs are consistently called for larger TADs ($w = 30$), with a maximal consistency of 80.66% for $w = 9$.
 The general trend can be seen below.
@@ -55,7 +55,17 @@ These results suggest that large scale organization (on lengths scales of 400 kb
 
 ### Finding patient subsets with differential TADs
 
+Using the symmetric overlap from earlier, we take the minimum symmetric overlap at all regions of the genome.
+This is encoded efficiently ($O(nm)$ where $n$ is the number of samples and $m$ is the max number of TADs in a sample) in `differential-tad-calls.py`.
+We can plot the degree of similarity across all length scales in the entire genome so see where TADs are the most dissimilar.
+
+![TAD similarity across length scales](Plots/tad-similarity-track.png)
+
+It's clear that the smaller window sizes (top rows) are largely less similar than the larger window sizes (bottom rows), as shown by the previous analyses.
+
 ## Conclusions
+
+TADs are more variable across patients at smaller length scales, and more consistent at larger length scales.
 
 ## References
 
