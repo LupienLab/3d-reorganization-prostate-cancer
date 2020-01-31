@@ -5,7 +5,8 @@ import os.path as path
 # Configuration
 # ==============================================================================
 CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    path.join("..", "..", "Data", "External",
+              "LowC_Samples_Data_Available.tsv"),
     sep="\t"
 )
 
@@ -27,7 +28,13 @@ rule all:
                 "aggregated-boundaries.bedGraph",
                 "aggregated-boundaries.extended-20000bp.bedGraph",
             ]
-        )
+        ),
+        expand(
+            path.join("resolved-TADs", "separated-TADs",
+                      "{sample}.40000bp.w_{w}.domains.bed"),
+            sample=SAMPLES,
+            w=WINDOWS
+        ),
 
 # ==============================================================================
 # Rules
@@ -40,33 +47,54 @@ rule agg_tads:
             w=WINDOWS
         )
     output:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-domains.bedGraph"),
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-boundaries.tsv"),
     shell:
         "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp"
 
 rule sort_tads:
     input:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph")
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-domains.bedGraph")
     output:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
     shell:
         "sort -k1,1 -V -k2,2n -k3,3n -k6,6n {input} > {output}"
 
 rule sort_boundaries:
     input:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv")
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-boundaries.tsv")
     output:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph")
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-boundaries.bedGraph")
     shell:
         "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $1, $2, $2 + 1, $4, $3}}' {input} | sort -k1,1 -V -k2,2n > {output}"
 
 rule extend_boundaries:
     input:
-        bed = path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph"),
+        bed = path.join("resolved-TADs",
+                        "{sample}.40000bp.aggregated-boundaries.bedGraph"),
     output:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.extended-{dist}bp.bedGraph")
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-boundaries.extended-{dist}bp.bedGraph")
     wildcard_constraints:
-        dist="\d+"
+        dist = "\d+"
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{ if ($2-{wildcards.dist} < 0) {{print $1, 0, $3+{wildcards.dist}, $4, $5}} else {{print $1, $2-{wildcards.dist}, $3+{wildcards.dist}, $4, $5}} }}' {input} > {output}"
+
+rule separate_by_window_size:
+    input:
+        path.join("resolved-TADs",
+                  "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
+    output:
+        expand(
+            path.join("resolved-TADs", "separated-TADs",
+                      "{{sample}}.40000bp.w_{w}.domains.bed"),
+            w=WINDOWS
+        )
+    shell:
+        "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $3, $5 > \"resolved-TADs/separated-TADs/{wildcards.sample}.40000bp.w_\"w\".domains.bed}} {input}"
