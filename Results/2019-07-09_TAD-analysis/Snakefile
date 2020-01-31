@@ -25,9 +25,6 @@ RESOLUTIONS = [40000]
 WINDOWS = range(3, 31)
 
 wildcard_constraints:
-    sample = 'PCa[0-9]+',
-    lane = '[1-4]',
-    read = '[1-2]',
     res = '[0-9]+',
     dist = "\d+"
 
@@ -50,7 +47,7 @@ rule all:
         #     w=WINDOWS, res=RESOLUTIONS
         # ),
         path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
-        # path.join(PLOT_DIR, 'tad-similarity-counts.png'),
+        path.join(PLOT_DIR, 'tad-similarity-counts.png'),
 
 
 # ==============================================================================
@@ -145,8 +142,7 @@ rule compare_tads:
     input:
         script = 'calc-tad-overlap-stats.R',
         tads = expand(
-            path.join(
-                TAD_DIR, '{sample}.{res}bp.aggregated-domains.sorted.bedGraph'),
+            path.join(TAD_DIR, "separated-TADs", "{sample}.{res}bp.w_{w}.domains.bed"),
             w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
         ),
         ints = expand(
@@ -161,7 +157,7 @@ rule compare_tads:
 rule plot_comparison:
     input:
         script = "plot-tad-overlap-stats.R",
-        path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
+        data = path.join(COMPARISON_DIR, 'comparison-total-counts.tsv'),
     output:
         path.join(PLOT_DIR, 'tad-similarity-counts.png'),
     shell:

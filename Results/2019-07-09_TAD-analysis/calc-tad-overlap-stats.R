@@ -3,15 +3,8 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
-suppressMessages(library("argparse"))
 suppressMessages(library("gtools"))
 
-if (!interactive()) {
-    PARSER <- argparse::ArgumentParser(
-        description = "Calculate TAD overlap similarities between PCa samples"
-    )
-    ARGS <- PARSER$parse_args()
-}
 
 # ==============================================================================
 # Data
@@ -35,14 +28,14 @@ domains = rbindlist(lapply(
             function(w) {
                 ## apply over chromosomes
                 dt2 = fread(
-                    paste0("../2019-07-08_TADs/TADs/w_", w, "/", s, ".40000bp.domains.bed"),
+                    paste0("../2020-01-15_TAD-aggregation/resolved-TADs/separated-TADs/", s, ".40000bp.w_", w, ".domains.bed"),
                         header = FALSE,
-                        col.names = c("chr", "start", "end", "tag")
+                        col.names = c("chr", "start", "end", "lower_persistence", "upper_persistence")
                     )
-                return(dt2[tag == "domain", .(w, 40000, .N), by = "chr"])
+                return(dt2[, .(w, .N), by = "chr"])
             }
         ))
-        colnames(dt1) = c("chr", "w", "res", "N")
+        colnames(dt1) = c("chr", "w", "N")
         dt1[, Sample := s]
         return(dt1)
     }
@@ -61,14 +54,14 @@ intersections = rbindlist(apply(
             WINDOWS,
             function(w) {
                 ## apply over chromosomes
-                fname = paste0("TAD-comparisons/intersections/w_", w, ".", combo[1], ".", combo[2], ".intersected.bed")
+                fname = paste0("TAD-comparisons/intersected/w_", w, ".", combo[1], ".", combo[2], ".intersected.bed")
                 dt2 = fread(
                         fname,
                         header = FALSE,
-                        col.names = c("chr", "start", "end", "tag")
+                        col.names = c("chr", "start", "end", "lower_persistence", "upper_persistence")
                     )
                 dt2[, Window := w]
-                return(dt2[tag == "domain", .N, by = c("chr", "Window")])
+                return(dt2[, .N, by = c("chr", "Window")])
             }
         ))
         dt1[, Sample1 := combo[1]]
@@ -86,59 +79,32 @@ samplewise_intersections = rbindlist(lapply(
     function(s) {
         s_ints = rbindlist(
             list(
+                # all combos where its sample 1
                 intersections[Sample1 == s, sum(N), by = c("Window", "Sample2")],
+                # all combos where its sample 2
                 intersections[Sample2 == s, sum(N), by = c("Window", "Sample1")]
             ),
             use.names = FALSE
         )
+        # calculate the number of domains for that sample
         for (w_size in WINDOWS) {
             sample_total = domains[w == w_size & Sample == s, sum(N)]
-            s_ints[Window == w_size, Total := sample_total]
+            s_ints[Window == w_size, Total1 := sample_total]
         }
+        # add sample name as a column
         s_ints[, Sample1 := s]
-        return(s_ints)
+        return(s_ints[, .SD, .SDcols = c("Sample1", "Sample2", "Window", "V1", "Total1")])
     }
 ))
-samplewise_intersections[, Frac := V1 / Total]
-colnames(samplewise_intersections)[3] = "N_Int"
-samplewise_intersections[, Window := factor(Window, levels = WINDOWS, ordered = TRUE)]
+colnames(samplewise_intersections)[4] = "N_Int"
+samplewise_intersections[, Frac := N_Int / Total1]
 
-# save results
+# ==============================================================================
+# Save data
+# ==============================================================================
 fwrite(
-    samplewise_intersections[, .(Sample1, Sample2, Window, N_Int, Total, Frac)],
-    "TADs-comparisons/comparison-total-counts.tsv",
+    samplewise_intersections,
+    "TAD-comparisons/comparison-total-counts.tsv",
     col.names = TRUE,
     sep = "\t"
-)
-
-# ==============================================================================
-# Plots
-# ==============================================================================
-
-gg = (
-    ggplot(data = samplewise_intersections)
-    + geom_boxplot(aes(x = Window, y = 100 * Frac, fill = Window, group = Window), outlier.shape = NA)
-    + labs(x = "Window Size (x 40 kbp)", y = "Similar TADs (%)")
-    + guides(colour = FALSE, fill = FALSE)
-    + scale_x_discrete(
-        breaks = c(3, 10, 20, 30),
-        labels = c(3, 10, 20, 30),
-        limits = c(3, 10, 20, 30)
-    )
-    + scale_fill_viridis_c()
-    + facet_wrap(~ Sample1, ncol = 7)
-    + theme_minimal()
-    + theme(
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-        # panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        # panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank()
-    )
-)
-ggsave(
-    "Plots/tad-similarity-counts.png",
-    height = 12,
-    width = 30,
-    units = "cm"
 )
