@@ -28,15 +28,11 @@ if (!interactive()) {
     ARGS <- PARSER$parse_args()
 } else {
     ARGS = list(
-        loops = file.path("cLoops_DefaultParameters", "PCa13266", "hic_loops_juicebox.txt"),
+        loops = file.path("Loops", "PCa13266", "hic_loops_juicebox.txt"),
         cres = file.path("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "Pca13266_peaks.filtered.bedGraph"),
-        prefix = "output"
+        prefix = file.path("Classification", "PCa13266")
     )
 }
-
-# ==============================================================================
-# Functions
-# ==============================================================================
 
 # ==============================================================================
 # Data
@@ -96,48 +92,22 @@ hits_x = as.data.table(findOverlaps(loops_x, peaks))
 hits_y = as.data.table(findOverlaps(loops_y, peaks))
 
 # calculate the number of loops where 0, 1, or 2 of its anchors overlap a CRE
-intersecting_loop_hits = list(
-    x_and_y = intersect(hits_x[, queryHits], hits_y[, queryHits])
-)
-intersecting_loop_hits[["x_and_noty"]] = setdiff(hits_x[, queryHits], intersecting_loop_hits[["x_and_y"]])
-intersecting_loop_hits[["notx_and_y"]] = setdiff(hits_y[, queryHits], intersecting_loop_hits[["x_and_y"]])
-intersecting_loop_hits[["notx_and_noty"]] = setdiff(
-    1:loops_dt[, .N],
-    unlist(intersecting_loop_hits)
-)
-# map list elements back to the loop IDs and store results in `loops_dt`
-intersecting_loop_IDs = lapply(
-    names(intersecting_loop_hits),
-    function(intersecting_class) {
-        loops_dt[intersecting_loop_hits[[intersecting_class]], V1 := intersecting_class]
-        return(loops_x[intersecting_loop_hits[[intersecting_class]]]$LoopID)
-    }
-)
-names(intersecting_loop_IDs) = names(intersecting_loop_hits)
-colnames(loops_dt)[16] = "CRE_Overlap"
+loops_dt[, Overlapping_Loop_x := 0]
+loops_dt[, Overlapping_Loop_y := 0]
+loops_dt[hits_x[, queryHits], Overlapping_Loop_x := 1]
+loops_dt[hits_y[, queryHits], Overlapping_Loop_y := 1]
+loops_dt[, CRE_Overlap := Overlapping_Loop_x + Overlapping_Loop_y]
+
+# add Peak IDs for loops where there are overlapping peaks
+x_loop_peakIDs = peaks_dt[hits_x[, subjectHits], PeakID]
+loops_dt[hits_x[, queryHits], Overlapping_Loop_x_ID:= x_loop_peakIDs]
+y_loop_peakIDs = peaks_dt[hits_y[, subjectHits], PeakID]
+loops_dt[hits_y[, queryHits], Overlapping_Loop_y_ID:= y_loop_peakIDs]
 
 # calculate the number of CREs overlapping at least 1 anchor in a loop pair
-intersecting_CRE_hits = list(
-    in_loop = union(hits_x[, subjectHits], hits_y[, subjectHits])
-)
-intersecting_CRE_hits$no_loop = setdiff(1:peaks_dt[, .N], intersecting_CRE_hits$in_loop)
-# sanity check: ensure that a loop isn't called on a single element
-if (length(unique(intersecting_CRE_hits$in_loop)) != length(intersecting_CRE_hits$in_loop)) {
-    print("Loops called on a single element in this sample")
-}
-
-# map list elements back to the CRE IDs and store results in `peaks_dt`
-intersecting_CRE_IDs = lapply(
-    names(intersecting_CRE_hits),
-    function(intersecting_class) {
-        peaks_dt[intersecting_CRE_hits[[intersecting_class]], V1 := intersecting_class]
-        return(peaks[intersecting_CRE_hits[[intersecting_class]]]$PeakID)
-    }
-)
-names(intersecting_CRE_IDs) = names(intersecting_CRE_hits)
-colnames(peaks_dt)[6] = "Loop_Overlap"
-peaks_dt[Loop_Overlap == "in_loop", Loop_Overlap := TRUE]
-peaks_dt[Loop_Overlap == "no_loop", Loop_Overlap := FALSE]
+idx_in_loop = unique(union(hits_x[, subjectHits], hits_y[, subjectHits]))
+peaks_dt[, Loop_Overlap := FALSE]
+peaks_dt[idx_in_loop, Loop_Overlap := TRUE]
 
 # ==============================================================================
 # Save data
