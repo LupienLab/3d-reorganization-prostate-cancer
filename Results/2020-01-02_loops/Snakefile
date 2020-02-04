@@ -37,14 +37,11 @@ rule all:
             data=["loops", "peaks"]
         ),
         expand(
-            path.join(PLOT_DIR, "loop-CRE-overlap.{sep}.{stat}.png"),
-            sep=["all", "sum"],
+            path.join(PLOT_DIR, "loop-{end}-overlap.{stat}.png"),
+            end=["CRE", "TAD"],
             stat=["count", "proportion"]
         ),
-        expand(
-            path.join(CLASS_DIR, "all.loops.{sep}.tsv"),
-            sep=["all", "sum"]
-        )
+
 
 # ==============================================================================
 # Rules

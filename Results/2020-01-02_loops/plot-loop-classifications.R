@@ -75,7 +75,8 @@ gg = (
             "#ece7f2",
             "#a6bddb",
             "#2b8cbe"
-        )
+        ),
+        name = "Anchors overlapping CREs"
     )
     + theme_minimal()
     + theme(
@@ -103,7 +104,8 @@ gg = (
             "#ece7f2",
             "#a6bddb",
             "#2b8cbe"
-        )
+        ),
+        name = "Anchors overlapping boundaries"
     )
     + theme_minimal()
     + theme(
