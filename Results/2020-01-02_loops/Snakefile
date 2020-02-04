@@ -12,7 +12,10 @@ BAM_DIR = path.join("..", "..", "Data", "Processed",
                     "2019-06-18_PCa-LowC-sequencing", "Aligned")
 PEAK_DIR = path.join("..", "..", "Data", "Processed",
                      "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
+TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
 LOOP_DIR = "Loops"
+PLOT_DIR = "Plots"
+CLASS_DIR = "Classification"
 
 # ==============================================================================
 # Meta Rules
@@ -27,19 +30,19 @@ rule all:
             path.join("Loops", "PCa{sampleid}", "hic_loops_juicebox.txt"),
             sampleid=SAMPLE_IDS
         ),
-        path.join("Plots", "loop-stats.png"),
+        path.join(PLOT_DIR, "loop-stats.png"),
         expand(
-            path.join("Classification", "PCa{sampleid}.{data}.tsv"),
+            path.join(CLASS_DIR, "PCa{sampleid}.{data}.tsv"),
             sampleid=SAMPLE_IDS,
             data=["loops", "peaks"]
         ),
         expand(
-            path.join("Plots", "loop-CRE-overlap.{sep}.{stat}.png"),
+            path.join(PLOT_DIR, "loop-CRE-overlap.{sep}.{stat}.png"),
             sep=["all", "sum"],
             stat=["count", "proportion"]
         ),
         expand(
-            path.join("Classification", "all.loops.{sep}.tsv"),
+            path.join(CLASS_DIR, "all.loops.{sep}.tsv"),
             sep=["all", "sum"]
         )
 
@@ -73,7 +76,7 @@ rule plot_loop_stats:
         script = "plot-loop-stats.R",
         data = path.join(LOOP_DIR, "loop-stats.tsv")
     output:
-        path.join("Plots", "loop-stats.png")
+        path.join(PLOT_DIR, "loop-stats.png")
     shell:
         "Rscript {input.script}"
 
@@ -81,21 +84,27 @@ rule classify:
     input:
         script = "classify-loops.R",
         loops = path.join(LOOP_DIR, "PCa{sampleid}", "hic_loops_juicebox.txt"),
-        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.bedGraph")
+        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.bedGraph"),
+        bounds = path.join(
+            TAD_DIR, "PCa{sampleid}.40000bp.aggregated-boundaries.tsv"),
     output:
-        path.join("Classification", "PCa{sampleid}.loops.tsv"),
-        path.join("Classification", "PCa{sampleid}.peaks.tsv")
+        path.join(CLASS_DIR, "PCa{sampleid}.loops.tsv"),
+        path.join(CLASS_DIR, "PCa{sampleid}.peaks.tsv"),
+        path.join(CLASS_DIR, "PCa{sampleid}.bounds.tsv"),
     shell:
-        "Rscript {input.script} {input.loops} {input.peaks} -p Classification/PCa{wildcards.sampleid}"
+        "Rscript {input.script} {input.loops} {input.peaks} {input.bounds} -p Classification/PCa{wildcards.sampleid}"
 
 rule plot_classifications:
     input:
         script = "plot-loop-classifications.R",
-        data = expand(path.join(
-            "Classification", "PCa{sampleid}.{data}.tsv"), sampleid=SAMPLE_IDS, data=["loops", "peaks"])
+        data = expand(
+            path.join(CLASS_DIR, "PCa{sampleid}.loops.tsv"), sampleid=SAMPLE_IDS)
     output:
-        path.join("Plots", "loop-CRE-overlap.count.png"),
-        path.join("Plots", "loop-CRE-overlap.proportion.png"),
-        path.join("Classification", "all.loops.tsv"),
+        path.join(PLOT_DIR, "loop-CRE-overlap.count.png"),
+        path.join(PLOT_DIR, "loop-CRE-overlap.proportion.png"),
+        path.join(PLOT_DIR, "loop-TAD-overlap.count.png"),
+        path.join(PLOT_DIR, "loop-TAD-overlap.proportion.png"),
+        path.join(CLASS_DIR, "loops.CREs.tsv"),
+        path.join(CLASS_DIR, "loops.TADs.tsv"),
     shell:
         "Rscript {input.script}"

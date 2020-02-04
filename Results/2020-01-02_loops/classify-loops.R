@@ -20,6 +20,11 @@ if (!interactive()) {
         help = "BED file containing cis-regulatory element loci"
     )
     PARSER$add_argument(
+        "boundaries",
+        type = "character",
+        help = "BED file containing TAD boundaries across window sizes"
+    )
+    PARSER$add_argument(
         "-p", "--prefix",
         type = "character",
         help = "Prefix for output files",
@@ -30,6 +35,7 @@ if (!interactive()) {
     ARGS = list(
         loops = file.path("Loops", "PCa13266", "hic_loops_juicebox.txt"),
         cres = file.path("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "Pca13266_peaks.filtered.bedGraph"),
+        boundaries = file.path("..", "2020-01-15_TAD-aggregation", "resolved-TADs", "PCa13266.40000bp.aggregated-boundaries.tsv"),
         prefix = file.path("Classification", "PCa13266")
     )
 }
@@ -84,30 +90,63 @@ peaks = GRanges(
     PeakID = peaks_dt$PeakID
 )
 
+# load TAD boudnaries
+boundaries_dt = fread(ARGS$boundaries, sep = "\t", header = TRUE)
+boundaries_dt[, BoundID := paste0(chr, ":", pos)]
+boundaries = GRanges(
+    seqnames = boundaries_dt$chr,
+    ranges = IRanges(start = boundaries_dt$pos + 1 - 20000, width = 40000),
+    BoundID = boundaries_dt$BoundID
+)
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# calculate intersection of loops and CREs
-hits_x = as.data.table(findOverlaps(loops_x, peaks))
-hits_y = as.data.table(findOverlaps(loops_y, peaks))
+# Calculate intersection of loops and CREs
+# --------------------------------------
+peak_hits_x = as.data.table(findOverlaps(loops_x, peaks))
+peak_hits_y = as.data.table(findOverlaps(loops_y, peaks))
 
 # calculate the number of loops where 0, 1, or 2 of its anchors overlap a CRE
-loops_dt[, Overlapping_Loop_x := 0]
-loops_dt[, Overlapping_Loop_y := 0]
-loops_dt[hits_x[, queryHits], Overlapping_Loop_x := 1]
-loops_dt[hits_y[, queryHits], Overlapping_Loop_y := 1]
+loops_dt[, Overlapping_Loop_x := FALSE]
+loops_dt[, Overlapping_Loop_y := FALSE]
+loops_dt[peak_hits_x[, queryHits], Overlapping_Loop_x := TRUE]
+loops_dt[peak_hits_y[, queryHits], Overlapping_Loop_y := TRUE]
 loops_dt[, CRE_Overlap := Overlapping_Loop_x + Overlapping_Loop_y]
 
 # add Peak IDs for loops where there are overlapping peaks
-x_loop_peakIDs = peaks_dt[hits_x[, subjectHits], PeakID]
-loops_dt[hits_x[, queryHits], Overlapping_Loop_x_ID:= x_loop_peakIDs]
-y_loop_peakIDs = peaks_dt[hits_y[, subjectHits], PeakID]
-loops_dt[hits_y[, queryHits], Overlapping_Loop_y_ID:= y_loop_peakIDs]
+x_loop_peakIDs = peaks_dt[peak_hits_x[, subjectHits], PeakID]
+y_loop_peakIDs = peaks_dt[peak_hits_y[, subjectHits], PeakID]
+loops_dt[peak_hits_x[, queryHits], Overlapping_Loop_x_ID:= x_loop_peakIDs]
+loops_dt[peak_hits_y[, queryHits], Overlapping_Loop_y_ID:= y_loop_peakIDs]
 
 # calculate the number of CREs overlapping at least 1 anchor in a loop pair
-idx_in_loop = unique(union(hits_x[, subjectHits], hits_y[, subjectHits]))
+idx_in_loop = unique(union(peak_hits_x[, subjectHits], peak_hits_y[, subjectHits]))
 peaks_dt[, Loop_Overlap := FALSE]
 peaks_dt[idx_in_loop, Loop_Overlap := TRUE]
+
+# Calculate intersection of loops and TAD boundaries
+# --------------------------------------
+bound_hits_x = as.data.table(findOverlaps(loops_x, boundaries))
+bound_hits_y = as.data.table(findOverlaps(loops_y, boundaries))
+
+# calculate the number of loops where 0, 1, or 2 of its anchors overlap a CRE
+loops_dt[, Overlapping_Boundary_x := FALSE]
+loops_dt[, Overlapping_Boundary_y := FALSE]
+loops_dt[bound_hits_x[, queryHits], Overlapping_Boundary_x := TRUE]
+loops_dt[bound_hits_y[, queryHits], Overlapping_Boundary_y := TRUE]
+loops_dt[, TAD_Overlap := Overlapping_Boundary_x + Overlapping_Boundary_y]
+
+# add Peak IDs for loops where there are overlapping peaks
+x_loop_boundIDs = boundaries_dt[bound_hits_x[, subjectHits], BoundID]
+y_loop_boundIDs = boundaries_dt[bound_hits_y[, subjectHits], BoundID]
+boundaries_dt[bound_hits_x[, queryHits], Overlapping_Loop_x_ID:= x_loop_boundIDs]
+boundaries_dt[bound_hits_y[, queryHits], Overlapping_Loop_y_ID:= y_loop_boundIDs]
+
+# calculate the number of CREs overlapping at least 1 anchor in a loop pair
+idx_in_loop = unique(union(bound_hits_x[, subjectHits], bound_hits_y[, subjectHits]))
+boundaries_dt[, Loop_Overlap := FALSE]
+boundaries_dt[idx_in_loop, Loop_Overlap := TRUE]
 
 # ==============================================================================
 # Save data
@@ -115,4 +154,5 @@ peaks_dt[idx_in_loop, Loop_Overlap := TRUE]
 # remove "colour" column and save to TSV
 loops_dt[, colour := NULL]
 fwrite(loops_dt, paste(ARGS$prefix, "loops", "tsv", sep = "."), sep = "\t", col.names = TRUE)
+fwrite(loops_dt, paste(ARGS$prefix, "bounds", "tsv", sep = "."), sep = "\t", col.names = TRUE)
 fwrite(peaks_dt, paste(ARGS$prefix, "peaks", "tsv", sep = "."), sep = "\t", col.names = TRUE)
