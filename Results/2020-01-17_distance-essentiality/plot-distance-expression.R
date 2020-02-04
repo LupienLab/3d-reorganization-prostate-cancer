@@ -110,3 +110,126 @@ ggsave(
     width = 20,
     units = "cm"
 )
+
+# same as before, but an empirical CDF plot instead of KDE
+gg = (
+    ggplot(data = combined[complete.cases(combined)])
+    + stat_ecdf(aes(x = Fraction, colour = Level), geom = "step")
+    # + geom_density(aes(x = Mean_Fraction, colour = Level))
+    + labs(y = "Cumulative Density")
+    + scale_x_continuous(
+        limits = c(0, 0.5),
+        breaks = 0:5 / 10,
+        name = "TSS distance from boundary",
+        labels = paste0(0:5 * 10, "%")
+    )
+    + scale_colour_manual(
+        breaks = 0:5,
+        name = "Expression Quantile",
+        labels = c(
+            "Not Expressed",
+            "[0%, 20%)",
+            "[20%, 40%)",
+            "[40%, 60%)",
+            "[60%, 80%)",
+            "[80%, 100%]"
+        ),
+        values = c(
+            "#000000",
+            "#edf8fb",
+            "#b2e2e2",
+            "#66c2a4",
+            "#2ca25f",
+            "#006d2c"
+        )
+    )
+    + facet_wrap(~ SampleID)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90)
+    )
+)
+ggsave(
+    "Plots/distance-density-by-expression.ecdf.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
+# plot size of TADs, stratified by their essentiality
+gg = (
+    ggplot(data = combined)
+    + geom_density(aes(x = end_TAD - start_TAD, colour = Level))
+    + labs(y = "Density")
+    + scale_x_log10(name = "Parent TAD size")
+    + scale_colour_manual(
+        breaks = 0:5,
+        name = "Expression Quantile",
+        labels = c(
+            "Not Expressed",
+            "[0%, 20%)",
+            "[20%, 40%)",
+            "[40%, 60%)",
+            "[60%, 80%)",
+            "[80%, 100%]"
+        ),
+        values = c(
+            "#000000",
+            "#edf8fb",
+            "#b2e2e2",
+            "#66c2a4",
+            "#2ca25f",
+            "#006d2c"
+        )
+    )
+    + facet_wrap(~ SampleID)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90)
+    )
+)
+ggsave(
+    "Plots/-by-expression.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
+# same as before, but an empirical CDF plot instead of KDE
+gg = (
+    ggplot(data = combined[complete.cases(combined)])
+    + stat_ecdf(aes(x = end_TAD - start_TAD, colour = Level), geom = "step")
+    + labs(y = "Cumulative Density")
+    + scale_x_log10(name = "Parent TAD size")
+    + scale_colour_manual(
+        breaks = 0:5,
+        name = "Expression Quantile",
+        labels = c(
+            "Not Expressed",
+            "[0%, 20%)",
+            "[20%, 40%)",
+            "[40%, 60%)",
+            "[60%, 80%)",
+            "[80%, 100%]"
+        ),
+        values = c(
+            "#000000",
+            "#edf8fb",
+            "#b2e2e2",
+            "#66c2a4",
+            "#2ca25f",
+            "#006d2c"
+        )
+    )
+    + facet_wrap(~ SampleID)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90)
+    )
+)
+ggsave(
+    "Plots/TAD-size-density-by-expression.ecdf.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)

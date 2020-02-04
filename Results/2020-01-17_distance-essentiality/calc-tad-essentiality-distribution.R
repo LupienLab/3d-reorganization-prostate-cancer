@@ -2,6 +2,7 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
+suppressMessages(library("ggplot2"))
 suppressMessages(library("argparse"))
 suppressMessages(library("Matrix"))
 suppressMessages(library("GenomicRanges"))
@@ -73,14 +74,56 @@ tads_gr = GRanges(
 
 hits = as.data.table(findOverlaps(genes_gr, tads_gr))
 
-# place genes into one of the 1/p bins
-for (i in 1:tads[, .N]) {
-    t = tads[i]
-    t_gr = tads_gr[i]
-    genes_in_tad = ess_coords[hits[subjectHits == i, queryHits], .SD]
-    t_split = 
-}
+# calculate mean essentiality by TAD
+# because some genes span TADs, they intersections needs to be double counted
+# thus double counting genes, but there are only 1331 cases here, not enough
+# to change the distribution overall of ~ 16K genes with essentiality scores
+ess_overlaps = ess_coords[hits$queryHits, .SD]
+ess_overlaps[, TAD := hits$subjectHits]
+
+ess_long = melt(
+    ess_overlaps,
+    id.vars = c("Gene", "TAD", "EnsemblID"),
+    measure.vars = c("22Rv1", "DU145", "LNCaP", "MDA PCa 2b", "NCI-H660", "PC3", "VCaP"),
+    variable.name = "CellLine",
+    value.name = "Essentiality"
+)
+
+tad_essentiality = ess_long[, .(mean(Essentiality, na.rm = TRUE), sd(Essentiality, na.rm = TRUE)), by = c("CellLine", "TAD")]
 
 # ==============================================================================
 # Plots
 # ==============================================================================
+gg = (
+    ggplot(data = tad_essentiality)
+    + geom_density(aes(x = V1))
+    + labs(x = "Mean TAD Essentiality", y = "Density")
+    + scale_x_continuous(
+        limits = c(-2, 2)
+    )
+    + facet_wrap(~ CellLine)
+    + theme_minimal()
+)
+ggsave(
+    "Plots/TAD-mean-essentiality-density.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
+gg = (
+    ggplot(data = tad_essentiality)
+    + geom_density(aes(x = V2))
+    + labs(x = "Mean TAD Essentiality", y = "Density")
+    + scale_x_continuous(
+        limits = c(-2, 2)
+    )
+    + facet_wrap(~ CellLine)
+    + theme_minimal()
+)
+ggsave(
+    "Plots/TAD-sd-essentiality-density.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
