@@ -22,10 +22,22 @@ We hypothesize that:
 * loops involving 1 active CREs are promoter-enhancer loops (where the enhancer is poised)
 * loops involving 0 active CREs are TAD boundaries
 
-![Loop anchors overlapping active cis-regulatory elements](Plots/loop-CRE-overlap.sum.proportion.png)
+![Loop anchors overlapping active cis-regulatory elements](Plots/loop-CRE-overlap.proportion.png)
 
 This suggests that many of the loops being called are in fact loops directly involved in promoter-enhancer interactions, but not all.
 
 ### Loops overlapping with TAD boundaries
 
 The remaining loops, we hypothesize, overlap TAD boundaries.
+We extend the boundary to be a 40 kbp window, and see which loops overlap these extended boundaries.
+
+![Loop anchors overlapping TAD boundaries](Plots/loop-TAD-overlap.proportion.png)
+
+These numbers are less variable across the samples, likely owing to the roughly equal number of TADs and boundaries called across each sample, whereas the number of H3K27ac peaks spans almost an order of magnitude.
+
+Approximately 25% of loops that do not overlap and CREs do not overlap any TAD boundary.
+Conversely, ~ 75% of loops have a boundary as at least one anchor, providing support to the hypothesis that called loops are active _cis_-regulatory interactions and TAD boundaries.
+
+## Conclusions
+
+Less than 10% of called loops, on average, do not coincide with a TAD boundary nor a _cis_-regulatory element, thus suggesting that the called loops are biologically relevant features of the Hi-C data.
