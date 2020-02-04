@@ -80,7 +80,8 @@ gg = (
     )
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90)
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
     )
 )
 ggsave(
@@ -105,11 +106,12 @@ gg = (
             "#a6bddb",
             "#2b8cbe"
         ),
-        name = "Anchors overlapping boundaries"
+        name = "Anchors overlapping CREs"
     )
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90)
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
     )
 )
 ggsave(
@@ -133,11 +135,13 @@ gg = (
             "#fff7bc",
             "#fec44f",
             "#d95f0e"
-        )
+        ),
+        name = "Anchors overlapping boundaries"
     )
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90)
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
     )
 )
 ggsave(
@@ -161,11 +165,13 @@ gg = (
             "#fff7bc",
             "#fec44f",
             "#d95f0e"
-        )
+        ),
+        name = "Anchors overlapping boundaries"
     )
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90)
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
     )
 )
 ggsave(
