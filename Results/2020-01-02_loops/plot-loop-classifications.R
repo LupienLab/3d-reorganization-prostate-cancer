@@ -45,46 +45,32 @@ invisible(sapply(
         loop_counts[i, Frequency := count / total]
 }))
 
-# combine `notx_and_y` and `x_and_noty` together, so the totals are number of loops overlapping 0, 1, or 2 CREs
-loop_counts_by_num_peaks = data.table(
-    SampleID = rep(metadata[, Sample_ID], 3),
-    Overlapping_CREs = rep(0L:2L, each = metadata[, .N]),
-    N = 0,
-    Frequency = 0
-)
-# calculate new frequencies and counts
-invisible(sapply(
-    1:loop_counts_by_num_peaks[, .N],
-    function(i) {
-        s = loop_counts_by_num_peaks[i, SampleID]
-        n_overlaps = loop_counts_by_num_peaks[i, Overlapping_CREs]
-        if (n_overlaps == 0) {
-            count = loop_counts[SampleID == s & CRE_Overlap == "notx_and_noty", N]
-        } else if (n_overlaps == 1) {
-            count = loop_counts[SampleID == s & CRE_Overlap %in% c("notx_and_y", "x_and_noty"), sum(N)]
-        } else {
-            count = loop_counts[SampleID == s & CRE_Overlap == "x_and_y", N]
-        }
-        total = n_loops[SampleID == loop_counts_by_num_peaks[i, SampleID], N]
-        loop_counts_by_num_peaks[i, N := as.integer(count)]
-        loop_counts_by_num_peaks[i, Frequency := count / total]
-}))
-
-
 # ==============================================================================
 # Plots
 # ==============================================================================
 gg = (
     ggplot(data = loop_counts)
-    + geom_col(aes(x = SampleID, y = N, fill = CRE_Overlap), position = "stack")
+    + geom_col(
+        aes(x = SampleID, y = N, fill = factor(CRE_Overlap, levels = 0:2, ordered = TRUE)),
+        position = "stack"
+    )
     + labs(x = NULL, y = "Number of Loops")
+    + scale_fill_manual(
+        limits = 0:2,
+        breaks = 0:2,
+        values = c(
+            "#ece7f2",
+            "#a6bddb",
+            "#2b8cbe"
+        )
+    )
     + theme_minimal()
     + theme(
         axis.text.x = element_text(angle = 90)
     )
 )
 ggsave(
-    file.path("Plots", "loop-CRE-overlap.all.count.png"),
+    file.path("Plots", "loop-CRE-overlap.count.png"),
     height = 12,
     width = 20,
     units = "cm"
@@ -92,59 +78,27 @@ ggsave(
 
 gg = (
     ggplot(data = loop_counts)
-    + geom_col(aes(x = SampleID, y = N, fill = CRE_Overlap), position = "fill")
+    + geom_col(
+        aes(x = SampleID, y = N, fill = factor(CRE_Overlap, levels = 0:2, ordered = TRUE)),
+        position = "fill"
+    )
     + labs(x = NULL, y = "Frequency of Loops")
+    + scale_fill_manual(
+        limits = 0:2,
+        breaks = 0:2,
+        values = c(
+            "#ece7f2",
+            "#a6bddb",
+            "#2b8cbe"
+        )
+    )
     + theme_minimal()
     + theme(
         axis.text.x = element_text(angle = 90)
     )
 )
 ggsave(
-    file.path("Plots", "loop-CRE-overlap.all.proportion.png"),
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-
-gg = (
-    ggplot(data = loop_counts_by_num_peaks)
-    + geom_col(
-        aes(x = SampleID, y = N, fill = Overlapping_CREs),
-        position = "stack"
-    )
-    + scale_fill_continuous(breaks = c(0, 1, 2), labels = c("0", "1", "2"))
-    + labs(x = NULL, y = "Number of Loops")
-    + guides(fill = guide_legend(title = "Anchors overlapping CREs"))
-    + theme_minimal()
-    + theme(
-        axis.text.x = element_text(angle = 90),
-        legend.position = "bottom"
-    )
-)
-ggsave(
-    file.path("Plots", "loop-CRE-overlap.sum.count.png"),
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-
-gg = (
-    ggplot(data = loop_counts_by_num_peaks)
-    + geom_col(
-        aes(x = SampleID, y = N, fill = Overlapping_CREs),
-        position = "fill"
-    )
-    + scale_fill_continuous(breaks = c(0, 1, 2), labels = c("0", "1", "2"))
-    + labs(x = NULL, y = "Frequency of Loops")
-    + guides(fill = guide_legend(title = "Anchors overlapping CREs"))
-    + theme_minimal()
-    + theme(
-        axis.text.x = element_text(angle = 90),
-        legend.position = "bottom"
-    )
-)
-ggsave(
-    file.path("Plots", "loop-CRE-overlap.sum.proportion.png"),
+    file.path("Plots", "loop-CRE-overlap.proportion.png"),
     height = 12,
     width = 20,
     units = "cm"
@@ -155,14 +109,7 @@ ggsave(
 # ==============================================================================
 fwrite(
     loop_counts,
-    file.path("Classification", "all.loops.all.tsv"),
-    sep = "\t",
-    col.names = TRUE
-)
-
-fwrite(
-    loop_counts_by_num_peaks,
-    file.path("Classification", "all.loops.sum.tsv"),
+    file.path("Classification", "all.loops.tsv"),
     sep = "\t",
     col.names = TRUE
 )
