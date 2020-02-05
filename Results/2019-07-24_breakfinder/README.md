@@ -76,17 +76,21 @@ The downstream end of the chr21 segment is inserted at the upstream end of the i
 Previously, this event was only detected as a deletion on chr21 using whole genome sequencing (see Supplementary Table S16 from \Cref{Fraser2017}).
 Moreover, not only can this SV be reclassified from a deletion to a translocation, this event also affects the local chromatin topology at the insertion site.
 
-![T2E translocation insertion site topology](Plots/PCa13848.T2E.insertion.png)
+![T2E translocation insertion site topology](../2019-10-24_higlass/Plots/T2E-translocation.insertion.png)
 
 The TAD in `PCa3023` at `chr14:35040000-35840000` is split into two TADs in `PCa13848` (`chr14:35040000-35720000` and `chr14:35720000-35840000`).
-This corroborates evidence in previous literature, such as \Cref{Dixon2018}, demonstrating SVs can lead to the formation of "neo-TADs".
+This corroborates evidence in previous literature demonstrating SVs can lead to the formation of "neo-TADs" \Cref{Dixon2018}.
+We can plot the reconstructed genome for this translocation.
+
+![Reconstructing genome at local insertion site for the T2E translocation in PCa13848](Plots/translocation-matrix.png)
 
 This translocation is possibly similar to the "LOUD" mutations related to _FOXA1_, as described in \Cref{Parolia2019}.
-The insertion site of this translocation disrupts the local chromatin topology, and while some genes in this disrupted TAD have increased expression, it does not appear to change expression for the majority of genes.
-
 The large TAD in samples without this translocation spans from `chr14:34560000-35840000` and contains the genes listed in [`translocation-disrupted-genes.tsv`](translocation-disrupted-genes.tsv).
 
 ![Expression of genes within the translocation-disrupted TAD](Plots/translocation-disrupted-genes.png)
+
+The insertion site of this translocation disrupts the local chromatin topology, and while some genes in this disrupted TAD have increased expression (BACE2, BAZ1A, BRMS1L CBR3, ETS2, HMGN1, NFKBIA, PSMA6, PSMG1, RUNX1, SRP54) (and possibly a decreased expression in CBR1), it does not appear to change expression for the majority of genes.
+This is in accordance with recent work consider the impact of structural variants in a pan-cancer study \Cref{Akdemir2020}.
 
 ### Hi-C tends to detect more inter-chromosomal translocations than whole genome sequencing
 
@@ -110,3 +114,5 @@ This may lead to differences in SV detection due to true differences in SVs in e
 \Cref{Fraser2017} [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788)
 
 \Cref{Parolia2019} [Parolia _et al._, Nature, 2019](https://doi.org/10.1038/s41586-019-1347-4)
+
+\Cref{Akdemir2020} [Akdemir _et al._, Nature Genetics, 2020](https://doi.org/10.1038/s41588-019-0564-y)
