@@ -28,7 +28,7 @@ rule all:
         expand(
             path.join(BREAK_DIR, '{param}', '{sample}.breaks.txt'),
             sample=SAMPLES,
-            param=['Default', 'Min_1kbp', 'Low_Thresh_30', 'Low_Thresh_20']
+            param=['Default', 'Min_1kbp', 'Low_Thresh_30']
         ),
         expand(
             path.join(BREAK_DIR, '{param}', 'breakpoints.{ext}'),
@@ -163,3 +163,13 @@ rule t2e_translocation_genes:
         "translocation-disrupted-genes.tsv"
     shell:
         "bedtools intersect -sorted -g {input.genome} -a {input.gencode} -b <(echo -e \"chr14\\t34560000\\t35840000\nchr21\\t35440000\\t41500000\") > {output}"
+
+rule plot_t2e_translocation_genes:
+    input:
+        script = path.join(SCRIPT_DIR, "plot-translocation-disrupted-genes.R"),
+        data = "translocation-disrupted-genes.tsv",
+    output:
+        path.join(PLOT_DIR, "translocation-disrupted-genes.png"),
+    shell:
+        "Rscript {input.script}"
+

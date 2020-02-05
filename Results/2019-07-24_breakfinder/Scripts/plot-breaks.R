@@ -68,6 +68,7 @@ hg38[, Bins := ceiling(Length / 10^6)]
 # load breakpoint data
 breakpoints = fread(ARGS$breaks, sep = "\t", header = TRUE)
 n_breaks = breakpoints[, .N]
+breakpoints[, Colour := ifelse(Chrom1 == Chrom2, "blue", "orange")]
 
 # manual aggregate by locus, since you can't melt them all together at once
 breakpoints_melted = rbindlist(list(
@@ -157,8 +158,12 @@ for (s in unique(breakpoints$Sample)) {
             .(Chrom1, Start1, End1, Chrom2, Start2, End2)
         ],
         track.num = 1,
-        by.chromosome = FALSE
+        by.chromosome = TRUE
     )
+    # change colour of inter vs intra chromosomal events
+    # params = RCircos.Get.Plot.Parameters()
+    # params$PlotColor = breakpoints$Colour
+    # RCircos.Reset.Plot.Parameters(params)
     dev.off()
 }
 
