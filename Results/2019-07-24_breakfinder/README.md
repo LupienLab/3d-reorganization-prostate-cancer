@@ -46,9 +46,9 @@ Overall, this refinement of SVs may provide a more accurate location for each de
 
 ### Detected structural variants still need to be manually annotated
 
-`hic_breakfinder` finds a submatrix that has a local maximum in signal, and returns the row and column coordinates for this submatrix.
+`hic_breakfinder` \Cref{Dixon2018} finds a submatrix that has a local maximum in signal, and returns the row and column coordinates for this submatrix.
 It does not indicate what type of structural variant it has detected, however.
-While [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8) provide heuristics for determining what a given SV will appear like in the contact matrix (see Supplementary Figure X), this is not incorporated into their statistical model.
+While \Cref{Dix2018} provide heuristics for determining what a given SV will appear like in the contact matrix (see Supplementary Figure X), this is not incorporated into their statistical model.
 
 To address this limitation, we manually curated each SV called by `hic_breakfinder` in each sample to resolve what type of SV each event was and its locus(i) to within 100 kbp.
 
@@ -73,13 +73,20 @@ chr21 is along the x-axis, and chr14 along the y-axis.
 The insertion of this fragment from chr21 occurs near `chr14:35000000`.
 The downstream end of the chr21 segment is inserted at the upstream end of the insertion site leading to _TMPRSS2_ being located next to _INSM2_ and _ERG_ being located next to _BRMS1L_.
 
-Previously, this event was only detected as a deletion on chr21 using whole genome sequencing (see Supplementary Table S16 from [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788)).
+Previously, this event was only detected as a deletion on chr21 using whole genome sequencing (see Supplementary Table S16 from \Cref{Fraser2017}).
 Moreover, not only can this SV be reclassified from a deletion to a translocation, this event also affects the local chromatin topology at the insertion site.
 
 ![T2E translocation insertion site topology](Plots/PCa13848.T2E.insertion.png)
 
 The TAD in `PCa3023` at `chr14:35040000-35840000` is split into two TADs in `PCa13848` (`chr14:35040000-35720000` and `chr14:35720000-35840000`).
-This corroborates evidence in previous literature, such as [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8), demonstrating SVs can lead to the formation of "neo-TADs".
+This corroborates evidence in previous literature, such as \Cref{Dixon2018}, demonstrating SVs can lead to the formation of "neo-TADs".
+
+This translocation is possibly similar to the "LOUD" mutations related to _FOXA1_, as described in \Cref{Parolia2019}.
+The insertion site of this translocation disrupts the local chromatin topology, and while some genes in this disrupted TAD have increased expression, it does not appear to change expression for the majority of genes.
+
+The large TAD in samples without this translocation spans from `chr14:34560000-35840000` and contains the genes listed in [`translocation-disrupted-genes.tsv`](translocation-disrupted-genes.tsv).
+
+![Expression of genes within the translocation-disrupted TAD](Plots/translocation-disrupted-genes.png)
 
 ### Hi-C tends to detect more inter-chromosomal translocations than whole genome sequencing
 
@@ -95,3 +102,11 @@ This may lead to differences in SV detection due to true differences in SVs in e
 [^1]: This is not a hypothesis we were explicitly looking for, in the first place. We have yet to find other independent evidence that suggests ERG over-expression leads to chromosomal instability. We wouldn't have tested for this if this result didn't return anything interesting, so in reality this _p_-value is a likelihood and should include a prior on "how likely we were to test this result".
 
 [^2]: These abbreviations are consistent with Delly, a commonly-used tool for detecting SVs from whole genome sequencing data.
+
+## References
+
+\Cref{Dixon2018} [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8)
+
+\Cref{Fraser2017} [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788)
+
+\Cref{Parolia2019} [Parolia _et al._, Nature, 2019](https://doi.org/10.1038/s41586-019-1347-4)

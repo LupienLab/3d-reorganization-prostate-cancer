@@ -38,7 +38,9 @@ rule all:
         expand(
             path.join(BREAK_DIR, "Default", "{sample}.breaks.bed"),
             sample=SAMPLES
-        )
+        ),
+        "translocation-disrupted-genes.tsv",
+        path.join(PLOT_DIR, "translocation-disrupted-genes.png"),
 
 # ==============================================================================
 # Rules
@@ -150,3 +152,14 @@ rule bf2bed:
         '-v FS="\t" -v OFS="\t"'
     shell:
         'awk {params} \'{{print $2, $3, $4, "SV"NR, "\\n"$6, $7, $8, "SV"NR}}\' {input} > {output}'
+
+rule t2e_translocation_genes:
+    input:
+        gencode = path.join("..", "..", "Data", "External",
+                            "GENCODE", "gencode.v33.genes.sorted.bed"),
+        genome = path.join("..", "..", "Data", "Processed",
+                           "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
+    output:
+        "translocation-disrupted-genes.tsv"
+    shell:
+        "bedtools intersect -sorted -g {input.genome} -a {input.gencode} -b <(echo -e \"chr14\\t34560000\\t35840000\nchr21\\t35440000\\t41500000\") > {output}"
