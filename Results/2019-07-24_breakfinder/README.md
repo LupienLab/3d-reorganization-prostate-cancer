@@ -86,11 +86,11 @@ We can plot the reconstructed genome for this translocation.
 
 This translocation is possibly similar to the "LOUD" mutations related to _FOXA1_, as described in \Cref{Parolia2019}.
 The large TAD in samples without this translocation spans from `chr14:34560000-35840000` and contains the genes listed in [`translocation-disrupted-genes.tsv`](translocation-disrupted-genes.tsv).
+The insertion site of this translocation disrupts the local chromatin topology and changes mean expression for the set of genes (two-sided t-test, _t_ = 3.1408, _n_ = 47, _p_ = 0.002943, 95% confidence interval [0.3654967, 1.670024]).
 
-![Expression of genes within the translocation-disrupted TAD](Plots/translocation-disrupted-genes.png)
+![Two-sided t-test for changes in gene expression for genes within the TAD disrupted by the T2E translocation](Plots/translocation-disrupted-genes.nhst.png)
 
-The insertion site of this translocation disrupts the local chromatin topology, and while some genes in this disrupted TAD have increased expression (BACE2, BAZ1A, BRMS1L CBR3, ETS2, HMGN1, NFKBIA, PSMA6, PSMG1, RUNX1, SRP54) (and possibly a decreased expression in CBR1), it does not appear to change expression for the majority of genes.
-This is in accordance with recent work consider the impact of structural variants in a pan-cancer study \Cref{Akdemir2020}.
+This is in accordance with recent work consider the impact of structural variants in a pan-cancer study showing that these variants affecting TAD structures can affect expression of the neighbouring genes, but only in a minority of cases \Cref{Akdemir2020}.
 
 ### Hi-C tends to detect more inter-chromosomal translocations than whole genome sequencing
 
