@@ -42,8 +42,16 @@ gg = (
     ggplot(data = disrupted_exprs_long)
     + geom_point(aes(x = (SampleID == "PCa13848"), y = Expression, colour = chr), position = "jitter")
     + labs(x = NULL, y = "Expression (FPKM)")
+    + scale_x_discrete(
+          limits = c(TRUE, FALSE),
+          breaks = c(TRUE, FALSE),
+          labels = c("PCa13848", "Other ERG+")
+      )
     + facet_wrap(~ Symbol, scales = "free")
     + theme_minimal()
+    + theme(
+          axis.text.x = element_text(angle = 90)
+      )
 )
 ggsave(
     "Plots/translocation-disrupted-genes.png",
