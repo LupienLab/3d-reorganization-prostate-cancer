@@ -104,14 +104,15 @@ gg = (
     + stat_function(
         fun = dt,
         args = list(df = disrupted_exprs[, .N] - 1),
-        linetype = 2
+        aes(colour = "null")
     )
     + stat_function(
         fun = dt,
         args = list(
             df = disrupted_exprs[, .N] - 1,
             ncp = test_results$estimate
-        )
+        ),
+        aes(colour = "alternative")
     )
     + geom_path(
         data = data.table(
@@ -128,9 +129,16 @@ gg = (
         label = paste("p =", round(test_results$p.value, 4))
     )
     + labs(x = "z-score", y = "Density")
+    + ylim(c(0, 0.45))
+    + scale_colour_discrete(
+        limits = c("null", "alternative"),
+        labels = c(expression("H"[0]), expression("H"["a"])),
+        name = "Hypothesis"
+    )
     + theme_minimal()
     + theme(
-          axis.text.x = element_text(angle = 90)
+          axis.text.x = element_text(angle = 90),
+          legend.position = "bottom"
       )
 )
 ggsave(
