@@ -1,45 +1,45 @@
 __default__:
-    params: "--export=ALL --workdir=. -p long"
+    params: "--export=ALL -p long"
 
 fastqc:
-    params: "--export=ALL --workdir=. -p all"
+    params: "--export=ALL -p all"
 
 hicup_truncate:
-    params: "--export=ALL --workdir=. -p long -c 8"
+    params: "--export=ALL -p long -c 8"
 
 hicup_map:
-    params: "--export=ALL --workdir=. -p veryhimem --mem=60G -c 8 -t 2-00:00:00"
+    params: "--export=ALL -p veryhimem --mem=60G -c 8 -t 2-00:00:00"
 
 hicup_filter:
-    params: "--export=ALL --workdir=. -p long -c 8"
+    params: "--export=ALL -p long -c 8"
 
 hicup_dedup:
-    params: "--export=ALL --workdir=. -p himem --mem=60G -c 8"
+    params: "--export=ALL -p himem --mem=60G -c 8"
 
 merge_bams:
-    params: '--export=ALL --workdir=. -p veryhimem --mem=60G -c 8 -t 4-00:00:00'
+    params: '--export=ALL -p veryhimem --mem=60G -c 8 -t 4-00:00:00'
 
 sort_bam:
-    params: '--export=ALL --workdir=. -p veryhimem --mem=100G -c 8 -t 2-00:00:00'
+    params: '--export=ALL -p veryhimem --mem=100G -c 8 -t 2-00:00:00'
 
 sort_bam_name:
-    params: '--export=ALL --workdir=. -p veryhimem --mem=100G -c 8 -t 2-00:00:00'
+    params: '--export=ALL -p veryhimem --mem=100G -c 8 -t 2-00:00:00'
 
 create_pairs:
-    params: "--export=ALL --workdir=. -p himem --mem=60G -c 8 -t 4-00:00:00"
+    params: "--export=ALL -p himem --mem=60G -c 8 -t 4-00:00:00"
 
 create_cooler:
-    params: "--export=ALL --workdir=. -p himem --mem=60G -c 8"
+    params: "--export=ALL -p himem --mem=60G -c 8"
 
 adjust_res:
-    params: "--export=ALL --workdir=. -p himem --mem=60G -c 8"
+    params: "--export=ALL -p himem --mem=60G -c 8"
 
 dump_mat:
-    params: "--export=ALL --workdir=. -p long --mem=30G"
+    params: "--export=ALL -p long --mem=30G"
 
 call_tads:
-    params: "--export=ALL --workdir=. -p long --mem=30G"
+    params: "--export=ALL -p long --mem=30G"
 
 plot_t2e:
-    params: "--export=ALL --workdir=. -p long --mem=30G"
+    params: "--export=ALL -p long --mem=30G"
 
