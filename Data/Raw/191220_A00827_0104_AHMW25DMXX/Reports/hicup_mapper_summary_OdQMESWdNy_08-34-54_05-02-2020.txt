@@ -1,0 +1,3 @@
+File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
+Benign-Prostate-1664855_R1.trunc.fastq.gz	274577339	7517110	2.7	224302869	81.7	38220184	13.9	4537176	1.7	185988477	67.7
+Benign-Prostate-1664855_R2.trunc.fastq.gz	274577339	7327256	2.7	221535977	80.7	39490552	14.4	6223554	2.3	185988477	67.7
