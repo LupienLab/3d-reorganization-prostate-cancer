@@ -16,17 +16,17 @@ chr11	104000000	105800000	chr2	198300000	199800000	.	1371.93	+	-	100kb	UNKNOWN	R
 chr11	123000000	123300000	chr3	25400000	27200000	.	557.806	-	-	100kb	UNKOWN	Possibly related to row 15; related to artefact in row 17
 chr11	123000000	134000000	chr3	75000000	91000000	.	430.001	-	+	1Mb	ARTEFACT	Artefact related to row 16
 chr11	118500000	118900000	chr6	160900000	162900000	.	1177.81	-	+	100kb	UNKNOWN	Possibly related to 3 nearby undetected aberrations
-chr11	54500000	55800000	chr11	87500000	87900000	.	54.7209	+	-	100kb		
-chr13	98700000	99200000	chr1	201100000	201900000	.	655.326	+	+	100kb		
-chr13	99400000	100600000	chr1	151000000	151300000	.	208.303	-	-	100kb		
-chr13	21400000	22900000	chr6	168600000	169600000	.	898.379	-	-	100kb		
-chr13	42100000	42800000	chr6	165600000	166400000	.	754.075	-	+	100kb		
-chr13	53000000	60000000	chr6	152000000	164000000	.	173.334	+	-	1Mb		
-chr13	20000000	20400000	chr13	39600000	40000000	.	69.9005	+	+	100kb		
-chr13	41700000	42200000	chr13	88800000	89200000	.	77.1269	-	+	100kb		
-chr13	58900000	59300000	chr13	106800000	107200000	.	61.2957	-	-	100kb		
-chr14	35440000	35700000	chr21	41450000	41500000	.	263.501	+	+	10kb		
-chr14	35700000	35830000	chr21	38500000	38780000	.	783.964	-	-	10kb		
-chr18	76340000	76460000	chr20	57700000	58220000	.	143.258	+	-	10kb		
-chr19	36300000	37800000	chr19	43800000	44500000	.	229.383	+	-	100kb		
-chrY	13800000	14600000	chrY	15500000	17400000	.	69.1986	+	-	100kb		
+chr11	54500000	55800000	chr11	87500000	87900000	.	54.7209	+	-	100kb	ARTEFACT	Due to sparisty of the region
+chr13	98700000	99200000	chr1	201100000	201900000	.	655.326	+	+	100kb	UNKNOWN	Related to row 21, 3 other nearby undetected events on chr1xchr13 and the 3 detected + 1 undetected event on chr13 (rows 25, 26, 27)
+chr13	99400000	100600000	chr1	151000000	151300000	.	208.303	-	-	100kb	UNKNOWN	Related to row 20, 3 other nearby undetected events on chr1xchr13 and the 3 detected + 1 undetected event on chr13 (rows 25, 26, 27)
+chr13	21400000	22900000	chr6	168600000	169600000	.	898.379	-	-	100kb	UNKNOWN	Related to rows 23, 24; possibly related to rows 20, 21, 25, 26, 27
+chr13	42100000	42800000	chr6	165600000	166400000	.	754.075	-	+	100kb	UNKNOW	Related to rows 22, 24; possibly related to rows 20, 21, 25, 26, 27
+chr13	53000000	60000000	chr6	152000000	164000000	.	173.334	+	-	1Mb	UNKNOWN	Related to rows 22, 23; possibly related to rows 20, 21, 25, 26, 27
+chr13	20000000	20400000	chr13	39600000	40000000	.	69.9005	+	+	100kb	UNKNOWN	Related to rows 20, 21, 26, 27; possibly related to rows 22, 23, 24
+chr13	41700000	42200000	chr13	88800000	89200000	.	77.1269	-	+	100kb	UNKNOWN	Related to rows 20, 21, 25, 27; possibly related to rows 22, 23, 24
+chr13	58900000	59300000	chr13	106800000	107200000	.	61.2957	-	-	100kb	UNKNOWN	Related to rows 20, 21, 25, 26; possibly related to rows 22, 23, 24
+chr14	35440000	35700000	chr21	41450000	41500000	.	263.501	+	+	10kb	BND	Translocation of T2E deletion into this site; related to row 29, undetected T2E deletion on chr21
+chr14	35700000	35830000	chr21	38500000	38780000	.	783.964	-	-	10kb	BND	Translocation of T2E deletion into this site; related to row 28, undetected T2E deletion on chr21
+chr18	76340000	76460000	chr20	57700000	58220000	.	143.258	+	-	10kb	UNKNOWN	No apparent related event
+chr19	36300000	37800000	chr19	43800000	44500000	.	229.383	+	-	100kb	ARTEFACT	Possible chr19 artefact that's present in all samples
+chrY	13800000	14600000	chrY	15500000	17400000	.	69.1986	+	-	100kb	ARTEFACT	Due to sparsity of the region
