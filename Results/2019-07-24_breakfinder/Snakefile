@@ -26,7 +26,7 @@ REPORT_DIR = 'Reports'
 rule all:
     input:
         expand(
-            path.join(BREAK_DIR, '{param}', '{sample}.breaks.txt'),
+            path.join(BREAK_DIR, '{param}', '{sample}.breaks.sorted.bedpe'),
             sample=SAMPLES,
             param=['Default', 'Min_1kbp', 'Low_Thresh_30']
         ),
@@ -102,6 +102,14 @@ rule breakfinder_low_thresh:
         ]
         command_str = '; '.join(commands)
         shell(command_str)
+
+rule sort_breaks:
+    input:
+        path.join(BREAK_DIR, "{prefix}", "{sample}.breaks.txt")
+    output:
+        path.join(BREAK_DIR, "{prefix}", "{sample}.breaks.sorted.bedpe")
+    shell:
+        "awk '{{FS=OFS=\"\\t\"}}{{print $2, $3, $4, $6, $7, $8, \".\", $1, $5, $9, $10}}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n > {output}"
 
 rule agg_breaks:
     input:

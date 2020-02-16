@@ -48,6 +48,12 @@ rule all:
             lane=LANES,
             read=READS
         ),
+        expand(
+            path.join(ALIGN_DIR, '{sample}_L00{lane}.hicup.name-sorted.bam'),
+            sample=SAMPLES,
+            lane=LANES,
+            read=READS
+        ),
         path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
         path.join(REPORT_DIR, 'multiqc_report.html')
 

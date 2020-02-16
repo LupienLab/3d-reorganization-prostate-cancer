@@ -1,0 +1,3 @@
+download:
+    params: "--export=ALL -p build -t 02:00:00"
+

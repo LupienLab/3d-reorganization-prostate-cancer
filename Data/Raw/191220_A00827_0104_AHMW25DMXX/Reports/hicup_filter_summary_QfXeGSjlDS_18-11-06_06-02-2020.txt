@@ -1,0 +1,2 @@
+File	Total_pairs	Valid_pairs	Cis_<10kbp	Cis_>10kbp	Trans	Invalid_pairs	Same_circularised	Same_dangling_ends	Same_internal	Re-ligation	Contiguous_sequence	Wrong_size
+Benign-Prostate-3320942_R1_2.pair.bam	228644646	222756580	7567045	113475610	101713925	5888066	253300	2135413	1994485	1504868	0	0
