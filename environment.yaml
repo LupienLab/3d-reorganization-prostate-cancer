@@ -16,17 +16,29 @@ dependencies:
   - bedtools=2.23.0
   - binutils_impl_linux-64=2.31.1
   - binutils_linux-64=2.31.1
+  - bioconductor-annotationdbi=1.44.0
   - bioconductor-biobase=2.42.0
   - bioconductor-biocgenerics=0.28.0
   - bioconductor-biocparallel=1.16.6
+  - bioconductor-biomart=2.38.0
   - bioconductor-biostrings=2.50.2
+  - bioconductor-bsgenome=1.50.0
+  - bioconductor-csaw=1.16.1
   - bioconductor-delayedarray=0.8.0
+  - bioconductor-diffhic=1.14.0
+  - bioconductor-edger=3.24.3
   - bioconductor-genomeinfodb=1.18.1
   - bioconductor-genomeinfodbdata=1.2.1
   - bioconductor-genomicalignments=1.18.1
+  - bioconductor-genomicfeatures=1.34.1
   - bioconductor-genomicranges=1.34.0
   - bioconductor-hitc=1.26.0
+  - bioconductor-interactionset=1.10.0
   - bioconductor-iranges=2.16.0
+  - bioconductor-limma=3.38.3
+  - bioconductor-rhdf5=2.26.2
+  - bioconductor-rhdf5lib=1.4.3
+  - bioconductor-rhtslib=1.14.1
   - bioconductor-rsamtools=1.34.0
   - bioconductor-rtracklayer=1.42.1
   - bioconductor-s4vectors=0.20.1
@@ -36,12 +48,13 @@ dependencies:
   - biopython=1.73
   - blosc=1.17.0
   - bokeh=1.3.0
+  - bowtie2=2.3.5
   - bwa=0.7.17
   - bwidget=1.9.11
   - bzip2=1.0.8
-  - ca-certificates=2019.6.16
+  - ca-certificates=2019.9.11
   - cairo=1.16.0
-  - certifi=2019.6.16
+  - certifi=2019.9.11
   - cffi=1.12.3
   - chardet=3.0.4
   - click=7.0
@@ -79,6 +92,7 @@ dependencies:
   - gitpython=2.1.12
   - glib=2.58.3
   - graphite2=1.3.13
+  - graphviz=2.38.0
   - gsl=2.5
   - gst-plugins-base=1.14.5
   - gstreamer=1.14.5
@@ -116,6 +130,7 @@ dependencies:
   - libssh2=1.8.2
   - libstdcxx-ng=7.3.0
   - libtiff=4.0.10
+  - libtool=2.4.6
   - libuuid=2.32.1
   - libxcb=1.13
   - libxml2=2.9.9
@@ -156,6 +171,7 @@ dependencies:
   - pycparser=2.19
   - pyfaidx=0.5.5.2
   - pygenometracks=3.0
+  - pygraphviz=1.5
   - pyopenssl=19.0.0
   - pyparsing=2.4.1
   - pyqt=5.9.2
@@ -177,6 +193,7 @@ dependencies:
   - r-bit=1.1_14
   - r-bit64=0.9_7
   - r-bitops=1.0_6
+  - r-blob=1.2.0
   - r-brew=1.0_6
   - r-callr=3.3.0
   - r-cli=1.1.0
@@ -187,6 +204,7 @@ dependencies:
   - r-crayon=1.3.4
   - r-curl=4.0
   - r-data.table=1.12.2
+  - r-dbi=1.0.0
   - r-desc=1.2.0
   - r-devtools=2.0.1
   - r-digest=0.6.20
@@ -203,7 +221,10 @@ dependencies:
   - r-gh=1.0.1
   - r-git2r=0.26.1
   - r-glue=1.3.1
+  - r-gridextra=2.3
   - r-gtable=0.3.0
+  - r-gtools=3.8.1
+  - r-hms=0.5.1
   - r-httr=1.4.0
   - r-ini=0.3.1
   - r-irlba=2.3.3
@@ -212,6 +233,7 @@ dependencies:
   - r-lambda.r=1.2.3
   - r-lattice=0.20_38
   - r-lazyeval=0.2.2
+  - r-locfit=1.5_9.1
   - r-magrittr=1.5
   - r-mass=7.3_51.4
   - r-matrix=1.2_17
@@ -230,6 +252,7 @@ dependencies:
   - r-plyr=1.8.4
   - r-prettyunits=1.0.2
   - r-processx=3.4.0
+  - r-progress=1.2.2
   - r-ps=1.3.0
   - r-purrr=0.3.2
   - r-r6=2.4.0
@@ -245,6 +268,7 @@ dependencies:
   - r-roxygen2=6.1.1
   - r-rprojroot=1.3_2
   - r-rspectra=0.14_0
+  - r-rsqlite=2.1.2
   - r-rstudioapi=0.10
   - r-scales=1.0.0
   - r-sessioninfo=1.1.1
@@ -254,6 +278,7 @@ dependencies:
   - r-sys=3.2
   - r-tibble=2.1.3
   - r-tidyselect=0.2.5
+  - r-upsetr=1.4.0
   - r-usethis=1.5.1
   - r-utf8=1.1.4
   - r-vctrs=0.2.0
@@ -281,6 +306,7 @@ dependencies:
   - sortedcontainers=2.1.0
   - spectra=0.0.11
   - sqlite=3.29.0
+  - tbb=2019.8
   - tblib=1.4.0
   - tk=8.6.9
   - tktable=2.10
@@ -297,7 +323,9 @@ dependencies:
   - xorg-libxau=1.0.9
   - xorg-libxdmcp=1.1.3
   - xorg-libxext=1.3.4
+  - xorg-libxpm=3.5.12
   - xorg-libxrender=0.9.10
+  - xorg-libxt=1.1.5
   - xorg-renderproto=0.11.1
   - xorg-xextproto=7.3.0
   - xorg-xproto=7.0.31
@@ -306,5 +334,4 @@ dependencies:
   - zict=1.0.0
   - zlib=1.2.11
   - zstd=1.4.0
-prefix: /mnt/work1/users/home2/hawleyj/miniconda3/envs/HiC
 
