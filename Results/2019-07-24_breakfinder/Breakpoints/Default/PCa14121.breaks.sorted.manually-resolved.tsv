@@ -4,4 +4,4 @@ chr2	114600000	115180000	chr4	125340000	125380000	.	180.728	+	-	10kb	UNKNOWN	Rel
 chr13	30670000	30940000	chr11	32280000	32310000	.	64.821	+	+	10kb	BND	Possible translocation from chr13 to this locus on chr11
 chr14	72710000	72870000	chr4	157730000	157880000	.	270.586	+	-	10kb	UNKNOWN	Related to row 6; related to nearby undetected aberration
 chr14	73000000	73120000	chr4	154870000	154930000	.	86.9914	-	+	10kb	UNKNOWN	Related to row 5
-chrY	13500000	15300000	chrY	15900000	17400000	.	129.078	+	-	100kb	ARTEFACT	Due to sparsity of the region
+chrY	13500000	15300000	chrY	15900000	17400000	.	129.078	+	-	100kb	ARTEFACT	Sparsity
