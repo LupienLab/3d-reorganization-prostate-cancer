@@ -35,44 +35,44 @@ chr10	26320000	26550000	chr10	68070000	68100000	.	131.407	+	+	10kb	DUP2
 chr10	28600000	28670000	chr10	90950000	91100000	.	166.184	-	+	10kb	DEL	Encompasses row 36; possibly related to row 37
 chr10	68740000	68900000	chr10	89220000	89260000	.	66.0003	-	+	10kb	DUP3	Inside row 35; possibly related to row 37
 chr10	83800000	84100000	chr10	91900000	92500000	.	100.166	+	-	100kb	DEL	Possibly related to rows 35, 36
-chr11	54600000	55300000	chr11	87400000	88000000	.	71.61	+	+	100kb		
-chr12	10210000	10360000	chr4	39150000	39460000	.	881.412	+	-	10kb		
-chr12	27310000	27740000	chr4	38050000	38180000	.	474.216	-	+	10kb		
-chr12	68800000	69800000	chr6	12300000	13600000	.	2431.62	+	-	100kb		
-chr12	59190000	59420000	chr10	86310000	86370000	.	283.797	-	-	10kb		
-chr12	60540000	60840000	chr10	84560000	84600000	.	186.201	+	+	10kb		
-chr12	61930000	62220000	chr10	87800000	87930000	.	347.922	+	+	10kb		
-chr12	103840000	103890000	chr10	87940000	88000000	.	104.725	-	-	10kb		
-chr12	105570000	106250000	chr10	88780000	88830000	.	445.355	-	-	10kb		
-chr12	58640000	58780000	chr12	104030000	104060000	.	101.832	+	+	10kb		
-chr12	60800000	62300000	chr12	103800000	104100000	.	196.363	-	-	100kb		
-chr12	105410000	105490000	chr12	121900000	122020000	.	111.897	-	-	10kb		
-chr12	44900000	46000000	chr14	88600000	90000000	.	2529.52	+	-	100kb		
-chr12	69740000	69870000	chr14	106470000	106540000	.	64.0032	-	+	10kb		
-chr12	60800000	62700000	chr21	32300000	33200000	.	1738.98	-	-	100kb		
-chr12	103600000	103830000	chr21	32260000	32350000	.	288.456	+	-	10kb		
-chr12	121810000	121890000	chr21	31620000	31660000	.	83.9409	-	+	10kb		
-chr12	46000000	49300000	chrX	53000000	53900000	.	1745.14	+	-	100kb		
-chr14	21520000	21700000	chr1	91810000	92020000	.	831.865	+	-	10kb		
-chr14	54300000	54450000	chr1	91470000	91560000	.	312.668	+	+	10kb		
-chr14	56000000	57400000	chr1	48000000	48200000	.	106.348	-	-	100kb		
-chr14	100040000	100200000	chr1	47930000	48120000	.	663.091	-	-	10kb		
-chr14	22000000	40000000	chr10	92000000	100000000	.	378.653	-	-	1Mb		
-chr14	24000000	31000000	chr10	42000000	59000000	.	267.16	+	+	1Mb		
-chr14	99880000	99990000	chr10	103210000	103370000	.	254.567	+	-	10kb		
-chr14	103310000	103440000	chr10	100290000	100510000	.	586.073	+	+	10kb		
-chr14	103520000	103670000	chr10	102500000	102660000	.	397.323	-	+	10kb		
-chr14	22450000	22530000	chr14	31360000	31480000	.	121.947	-	-	10kb		
-chr14	23470000	23500000	chr14	30580000	30730000	.	65.6077	+	-	10kb		
-chr14	24030000	24170000	chr14	102300000	102360000	.	195.59	-	-	10kb		
-chr14	56000000	56300000	chr14	101770000	101800000	.	126.615	-	-	10kb		
-chr14	56300000	56490000	chr14	101660000	101800000	.	209.382	-	+	10kb		
-chr14	88480000	88600000	chrX	144700000	144740000	.	60.5715	+	+	10kb		
-chr16	6700000	8500000	chr16	34000000	34200000	.	78.1739	+	-	100kb		
-chr17	22700000	28300000	chr10	85000000	86000000	.	2876.49	+	-	100kb		
-chr19	36400000	37700000	chr19	43800000	44500000	.	110.547	+	+	100kb		
-chr21	10000000	30000000	chr10	93000000	111000000	.	87.7904	+	+	1Mb		
-chr21	32350000	32410000	chr10	87940000	88000000	.	60.2075	-	+	10kb		
-chrX	52340000	52430000	chrX	67850000	67990000	.	180.209	-	-	10kb		
-chrX	67670000	67830000	chrX	144620000	144690000	.	174.324	+	+	10kb		
-chrY	13600000	15300000	chrY	15900000	17400000	.	162.927	+	-	100kb		
+chr11	54600000	55300000	chr11	87400000	88000000	.	71.61	+	+	100kb	ARTEFACT	Sparsity
+chr12	10210000	10360000	chr4	39150000	39460000	.	881.412	+	-	10kb	UNKNOWN	Possibly related to row 40
+chr12	27310000	27740000	chr4	38050000	38180000	.	474.216	-	+	10kb	UNKNOWN	Possibly related to row 39
+chr12	68800000	69800000	chr6	12300000	13600000	.	2431.62	+	-	100kb	UNKNOWN	
+chr12	59190000	59420000	chr10	86310000	86370000	.	283.797	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	60540000	60840000	chr10	84560000	84600000	.	186.201	+	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	61930000	62220000	chr10	87800000	87930000	.	347.922	+	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	103840000	103890000	chr10	87940000	88000000	.	104.725	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	105570000	106250000	chr10	88780000	88830000	.	445.355	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	58640000	58780000	chr12	104030000	104060000	.	101.832	+	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	60800000	62300000	chr12	103800000	104100000	.	196.363	-	-	100kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	105410000	105490000	chr12	121900000	122020000	.	111.897	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	44900000	46000000	chr14	88600000	90000000	.	2529.52	+	-	100kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	69740000	69870000	chr14	106470000	106540000	.	64.0032	-	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	60800000	62700000	chr21	32300000	33200000	.	1738.98	-	-	100kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	103600000	103830000	chr21	32260000	32350000	.	288.456	+	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	121810000	121890000	chr21	31620000	31660000	.	83.9409	-	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr12	46000000	49300000	chrX	53000000	53900000	.	1745.14	+	-	100kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [42, 55]
+chr14	21520000	21700000	chr1	91810000	92020000	.	831.865	+	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	54300000	54450000	chr1	91470000	91560000	.	312.668	+	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	56000000	57400000	chr1	48000000	48200000	.	106.348	-	-	100kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	100040000	100200000	chr1	47930000	48120000	.	663.091	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	22000000	40000000	chr10	92000000	100000000	.	378.653	-	-	1Mb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	24000000	31000000	chr10	42000000	59000000	.	267.16	+	+	1Mb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	99880000	99990000	chr10	103210000	103370000	.	254.567	+	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	103310000	103440000	chr10	100290000	100510000	.	586.073	+	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	103520000	103670000	chr10	102500000	102660000	.	397.323	-	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	22450000	22530000	chr14	31360000	31480000	.	121.947	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	23470000	23500000	chr14	30580000	30730000	.	65.6077	+	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	24030000	24170000	chr14	102300000	102360000	.	195.59	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	56000000	56300000	chr14	101770000	101800000	.	126.615	-	-	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	56300000	56490000	chr14	101660000	101800000	.	209.382	-	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	88480000	88600000	chrX	144700000	144740000	.	60.5715	+	+	10kb	UNKNOWN	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr16	6700000	8500000	chr16	34000000	34200000	.	78.1739	+	-	100kb	ARTEFACT	Sparsity
+chr17	22700000	28300000	chr10	85000000	86000000	.	2876.49	+	-	100kb	UNKNOWN	Sparsity in the region, but this appears to be a real event unrelated to others
+chr19	36400000	37700000	chr19	43800000	44500000	.	110.547	+	+	100kb	ARTEFACT	chr19 artefacts
+chr21	10000000	30000000	chr10	93000000	111000000	.	87.7904	+	+	1Mb	ARTEFACT	Compartmentalization
+chr21	32350000	32410000	chr10	87940000	88000000	.	60.2075	-	+	10kb	UNKNOWN	Due to its shape, probably related to other undetected aberrations on chr10 and chr21
+chrX	52340000	52430000	chrX	67850000	67990000	.	180.209	-	-	10kb	ARTEFACT	Sparsity
+chrX	67670000	67830000	chrX	144620000	144690000	.	174.324	+	+	10kb	DUP2	Right at the AR locus, entirety of AR is duplicated
+chrY	13600000	15300000	chrY	15900000	17400000	.	162.927	+	-	100kb	ARTEFACT	Sparsity
