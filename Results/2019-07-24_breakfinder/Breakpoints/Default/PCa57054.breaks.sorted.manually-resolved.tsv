@@ -12,7 +12,7 @@ chr8	22000000	22400000	chr10	89500000	91000000	.	783.932	-	+	100kb	UNKNOWN	Relat
 chr8	73700000	74900000	chrX	13800000	15400000	.	1780.36	+	-	100kb	UNKNOWN	Related to row 13; possible broken translocation into chrX
 chr8	77000000	78400000	chrX	15200000	16700000	.	2568.52	-	+	100kb	UNKNOWN	Related to row 12; possible broken translocation into chrX
 chr9	33000000	39000000	chr3	50000000	53000000	.	110.454	+	+	1Mb	UNKNOWN	Possible chromosome arm swap or breakage-fusion-bridge between these chromosomes; possibly related to row 18
-chr10	81100000	81400000	chr10	87900000	88400000	.	53.6322	+	-	100kb	DUP3	Possibly related to rows 6, 10, 11
+chr10	81100000	81400000	chr10	87900000	88400000	.	53.6322	+	-	100kb	DUP	Type 3; possibly related to rows 6, 10, 11
 chr12	118330000	118360000	chr21	41470000	41630000	.	148.863	+	-	10kb	BND	Possible translocation of ERG from the undetected TMPRSS2-ERG fusion into chr12; related to row 17
 chr12	125000000	133000000	chr21	10000000	28000000	.	138.148	-	+	1Mb	BND	Possible translocation of ERG from the undetected TMPRSS2-ERG fusion into chr12; related to row 17
 chr13	29470000	29520000	chr3	52420000	52700000	.	281.39	+	+	10kb	UNKNOWN	Related to rows 21, 23; possibly related to row 14

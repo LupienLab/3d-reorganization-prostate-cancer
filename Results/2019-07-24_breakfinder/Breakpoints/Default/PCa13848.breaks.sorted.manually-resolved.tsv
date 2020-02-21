@@ -1,4 +1,4 @@
-chr1	75460000	75560000	chr1	79350000	79420000	.	91.2972	+	+	10kb	DUP2	
+chr1	75460000	75560000	chr1	79350000	79420000	.	91.2972	+	+	10kb	DUP	Type 2
 chr1	205000000	205600000	chr6	109500000	110500000	.	683.678	+	+	100kb	UNKNOWN	Related to 2 undetected events by centromere on chr1 and same position on chr6
 chr1	208000000	219000000	chr6	96000000	106000000	.	161.433	+	-	1Mb	ARTEFACT	Compartmentalization
 chr2	212700000	215000000	chr3	23700000	25000000	.	709.013	-	-	100kb	UNKNOWN	Related to other nearby aberrations on the same pair of chromosomes as well as an undetected deletion on chr2 and numerous surrounding events; no related events on chr3; related to rows 5, 6
@@ -9,7 +9,7 @@ chr5	59000000	59200000	chr5	172400000	173000000	.	53.8291	+	+	100kb	UNKOWN	Relat
 chr7	56100000	58100000	chr7	60900000	62400000	.	60.1504	+	+	100kb	ARTEFACT	Sparsity
 chr8	46000000	80000000	chr10	104000000	111000000	.	1398.15	-	-	1Mb	UNKNOWN	Possible artefact, but this spans much of the q arm of chr8 but not its entirety; this large region also strongly effects other chromosomes, may be normalization issue, unsure
 chr8	45000000	47100000	chr20	30400000	31500000	.	375.551	+	+	100kb	ARTEFACT	Sparsity
-chr10	5970000	6090000	chr10	96630000	96720000	.	328.899	-	-	10kb	DUP1	
+chr10	5970000	6090000	chr10	96630000	96720000	.	328.899	-	-	10kb	DUP	Type 1
 chr10	96700000	99300000	chr20	21000000	23500000	.	4074.27	-	-	100kb	UNKNOWN	No apparent related event
 chr10	106100000	107800000	chr20	30900000	31500000	.	180.229	-	+	100kb	ARTEFACT	Sparsity
 chr11	104000000	105800000	chr2	198300000	199800000	.	1371.93	+	-	100kb	UNKNOWN	Related to at least 5 other undetected events on chr2xchr11; possibly related to row 16

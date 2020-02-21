@@ -18,7 +18,7 @@ chr10	79350000	79400000	chr10	112050000	112160000	.	78.231	+	+	10kb	UNKNOWN	Rela
 chr12	70480000	70570000	chr8	128100000	128150000	.	92.9259	-	+	10kb	UNKNOWN	Related to rows 19, 20, and another undetected aberration near this position; at 3' end of MYC
 chr12	123700000	124900000	chr8	134700000	136000000	.	2172.59	+	+	100kb	UNKNOWN	Related to rows 18, 20, and another undetected aberration; at 3' end of MYC
 chr12	124900000	126800000	chr8	128200000	129200000	.	1235.44	-	-	100kb	UNKOWN	Related to rows 18, 19, and another undetected aberration; at 3' end of MYC
-chr16	13700000	14400000	chr16	46800000	47200000	.	207.073	+	+	100kb	DUP2	
+chr16	13700000	14400000	chr16	46800000	47200000	.	207.073	+	+	100kb	DUP	Type 2
 chr16	14600000	14700000	chr16	59100000	60500000	.	81.7447	-	-	100kb	UNKNOWN	Related to rows 23, 24
 chr16	48000000	48300000	chr16	81200000	81900000	.	134.066	-	-	100kb	UNKNOWN	Related to rows 22, 24
 chr16	48700000	49700000	chr16	77600000	78000000	.	105.308	+	+	100kb	UNKNOWN	Related to rows 22, 23

@@ -31,9 +31,9 @@ chr6	136230000	136300000	chr7	105440000	105520000	.	61.0481	+	+	10kb	BND	Possibl
 chr6	151000000	156000000	chr7	78000000	96000000	.	126.44	-	+	1Mb	ARTEFACT	Compartmentalization
 chr8	38400000	38800000	chr2	68400000	69900000	.	781.953	-	+	100kb	UNKNOWN	Related to row 33; possible discontinuous translocation of this fragment from chr8 into this spot on chr2
 chr8	18090000	18150000	chr8	41240000	41540000	.	269.973	+	-	10kb	DEL	Related to row 32
-chr10	26320000	26550000	chr10	68070000	68100000	.	131.407	+	+	10kb	DUP2	
+chr10	26320000	26550000	chr10	68070000	68100000	.	131.407	+	+	10kb	DUP	Type 2
 chr10	28600000	28670000	chr10	90950000	91100000	.	166.184	-	+	10kb	DEL	Encompasses row 36; possibly related to row 37
-chr10	68740000	68900000	chr10	89220000	89260000	.	66.0003	-	+	10kb	DUP3	Inside row 35; possibly related to row 37
+chr10	68740000	68900000	chr10	89220000	89260000	.	66.0003	-	+	10kb	DUP	Type 3; inside row 35; possibly related to row 37
 chr10	83800000	84100000	chr10	91900000	92500000	.	100.166	+	-	100kb	DEL	Possibly related to rows 35, 36
 chr11	54600000	55300000	chr11	87400000	88000000	.	71.61	+	+	100kb	ARTEFACT	Sparsity
 chr12	10210000	10360000	chr4	39150000	39460000	.	881.412	+	-	10kb	UNKNOWN	Possibly related to row 40
@@ -74,5 +74,5 @@ chr19	36400000	37700000	chr19	43800000	44500000	.	110.547	+	+	100kb	ARTEFACT	chr
 chr21	10000000	30000000	chr10	93000000	111000000	.	87.7904	+	+	1Mb	ARTEFACT	Compartmentalization
 chr21	32350000	32410000	chr10	87940000	88000000	.	60.2075	-	+	10kb	UNKNOWN	Due to its shape, probably related to other undetected aberrations on chr10 and chr21
 chrX	52340000	52430000	chrX	67850000	67990000	.	180.209	-	-	10kb	ARTEFACT	Sparsity
-chrX	67670000	67830000	chrX	144620000	144690000	.	174.324	+	+	10kb	DUP2	Right at the AR locus, entirety of AR is duplicated
+chrX	67670000	67830000	chrX	144620000	144690000	.	174.324	+	+	10kb	DUP	Type 2; right at the AR locus, entirety of AR is duplicated
 chrY	13600000	15300000	chrY	15900000	17400000	.	162.927	+	-	100kb	ARTEFACT	Sparsity
