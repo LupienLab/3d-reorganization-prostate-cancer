@@ -120,6 +120,9 @@ breakpoints = pd.concat(
 # remove artefacts
 breakpoints = breakpoints.loc[breakpoints["annotation"] != "ARTEFACT", :]
 
+# label interactions that are on different chromosomes as BND
+breakpoints.loc[breakpoints.chr_x != breakpoints.chr_y, "annotation"] = "BND"
+
 # create graph
 G = {s: nx.Graph() for s in SAMPLES}
 
@@ -134,20 +137,20 @@ for s in SAMPLES:
                 bp.chr_x,
                 bp.start_x,
                 bp.end_x,
-                {"annotation": bp.annotation, "notes": bp.notes, "strand": bp.strand_x},
+                {"notes": bp.notes, "strand": bp.strand_x},
             ),
             GenomicInterval(
                 bp.chr_y,
                 bp.start_y,
                 bp.end_y,
-                {"annotation": bp.annotation, "notes": bp.notes, "strand": bp.strand_y},
+                {"notes": bp.notes, "strand": bp.strand_y},
             ),
         ]
         # create nodes in the graph
         for i in intvls:
             G[s].add_node(i)
         # link these two nodes since they are linked breakpoints
-        G[s].add_edge(intvls[0], intvls[1], colour="blue")
+        G[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
     # connect 2 nodes if their intervals are within 100 kbp of each other
     for i, n in enumerate(G[s]):
         for j, m in enumerate(G[s]):
@@ -155,15 +158,25 @@ for s in SAMPLES:
                 continue
             # connect these nodes if the identified loci are within 100 kbp of each other
             if overlapping(n, m, 100000 / 2):
-                G[s].add_edge(n, m, colour="red")
+                G[s].add_edge(n, m, annotation="nearby")
 
 
-s = SAMPLES[5]
-s
+unique_annots = list(np.unique(breakpoints["annotation"].tolist() + ["nearby"]))
 
-edges, colours = zip(*nx.get_edge_attributes(G[s], 'colour').items())
+s "PCa57054"
+
+edges, annots = zip(*nx.get_edge_attributes(G[s], "annotation").items())
+colours = [plt.cm.tab10(unique_annots.index(a)) for a in annots]
 pos = nx.spring_layout(G[s])
-nx.draw(G[s], pos, edgelist=edges, edge_color=colours, with_labels=True, font_weight="bold", width=10)
+nx.draw(
+    G[s],
+    pos,
+    edgelist=edges,
+    edge_color=colours,
+    with_labels=True,
+    font_weight="bold",
+    width=10,
+)
 
 # these are the individual component subgraphs that are not connected to other nodes in the graph
-cc = nx.connected_components(G["PCa13848"]):
+cc = nx.connected_components(G["PCa56413"])
