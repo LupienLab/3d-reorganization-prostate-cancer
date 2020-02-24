@@ -102,9 +102,19 @@ def normalize_genes(genes, sample):
     genes_to_normalize.set_index("EnsemblID", inplace=True)
     # calculate mean and variance of background samples for each gene
     means = genes_to_normalize[background_samples].mean(axis=1)
+    # using .var instead of .std here since the background samples are the entire population, not a sample of the population
     variances = genes_to_normalize[background_samples].var(axis=1)
-    # return z-score normalization
-    return (genes_to_normalize[s] - means) / np.sqrt(variances)
+    # keep track of which genes have no expression in the background samples
+    no_exprs_idx = variances.loc[variances == 0].index
+    # keep track of which genes have no expression in the foreground sample
+    sample_genes_expressed_idx = genes_to_normalize.loc[genes_to_normalize[s] > 0].index
+    # calculate z-score normalization
+    z = (genes_to_normalize[s] - means) / np.sqrt(variances)
+    # for the samples with 0 variance, if the sample of interest also has no expression, replace NaN with 0
+    z.loc[no_exprs_idx] = 0
+    # for the samples with 0 variance, if the sample of interest also has some non-zero expression, replace NaN with Infinity
+    z.loc[sample_genes_expressed_idx & no_exprs_idx] = np.inf
+    return z
 
 
 # ==============================================================================
@@ -162,9 +172,20 @@ exprs = exprs.merge(gencode, on="EnsemblID", suffixes=["_exprs", "_gencode"])
 # ==============================================================================
 # Analysis
 # ==============================================================================
+# count the number of connected components in each graph
+cc_counts = {s: sum(1 for cc in nx.connected_components(G[s])) for s in SAMPLES}
+n_component_tests = sum(v for v in cc_counts.values())
+
 # store hypothesis testing results
-htest = pd.DataFrame(
-    columns=["Sample", "Component_Index", "n_breakpoints", "n_genes", "t", "p"]
+htest = pd.DataFrame.from_dict(
+    {
+        "Sample": np.repeat(SAMPLES, list(cc_counts.values())),
+        "Component_Index": [i for n in cc_counts.values() for i in range(n)],
+        "n_breakpoints": [0] * n_component_tests,
+        "n_genes": [0] * n_component_tests,
+        "t": [0] * n_component_tests,
+        "p": [1] * n_component_tests,
+    }
 )
 # store genes invoved in hypothesis tests
 tested_genes = {
@@ -206,17 +227,20 @@ for s in tqdm(SAMPLES):
         genes["z"] = z.tolist()
         # store tested genes for later
         tested_genes[s][i] = genes
-        # # conduct the hypothesis test, since all genes have their expression values normalized across samples
-        # t, p = stats.ttest_1samp(genes_z, 0)
-        # # store the data
-        # htest.loc[
-        #     (htest.Sample == s) & (htest.Component_Index == i), "n_breakpoints"
-        # ] = len(cc)
-        # htest.loc[
-        #     (htest.Sample == s) & (htest.Component_Index == i), "n_genes"
-        # ] = genes_in_tad.shape[0]
-        # htest.loc[(htest.Sample == s) & (htest.Component_Index == i), "t"] = t
-        # htest.loc[(htest.Sample == s) & (htest.Component_Index == i), "p"] = p
+        # conduct the hypothesis test, since all genes have their expression values normalized across samples
+        infty_idx = genes.loc[np.isinf(genes["z"])].index
+        # only conduct on non-infinite values
+        # we look at these infinite values later on, specifically
+        t, p = stats.ttest_1samp(genes.loc[~np.isinf(genes["z"]), "z"], 0)
+        # store the data
+        htest.loc[
+            (htest.Sample == s) & (htest.Component_Index == i), "n_breakpoints"
+        ] = len(cc)
+        htest.loc[
+            (htest.Sample == s) & (htest.Component_Index == i), "n_genes"
+        ] = genes.shape[0] - len(infty_idx)
+        htest.loc[(htest.Sample == s) & (htest.Component_Index == i), "t"] = t
+        htest.loc[(htest.Sample == s) & (htest.Component_Index == i), "p"] = p
 
 # ==============================================================================
 # Save data
