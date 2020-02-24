@@ -99,7 +99,7 @@ def normalize_genes(genes, sample):
     background_samples = [s for s in SAMPLES if s != sample]
     # copy this data so as to not mutate the original DataFrame
     genes_to_normalize = genes.copy()
-    genes_to_normalize.set_index("EnsemblID", inplace=True)
+    genes_to_normalize.set_index("EnsemblID_short", inplace=True)
     # calculate mean and variance of background samples for each gene
     means = genes_to_normalize[background_samples].mean(axis=1)
     # using .var instead of .std here since the background samples are the entire population, not a sample of the population
@@ -157,6 +157,8 @@ exprs = pd.read_csv(
     sep="\t",
     header=0,
 )
+# remove annotation version number to ensure compatibility with GENCODE
+exprs["EnsemblID_short"] = exprs.EnsemblID.str.replace("\\..*", "")
 
 
 # load GENCODE reference annotation (all genes, not just protein-coding)
@@ -166,8 +168,10 @@ gencode = pd.read_csv(
     header=None,
     names=["chr", "start", "end", "strand", "EnsemblID"],
 )
+# remove annotation version number to ensure compatibility with previous RNA-seq
+gencode["EnsemblID_short"] = gencode.EnsemblID.str.replace("\\..*", "")
 
-exprs = exprs.merge(gencode, on="EnsemblID", suffixes=["_exprs", "_gencode"])
+exprs = exprs.merge(gencode, on="EnsemblID_short", suffixes=["_exprs", "_gencode"])
 
 # ==============================================================================
 # Analysis
@@ -227,6 +231,8 @@ for s in tqdm(SAMPLES):
         genes["z"] = z.tolist()
         # store tested genes for later
         tested_genes[s][i] = genes
+        tested_genes[s][i]["Mutated_In"] = s
+        tested_genes[s][i]["Component_Index"] = i
         # conduct the hypothesis test, since all genes have their expression values normalized across samples
         infty_idx = genes.loc[np.isinf(genes["z"])].index
         # only conduct on non-infinite values
@@ -245,4 +251,12 @@ for s in tqdm(SAMPLES):
 # ==============================================================================
 # Save data
 # ==============================================================================
+# save hypothesis test results
 htest.to_csv("sv-disruption-tests.tsv", sep="\t", index=False)
+
+# concatenate information about the genes tested into a single large table, and save
+tested_genes_df = pd.concat(
+    [tested_genes[s][i] for s in SAMPLES for i in tested_genes[s].keys()],
+    ignore_index=True,
+)
+tested_genes_df.to_csv("sv-disruption-tests.genes.tsv", sep="\t", index=False)
