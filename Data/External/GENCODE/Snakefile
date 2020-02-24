@@ -5,6 +5,7 @@ rule all:
     input:
         "gencode.v33.genes.sorted.bed",
         "gencode.v33.tss.sorted.bed",
+        "gencode.v33.all-genes.bed"
 
 # ==============================================================================
 # Rules
@@ -14,6 +15,14 @@ rule download_annotation:
         temp("gencode.v33.annotation.gtf.gz")
     shell:
         "curl -O ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_33/gencode.v33.annotation.gtf.gz"
+
+rule all_genes:
+    input:
+        "gencode.v33.annotation.gtf"
+    output:
+        "gencode.v33.all-genes.bed"
+    shell:
+        "awk '{{FS=OFS=\"\\t\"}}{{if (NR > 5 && $3 == \"gene\"){{gsub(/\";.*/,\"\",$9); gsub(/gene_id \"/, \"\", $9); print $1, $4, $5, $7, $9}} }}' {input} > {output}"
 
 rule filter:
     input:
