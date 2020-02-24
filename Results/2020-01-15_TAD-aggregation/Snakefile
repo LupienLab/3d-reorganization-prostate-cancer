@@ -31,9 +31,14 @@ rule all:
         ),
         expand(
             path.join("resolved-TADs", "separated-TADs",
-                      "{sample}.40000bp.w_{w}.domains.bed"),
+                      "{sample}.40000bp.w_{w}.domains.{ext}"),
             sample=SAMPLES,
-            w=WINDOWS
+            w=WINDOWS,
+            ext=["bed", "beddb", "bed2ddb"]
+        ),
+        expand(
+            path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
+            sample=SAMPLES
         ),
 
 # ==============================================================================
@@ -63,6 +68,37 @@ rule sort_tads:
                   "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
     shell:
         "sort -k1,1 -V -k2,2n -k3,3n -k6,6n {input} > {output}"
+
+rule clodius_agg_2d_bdg:
+     input:
+         "{file}.sorted.bedGraph"
+     output:
+         "{file}.bed2ddb"
+     params:
+         "-a hg38 --chr1-col 1 --chr2-col 1 --from1-col 2 --from2-col 2 --to1-col 3 --to2-col 3"
+     shell:
+         "clodius aggregate bedpe {params} -o {output} {input}"
+
+rule clodius_agg_2d_bed:
+     input:
+         "{file}.bed"
+     output:
+         "{file}.bed2ddb"
+     params:
+         "-a hg38 --chr1-col 1 --chr2-col 1 --from1-col 2 --from2-col 2 --to1-col 3 --to2-col 3"
+     shell:
+         "clodius aggregate bedpe {params} -o {output} {input}"
+
+
+rule clodius_agg_1d:
+    input:
+        path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
+    output:
+        path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.beddb"),
+    params:
+        "-a hg38"
+    shell:
+        "clodius aggregate bedfile {params} -o {output} {input}"
 
 rule sort_boundaries:
     input:
