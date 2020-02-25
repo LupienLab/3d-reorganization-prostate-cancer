@@ -83,7 +83,7 @@ def get_genes_in_tads(intvls):
     return involved_genes
 
 
-def normalize_genes(genes, sample):
+def normalize_genes(genes, sample, offset=1e-3):
     """
     Convert expression values into a z-score for a particular sample, given the remaining
 
@@ -105,16 +105,18 @@ def normalize_genes(genes, sample):
     # using .var instead of .std here since the background samples are the entire population, not a sample of the population
     variances = genes_to_normalize[background_samples].var(axis=1)
     # keep track of which genes have no expression in the background samples
-    no_exprs_idx = variances.loc[variances == 0].index
+    no_exprs_idx = means.loc[means == 0].index & variances.loc[variances == 0].index
     # keep track of which genes have no expression in the foreground sample
     sample_genes_expressed_idx = genes_to_normalize.loc[genes_to_normalize[s] > 0].index
     # calculate z-score normalization
     z = (genes_to_normalize[s] - means) / np.sqrt(variances)
+    # calculate fold change (log10(FPKM + offset) - log10(mean + offset) to ensure no divide by 0)
+    fc = np.log10((genes_to_normalize[s] + offset) / (means + offset))
     # for the samples with 0 variance, if the sample of interest also has no expression, replace NaN with 0
     z.loc[no_exprs_idx] = 0
     # for the samples with 0 variance, if the sample of interest also has some non-zero expression, replace NaN with Infinity
     z.loc[sample_genes_expressed_idx & no_exprs_idx] = np.inf
-    return z
+    return z, fc
 
 
 # ==============================================================================
@@ -226,9 +228,10 @@ for s in tqdm(SAMPLES):
         genes = get_genes_in_tads(affected_tad_intvls)
         # CHECK THAT THIS MUTATION DOES NOT EXIST IN ANOTHER SAMPLE #
         # normalize them according to the samples without this mutation
-        z = normalize_genes(genes, s)
+        z, fc = normalize_genes(genes, s)
         # order is preserved, so just append the column
         genes["z"] = z.tolist()
+        genes["log10fold"] = fc.tolist()
         # store tested genes for later
         tested_genes[s][i] = genes
         tested_genes[s][i]["Mutated_In"] = s
