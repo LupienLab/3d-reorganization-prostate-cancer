@@ -132,6 +132,7 @@ for s in tqdm(SAMPLES):
         width=10,
     )
     plt.savefig(path.join("Plots", s + ".png"))
+    plt.close()
 
 # ==============================================================================
 # Save data
