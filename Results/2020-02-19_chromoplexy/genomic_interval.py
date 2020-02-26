@@ -7,8 +7,8 @@ from interval import interval
 # Classes
 # ==============================================================================
 class GenomicInterval:
-    def __init__(self, chr, start, end, data=None):
-        self.chr = chr
+    def __init__(self, chrom, start, end, data=None):
+        self.chr = chrom
         self.interval = interval([start, end])
         self.data = data
 
@@ -17,9 +17,9 @@ class GenomicInterval:
             self.chr
             + " ["
             + coord_pos_str(int(self.interval[0].inf))
-            + ", "
+            + "e6, "
             + coord_pos_str(int(self.interval[0].sup))
-            + ")"
+            + "e6)"
         )
 
     def plot_str(self):
@@ -42,6 +42,12 @@ class GenomicInterval:
 
     def sup(self):
         return int(self.interval[0].sup)
+
+
+class TopologicalDomain(GenomicInterval):
+    def __init__(self, chrom, start, end, persistence=(None, None)):
+        self.persistence = persistence
+        super().__init__(chrom, start, end)
 
 
 # ==============================================================================
