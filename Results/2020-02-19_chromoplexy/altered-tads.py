@@ -24,6 +24,7 @@ TAD_DIR = path.join(
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 WINDOWS = list(range(3, 31))
 TOL = 100000
+BREAK_FLANK_SIZE = 1000000
 
 # ==============================================================================
 # Functions
@@ -65,7 +66,8 @@ def find_tad(i: GenomicInterval, tads):
 def different_tads(mut, nonmut):
     """
     Determine if the TADs of mutated samples are different from the TADs of
-    non-mutated samples
+    non-mutated samples.
+    Makes use of BPscore algorithm, from Zaborowski and Wilczynski 2019
 
     Parameters
     ----------
@@ -75,6 +77,79 @@ def different_tads(mut, nonmut):
         TADs of non-mutated samples
     """
     pass
+
+
+def get_neighbouring_TADs(bp, ids, w=3, flank=BREAK_FLANK_SIZE):
+    """
+    Get all the TADs in a given set of samples from their IDs within a flanking distance of a given position
+
+    Parameters
+    ----------
+    bp : GenomicInterval
+        Breakpoint under consideration
+    ids : list<str>
+        Sample IDs
+    w : int
+        Window size parameter for TAD calls to check
+    flank : int
+        Flanking distance around position
+    """
+    # use globally loaded set of TADs
+    global tads
+    return pd.concat(
+        [
+            tads[s][w].loc[
+                (tads[s][w].chr == bp.chr)
+                & (tads[s][w].start <= bp.sup() + flank)
+                & (bp.inf() - flank <= tads[s][w].end),
+                :,
+            ]
+            for s in ids
+        ],
+        keys=ids,
+    )
+
+
+def get_mutated_ids_near_breakend(bp, neighbours, tol=TOL):
+    """
+    Get the sample IDs of all samples with a breakpoint near a given breakpoint end
+
+    Parameters
+    ----------
+    bp : nx.Node
+        Breakpoint under consideration
+    neighbours : list<nx.Node>
+        Nearby and recurrent neighbours of `bp`
+    tol : int
+        Distance tolerance around `pos` to be considered for "recurrent"
+    """
+    return set(
+        [bp.data["sample"]]
+        + [n.data["sample"] for n in nbrs if overlapping(bp, n, tol)]
+    )
+
+
+def print_tads(mut, nonmut, res=40000):
+    """
+    Print TADs and boundaries with ASCII characters
+
+    Parameters
+    ----------
+    mut : pd.DataFrame
+        TADs of mutated samples
+    nonmut : pd.DataFrame
+        TADs of non-mutated samples
+    res : int
+        TAD resolution
+    """
+    lower = min(mut.start.min(), nonmut.start.min())
+    upper = max(mut.end.max(), nonmut.end.max())
+    print(mut)
+    print(nonmut)
+    print()
+    print(lower)
+    print(upper)
+
 
 # ==============================================================================
 # Data
@@ -107,65 +182,52 @@ G = pickle.load(open("breakpoints.all-samples.p", "rb"))
 # ==============================================================================
 # table to track how many breakpoint ends alter TADs
 table_cols = [
-    "chr", "start", "end", "mutated_sample",
-    "lower_end_altered_TAD", "upper_end_altered_TAD", "lower_upper_same_TAD",
-    "num_ends_altering_TADs"
-] 
+    "chr",
+    "start",
+    "end",
+    "mutated_sample",
+    "altered_TAD",
+]
 altering_bps = pd.DataFrame(columns=table_cols)
 
+# window size to check TADs for
+w = 10
+
 # iterate over each breakpoint
-counter = 0
-for bp in tqdm(G):
-    counter += 1
-    if counter > 20:
-        break
+# counter = 0
+for bp in G:
+    # counter += 1
+    # if counter > 20:
+    #     break
     data_to_store = {
         "chr": bp.chr,
         "start": bp.inf(),
         "end": bp.sup(),
         "mutated_sample": bp.data["sample"],
-        "lower_end_altered_TAD": False,
-        "upper_end_altered_TAD": False,
-        "lower_upper_same_TAD": False,
+        "altered_TAD": False,
     }
     # find samples where this, or a nearby, breakpoint occurs
     nbrs = [n for n, v in G[bp].items() if v["annotation"] in ["nearby", "recurrent"]]
-    # if they're in the same TAD, don't double count them
-    if find_tad(bp, tads[bp.data["sample"]][3]).shape[0] == 1:
-        data_to_store["lower_upper_same_TAD"] = True
-    # for each end of the breakpoint, see if any of these neighbours has a breakpoint end within a certain distance
-    for which, pos in zip(["lower_end_altered_TAD", "upper_end_altered_TAD"], [bp.inf(), bp.sup()]):
-        # only keep unique sample IDs, don't double count them
-        mut_samples = set([bp.data["sample"]] + [n.data["sample"] for n in nbrs if (n.chr == bp.chr) and (abs(pos - n.inf()) <= TOL or abs(pos - n.sup()) <= TOL)])
-        nonmut_samples = set([s for s in SAMPLES if s not in mut_samples])
-        # get TADs where this breakpoint end is in, for the mutated and non-mutated samples
-        mut_tads = pd.concat(
-            [
-                tads[s][3].loc[
-                    (tads[s][3].chr == bp.chr) & (tads[s][3].start <= pos) & (pos <= tads[s][3].end),
-                    :
-                ] for s in mut_samples
-            ],
-            keys = mut_samples
-        )
-        nonmut_tads = pd.concat(
-            [
-                tads[s][3].loc[
-                    (tads[s][3].chr == bp.chr) & (tads[s][3].start <= pos) & (pos <= tads[s][3].end),
-                    :
-                ] for s in nonmut_samples
-            ],
-            keys = nonmut_samples
-        )
-        if different_tads(mut_tads, nonmut_tads):
-            data_to_store[which] = True
+    # only keep unique sample IDs, don't double count them
+    mut_samples = get_mutated_ids_near_breakend(bp, nbrs)
+    nonmut_samples = set([s for s in SAMPLES if s not in mut_samples])
+    # get TADs where this breakpoint end is in, for the mutated and non-mutated samples
+    mut_tads = get_neighbouring_TADs(bp, mut_samples)
+    nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples)
+    print(bp)
+    print(mut_tads)
+    print(nonmut_tads)
+    input()
+    if different_tads(mut_tads, nonmut_tads):
+        data_to_store[which] = True
     # store the result
     df = pd.DataFrame(data_to_store, index=[0])
     altering_bps = altering_bps.append(df, ignore_index=True, sort=False)
 
-altering_bps["num_ends_altering_TADs"] = altering_bps["lower_end_altered_TAD"] + altering_bps["upper_end_altered_TAD"]
-print(altering_bps["num_ends_altering_TADs"].sum() / (2*altering_bps.shape[0]))
+altering_bps["num_ends_altering_TADs"] = (
+    altering_bps["lower_end_altered_TAD"] + altering_bps["upper_end_altered_TAD"]
+)
+print(altering_bps["num_ends_altering_TADs"].sum() / (2 * altering_bps.shape[0]))
 
 altering_bps.to_csv("sv-ends-altering-TADs.tsv", sep="\t", index=False)
-
 
