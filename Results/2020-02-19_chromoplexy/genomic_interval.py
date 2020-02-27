@@ -23,7 +23,7 @@ class GenomicInterval:
         )
 
     def plot_str(self):
-        return "\n".join(
+        return " ".join(
             [
                 self.chr,
                 coord_pos_str(int(self.interval[0].inf)),

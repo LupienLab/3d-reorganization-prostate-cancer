@@ -13,11 +13,6 @@ from tqdm import tqdm
 import pickle
 from genomic_interval import GenomicInterval, overlapping
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-plt.rcParams["figure.figsize"] = (20/2.54, 20/2.54) # 20x20 cm
-
 # ==============================================================================
 # Constants
 # ==============================================================================
@@ -133,45 +128,6 @@ for s in SAMPLES:
                 # if the two breakpoints are from the same sample, they're nearby
                 G_sample[s].add_edge(n, m, annotation="nearby")
 
-# ==============================================================================
-# Plots
-# ==============================================================================
-print("Plotting graphs")
-# colours for edges between breakpoints
-unique_annots = list(unique(breakpoints["annotation"].tolist() + ["nearby", "recurrent"]))
-
-edges, e_annots = zip(*nx.get_edge_attributes(G_all, "annotation").items())
-n_colours = [plt.cm.tab20b(SAMPLES.index(n.data["sample"])) for n in G_all]
-e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
-pos = nx.circular_layout(G_all)
-nx.draw(
-    G_all,
-    pos,
-    edgelist=None,
-    node_color=n_colours,
-    edge_color=e_colours,
-    with_labels=False,
-    width=1,
-)
-plt.savefig(path.join("Plots", "breakpoint-graph.png"), dpi=96)
-plt.close()
-
-for i, s in enumerate(SAMPLES):
-    n_colours = [plt.cm.tab20b(i)] * len(G_sample[s])
-    edges, e_annots = zip(*nx.get_edge_attributes(G_sample[s], "annotation").items())
-    e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
-    pos = nx.spring_layout(G_sample[s])
-    nx.draw(
-        G_sample[s],
-        pos,
-        edgelist=None,
-        node_color=n_colours,
-        edge_color=e_colours,
-        with_labels=False,
-        width=10,
-    )
-    plt.savefig(path.join("Plots", s + ".png"), dpi=96)
-    plt.close()
 
 # ==============================================================================
 # Save data
