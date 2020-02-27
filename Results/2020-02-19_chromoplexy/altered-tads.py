@@ -13,6 +13,7 @@ import pickle
 from tqdm import tqdm
 from interval import interval
 from genomic_interval import GenomicInterval, overlapping
+from sklearn.cluster import KMeans
 
 # ==============================================================================
 # Constants
@@ -63,7 +64,19 @@ def find_tad(i: GenomicInterval, tads):
         return tads.iloc[range(min(lower_idx), max(upper_idx) + 1), :]
 
 
-def different_tads(mut, nonmut):
+def bpscore(a, b):
+    """
+    Calculate the BPscore for two sets of TADs
+
+    Parameters
+    ----------
+    a, b : 
+        TADs to compare
+    """
+    pass
+
+
+def different_tads(mut, nonmut, lower, upper):
     """
     Determine if the TADs of mutated samples are different from the TADs of
     non-mutated samples.
@@ -75,8 +88,22 @@ def different_tads(mut, nonmut):
         TADs of mutated samples
     nonmut: pd.DataFrame
         TADs of non-mutated samples
+    lower : int
+        Lower bound of positions to consider
+    upper : int
+        Upper bound of positions to consider
     """
-    pass
+    N = upper - lower
+    # create GenomicIntervals to work with
+    # calculate BPscore for all pairwise comparisons
+    X = np.array([[]])
+    # perform kmeans clustering
+    kmeans = KMeans(n_clusters=2).fit(X)
+    # compare actual mut and non-mut samples to identified clusters
+    if kmeans.labels_ ~= (mut, nonmut):
+        return True
+    return False
+
 
 
 def get_neighbouring_TADs(bp, ids, w=3, flank=BREAK_FLANK_SIZE):
