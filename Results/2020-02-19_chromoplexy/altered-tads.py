@@ -114,7 +114,11 @@ table_cols = [
 altering_bps = pd.DataFrame(columns=table_cols)
 
 # iterate over each breakpoint
-for bp in G:
+counter = 0
+for bp in tqdm(G):
+    counter += 1
+    if counter > 20:
+        break
     data_to_store = {
         "chr": bp.chr,
         "start": bp.inf(),
@@ -127,10 +131,10 @@ for bp in G:
     # find samples where this, or a nearby, breakpoint occurs
     nbrs = [n for n, v in G[bp].items() if v["annotation"] in ["nearby", "recurrent"]]
     # if they're in the same TAD, don't double count them
-    if find_tad(bp, tads[bp.data["sample"][3]]).shape[0] == 1:
+    if find_tad(bp, tads[bp.data["sample"]][3]).shape[0] == 1:
         data_to_store["lower_upper_same_TAD"] = True
     # for each end of the breakpoint, see if any of these neighbours has a breakpoint end within a certain distance
-    for which, pos in zip(["lower_end_altered_TAD", "upper_end_altered_TAD"], [bp.inf(), bp.sup()]:
+    for which, pos in zip(["lower_end_altered_TAD", "upper_end_altered_TAD"], [bp.inf(), bp.sup()]):
         # only keep unique sample IDs, don't double count them
         mut_samples = set([bp.data["sample"]] + [n.data["sample"] for n in nbrs if (n.chr == bp.chr) and (abs(pos - n.inf()) <= TOL or abs(pos - n.sup()) <= TOL)])
         nonmut_samples = set([s for s in SAMPLES if s not in mut_samples])
@@ -155,19 +159,13 @@ for bp in G:
         )
         if different_tads(mut_tads, nonmut_tads):
             data_to_store[which] = True
-        # store the result
-        altering_bps.append(pd.DataFrame.from_dict(data_to_store))
-    input()
+    # store the result
+    df = pd.DataFrame(data_to_store, index=[0])
+    altering_bps = altering_bps.append(df, ignore_index=True, sort=False)
+
+altering_bps["num_ends_altering_TADs"] = altering_bps["lower_end_altered_TAD"] + altering_bps["upper_end_altered_TAD"]
+print(altering_bps["num_ends_altering_TADs"].sum() / (2*altering_bps.shape[0]))
+
+altering_bps.to_csv("sv-ends-altering-TADs.tsv", sep="\t", index=False)
 
 
-for s in SAMPLES:
-    for bp_s in G[s]:
-        # find other samples with a breakpoint that overlap this one
-        overlaps = np.unique([r for r in SAMPLES for bp_r in G[r] if r != s if overlapping(bp_s, bp_r)])
-        if len(overlaps) > 0:
-            print(bp_s, s, overlaps)
-    shared = [SAMPLES[i] for bp in G[s] for i, t in enumerate(SAMPLES) if t != s if bp in G[t]]
-    if len(shared) > 0:
-        print(bp)
-        print(s)
-        print(shared)
