@@ -64,16 +64,44 @@ def find_tad(i: GenomicInterval, tads):
         return tads.iloc[range(min(lower_idx), max(upper_idx) + 1), :]
 
 
-def bpscore(a, b):
+def bpscore(tads_a, tads_b, lower=None, upper=None):
     """
     Calculate the BPscore for two sets of TADs
 
     Parameters
     ----------
-    a, b : 
+    tads_a, tads_b : 
         TADs to compare
+    lower : int
+        Lower bound to consider
+    upper : int
+        Upper bound to consider
     """
-    pass
+    if lower is None:
+        lower = max(tads_a["start"].min(), tads_b["start"].min())
+    if upper is None:
+        upper = min(tads_a["end"].max(), tads_b["end"].max())
+    N = upper - lower
+    a = sorted(tads_a["start"].tolist() + tads_a["end"].tolist())
+    # winsorize the ends so they match upper and lower
+    a = np.unique([min(max(lower, x), upper) for x in a])
+    b = sorted(tads_b["start"].tolist() + tads_b["end"].tolist())
+    b = np.unique([min(max(lower, x), upper) for x in b])
+    # counters for a, b, repsectively
+    i, j = (1, 1)
+    # similarity
+    s = 0
+    while i < len(a) and j < len(b):
+        print(a[i - 1], a[i])
+        print(b[j - 1], b[j])
+        print()
+        overlap = min(a[i], b[j]) - max(a[i - 1], b[j - 1])
+        s += overlap ** 2 / max(a[i] - a[i-1], b[j] - b[j - 1])
+        if b[j] > a[i]:
+            i += 1
+        else:
+            j += 1
+    return 1 - s / N
 
 
 def different_tads(mut, nonmut, lower, upper):
@@ -93,10 +121,9 @@ def different_tads(mut, nonmut, lower, upper):
     upper : int
         Upper bound of positions to consider
     """
-    N = upper - lower
-    # create GenomicIntervals to work with
     # calculate BPscore for all pairwise comparisons
-    X = np.array([[]])
+    X = np.array([[bp_score(tads[s1], tads[s2], lower, upper) for s2 in SAMPLES] for s1 in SAMPLES])
+    print(X)
     # perform kmeans clustering
     kmeans = KMeans(n_clusters=2).fit(X)
     # compare actual mut and non-mut samples to identified clusters
@@ -241,6 +268,7 @@ for bp in G:
     # get TADs where this breakpoint end is in, for the mutated and non-mutated samples
     mut_tads = get_neighbouring_TADs(bp, mut_samples)
     nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples)
+    bpscore(mut_tads.iloc[0], nonmut_tads.iloc[0], bp.inf() - BREAK_FLANK_SIZE, bp.sup() + BREAK_FLANK_SIZE)
     print(bp)
     print(mut_tads)
     print(nonmut_tads)
