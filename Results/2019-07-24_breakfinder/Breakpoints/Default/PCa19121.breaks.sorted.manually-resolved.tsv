@@ -12,4 +12,5 @@ chr7	56100000	58100000	chr7	60900000	62400000	.	56.2602	+	+	100kb	ARTEFACT	Spars
 chr11	50700000	55400000	chr11	87400000	88000000	.	71.1679	+	+	100kb	ARTEFACT	Sparsity
 chr16	4450000	4700000	chr8	41510000	41550000	.	306.152	+	-	10kb	BND	Drastic change in nearby contact on chr16; related to row 14
 chr16	4800000	5100000	chr16	71100000	71600000	.	72.404	-	+	100kb	UNKNOWN	Drastic change in nearby contact on chr16; related to row 13; possible repeat at upper end of this region leading to NA
+chr21	38400000	38500000	chr21	41500000	41620000	.	322.447	+	-	10kb	DEL	TMPRSS2-ERG fusion event; added manually since not detected by hic_breakfinder
 chrY	13500000	15700000	chrY	16500000	17400000	.	93.2473	+	-	100kb	ARTEFACT	Sparsity

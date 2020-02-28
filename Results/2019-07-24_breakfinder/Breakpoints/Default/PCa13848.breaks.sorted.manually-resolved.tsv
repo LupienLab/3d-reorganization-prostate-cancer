@@ -29,4 +29,5 @@ chr14	35440000	35700000	chr21	41450000	41500000	.	263.501	+	+	10kb	BND	Transloca
 chr14	35700000	35830000	chr21	38500000	38780000	.	783.964	-	-	10kb	BND	Translocation of T2E deletion into this site; related to row 28, undetected T2E deletion on chr21
 chr18	76340000	76460000	chr20	57700000	58220000	.	143.258	+	-	10kb	BND	No apparent related event
 chr19	36300000	37800000	chr19	43800000	44500000	.	229.383	+	-	100kb	ARTEFACT	Possible chr19 artefact that's present in all samples
+chr21	38400000	38500000	chr21	41500000	41620000	.	322.447	+	-	10kb	DEL	TMPRSS2-ERG fusion event; added manually since not detected by hic_breakfinder
 chrY	13800000	14600000	chrY	15500000	17400000	.	69.1986	+	-	100kb	ARTEFACT	Sparsity

@@ -27,4 +27,5 @@ chr16	5300000	8400000	chr16	34000000	34200000	.	138.846	-	+	100kb	ARTEFACT	Spars
 chr17	51000000	56000000	chr10	18000000	28000000	.	158.356	-	+	1Mb	ARTEFACT	Compartmentalization
 chr17	78930000	79000000	chr10	34650000	34980000	.	465.235	+	-	10kb	BND	Apparently unrelated to any other aberrations
 chr19	36300000	37900000	chr19	43800000	44500000	.	310.097	-	+	100kb	ARTEFACT	Compartmentalization
+chr21	38400000	38500000	chr21	41500000	41620000	.	322.447	+	-	10kb	DEL	TMPRSS2-ERG fusion event; added manually since not detected by hic_breakfinder
 chrY	13500000	15400000	chrY	16500000	17400000	.	101.031	+	-	100kb	ARTEFACT	Sparsity

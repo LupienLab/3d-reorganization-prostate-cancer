@@ -73,6 +73,7 @@ chr17	22700000	28300000	chr10	85000000	86000000	.	2876.49	+	-	100kb	BND	Sparsity
 chr19	36400000	37700000	chr19	43800000	44500000	.	110.547	+	+	100kb	ARTEFACT	chr19 artefacts
 chr21	10000000	30000000	chr10	93000000	111000000	.	87.7904	+	+	1Mb	ARTEFACT	Compartmentalization
 chr21	32350000	32410000	chr10	87940000	88000000	.	60.2075	-	+	10kb	BND	Due to its shape, probably related to other undetected aberrations on chr10 and chr21
+chr21	38400000	38500000	chr21	41500000	41620000	.	322.447	+	-	10kb	DEL	TMPRSS2-ERG fusion event; added manually since not detected by hic_breakfinder
 chrX	52340000	52430000	chrX	67850000	67990000	.	180.209	-	-	10kb	ARTEFACT	Sparsity
 chrX	67670000	67830000	chrX	144620000	144690000	.	174.324	+	+	10kb	DUP	Type 2; right at the AR locus, entirety of AR is duplicated
 chrY	13600000	15300000	chrY	15900000	17400000	.	162.927	+	-	100kb	ARTEFACT	Sparsity
