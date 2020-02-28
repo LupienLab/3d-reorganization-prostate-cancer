@@ -13,7 +13,7 @@ import pickle
 from tqdm import tqdm
 from interval import interval
 from genomic_interval import GenomicInterval, overlapping
-from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
 
 # ==============================================================================
 # Constants
@@ -24,46 +24,12 @@ TAD_DIR = path.join(
 )
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 WINDOWS = list(range(3, 31))
-TOL = 100000
-BREAK_FLANK_SIZE = 1000000
+TOL = 1e5
+BREAK_FLANK_SIZE = 5e5
 
 # ==============================================================================
 # Functions
 # ==============================================================================
-def find_tad(i: GenomicInterval, tads):
-    """
-    Find the TAD(s) that overlap a given interval
-
-    Parameters
-    ----------
-    i: GenomicInterval
-        Interval to find TADs for
-    tads: pd.DataFrame
-        Set of TADs to query
-    """
-    # get TAD containing infimum
-    tads_lower = tads.loc[
-        (tads.chr == i.chr) & (tads.start <= i.inf()) & (i.inf() <= tads.end), :
-    ]
-    # get TAD containing supremum
-    tads_upper = tads.loc[
-        (tads.chr == i.chr) & (tads.start <= i.sup()) & (i.sup() <= tads.end), :
-    ]
-    # get indices of the TADs identified
-    lower_idx = tads_lower.index.tolist()
-    upper_idx = tads_upper.index.tolist()
-    # if everything is contained to a single TAD, return just the one
-    if (
-        (len(lower_idx) == 1)
-        and (len(upper_idx) == 1)
-        and (lower_idx[0] == upper_idx[0])
-    ):
-        return tads_lower
-    # if not, return the set of TADs spanned by the breakpoint coordinates
-    else:
-        return tads.iloc[range(min(lower_idx), max(upper_idx) + 1), :]
-
-
 def bpscore(tads_a, tads_b, lower=None, upper=None):
     """
     Calculate the BPscore for two sets of TADs
@@ -92,9 +58,6 @@ def bpscore(tads_a, tads_b, lower=None, upper=None):
     # similarity
     s = 0
     while i < len(a) and j < len(b):
-        print(a[i - 1], a[i])
-        print(b[j - 1], b[j])
-        print()
         overlap = min(a[i], b[j]) - max(a[i - 1], b[j - 1])
         s += overlap ** 2 / max(a[i] - a[i-1], b[j] - b[j - 1])
         if b[j] > a[i]:
@@ -104,7 +67,7 @@ def bpscore(tads_a, tads_b, lower=None, upper=None):
     return 1 - s / N
 
 
-def different_tads(mut, nonmut, lower, upper):
+def different_tads(mut, mut_ids, nonmut, nonmut_ids, lower, upper):
     """
     Determine if the TADs of mutated samples are different from the TADs of
     non-mutated samples.
@@ -114,23 +77,41 @@ def different_tads(mut, nonmut, lower, upper):
     ----------
     mut: pd.DataFrame
         TADs of mutated samples
+    mut_ids: list<str>
+        List of mutated sample IDs
     nonmut: pd.DataFrame
         TADs of non-mutated samples
+    nonmut_ids: list<str>
+        List of non-mutated sample IDs
     lower : int
         Lower bound of positions to consider
     upper : int
         Upper bound of positions to consider
     """
+    all_ids = mut_ids + nonmut_ids
+    all_tads = pd.concat([mut, nonmut])
     # calculate BPscore for all pairwise comparisons
-    X = np.array([[bp_score(tads[s1], tads[s2], lower, upper) for s2 in SAMPLES] for s1 in SAMPLES])
-    print(X)
+    X = pd.DataFrame(
+        [[bpscore(all_tads.loc[s1], all_tads.loc[s2], lower, upper) for s2 in all_ids] for s1 in all_ids],
+        index=all_ids,
+        columns=all_ids
+    )
     # perform kmeans clustering
-    kmeans = KMeans(n_clusters=2).fit(X)
+    clustering = AgglomerativeClustering(n_clusters=2, affinity="precomputed", linkage="complete").fit(X)
     # compare actual mut and non-mut samples to identified clusters
-    if kmeans.labels_ ~= (mut, nonmut):
+    # mut IDs are always the first few rows/columns
+    # thus, if they group together, the firs tlen(mut_ids) should all have the same label
+    # and all the remaining IDs should have the other
+    labels = clustering.labels_
+    # force first label to be 1 (i.e. all mutated samples should have label 1 if the TAD changes)
+    if labels[0] != 1:
+        # swap labels (i.e. 0 -> 1 and 1 -> 0)
+        labels = [1 - x for x in labels]
+    # check consistency of clustering with mutated samples
+    labels_if_TAD_altered = [1 for i in mut_ids] + [0 for i in nonmut_ids]
+    if np.all(labels == labels_if_TAD_altered) :
         return True
     return False
-
 
 
 def get_neighbouring_TADs(bp, ids, w=3, flank=BREAK_FLANK_SIZE):
@@ -183,28 +164,6 @@ def get_mutated_ids_near_breakend(bp, neighbours, tol=TOL):
     )
 
 
-def print_tads(mut, nonmut, res=40000):
-    """
-    Print TADs and boundaries with ASCII characters
-
-    Parameters
-    ----------
-    mut : pd.DataFrame
-        TADs of mutated samples
-    nonmut : pd.DataFrame
-        TADs of non-mutated samples
-    res : int
-        TAD resolution
-    """
-    lower = min(mut.start.min(), nonmut.start.min())
-    upper = max(mut.end.max(), nonmut.end.max())
-    print(mut)
-    print(nonmut)
-    print()
-    print(lower)
-    print(upper)
-
-
 # ==============================================================================
 # Data
 # ==============================================================================
@@ -245,14 +204,10 @@ table_cols = [
 altering_bps = pd.DataFrame(columns=table_cols)
 
 # window size to check TADs for
-w = 10
+w = 3
 
 # iterate over each breakpoint
-# counter = 0
-for bp in G:
-    # counter += 1
-    # if counter > 20:
-    #     break
+for bp in tqdm(G):
     data_to_store = {
         "chr": bp.chr,
         "start": bp.inf(),
@@ -266,23 +221,15 @@ for bp in G:
     mut_samples = get_mutated_ids_near_breakend(bp, nbrs)
     nonmut_samples = set([s for s in SAMPLES if s not in mut_samples])
     # get TADs where this breakpoint end is in, for the mutated and non-mutated samples
-    mut_tads = get_neighbouring_TADs(bp, mut_samples)
-    nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples)
-    bpscore(mut_tads.iloc[0], nonmut_tads.iloc[0], bp.inf() - BREAK_FLANK_SIZE, bp.sup() + BREAK_FLANK_SIZE)
-    print(bp)
-    print(mut_tads)
-    print(nonmut_tads)
-    input()
-    if different_tads(mut_tads, nonmut_tads):
-        data_to_store[which] = True
+    mut_tads = get_neighbouring_TADs(bp, mut_samples, w)
+    nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples, w)
+    if different_tads(mut_tads, list(mut_samples), nonmut_tads, list(nonmut_samples), bp.inf() - BREAK_FLANK_SIZE, bp.sup() + BREAK_FLANK_SIZE):
+        data_to_store["altered_TAD"] = True
     # store the result
     df = pd.DataFrame(data_to_store, index=[0])
     altering_bps = altering_bps.append(df, ignore_index=True, sort=False)
 
-altering_bps["num_ends_altering_TADs"] = (
-    altering_bps["lower_end_altered_TAD"] + altering_bps["upper_end_altered_TAD"]
-)
-print(altering_bps["num_ends_altering_TADs"].sum() / (2 * altering_bps.shape[0]))
+print(altering_bps["altered_TAD"].sum() / altering_bps.shape[0])
 
 altering_bps.to_csv("sv-ends-altering-TADs.tsv", sep="\t", index=False)
 
