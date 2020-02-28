@@ -62,9 +62,6 @@ breakpoints = pd.concat(
 # remove artefacts
 breakpoints = breakpoints.loc[breakpoints["annotation"] != "ARTEFACT", :]
 
-# label interactions that are on different chromosomes as BND
-breakpoints.loc[breakpoints.chr_x != breakpoints.chr_y, "annotation"] = "BND"
-
 # ==============================================================================
 # Analysis
 # ==============================================================================
@@ -105,7 +102,7 @@ for s in tqdm(SAMPLES, unit="sample"):
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
 
 # connect 2 nodes if their intervals are within 100 kbp of each other
-for n in tqdm(G_all, position=0):
+for n in tqdm(G_all):
     for m in G_all:
         if n == m:
             continue
@@ -119,7 +116,7 @@ for n in tqdm(G_all, position=0):
                 G_all.add_edge(n, m, annotation="recurrent")
 
 for s in SAMPLES:
-    for n in tqdm(G_sample[s], position=0):
+    for n in tqdm(G_sample[s]):
         for m in G_sample[s]:
             if n == m:
                 continue
