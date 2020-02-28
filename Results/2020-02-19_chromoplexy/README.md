@@ -20,6 +20,14 @@ Breakpoints are subsequently connected with an edge if they are within 100 kbp o
 This tolerance distance was chosen due to the granularity of the breakpoint calls, since each breakpoint pair is identified at a contact matrix resolution of 10 kbp or 100 kbp.
 This produces a graph of SV breakpoints for each patient, where every connected component of the graph is a chromoplexic event.
 
+### Detecting SV breakpoints that alter local chromatin topology
+
+We consider each breakpoint end from each SV detected.
+For each breakpoint at locus $[s, e)$ in a given patient, we look for other patients that have a breakpoint end within 500 kbp (i.e. overlapping $[s - \delta, e + \delta), \delta = 500 000$) to identify similarly mutated patients.
+A local version of the BPscore \Cref{Zaborowski2019} is calculated for the identified TADs within this $[s - \delta, e + \delta)$ window for each pair of samples.
+Patients are then assigned into one of two groups using hierarchical clustering with the matrix of pairwise BPscore values as a distance matrix.
+If the clustering perfectly stratifies the mutated samples from the non-mutated samples (i.e. the clustering matches the mutation status in this locus), then the local topology is counted as altered as a result of the SV.
+
 ### Hypothesis testing for differences in RNA abundance
 
 Conventional methods for differential gene expression, such as DESeq2 \Cref{Love2014}, EdgeR \Cref{Robinson2010}, and Sleuth \Cref{Yi2018} require replicates for each condition being tested.
@@ -48,6 +56,25 @@ To address this shortcoming, we developed a different null hypothesis testing fr
 ## Results
 
 ### Chromplexy is common and more frequent in _T2E_-fusion patients
+
+### Breakpoints rarely alter the local chromatin topology
+
+Using the method described above for detecting changes to local topology as a result of and SV breakpoint, we find that a small minority of SVs alter the local topology (11/462 breakpoint ends, 2.38%).
+
+SVs that do alter the local topology include:
+
+* a translocation of the deleted _TMPRSS2_-_ERG_ locus being inserted into chr14 in `PCa13848`
+* multiple complex events on chr4 of `PCa3023`
+* a translocation of a deleted segment on chr12 and inserted into chr17 in `PCa3023` near _NCOR1_, _TTC19_, and _SNORD163_
+* one end of a tandem duplication on chr3 in `PCa53687` by _GAP43_
+* a complex, indeterminate event on chr15 in `PCa53687`
+* an apparent chromosome arm swap between chr7 and chr19 in `PCa53687`
+* multiple chained events on chr3 of `PCa56413`
+* a duplication on chr10 of `PCa56413`
+
+Only one breakpoint of a detected SV appeared to alter the local topology.
+There was no event detected where both breakpoints altered the local topology.
+If SVs are altering gene expression, it is likely not through establishing or altering TAD boundaries, but by interfering with _cis_-regulatory interactions through other means.
 
 ### Chromoplexy alters the expression of genes within TADs containing breakpoints
 
