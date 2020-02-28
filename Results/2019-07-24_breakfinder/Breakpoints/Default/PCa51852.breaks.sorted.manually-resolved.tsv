@@ -1,12 +1,12 @@
 chr1	125100000	143700000	chr1	152500000	153300000	.	69.8616	+	-	100kb	ARTEFACT	Sparsity
 chr1	125100000	143700000	chr1	157500000	159500000	.	76.1985	+	-	100kb	ARTEFACT	Sparsity
-chr3	179000000	181000000	chr15	28000000	31000000	.	57.7806	+	-	1Mb	UNKNOWN	Sparsity, but surrounded by multiple non-trivial undetected aberrations
+chr3	179000000	181000000	chr15	28000000	31000000	.	57.7806	+	-	1Mb	BND	Sparsity, but surrounded by multiple non-trivial undetected aberrations
 chr8	60800000	61100000	chr8	113100000	113600000	.	85.5346	+	-	100kb	UNKNOWN	Looks like an inversion coupled with another event
-chr12	6680000	6780000	chr2	11230000	11500000	.	268.964	+	+	10kb	UNKNOWN	Related to row 6
-chr12	6780000	6840000	chr2	11070000	11220000	.	181.597	-	+	10kb	UNKNOWN	Related to row 5
-chr12	58200000	59400000	chr16	23700000	24300000	.	466.783	-	-	100kb	UNKNOWN	Possibly related to nearby undetected aberration and undetected deletion on chr15; strong TAD boundary
-chr15	43800000	44700000	chr7	128300000	128700000	.	436.506	+	+	100kb	UNKNOWN	Related to an undetected strong aberration edge earlier on chr7
-chr16	15000000	18000000	chr13	84000000	90000000	.	89.1607	+	+	1Mb	UNKNOWN	Sparsity in the region, possibly related to nearby undetected aberration on chr13xchr16
+chr12	6680000	6780000	chr2	11230000	11500000	.	268.964	+	+	10kb	BND	Related to row 6
+chr12	6780000	6840000	chr2	11070000	11220000	.	181.597	-	+	10kb	BND	Related to row 5
+chr12	58200000	59400000	chr16	23700000	24300000	.	466.783	-	-	100kb	BND	Possibly related to nearby undetected aberration and undetected deletion on chr15; strong TAD boundary
+chr15	43800000	44700000	chr7	128300000	128700000	.	436.506	+	+	100kb	BND	Related to an undetected strong aberration edge earlier on chr7
+chr16	15000000	18000000	chr13	84000000	90000000	.	89.1607	+	+	1Mb	BND	Sparsity in the region, possibly related to nearby undetected aberration on chr13xchr16
 chr17	41910000	41980000	chr19	50880000	51130000	.	218.557	+	-	10kb	BND	Looks like a balanced translocation of chromosome arms between 17q and 19p; one half of the event detected in row 11
 chr17	41980000	42190000	chr19	50770000	50880000	.	224.481	-	+	10kb	BND	Looks like a balanced translocation of chromosome arms between 17q and 19p; one half of the event detected in row 10
 chr21	38400000	38500000	chr21	41500000	41620000	.	322.447	+	-	10kb	DEL	TMPRSS2-ERG fusion event

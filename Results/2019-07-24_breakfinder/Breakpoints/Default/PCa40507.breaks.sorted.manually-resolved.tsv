@@ -1,23 +1,23 @@
-chr1	105900000	108000000	chr11	64000000	64200000	.	190.181	+	-	100kb	UNKNOWN	Related to rows 2, 7, 8, 9
-chr1	230350000	230500000	chr11	64260000	64310000	.	81.0574	+	+	10kb	UNKNOWN	Related to rows 1, 7, 8, 9
-chr1	230600000	231300000	chr17	8200000	8900000	.	531.841	-	-	100kb	UNKNOWN	Possibly related to row 2
-chr2	6810000	6890000	chr17	50440000	50480000	.	81.3226	-	-	10kb	UNKNOWN	Related to row 27
+chr1	105900000	108000000	chr11	64000000	64200000	.	190.181	+	-	100kb	BND	Related to rows 2, 7, 8, 9
+chr1	230350000	230500000	chr11	64260000	64310000	.	81.0574	+	+	10kb	BND	Related to rows 1, 7, 8, 9
+chr1	230600000	231300000	chr17	8200000	8900000	.	531.841	-	-	100kb	BND	Possibly related to row 2
+chr2	6810000	6890000	chr17	50440000	50480000	.	81.3226	-	-	10kb	BND	Related to row 27
 chr3	12000000	12300000	chr3	151000000	152000000	.	110.107	+	-	100kb	UNKNOWN	Related to row 6; given the shape, almost necessarily involves another locus
 chr3	12010000	12200000	chr3	149820000	149890000	.	75.9403	-	+	10kb	UNKNOWN	Related to row 5; given the shape, almost necessarily involves another locus
-chr5	69100000	69500000	chr1	108400000	109600000	.	587.295	-	-	100kb	UNKNOWN	Related to rows 1, 2, 8, 9
-chr5	54500000	55300000	chr2	3700000	6800000	.	1501.45	+	+	100kb	UNKNOWN	Related to rows 1, 2, 7, 9
+chr5	69100000	69500000	chr1	108400000	109600000	.	587.295	-	-	100kb	BND	Related to rows 1, 2, 8, 9
+chr5	54500000	55300000	chr2	3700000	6800000	.	1501.45	+	+	100kb	BND	Related to rows 1, 2, 7, 9
 chr5	55300000	55800000	chr5	69100000	69300000	.	57.6012	-	-	100kb	UNKNOWN	Related to rows 1, 2, 7, 8
-chr8	93000000	93130000	chr7	155400000	155520000	.	113.591	-	-	10kb	UNKNOWN	Possibly related to nearby undetected aberration on chr7xchr8
-chr8	129470000	129620000	chr7	70740000	70810000	.	97.7349	-	-	10kb	UNKNOWN	Related to row 12; separate TADs on both chromosomes; given size and fade, probably involves a third aberration elswhere, too
-chr8	136000000	137700000	chr7	69500000	70700000	.	2200.91	-	+	100kb	UNKNOWN	Related to row 11
-chr10	49410000	49540000	chr1	234330000	234420000	.	149.987	+	+	10kb	UNKNOWN	Possibly related to rows 1, 2, 3, 7, 8, 9, 14
-chr10	111000000	111900000	chr1	223000000	223900000	.	311.371	+	+	100kb	UNKNOWN	Possibly related to rows 1, 2, 3, 7, 8, 9, 13, another undetected aberration on chr1:224000000
+chr8	93000000	93130000	chr7	155400000	155520000	.	113.591	-	-	10kb	BND	Possibly related to nearby undetected aberration on chr7xchr8
+chr8	129470000	129620000	chr7	70740000	70810000	.	97.7349	-	-	10kb	BND	Related to row 12; separate TADs on both chromosomes; given size and fade, probably involves a third aberration elswhere, too
+chr8	136000000	137700000	chr7	69500000	70700000	.	2200.91	-	+	100kb	BND	Related to row 11
+chr10	49410000	49540000	chr1	234330000	234420000	.	149.987	+	+	10kb	BND	Possibly related to rows 1, 2, 3, 7, 8, 9, 14
+chr10	111000000	111900000	chr1	223000000	223900000	.	311.371	+	+	100kb	BND	Possibly related to rows 1, 2, 3, 7, 8, 9, 13, another undetected aberration on chr1:224000000
 chr10	68600000	69000000	chr10	110800000	112000000	.	245.198	-	+	100kb	UNKNOWN	Related to row 17; possibly related to row 16
 chr10	69400000	69900000	chr10	93400000	93700000	.	61.2375	-	-	100kb	UNKNOWN	Possibly related to row 15
 chr10	79350000	79400000	chr10	112050000	112160000	.	78.231	+	+	10kb	UNKNOWN	Related to row 15
-chr12	70480000	70570000	chr8	128100000	128150000	.	92.9259	-	+	10kb	UNKNOWN	Related to rows 19, 20, and another undetected aberration near this position; at 3' end of MYC
-chr12	123700000	124900000	chr8	134700000	136000000	.	2172.59	+	+	100kb	UNKNOWN	Related to rows 18, 20, and another undetected aberration; at 3' end of MYC
-chr12	124900000	126800000	chr8	128200000	129200000	.	1235.44	-	-	100kb	UNKOWN	Related to rows 18, 19, and another undetected aberration; at 3' end of MYC
+chr12	70480000	70570000	chr8	128100000	128150000	.	92.9259	-	+	10kb	BND	Related to rows 19, 20, and another undetected aberration near this position; at 3' end of MYC
+chr12	123700000	124900000	chr8	134700000	136000000	.	2172.59	+	+	100kb	BND	Related to rows 18, 20, and another undetected aberration; at 3' end of MYC
+chr12	124900000	126800000	chr8	128200000	129200000	.	1235.44	-	-	100kb	BND	Related to rows 18, 19, and another undetected aberration; at 3' end of MYC
 chr16	13700000	14400000	chr16	46800000	47200000	.	207.073	+	+	100kb	DUP	Type 2
 chr16	14600000	14700000	chr16	59100000	60500000	.	81.7447	-	-	100kb	UNKNOWN	Related to rows 23, 24
 chr16	48000000	48300000	chr16	81200000	81900000	.	134.066	-	-	100kb	UNKNOWN	Related to rows 22, 24
@@ -25,7 +25,7 @@ chr16	48700000	49700000	chr16	77600000	78000000	.	105.308	+	+	100kb	UNKNOWN	Rela
 chr17	5300000	6600000	chr17	47500000	47900000	.	141.183	+	+	100kb	UNKNOWN	Possibly related to rows 26, 27, 28, 29
 chr17	9700000	10700000	chr17	45600000	45800000	.	197.397	+	+	100kb	UNKNOWN	Possibly related to rows 25, 27, 28, 29
 chr17	11300000	11800000	chr17	50100000	50500000	.	145.597	+	+	100kb	UNKNOWN	Possibly related to rows 25, 26, 28, 29
-chr17	46300000	47400000	chr18	55000000	57600000	.	1767.81	+	+	100kb	UNKNOWN	Possibly related to rows 25, 26, 27, 29
-chr17	51720000	51760000	chr18	67200000	67430000	.	79.0419	+	+	10kb	UNKNOWN	Possibly related to rows 25, 26, 27, 28
+chr17	46300000	47400000	chr18	55000000	57600000	.	1767.81	+	+	100kb	BND	Possibly related to rows 25, 26, 27, 29
+chr17	51720000	51760000	chr18	67200000	67430000	.	79.0419	+	+	10kb	BND	Possibly related to rows 25, 26, 27, 28
 chr19	36300000	37800000	chr19	43800000	44500000	.	168.378	+	+	100kb	ARTEFACT	chr19 regions
 chrY	12900000	15300000	chrY	16000000	17400000	.	214.264	+	-	100kb	ARTEFACT	Sparsity
