@@ -17,7 +17,7 @@ chr12	118330000	118360000	chr21	41470000	41630000	.	148.863	+	-	10kb	BND	Possibl
 chr12	125000000	133000000	chr21	10000000	28000000	.	138.148	-	+	1Mb	BND	Possible translocation of ERG from the undetected TMPRSS2-ERG fusion into chr12; related to row 17
 chr13	29470000	29520000	chr3	52420000	52700000	.	281.39	+	+	10kb	BND	Related to rows 21, 23; possibly related to row 14
 chr13	21560000	21590000	chr13	94420000	94690000	.	99.4111	+	-	10kb	DEL	
-chr13	94000000	101000000	chrY	19000000	21000000	.	143.43	-	+	1Mb	BND	Sparsity in the region, but there is something there
+chr13	94000000	101000000	chrY	19000000	21000000	.	143.43	-	+	1Mb	BND	Sparsity in the region, but there is something there; not detected at smaller resolution probably due to the sparsity
 chr14	87650000	87770000	chr3	52710000	52860000	.	156.566	-	-	10kb	BND	Related to rows 18, 23
 chr14	95000000	100000000	chr3	75000000	91000000	.	196.959	+	-	1Mb	ARTEFACT	Compartmentalization
 chr14	86100000	87700000	chr13	24000000	24800000	.	1852.66	+	-	100kb	BND	Related to rows 18, 21

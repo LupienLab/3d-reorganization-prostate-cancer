@@ -5,7 +5,7 @@ chr1	99800000	101600000	chr15	25100000	29100000	.	668.377	+	-	100kb	BND	Possible
 chr2	7000000	8000000	chr2	46100000	46900000	.	611.687	+	-	100kb	DEL	Related to insertion on chr5 (rows 25, 26)
 chr3	44390000	44510000	chr2	97740000	97810000	.	226.614	-	-	10kb	BND	Related to rows [6, 24]
 chr3	73600000	75800000	chr2	97700000	98600000	.	1713.01	-	-	100kb	BND	Related to rows [6, 24]
-chr3	157000000	164000000	chr2	75000000	85000000	.	180.795	-	+	1Mb	BND	Related to rows [6, 24]
+chr3	157000000	164000000	chr2	75000000	85000000	.	180.795	-	+	1Mb	ARTEFACT	Related to rows [6, 24]; compartmentalization, probably due to small nearby aberration on chr3
 chr3	41700000	41890000	chr3	134550000	134570000	.	72.9474	+	+	10kb	UNKNOWN	Related to rows [6, 24]
 chr3	41900000	42000000	chr3	130950000	131030000	.	177.516	+	+	10kb	UNKNOWN	Related to rows [6, 24]
 chr3	41910000	41970000	chr3	156830000	157140000	.	139.239	-	-	10kb	UNKNOWN	Related to rows [6, 24]
@@ -57,8 +57,8 @@ chr14	21520000	21700000	chr1	91810000	92020000	.	831.865	+	-	10kb	BND	Related to
 chr14	54300000	54450000	chr1	91470000	91560000	.	312.668	+	+	10kb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
 chr14	56000000	57400000	chr1	48000000	48200000	.	106.348	-	-	100kb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
 chr14	100040000	100200000	chr1	47930000	48120000	.	663.091	-	-	10kb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
-chr14	22000000	40000000	chr10	92000000	100000000	.	378.653	-	-	1Mb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
-chr14	24000000	31000000	chr10	42000000	59000000	.	267.16	+	+	1Mb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	22000000	40000000	chr10	92000000	100000000	.	378.653	-	-	1Mb	ARTEFACT	Compartmentalization; related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
+chr14	24000000	31000000	chr10	42000000	59000000	.	267.16	+	+	1Mb	ARTEFACT	Compartmentalization; related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
 chr14	99880000	99990000	chr10	103210000	103370000	.	254.567	+	-	10kb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
 chr14	103310000	103440000	chr10	100290000	100510000	.	586.073	+	+	10kb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]
 chr14	103520000	103670000	chr10	102500000	102660000	.	397.323	-	+	10kb	BND	Related to numerous events, difficult to count since they span multiple chromosomes; possibly related to rows [56, 70]

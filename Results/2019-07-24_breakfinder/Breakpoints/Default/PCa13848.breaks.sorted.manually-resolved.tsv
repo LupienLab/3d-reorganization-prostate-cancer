@@ -7,7 +7,7 @@ chr3	25400000	27300000	chr6	163100000	163400000	.	1178.44	-	-	100kb	BND	Related 
 chr4	69200000	69900000	chr9	98000000	98900000	.	701.427	+	-	100kb	BND	Possibly related to undetected nearby event on chr4xchr9, but ends do not meet each other
 chr5	59000000	59200000	chr5	172400000	173000000	.	53.8291	+	+	100kb	UNKNOWN	Related to 4 undetected events on the same chromosome
 chr7	56100000	58100000	chr7	60900000	62400000	.	60.1504	+	+	100kb	ARTEFACT	Sparsity
-chr8	46000000	80000000	chr10	104000000	111000000	.	1398.15	-	-	1Mb	BND	Possible artefact, but this spans much of the q arm of chr8 but not its entirety; this large region also strongly effects other chromosomes, may be normalization issue, unsure
+chr8	46000000	80000000	chr10	104000000	111000000	.	1398.15	-	-	1Mb	ARTEFACT	Compartmentalization; Possibly due to strong compartmentalization on chr10; this spans much of the q arm of chr8 but not its entirety; this large region also strongly effects other chromosomes, may be normalization issue, unsure
 chr8	45000000	47100000	chr20	30400000	31500000	.	375.551	+	+	100kb	ARTEFACT	Sparsity
 chr10	5970000	6090000	chr10	96630000	96720000	.	328.899	-	-	10kb	DUP	Type 1
 chr10	96700000	99300000	chr20	21000000	23500000	.	4074.27	-	-	100kb	BND	No apparent related event
@@ -21,7 +21,7 @@ chr13	98700000	99200000	chr1	201100000	201900000	.	655.326	+	+	100kb	BND	Related
 chr13	99400000	100600000	chr1	151000000	151300000	.	208.303	-	-	100kb	BND	Related to row 20, 3 other nearby undetected events on chr1xchr13 and the 3 detected + 1 undetected event on chr13 (rows 25, 26, 27)
 chr13	21400000	22900000	chr6	168600000	169600000	.	898.379	-	-	100kb	BND	Related to rows 23, 24; possibly related to rows 20, 21, 25, 26, 27
 chr13	42100000	42800000	chr6	165600000	166400000	.	754.075	-	+	100kb	BND	Related to rows 22, 24; possibly related to rows 20, 21, 25, 26, 27
-chr13	53000000	60000000	chr6	152000000	164000000	.	173.334	+	-	1Mb	BND	Related to rows 22, 23; possibly related to rows 20, 21, 25, 26, 27
+chr13	53000000	60000000	chr6	152000000	164000000	.	173.334	+	-	1Mb	ARTEFACT	Compartmentalization and nearby sparsity; related to rows 22, 23; possibly related to rows 20, 21, 25, 26, 27
 chr13	20000000	20400000	chr13	39600000	40000000	.	69.9005	+	+	100kb	UNKNOWN	Related to rows 20, 21, 26, 27; possibly related to rows 22, 23, 24
 chr13	41700000	42200000	chr13	88800000	89200000	.	77.1269	-	+	100kb	UNKNOWN	Related to rows 20, 21, 25, 27; possibly related to rows 22, 23, 24
 chr13	58900000	59300000	chr13	106800000	107200000	.	61.2957	-	-	100kb	UNKNOWN	Related to rows 20, 21, 25, 26; possibly related to rows 22, 23, 24
