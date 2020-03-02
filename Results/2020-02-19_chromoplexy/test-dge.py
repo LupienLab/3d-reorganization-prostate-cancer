@@ -116,7 +116,7 @@ def normalize_genes(genes, sample, offset=1e-3):
     z.loc[no_exprs_idx] = 0
     # for the samples with 0 variance, if the sample of interest also has some non-zero expression, replace NaN with Infinity
     z.loc[sample_genes_expressed_idx & no_exprs_idx] = np.inf
-    return z, fc
+    return z, fc, means, variances
 
 
 # ==============================================================================
@@ -228,10 +228,12 @@ for s in tqdm(SAMPLES):
         genes = get_genes_in_tads(affected_tad_intvls)
         # CHECK THAT THIS MUTATION DOES NOT EXIST IN ANOTHER SAMPLE #
         # normalize them according to the samples without this mutation
-        z, fc = normalize_genes(genes, s)
+        z, fc, means, variances = normalize_genes(genes, s)
         # order is preserved, so just append the column
         genes["z"] = z.tolist()
         genes["log2fold"] = fc.tolist()
+        genes["nonmut_mean"] = means.tolist()
+        genes["nonmut_var"] = variances.tolist()
         # store tested genes for later
         tested_genes[s][i] = genes
         tested_genes[s][i]["Mutated_In"] = s

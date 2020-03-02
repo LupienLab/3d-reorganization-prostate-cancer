@@ -13,17 +13,60 @@ htest = fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
 # load z-scores for tested genes
 tested_genes = fread("sv-disruption-tests.genes.tsv", sep = "\t", header = TRUE)
 
+# load expression of all genes
+exprs = fread(
+    file.path(
+        "..",
+        "..",
+        "Data",
+        "External",
+        "CPC-GENE",
+        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv"
+    ),
+    sep = "\t",
+    header = TRUE
+)
+exprs[, EnsemblID_short := gsub("\\.\\d+", "", EnsemblID)]
+
+# load GENCODE reference annotation (all genes, not just protein-coding)
+gencode = fread(
+    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
+    sep = "\t",
+    header = FALSE,
+    col.names = c("chr", "start", "end", "strand", "EnsemblID", "name"),
+)
+# remove annotation version number to ensure compatibility with previous RNA-seq
+gencode[, EnsemblID_short := gsub("\\.\\d+", "", EnsemblID)]
+
+# merge gencode annotations to gene expression
+exprs = merge(
+    x = exprs,
+    y = gencode,
+    by = "EnsemblID_short"
+)
+
+# plotting thresholds
+log_fold_thresh = log2(c(0.5, 2))
+
+# delta offset used in calculating fold change
+offset = 1e-3
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
 # add n_breakpoints to tested_genes for plotting
 tested_genes = merge(
     x = tested_genes,
-    y = htest[, .SD, .SDcols=c("Sample", "Component_Index", "n_breakpoints", "n_genes")],
+    y = htest[, .SD, .SDcols = c("Sample", "Component_Index", "n_genes")],
     by.x = c("Mutated_In", "Component_Index"),
     by.y = c("Sample", "Component_Index"),
     all.x = TRUE
 )
+
+# calculate means and variances for all genes
+sample_cols = 3:15
+exprs[, Mean := rowMeans(.SD), .SDcols = sample_cols]
+exprs[, StdDev := apply(.SD, 1, sd), .SDcols = sample_cols]
 
 # ==============================================================================
 # Plots
@@ -46,7 +89,7 @@ ggsave(
 gg = (
     ggplot(data = tested_genes)
     + geom_violin(aes(x = factor(Component_Index), y = z, fill = n_breakpoints))
-    + labs(x = "Chromoplexic Event", y = "z-score\n(Mutated Sample)")
+    + labs(x = "Complex Event", y = "z-score\n(Mutated Sample)")
     + ylim(-5, 5)
     + facet_wrap(~ Mutated_In, scales = "free_y")
     + guides(fill = guide_legend(title="Breakpoints"))
@@ -66,6 +109,65 @@ ggsave(
     units = "cm"
 )
 
+gg = (
+    ggplot(data = tested_genes)
+    + geom_boxplot(aes(x = factor(Component_Index), y = log2fold), outlier.size = 0.5, outlier.alpha = 0.5)
+    + labs(x = "Complex Event", y = expression(log[2] * " Expression fold change"))
+    + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
+    + facet_wrap(~ Mutated_In, scales = "free_y")
+    + guides(fill = guide_legend(title="Breakpoints"))
+    + coord_flip()
+    + theme_minimal()
+    + theme(
+        strip.text.y = element_text(angle = 0, hjust = 0),
+        axis.text.y = element_blank(),
+        legend.position = "bottom"
+    )
+)
+ggsave(
+    "Plots/sv-disruption.fold-change.png",
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+
+gg = (
+    ggplot(data = tested_genes)
+    + geom_point(aes(x = (2^log2fold - 1) * (nonmut_mean + offset), y = log2fold))
+    + geom_hline(yintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
+    + geom_hline(yintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + labs(x = "RNA abundance - mean", y = expression(log[2] * " Expression fold change"))
+    + xlim(-100, 100)
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom"
+    )
+)
+ggsave(
+    "Plots/sv-disruption.fold-change-vs-mean.png",
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+
+gg = (
+    ggplot(data = exprs)
+    + geom_density(aes(x = Mean))
+    + labs(x = "Mean expression (FPKM)", y = "Density")
+    # + xlim(0, 2000)
+    + scale_x_log10()
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom"
+    )
+)
+ggsave(
+    "Plots/all-genes.sd-vs-mean.png",
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+
 # plot empirical CDFs of fold changes for each chromoxplexic event
 # convert to log2 base for more understandable plotting
 fold_ecdf = tested_genes[, ecdf(log2fold)]
@@ -73,7 +175,6 @@ ecdf_data = data.table(
     log2fold = tested_genes[order(log2fold), log2fold]
 )
 ecdf_data[, cdf := fold_ecdf(log2fold)]
-log_fold_thresh = log2(c(0.5, 2))
 gg = (
     ggplot()
     + geom_ribbon(
