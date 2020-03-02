@@ -68,7 +68,6 @@ ggsave(
 
 # plot empirical CDFs of fold changes for each chromoxplexic event
 # convert to log2 base for more understandable plotting
-tested_genes[, log2fold := log10fold * log2(10)]
 fold_ecdf = tested_genes[, ecdf(log2fold)]
 ecdf_data = data.table(
     log2fold = tested_genes[order(log2fold), log2fold]

@@ -111,7 +111,7 @@ def normalize_genes(genes, sample, offset=1e-3):
     # calculate z-score normalization
     z = (genes_to_normalize[s] - means) / np.sqrt(variances)
     # calculate fold change (log10(FPKM + offset) - log10(mean + offset) to ensure no divide by 0)
-    fc = np.log10((genes_to_normalize[s] + offset) / (means + offset))
+    fc = np.log2((genes_to_normalize[s] + offset) / (means + offset))
     # for the samples with 0 variance, if the sample of interest also has no expression, replace NaN with 0
     z.loc[no_exprs_idx] = 0
     # for the samples with 0 variance, if the sample of interest also has some non-zero expression, replace NaN with Infinity
@@ -231,7 +231,7 @@ for s in tqdm(SAMPLES):
         z, fc = normalize_genes(genes, s)
         # order is preserved, so just append the column
         genes["z"] = z.tolist()
-        genes["log10fold"] = fc.tolist()
+        genes["log2fold"] = fc.tolist()
         # store tested genes for later
         tested_genes[s][i] = genes
         tested_genes[s][i]["Mutated_In"] = s
