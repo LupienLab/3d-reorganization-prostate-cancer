@@ -93,7 +93,6 @@ gg = (
         data = tested_genes,
         mapping = aes(x = log2fold)
     )
-    + labs(x = expression(log[2] * "Fold Change"), y = "Cumulative Density")
     + geom_vline(xintercept=log_fold_thresh[1], linetype = "dashed", colour = "red")
     + geom_vline(xintercept=log_fold_thresh[2], linetype = "dashed", colour = "red")
     + annotate(
@@ -105,7 +104,9 @@ gg = (
     )
     + annotate(
         x = 4, y = 0.875,
-        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
+        # label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"), # this was producing repeated 9s,
+        # so I'm just typing in the value
+        label = "6.7%",
         geom = "text",
         colour = "red",
         alpha = 0.5
@@ -126,7 +127,13 @@ gg = (
     )
     + scale_x_continuous(
         breaks = seq(-10, 10, 2),
-        limits = c(-10, 10)
+        limits = c(-10, 10),
+        name = expression(log[2] * " Expression Fold Change")
+    )
+    + scale_y_continuous(,
+        breaks = seq(0, 1, 0.2),
+        labels = seq(0, 100, 20),
+        name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
     )
     + theme_minimal()
 )
