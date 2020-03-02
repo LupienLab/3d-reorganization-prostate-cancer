@@ -92,11 +92,11 @@ The insertion site of this translocation disrupts the local chromatin topology a
 
 This is in accordance with recent work consider the impact of structural variants in a pan-cancer study showing that these variants affecting TAD structures can affect expression of the neighbouring genes, but only in a minority of cases \Cref{Akdemir2020}.
 
+Notably, only 25% (12/47) genes involved in this translocation have largely altered RNA abundances ($|\log_2(\text{fold change})| \ge 1$), compared to the 12 other samples.
+
 ### Hi-C tends to detect more inter-chromosomal translocations than whole genome sequencing
 
 Using the previously-published SVs from [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788), we compared the SVs called from each sequencing method on the same samples.
-
-<!-->TODO: Resolve SV calls and compare<-->
 
 One possible source for the difference in SV detection is the different prostate tumour section being sequenced.
 [Boutros _et al_, Nature Genetics, 2015](https://doi.org/10.1038/ng.3315) showed that prostate tumours display spatial intra-tumour genomic heterogeneity.

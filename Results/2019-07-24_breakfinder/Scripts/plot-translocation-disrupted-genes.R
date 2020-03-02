@@ -65,6 +65,7 @@ disrupted_exprs[, Non_Translocation_SD := apply(
     sd
 )]
 disrupted_exprs[, fold_change := PCa13848 / Non_Translocation_Mean]
+disrupted_exprs[, log2fold := log2(fold_change)]
 disrupted_exprs[, z := (PCa13848 - Non_Translocation_Mean) / Non_Translocation_SD]
 
 # perform t-test on disrupted_exprs$z
@@ -75,15 +76,15 @@ test_results <- t.test(disrupted_exprs$z)
 # ==============================================================================
 gg = (
     ggplot(data = disrupted_exprs_long)
-    + geom_point(
+    + geom_jitter(
         aes(x = (SampleID == "PCa13848"), y = Expression, colour = chr),
-        position = "jitter"
+        width = 0.3
     )
     + labs(x = NULL, y = "Expression (FPKM)")
     + scale_x_discrete(
           limits = c(TRUE, FALSE),
           breaks = c(TRUE, FALSE),
-          labels = c("PCa13848", "Other ERG+")
+          labels = c("PCa13848", "Other")
     )
     + facet_wrap(~ Symbol, scales = "free")
     + theme_minimal()
@@ -143,6 +144,71 @@ gg = (
 )
 ggsave(
     "Plots/translocation-disrupted-genes.nhst.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
+# plot empirical CDFs of fold changes for each chromoxplexic event
+# convert to log2 base for more understandable plotting
+fold_ecdf = disrupted_exprs[, ecdf(log2fold)]
+ecdf_data = data.table(
+    log2fold = c(-1e6, disrupted_exprs[order(log2fold), log2fold])
+)
+ecdf_data[, cdf := fold_ecdf(log2fold)]
+log_fold_thresh = log2(c(0.5, 2))
+gg = (
+    ggplot()
+    + stat_ecdf(
+        data = disrupted_exprs,
+        mapping = aes(x = log2fold)
+    )
+    + geom_vline(xintercept=log_fold_thresh[1], linetype = "dashed", colour = "red")
+    + geom_vline(xintercept=log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + annotate(
+        x = -2, y = 0.2,
+        label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
+        geom = "text",
+        colour = "red",
+        alpha = 0.5
+    )
+    + annotate(
+        x = 2, y = 0.875,
+        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
+        geom = "text",
+        colour = "red",
+        alpha = 0.5
+    )
+    + geom_curve(
+        aes(x = -1.75, y = 0.2, xend = -1.5, yend = 0.13),
+        arrow = arrow(angle = 30, length = unit(0.03, "npc")),
+        curvature = -0.3,
+        colour = "red",
+        alpha = 0.5
+    )
+    + geom_curve(
+        aes(x = 1.75, y = 0.875, xend = 1.5, yend = 0.9),
+        arrow = arrow(angle = 30, length = unit(0.03, "npc")),
+        curvature = -0.3,
+        colour = "red",
+        alpha = 0.5
+    )
+    + scale_x_continuous(
+        breaks = seq(-3, 3, 1),
+        limits = c(-3, 3),
+        name = expression(log[2] * " Expression Fold Change")
+    )
+    + scale_y_continuous(,
+        breaks = seq(0, 1, 0.2),
+        labels = seq(0, 100, 20),
+        name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
+    )
+    + theme_minimal()
+)
+
+    
+ggsave(
+    "Plots/translocation-disrupted-genes.ecdf.png",
     height = 12,
     width = 20,
     units = "cm"
