@@ -104,9 +104,7 @@ gg = (
     )
     + annotate(
         x = 4, y = 0.875,
-        # label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"), # this was producing repeated 9s,
-        # so I'm just typing in the value
-        label = "6.7%",
+        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
         geom = "text",
         colour = "red",
         alpha = 0.5

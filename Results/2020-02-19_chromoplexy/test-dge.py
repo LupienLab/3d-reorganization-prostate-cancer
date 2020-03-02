@@ -144,7 +144,7 @@ tads = {
 }
 
 # load breakpoint graphs for each patient
-G = pickle.load(open("breakpoint-graphs.p", "rb"))
+G = pickle.load(open("breakpoints.per-sample.p", "rb"))
 
 # load gene expression data
 exprs = pd.read_csv(
@@ -160,7 +160,7 @@ exprs = pd.read_csv(
     header=0,
 )
 # remove annotation version number to ensure compatibility with GENCODE
-exprs["EnsemblID_short"] = exprs.EnsemblID.str.replace("\\..*", "")
+exprs["EnsemblID_short"] = exprs.EnsemblID.str.replace("\\.\\d+", "")
 
 
 # load GENCODE reference annotation (all genes, not just protein-coding)
@@ -168,10 +168,10 @@ gencode = pd.read_csv(
     path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed",),
     sep="\t",
     header=None,
-    names=["chr", "start", "end", "strand", "EnsemblID"],
+    names=["chr", "start", "end", "strand", "EnsemblID", "name"],
 )
 # remove annotation version number to ensure compatibility with previous RNA-seq
-gencode["EnsemblID_short"] = gencode.EnsemblID.str.replace("\\..*", "")
+gencode["EnsemblID_short"] = gencode.EnsemblID.str.replace("\\.\\d+", "")
 
 exprs = exprs.merge(gencode, on="EnsemblID_short", suffixes=["_exprs", "_gencode"])
 
