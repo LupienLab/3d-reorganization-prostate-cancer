@@ -17,8 +17,8 @@ Similar in design to the ChainFinder algorithm previously described \Cref{Baca20
 Each row of the `hic_breakfinder` output contains a pair of breakpoints corresponding to the bounding coordinates of the aberrant submatrix.
 These two nodes are connected via an edge, coloured according to the breakpoint type assigned to it by manual annotation (see the `Type` column in [`../2019-07-24_breakfinder/Breakpoints/Default/PCa*.breaks.sorted.manually-resolved.tsv`](../2019-07-24_breakfinder/Breakpoints/Default/)).
 Breakpoints are subsequently connected with an edge if they are within 100 kbp of each other.
-This tolerance distance was chosen due to the granularity of the breakpoint calls, since each breakpoint pair is identified at a contact matrix resolution of 10 kbp or 100 kbp.
-This produces a graph of SV breakpoints for each patient, where every connected component of the graph is a chromoplexic event.
+This tolerance distance was chosen due to the granularity of the breakpoint calls, since each breakpoint pair is identified at a contact matrix resolution of 10 kbp or 100 kbp (most breakpoints called at 1 Mbp resolution appear to be a false positive due to effects of compartmentalization).
+This produces a graph of SV breakpoints for each patient, where every connected component of the graph (i.e. sets of inter-connected breakpoints) is a complex event.
 
 ### Detecting SV breakpoints that alter local chromatin topology
 
@@ -73,7 +73,7 @@ SVs that do alter the local topology include:
 * a duplication on chr10 of `PCa56413`
 
 Only one breakpoint of a detected SV appeared to alter the local topology.
-There was no event detected where both breakpoints altered the local topology.
+There was no event detected where both breakpoints in a pair altered the local topology.
 If SVs are altering gene expression, it is likely not through establishing or altering TAD boundaries, but by interfering with _cis_-regulatory interactions through other means.
 
 ### Chromoplexy alters the expression of genes within TADs containing breakpoints
