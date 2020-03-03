@@ -111,8 +111,12 @@ ggsave(
 
 gg = (
     ggplot(data = tested_genes)
-    + geom_boxplot(aes(x = factor(Component_Index), y = log2fold), outlier.size = 0.5, outlier.alpha = 0.5)
-    + labs(x = "Complex Event", y = expression(log[2] * " Expression fold change"))
+    + geom_point(
+        aes(x = factor(Component_Index), y = log2fold, group = factor(log2fold)),
+        position = position_dodge(width=1),
+        size = 1
+    )
+    # + labs(x = "Complex Event", y = expression(log[2] * " Expression fold change"))
     + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
     + facet_wrap(~ Mutated_In, scales = "free_y")
     + guides(fill = guide_legend(title="Breakpoints"))
@@ -126,7 +130,7 @@ gg = (
 )
 ggsave(
     "Plots/sv-disruption.fold-change.png",
-    height = 20,
+    height = 30,
     width = 20,
     units = "cm"
 )

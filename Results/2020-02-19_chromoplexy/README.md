@@ -25,8 +25,16 @@ This produces a graph of SV breakpoints for each patient, where every connected 
 We consider each breakpoint end from each SV detected.
 For each breakpoint at locus $[s, e)$ in a given patient, we look for other patients that have a breakpoint end within 500 kbp (i.e. overlapping $[s - \delta, e + \delta), \delta = 500 000$) to identify similarly mutated patients.
 A local version of the BPscore \Cref{Zaborowski2019} is calculated for the identified TADs within this $[s - \delta, e + \delta)$ window for each pair of samples.
+Using these calculations, we use two approaches for determining whether there is an alteration of the local topology; one binary classification method, and one permutation test method.
+
+#### Binary classification of local topology
+
 Patients are then assigned into one of two groups using hierarchical clustering with the matrix of pairwise BPscore values as a distance matrix.
 If the clustering perfectly stratifies the mutated samples from the non-mutated samples (i.e. the clustering matches the mutation status in this locus), then the local topology is counted as altered as a result of the SV.
+
+#### Permutation test for differences in local topology
+
+
 
 ### Hypothesis testing for differences in RNA abundance
 
