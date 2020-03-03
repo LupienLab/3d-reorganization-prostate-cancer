@@ -47,6 +47,7 @@ exprs = merge(
 
 # plotting thresholds
 log_fold_thresh = log2(c(0.5, 2))
+abs_abundance_thresh = c(-1, 1)
 
 # delta offset used in calculating fold change
 offset = 1e-3
@@ -67,6 +68,13 @@ tested_genes = merge(
 sample_cols = 3:15
 exprs[, Mean := rowMeans(.SD), .SDcols = sample_cols]
 exprs[, StdDev := apply(.SD, 1, sd), .SDcols = sample_cols]
+
+# calculate absolute abundances
+tested_genes[, mutated_mean := (2^log2fold - 1) * (nonmut_mean + offset)]
+
+# classify according to thresholds
+tested_genes[, Pass_Thresh := FALSE]
+tested_genes[abs(mutated_mean - nonmut_mean) >= abs_abundance_thresh[2] & abs(log2fold) >= log_fold_thresh[2], Pass_Thresh := TRUE]
 
 # ==============================================================================
 # Plots
@@ -137,18 +145,28 @@ ggsave(
 
 gg = (
     ggplot(data = tested_genes)
-    + geom_point(aes(x = (2^log2fold - 1) * (nonmut_mean + offset), y = log2fold))
+    + geom_point(aes(x = mutated_mean, y = log2fold, colour = Pass_Thresh))
     + geom_hline(yintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
     + geom_hline(yintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
-    + labs(x = "RNA abundance - mean", y = expression(log[2] * " Expression fold change"))
+    + geom_vline(xintercept = abs_abundance_thresh[1], linetype = "dashed", colour = "red")
+    + geom_vline(xintercept = abs_abundance_thresh[2], linetype = "dashed", colour = "red")
+    # + labs(x = expression("RNA abundance difference ("*\bar{x}[mut] * ")"), y = expression(log[2] * " Expression fold change"))
+    + labs(x = "RNA abundance difference", y = expression(log[2] * " Expression fold change"))
     + xlim(-100, 100)
+    + scale_y_continuous(
+        breaks = c(-20, -10, -5, -1, 0, 1, 5, 10)
+    )
+    + scale_colour_manual(
+        limits = c(TRUE, FALSE),
+        values = c("#000000", "#ececec")
+    )
     + theme_minimal()
     + theme(
         legend.position = "bottom"
     )
 )
 ggsave(
-    "Plots/sv-disruption.fold-change-vs-mean.png",
+    "Plots/sv-disruption.fold-change-vs-difference.png",
     height = 20,
     width = 20,
     units = "cm"

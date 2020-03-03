@@ -88,11 +88,18 @@ If SVs are altering gene expression, it is likely not through establishing or al
 
 Using the method described above, we identified $n$ chromoplexic events that significantly altered gene expression of genes within the same TADs as the linked breakpoints.
 
-![Distribution of z-scores for each chromoplexic event](Plots/sv-disruption.z.png)
+![Distribution of expression fold changes for each complex event](Plots/sv-disruption.fold-change.png)
 
 While most genes did not have a large change to their expression, we observed that approximately one third (33.1%) of all genes had fold changes greater than 2.
 
 ![Chromoplexy leads to altered expression in 1/3 of nearby genes](Plots/sv-disruption.fold.ecdf.png)
+
+To reduce false positives stemming from lowly-expressed genes (thus producing large fold-changes and z-scores, despite not having large absolute changes in expression), we consider the absolute change in RNA abundance.
+We see that the majority of genes with large fold changes (i.e. $|\log_2(\text{fold change})| \ge 1$) have small absolute differences in read abundances between the mutated and non-mutated samples (i.e. $|\bar{x}_{mut} - \bar{x}_{non-mut}|$ < 0.1 FPKM).
+
+![Fold change vs absolute RNA abundance difference between mutated and non-mutated samples](Plots/sv-disruption.fold-change-vs-difference.png)
+
+This reduces the number of differentially expressed genes to 605 (from the original 3882 without setting a threshold on absolute RNA abundance difference).
 
 ## Conclusions
 
