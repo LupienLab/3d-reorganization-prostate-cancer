@@ -14,6 +14,7 @@ SAMPLES = ['Pca' + str(i) for i in CONFIG['Sample ID'].tolist()]
 CHIPS = CONFIG['ChIP Type'].tolist()
 
 GENOMES = ['hg38']
+CHR_REGEX = "^chr[0-9]{0,3}[XYM]?\\t"
 
 # ==============================================================================
 # Meta Rules
@@ -31,16 +32,14 @@ rule all:
             sample=SAMPLES
         ),
         expand(
-            path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak'),
-            sample=SAMPLES
+            path.join(PEAK_DIR, '{sample}_peaks.filtered.{ext}'),
+            sample=SAMPLES,
+            ext=["narrowPeak", "bdg"],
         ),
         expand(
-            path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bedGraph'),
-            sample=SAMPLES
-        ),
-        expand(
-            path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.tdf'),
-            sample=SAMPLES
+            path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.{ext}'),
+            sample=SAMPLES,
+            ext=["bdg", "bw"],
         ),
 
 # ==============================================================================
@@ -68,36 +67,33 @@ rule call_peaks:
     shell:
         'macs2 callpeak {params} -t {input.chip} -c {input.input}'
 
-rule filter_blacklist_narrowpeak:
+rule filter_blacklist_noncanonical:
     input:
         blacklist = 'ENCODE-blacklist.bed',
-        peaks = path.join(PEAK_DIR, '{sample}_peaks.narrowPeak')
+        peaks = path.join(PEAK_DIR, '{sample}_{type}.{ext}')
     output:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+        path.join(PEAK_DIR, '{sample}_{type}.filtered.{ext}')
+    wildcard_constraints:
+        sample = "Pca\d+",
+        type = "[^.]+",
+        ext = "[^.]+",
     shell:
-        'bedtools intersect -v -a {input.peaks} -b {input.blacklist} > {output}'
+        # remove blacklist regions and only keep canonical chromosomes
+        "bedtools intersect -v -a {input.peaks} -b {input.blacklist} | awk '/{CHR_REGEX}/ {{print}}' | LC_COLLATE=C sort -k1,1 -k2,2n > {output}"
 
 rule narrowPeak2bedGraph:
     input:
         path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
     output:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.bedGraph')
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.bdg')
     shell:
-        "awk '{{FS=OFS='\t'}}{{print $1, $2, $3, $5}}' {input} > {output}"
+        "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $5}}' {input} > {output}"
 
-rule filter_blacklist_bdg:
+rule bdg_to_bigwig:
     input:
-        blacklist = 'ENCODE-blacklist.bed',
-        bdg = path.join(PEAK_DIR, '{sample}_treat_pileup.bdg')
+        bed = path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bdg'),
+        genome = path.join("..", "2019-06-18_PCa-LowC-sequencing/hg38.sizes.txt"),
     output:
-        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bedGraph')
+        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bw')
     shell:
-        'bedtools intersect -v -a {input.bdg} -b {input.blacklist} > {output}'
-
-rule bdg_to_tdf:
-    input:
-        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bedGraph')
-    output:
-        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.tdf')
-    shell:
-        'igvtools toTDF {input} {output} hg38'
+        "bedGraphToBigWig {input.bed} {input.genome} {output}"

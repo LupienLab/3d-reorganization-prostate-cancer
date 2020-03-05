@@ -1,5 +1,3 @@
 __default__:
-    params: '-V -cwd -q lupiengroup -l h_vmem=16G -l mem_requested=16G'
+    params: "--export=ALL -p all --mem=16G -t 1-00:00:00"
 
-call_peaks:
-    params: '-V -cwd -q highmem.q -l h_vmem=16G -l mem_requested=16G'
