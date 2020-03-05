@@ -47,19 +47,20 @@ To address this shortcoming, we developed a different null hypothesis testing fr
   In the case of an insertion, it may be a single TAD; in the case of a large deletion, it may be many.
 2. Identify all genes lying within these affected TADs, according to the GENCODE v33 reference \Cref{GENCODE}.
 3. Perform a z-transformation on the abundance values (in FPKM) for these genes, given by
-  $$
-  z_i = \frac{x_{i,mut} - \mu_{i,non-mut}}  {\sigma_{i,non-mut}}
-  $$
-  Under the null hypothesis, that these linked breakpoints do not affect the expression of the nearby genes within the same TADs, the random variable for the expression of gene is distributed like the non-mutant samples, namely
-  $$
-  \mathbb{E}[X_{i,mut}] = \mu_{i,non-mut}
-  $$
-  $$
-  \text{Var}[X_{i,mut}] = \sigma^2_{i,non-mut}
-  $$
-  Thus, each gene's z-score should come from a distribution with mean 0 and standard deviation 1.
 
-3. For each set of related genes, perform a two-sided t-test on these z-scores.
+    $$
+    z_i = \frac{x_{i,mut} - \mu_{i,non-mut}}  {\sigma_{i,non-mut}}
+    $$
+    Under the null hypothesis, that these linked breakpoints do not affect the expression of the nearby genes within the same TADs, the random variable for the expression of gene is distributed   like the non-mutant samples, namely
+    $$
+    \mathbb{E}[X_{i,mut}] = \mu_{i,non-mut}
+    $$
+    $$
+    \text{Var}[X_{i,mut}] = \sigma^2_{i,non-mut}
+    $$
+    Thus, each gene's z-score should come from a distribution with mean 0 and standard deviation 1.
+
+4. For each set of related genes, perform a two-sided t-test on these z-scores.
 
 ## Results
 
