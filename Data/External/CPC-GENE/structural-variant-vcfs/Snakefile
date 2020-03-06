@@ -22,7 +22,7 @@ rule all:
 # ==============================================================================
 rule vcf2tsv:
     input:
-        '{sample}_filtered_somatic.bnd-updated.hg38.vcf'
+        '{sample}_filtered_somatic.bnd-updated.vcf'
     output:
         '{sample}.tsv'
     shell:
