@@ -15,7 +15,12 @@ from tqdm import tqdm
 from scipy import stats
 import pickle
 
-from genomic_interval import GenomicInterval, overlapping, get_mutated_ids_near_breakend
+from genomic_interval import (
+    GenomicInterval,
+    overlapping,
+    get_mutated_ids_near_breakend,
+    find_tad,
+)
 
 # ==============================================================================
 # Constants
@@ -29,30 +34,6 @@ CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 # ==============================================================================
 # Functions
 # ==============================================================================
-
-
-def find_tad(i: GenomicInterval, tads):
-    # get TAD containing infimum
-    tads_lower = tads.loc[
-        (tads.chr == i.chr) & (tads.start <= i.inf()) & (i.inf() <= tads.end), :
-    ]
-    # get TAD containing supremum
-    tads_upper = tads.loc[
-        (tads.chr == i.chr) & (tads.start <= i.sup()) & (i.sup() <= tads.end), :
-    ]
-    # get indices of the TADs identified
-    lower_idx = tads_lower.index.tolist()
-    upper_idx = tads_upper.index.tolist()
-    # if everything is contained to a single TAD, return just the one
-    if (
-        (len(lower_idx) == 1)
-        and (len(upper_idx) == 1)
-        and (lower_idx[0] == upper_idx[0])
-    ):
-        return tads_lower
-    # if not, return the set of TADs spanned by the breakpoint coordinates
-    else:
-        return tads.iloc[range(min(lower_idx), max(upper_idx) + 1), :]
 
 
 def get_genes_in_tads(intvls):
@@ -216,7 +197,8 @@ htest = pd.DataFrame(
 )
 # store genes invoved in hypothesis tests
 tested_genes = pd.DataFrame(
-    columns=exprs_cols + [
+    columns=exprs_cols
+    + [
         "z",
         "log2fold",
         "mut_mean",
@@ -227,11 +209,24 @@ tested_genes = pd.DataFrame(
     ]
 )
 
+# finding recurrent SV breakpoints means that we will test the same breakpoint multiple times
+# this object keeps track of which ones we've already counted
+tested_bps = set([])
 
 # and identify all the TADs that are involved (usually just 1 or 2)
-for i, bp in tqdm(enumerate(G)):
+for i, bp in tqdm(enumerate(G), total=len(G)):
+    # skip this breakpoint if we've already included it in a previous calculation
+    if bp in tested_bps:
+        continue
     # find samples where this, or a nearby, breakpoint occurs
-    nbrs = [n for n, v in G[bp].items() if v["annotation"] in ["nearby", "recurrent"]]
+    nbrs = [
+        n
+        for n, v in G[bp].items()
+        if v["annotation"] in ["nearby", "recurrent", "equivalent-TAD", "same-TAD"]
+    ]
+    # add this breakpoint and its neighbours to the list of tested breakpoints so we don't test it again
+    for n in [bp] + nbrs:
+        tested_bps.add(n)
     # only keep unique sample IDs, don't double count them
     mut_samples = get_mutated_ids_near_breakend(bp, nbrs)
     nonmut_samples = [s for s in SAMPLES if s not in mut_samples]
@@ -262,7 +257,6 @@ for i, bp in tqdm(enumerate(G)):
     genes["mut_mean"] = means["fg"].tolist()
     genes["nonmut_mean"] = means["bg"].tolist()
     genes["nonmut_sd"] = dev.tolist()
-    genes["nonmut_sd"] = dev.tolist()
     genes["mutated_in"] = ",".join(mut_samples)
     genes["breakpoint_index"] = i
     # store tested genes for later
@@ -282,6 +276,8 @@ for i, bp in tqdm(enumerate(G)):
 # Save data
 # ==============================================================================
 # save hypothesis test results
-htest.to_csv("sv-disruption-tests.tsv", sep="\t", index=True, index_label="breakpoint_index")
+htest.to_csv(
+    "sv-disruption-tests.tsv", sep="\t", index=True, index_label="breakpoint_index"
+)
 
 tested_genes.to_csv("sv-disruption-tests.genes.tsv", sep="\t", index=False)
