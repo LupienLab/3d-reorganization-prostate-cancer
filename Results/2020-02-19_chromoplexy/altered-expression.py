@@ -31,37 +31,32 @@ TAD_DIR = path.join(
 )
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
+# window size to check TADs for
+W = 3
+
 # ==============================================================================
 # Functions
 # ==============================================================================
 
 
-def get_genes_in_tads(intvls):
+def genes_in_interval(intvl):
     """
     Query the expression table for the genes lying within the coordinates specified
 
     Parameters
     ----------
-    intvls : Dict<str: interval.interval>
-        Intervals to subset the reference genome by
+    intvl : GenomicInterval
+        Interval to subset the reference genome by
     """
     # use the globally registered gene expression data
     global exprs
-    # concatenate all these tables together
-    involved_genes = pd.concat(
-        [
-            exprs.loc[
-                # find genes intersecting this component for each affected component
-                (exprs.chr == chrom)
-                & (exprs.start <= int(component.sup))
-                & (exprs.end >= component.inf),
-                :,
-            ]
-            for chrom, intvl in intvls.items()
-            for component in intvl
-        ]
-    )
-    return involved_genes
+    return exprs.loc[
+        # find genes intersecting this component for each affected component
+        (exprs.chr == intvl.chr)
+        & (exprs.start <= intvl.sup())
+        & (exprs.end >= intvl.inf()),
+        :,
+    ].copy()
 
 
 def normalize_genes(genes, fg_ids, bg_ids, offset=1e-3):
@@ -176,8 +171,7 @@ exprs = exprs[exprs_cols]
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# window size to check TADs for
-w = 3
+
 
 # number of breakpoints in the entire graph
 n_bps = len(G)
@@ -191,10 +185,13 @@ htest = pd.DataFrame(
         "strand": [bp.data["strand"] for bp in G],
         "mutated_in": [""] * n_bps,
         "n_genes": [0] * n_bps,
-        "t": [0] * n_bps,
-        "p": [1] * n_bps,
+        "n_mut": [0] * n_bps,
+        "n_nonmut": [0] * n_bps,
+        "t": [0.0] * n_bps,
+        "p": [1.0] * n_bps,
     }
 )
+
 # store genes invoved in hypothesis tests
 tested_genes = pd.DataFrame(
     columns=exprs_cols
@@ -209,46 +206,24 @@ tested_genes = pd.DataFrame(
     ]
 )
 
-# finding recurrent SV breakpoints means that we will test the same breakpoint multiple times
-# this object keeps track of which ones we've already counted
-tested_bps = set([])
-
 # and identify all the TADs that are involved (usually just 1 or 2)
 for i, bp in tqdm(enumerate(G), total=len(G)):
-    # skip this breakpoint if we've already included it in a previous calculation
-    if bp in tested_bps:
-        continue
     # find samples where this, or a nearby, breakpoint occurs
     nbrs = [
         n
         for n, v in G[bp].items()
-        if v["annotation"] in ["nearby", "recurrent", "equivalent-TAD", "same-TAD"]
+        if v["annotation"] in ["nearby", "recurrent", "equivalent-TAD"]
     ]
-    # add this breakpoint and its neighbours to the list of tested breakpoints so we don't test it again
-    for n in [bp] + nbrs:
-        tested_bps.add(n)
     # only keep unique sample IDs, don't double count them
     mut_samples = get_mutated_ids_near_breakend(bp, nbrs)
     nonmut_samples = [s for s in SAMPLES if s not in mut_samples]
-    # for each breakpoint involved in the component, find the parent TAD
-    # do this across all patients and find the maximal equivalent one to get a set of sites and genes to compare
-    affected_tads = pd.concat([find_tad(bp, tads[new_s][3]) for new_s in SAMPLES])
-    # convert affects_tads to interval objects to more easily convert to contiguous segments
-    affected_tad_intvls = {
-        c: interval(
-            *[
-                [i.start, i.end]
-                for i in affected_tads.loc[affected_tads.chr == c, :].itertuples()
-            ]
-        )
-        for c in CHRS
-    }
-    # remove unused chromosomes (this is true when the value is an empty interval)
-    affected_tad_intvls = {
-        c: i for c, i in affected_tad_intvls.items() if i != interval()
-    }
-    # get all the genes across all the involved TADs
-    genes = get_genes_in_tads(affected_tad_intvls)
+    # find the parent TAD(s) of this breakpoint
+    affected_tads = find_tad(bp, tads[bp.data["sample"]][W])
+    affected_intvl = GenomicInterval(
+        bp.chr, affected_tads["start"].min(), affected_tads["end"].max()
+    )
+    # get all the genes across all the affected interval
+    genes = genes_in_interval(affected_intvl)
     # normalize them according to the samples without this mutation
     z, fc, means, dev = normalize_genes(genes, mut_samples, nonmut_samples)
     # order is preserved, so just append the column
@@ -257,18 +232,28 @@ for i, bp in tqdm(enumerate(G), total=len(G)):
     genes["mut_mean"] = means["fg"].tolist()
     genes["nonmut_mean"] = means["bg"].tolist()
     genes["nonmut_sd"] = dev.tolist()
-    genes["mutated_in"] = ",".join(mut_samples)
+    genes["mutated_in"] = bp.data["sample"]
+    genes["n_mut"] = len(mut_samples)
+    genes["n_nonmut"] = len(nonmut_samples)
     genes["breakpoint_index"] = i
     # store tested genes for later
-    tested_genes = pd.concat([tested_genes, genes], ignore_index=True)
+    tested_genes = pd.concat([tested_genes, genes], ignore_index=True, sort=False)
     # conduct the hypothesis test, since all genes have their expression values normalized across samples
-    infty_idx = genes.loc[np.isinf(genes["z"])].index
+    finite_idx = genes.loc[~np.isinf(genes["z"])].index
+    n_genes_tested = len(finite_idx)
     # only conduct on non-infinite values
     # we look at these infinite values later on, specifically
-    t, p = stats.ttest_1samp(genes.loc[~np.isinf(genes["z"]), "z"], 0)
+    # need at least 1 degree of freedom
+    if n_genes_tested > 1:
+        t, p = stats.ttest_1samp(genes.loc[finite_idx, "z"], 0)
+    else:
+        t = np.nan
+        p = np.nan
     # store the data
     htest.loc[i, "mutated_in"] = ",".join(mut_samples)
-    htest.loc[i, "n_genes"] = genes.shape[0] - len(infty_idx)
+    htest.loc[i, "n_genes"] = n_genes_tested
+    htest.loc[i, "n_mut"] = len(mut_samples)
+    htest.loc[i, "n_nonmut"] = len(nonmut_samples)
     htest.loc[i, "t"] = t
     htest.loc[i, "p"] = p
 

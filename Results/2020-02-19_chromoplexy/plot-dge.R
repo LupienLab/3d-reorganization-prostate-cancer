@@ -52,29 +52,47 @@ abs_abundance_thresh = c(-1, 1)
 # delta offset used in calculating fold change
 offset = 1e-3
 
+# chrom sizes
+chrom_sizes = fread(
+    "../../Data/Processed/2019-06-18_PCa-LowC-sequencing/hg38.sizes.txt",
+    sep = "\t",
+    header = FALSE,
+    col.names = c("chrom", "size")
+)
+
+chrom_sizes[, colour := ifelse(.I %% 2 == 0, "#276FBF", "#183059")]
+chrom_sizes[, offset := cumsum(as.numeric(c(0, head(size, -1))))]
+chrom_sizes[, label_offset := (offset + c(0, head(offset, -1))) / 2]
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# add n_breakpoints to tested_genes for plotting
-tested_genes = merge(
-    x = tested_genes,
-    y = htest[, .SD, .SDcols = c("Sample", "Component_Index", "n_genes")],
-    by.x = c("Mutated_In", "Component_Index"),
-    by.y = c("Sample", "Component_Index"),
-    all.x = TRUE
-)
-
 # calculate means and variances for all genes
 sample_cols = 3:15
 exprs[, Mean := rowMeans(.SD), .SDcols = sample_cols]
 exprs[, StdDev := apply(.SD, 1, sd), .SDcols = sample_cols]
 
-# calculate absolute abundances
-tested_genes[, mutated_mean := (2^log2fold - 1) * (nonmut_mean + offset)]
-
 # classify according to thresholds
 tested_genes[, Pass_Thresh := FALSE]
-tested_genes[abs(mutated_mean - nonmut_mean) >= abs_abundance_thresh[2] & abs(log2fold) >= log_fold_thresh[2], Pass_Thresh := TRUE]
+tested_genes[abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2] & abs(log2fold) >= log_fold_thresh[2], Pass_Thresh := TRUE]
+
+# order chromosomes
+CHRS = paste0("chr", c(1:22, "X", "Y"))
+tested_genes[, chr := factor(chr, ordered = TRUE, levels = CHRS)]
+
+# set cumulative genome position for Manhattan-style plotting
+tested_genes$cpos <- sapply(
+    1:tested_genes[, .N],
+    function(i) {
+        return(tested_genes[i, start] + chrom_sizes[chrom == tested_genes[i, chr], offset])
+    }
+)
+tested_genes$colour <- sapply(
+    1:tested_genes[, .N],
+    function(i) {
+        return(chrom_sizes[chrom == tested_genes[i, chr], colour])
+    }
+)
 
 # ==============================================================================
 # Plots
@@ -93,40 +111,52 @@ ggsave(
     units = "cm"
 )
 
-# plot z-scores for each connected component
+# plot z-scores for each breakpoint
+ann_text = tested_genes[z > 20 & is.finite(z)]
+
 gg = (
-    ggplot(data = tested_genes)
-    + geom_violin(aes(x = factor(Component_Index), y = z, fill = n_breakpoints))
-    + labs(x = "Complex Event", y = "z-score\n(Mutated Sample)")
-    + ylim(-5, 5)
-    + facet_wrap(~ Mutated_In, scales = "free_y")
-    + guides(fill = guide_legend(title="Breakpoints"))
-    + scale_fill_viridis_c()
-    + coord_flip()
+    ggplot(data = tested_genes[is.finite(z)])
+    + geom_text(
+        data = ann_text,
+        aes(x = cpos, y = z + 20, label = name),
+    )
+    + geom_point(
+        aes(x = cpos, y = z, colour = colour),
+        size = 1
+    )
+    + labs(x = "Breakpoint Position", y = "z-score")
+    + scale_x_continuous(
+        limits = c(0, chrom_sizes[chrom == "chrM", offset]),
+        breaks = chrom_sizes[, label_offset],
+        label = chrom_sizes[, chrom]
+    )
+    + guides(colour = FALSE)
     + theme_minimal()
     + theme(
-        strip.text.y = element_text(angle = 0, hjust = 0),
-        axis.text.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 0.5),
+        strip.text.x = element_text(angle = 90, hjust = 0.5),
         legend.position = "bottom"
     )
 )
 ggsave(
     "Plots/sv-disruption.z.png",
-    height = 20,
-    width = 20,
+    height = 10,
+    width = 40,
     units = "cm"
 )
 
 gg = (
     ggplot(data = tested_genes)
     + geom_point(
-        aes(x = factor(Component_Index), y = log2fold, group = factor(log2fold)),
+        aes(x = factor(breakpoint_index), y = log2fold, group = factor(log2fold)),
         position = position_dodge(width=1),
         size = 1
     )
     # + labs(x = "Complex Event", y = expression(log[2] * " Expression fold change"))
     + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
-    + facet_wrap(~ Mutated_In, scales = "free_y")
+    + facet_wrap(~ mutated_in, scales = "free_y")
     + guides(fill = guide_legend(title="Breakpoints"))
     + coord_flip()
     + theme_minimal()
@@ -145,7 +175,7 @@ ggsave(
 
 gg = (
     ggplot(data = tested_genes)
-    + geom_point(aes(x = mutated_mean, y = log2fold, colour = Pass_Thresh))
+    + geom_point(aes(x = mut_mean - nonmut_mean, y = log2fold, colour = Pass_Thresh))
     + geom_hline(yintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
     + geom_hline(yintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
     + geom_vline(xintercept = abs_abundance_thresh[1], linetype = "dashed", colour = "red")
@@ -190,11 +220,10 @@ ggsave(
     units = "cm"
 )
 
-# plot empirical CDFs of fold changes for each chromoxplexic event
-# convert to log2 base for more understandable plotting
-fold_ecdf = tested_genes[, ecdf(log2fold)]
+# plot empirical CDFs of fold changes for each breakpoint
+fold_ecdf = tested_genes[abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2], ecdf(log2fold)]
 ecdf_data = data.table(
-    log2fold = tested_genes[order(log2fold), log2fold]
+    log2fold = tested_genes[abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2]][order(log2fold), log2fold]
 )
 ecdf_data[, cdf := fold_ecdf(log2fold)]
 gg = (
@@ -211,9 +240,18 @@ gg = (
         alpha = 0.5,
         fill = "red"
     )
-    + stat_ecdf(
-        data = tested_genes,
-        mapping = aes(x = log2fold)
+    + geom_rect(
+        aes(
+            xmin = abs_abundance_thresh[1],
+            xmax = abs_abundance_thresh[2],
+            ymin = 0,
+            ymax = 1
+        ),
+        fill = "#ececec"
+    )
+    + geom_path(
+        data = ecdf_data,
+        aes(x = log2fold, y= cdf)
     )
     + geom_vline(xintercept=log_fold_thresh[1], linetype = "dashed", colour = "red")
     + geom_vline(xintercept=log_fold_thresh[2], linetype = "dashed", colour = "red")
