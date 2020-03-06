@@ -11,12 +11,52 @@ import pandas as pd
 import networkx as nx
 from tqdm import tqdm
 import pickle
-from genomic_interval import GenomicInterval, overlapping
+from genomic_interval import GenomicInterval, overlapping, find_tad
 
 # ==============================================================================
 # Constants
 # ==============================================================================
 BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
+TAD_DIR = path.join(
+    "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
+)
+
+# ==============================================================================
+# Functions
+# ==============================================================================
+def equivalent_tad(
+    bp_i: GenomicInterval,
+    bp_j: GenomicInterval,
+    tads_i: pd.DataFrame,
+    tads_j: pd.DataFrame,
+):
+    """
+    Find if two breakpoints are located in equivalent TADs in their respective samples
+
+    Parameters
+    ----------
+    bp_i: GenomicInterval
+        First breakpoint
+    bp_j: GenomicInterval
+        Second breakpoint
+    tads_i: pd.DataFrame
+        TADs from the sample corresponding to `bp_i`
+    tads_j : pd.DataFrame
+        TADs from the sample corresponding to `bp_j`
+    """
+    # if the breakpoints are not on the same chromosome, they can't have equivalent TADs
+    if bp_i.chr != bp_j.chr:
+        return False
+    parent_tads_i = find_tad(bp_i, tads_i)
+    parent_tads_j = find_tad(bp_j, tads_j)
+    # convert to contiguous GenomicInterval to use `overlapping` function
+    locus_i = GenomicInterval(
+        bp_i.chr, parent_tads_i["start"].min(), parent_tads_i["end"].max()
+    )
+    locus_j = GenomicInterval(
+        bp_j.chr, parent_tads_j["start"].min(), parent_tads_j["end"].max()
+    )
+    return overlapping(locus_i, locus_j)
 
 
 # ==============================================================================
@@ -62,11 +102,29 @@ breakpoints = pd.concat(
 # remove artefacts
 breakpoints = breakpoints.loc[breakpoints["annotation"] != "ARTEFACT", :]
 
+# load TADs
+print("Reading TADs")
+tads = {
+    s: {
+        w: pd.read_csv(
+            path.join(TAD_DIR, s + ".40000bp.w_" + str(w) + ".domains.bed"),
+            sep="\t",
+            names=["chr", "start", "end", "lower_persistence", "upper_persistence",],
+        )
+        for w in range(3, 31)
+    }
+    for s in SAMPLES
+}
+
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
 # distance tolerance for comparisons
 tol = 100000
+
+# window size to check TADs for
+w = 3
 
 # create graph
 print("Creating graphs of breakpoints")
@@ -101,6 +159,7 @@ for s in tqdm(SAMPLES, unit="sample"):
         G_all.add_edge(intvls[0], intvls[1], annotation=bp.annotation)
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
 
+print("Connecting proximal breakpoints")
 # connect 2 nodes if their intervals are within 100 kbp of each other
 for n in tqdm(G_all):
     for m in G_all:
@@ -114,6 +173,11 @@ for n in tqdm(G_all):
             # if the breakpoints are not from the same sample, this site is recurrent
             else:
                 G_all.add_edge(n, m, annotation="recurrent")
+        # connect these nodes if the identified loci at within the equivalent TADs from their respective samples
+        # (I know this isn't the most efficient way to do this, but given the number of breakpoints and samples
+        # it's not that much of a concern)
+        if equivalent_tad(n, m, tads[n.data["sample"]][w], tads[m.data["sample"]][w]):
+            G_all.add_edge(n, m, annotation="equivalent-TAD")
 
 for s in SAMPLES:
     for n in tqdm(G_sample[s]):
@@ -124,7 +188,9 @@ for s in SAMPLES:
             if overlapping(n, m, tol / 2):
                 # if the two breakpoints are from the same sample, they're nearby
                 G_sample[s].add_edge(n, m, annotation="nearby")
-
+            # connect these nodes if the identified loci at within the same TAD
+            if equivalent_tad(n, m, tads[s][w], tads[s][w]):
+                G_all.add_edge(n, m, annotation="same-TAD")
 
 # ==============================================================================
 # Save data
