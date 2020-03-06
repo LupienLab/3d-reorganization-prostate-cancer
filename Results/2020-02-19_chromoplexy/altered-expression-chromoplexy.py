@@ -1,5 +1,5 @@
 """
-test-dge
+altered-expression
 ==========
 
 Test for differential expression in samples due to connected breakpoints
