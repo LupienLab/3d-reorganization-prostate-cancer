@@ -75,3 +75,21 @@ def overlapping(a: GenomicInterval, b: GenomicInterval, extend: int = 0):
         and a.inf() - extend <= b.sup() + extend
         and b.inf() - extend <= a.sup() + extend
     )
+
+def get_mutated_ids_near_breakend(bp, neighbours, tol=1e5):
+    """
+    Get the sample IDs of all samples with a breakpoint near a given breakpoint end
+
+    Parameters
+    ----------
+    bp : nx.Node
+        Breakpoint under consideration
+    neighbours : [nx.Node]
+        Nearby and recurrent neighbours of `bp`
+    tol : int
+        Distance tolerance around `pos` to be considered for "recurrent"
+    """
+    return list(set(
+        [bp.data["sample"]]
+        + [n.data["sample"] for n in neighbours if overlapping(bp, n, tol)]
+    ))

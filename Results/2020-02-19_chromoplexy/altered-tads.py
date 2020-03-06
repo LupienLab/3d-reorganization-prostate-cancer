@@ -12,7 +12,7 @@ import pandas as pd
 import pickle
 from tqdm import tqdm
 from interval import interval
-from genomic_interval import GenomicInterval, overlapping
+from genomic_interval import GenomicInterval, overlapping, get_mutated_ids_near_breakend
 from sklearn.cluster import AgglomerativeClustering
 
 # ==============================================================================
@@ -24,7 +24,6 @@ TAD_DIR = path.join(
 )
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 WINDOWS = list(range(3, 31))
-TOL = 1e5
 BREAK_FLANK_SIZE = 5e5
 
 # ==============================================================================
@@ -142,25 +141,6 @@ def get_neighbouring_TADs(bp, ids, w=3, flank=BREAK_FLANK_SIZE):
             for s in ids
         ],
         keys=ids,
-    )
-
-
-def get_mutated_ids_near_breakend(bp, neighbours, tol=TOL):
-    """
-    Get the sample IDs of all samples with a breakpoint near a given breakpoint end
-
-    Parameters
-    ----------
-    bp : nx.Node
-        Breakpoint under consideration
-    neighbours : list<nx.Node>
-        Nearby and recurrent neighbours of `bp`
-    tol : int
-        Distance tolerance around `pos` to be considered for "recurrent"
-    """
-    return set(
-        [bp.data["sample"]]
-        + [n.data["sample"] for n in nbrs if overlapping(bp, n, tol)]
     )
 
 
