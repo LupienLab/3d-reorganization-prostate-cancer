@@ -20,6 +20,12 @@ BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join(
     "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
 )
+# distance tolerance for comparisons
+TOL = 150000
+
+# window size to check TADs for
+W = 3
+
 
 # ==============================================================================
 # Functions
@@ -56,7 +62,7 @@ def equivalent_tad(
     locus_j = GenomicInterval(
         bp_j.chr, parent_tads_j["start"].min(), parent_tads_j["end"].max()
     )
-    return overlapping(locus_i, locus_j)
+    return overlapping(locus_i, locus_j, 0)
 
 
 # ==============================================================================
@@ -105,27 +111,22 @@ breakpoints = breakpoints.loc[breakpoints["annotation"] != "ARTEFACT", :]
 # load TADs
 print("Reading TADs")
 tads = {
-    s: {
-        w: pd.read_csv(
-            path.join(TAD_DIR, s + ".40000bp.w_" + str(w) + ".domains.bed"),
-            sep="\t",
-            names=["chr", "start", "end", "lower_persistence", "upper_persistence",],
-        )
-        for w in range(3, 31)
-    }
+    s: pd.read_csv(
+        path.join(TAD_DIR, s + ".40000bp.w_" + str(W) + ".domains.bed"),
+        sep="\t",
+        names=["chr", "start", "end", "lower_persistence", "upper_persistence",],
+    )
     for s in SAMPLES
 }
 
+# aggregate all TADs together for single search across all samples
+all_tads = pd.concat([t for t in tads.values()], keys=SAMPLES)
+# move "keys" index to be a column
+all_tads = all_tads.reset_index(level=0).rename(columns={"level_0": "Sample"})
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# distance tolerance for comparisons
-tol = 100000
-
-# window size to check TADs for
-w = 3
-
 # create graph
 print("Creating graphs of breakpoints")
 G_all = nx.Graph()
@@ -166,7 +167,7 @@ for n in tqdm(G_all):
         if n == m:
             continue
         # connect these nodes if the identified loci are within 100 kbp of each other
-        if overlapping(n, m, tol / 2):
+        if overlapping(n, m, TOL / 2):
             # if the two breakpoints are from the same sample, they're nearby
             if n.data["sample"] == m.data["sample"]:
                 G_all.add_edge(n, m, annotation="nearby")
@@ -176,7 +177,7 @@ for n in tqdm(G_all):
         # connect these nodes if the identified loci at within the equivalent TADs from their respective samples
         # (I know this isn't the most efficient way to do this, but given the number of breakpoints and samples
         # it's not that much of a concern)
-        if equivalent_tad(n, m, tads[n.data["sample"]][w], tads[m.data["sample"]][w]):
+        if equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
             G_all.add_edge(n, m, annotation="equivalent-TAD")
 
 for s in SAMPLES:
@@ -185,12 +186,12 @@ for s in SAMPLES:
             if n == m:
                 continue
             # connect these nodes if the identified loci are within 100 kbp of each other
-            if overlapping(n, m, tol / 2):
+            if overlapping(n, m, TOL / 2):
                 # if the two breakpoints are from the same sample, they're nearby
                 G_sample[s].add_edge(n, m, annotation="nearby")
             # connect these nodes if the identified loci at within the same TAD
-            if equivalent_tad(n, m, tads[s][w], tads[s][w]):
-                G_all.add_edge(n, m, annotation="same-TAD")
+            if equivalent_tad(n, m, tads[s], tads[s]):
+                G_all.add_edge(n, m, annotation="equivalent-TAD")
 
 # ==============================================================================
 # Save data
