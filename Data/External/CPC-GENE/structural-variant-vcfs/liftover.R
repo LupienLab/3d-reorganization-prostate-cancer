@@ -51,9 +51,14 @@ gr_hg38 = liftOver(gr, chain)
 gr_hg38_resolved = unlist(GRangesList(lapply(
     gr_hg38,
     function(r) {
-        new_gr = range(r)
-        new_gr$ID = r[1]$ID
-        return(new_gr)
+        # some regions do not get mapped, these will have length 0
+        # and need to be handled separately
+        if (length(r) > 0) {
+            new_gr = range(r)
+            new_gr$ID = r[1]$ID
+            return(new_gr)
+        }
+        return(GRanges())
     }
 )))
 
