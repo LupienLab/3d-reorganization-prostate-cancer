@@ -4,8 +4,14 @@ import os.path as path
 # ==============================================================================
 # Configuration
 # ==============================================================================
-CONFIG = pd.read_csv(path.join("..", "..", "Data", "External",
-                               "LowC_Samples_Data_Available.tsv"), sep="\t", index_col=False)
+CONFIG = pd.read_csv(
+    path.join(
+        "..", "..", "Data", "External",
+        "LowC_Samples_Data_Available.tsv"
+    ),
+    sep="\t",
+    index_col=False
+)
 
 SAMPLE_IDS = CONFIG["Sample ID"].tolist()
 BAM_DIR = path.join("..", "..", "Data", "Processed",
@@ -22,10 +28,6 @@ CLASS_DIR = "Classification"
 # ==============================================================================
 rule all:
     input:
-        expand(
-            path.join("BEDPE", "PCa{sampleid}.agg.hicup.name-sorted.bedpe"),
-            sampleid=SAMPLE_IDS
-        ),
         expand(
             path.join("Loops", "PCa{sampleid}", "hic_loops_juicebox.txt"),
             sampleid=SAMPLE_IDS
@@ -81,7 +83,7 @@ rule classify:
     input:
         script = "classify-loops.R",
         loops = path.join(LOOP_DIR, "PCa{sampleid}", "hic_loops_juicebox.txt"),
-        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.bedGraph"),
+        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.narrowPeak"),
         bounds = path.join(
             TAD_DIR, "PCa{sampleid}.40000bp.aggregated-boundaries.tsv"),
     output:
