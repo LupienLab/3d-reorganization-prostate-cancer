@@ -26,6 +26,12 @@ We hypothesize that:
 
 This suggests that many of the loops being called are in fact loops directly involved in promoter-enhancer interactions, but not all.
 
+However, if we suspected that these loops covered all genes in the genome, then we are vastly under-detecting them.
+The largest number of loops in a single sample is ~ 10K.
+There are ~66K genes (coding + non-coding).
+If we wanted to use these identified loops to detect promoter-enhancer interactions, we would need more than 6x the amount of this maximal sample.
+Even if we just wanted to focus on protein coding genes, we would still need more than twice the number of detected loops that we have here.
+
 ### Loops overlapping with TAD boundaries
 
 The remaining loops, we hypothesize, overlap TAD boundaries.
@@ -41,3 +47,4 @@ Conversely, ~ 75% of loops have a boundary as at least one anchor, providing sup
 ## Conclusions
 
 Less than 10% of called loops, on average, do not coincide with a TAD boundary nor a _cis_-regulatory element, thus suggesting that the called loops are biologically relevant features of the Hi-C data.
+However, fewer than 10K loops are identified per sample, suggesting that we are vastly under-detecting the promoter-enhancer loops in these samples.
