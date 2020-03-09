@@ -20,7 +20,17 @@ plt.rcParams["figure.figsize"] = (20 / 2.54, 20 / 2.54)  # 20x20 cm
 # Constants
 # ==============================================================================
 BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
-unique_annots = ["nearby", "recurrent", "DUP", "INS", "INV", "DEL", "BND", "UNKNOWN"]
+unique_annots = [
+    "nearby",
+    "recurrent",
+    "DUP",
+    "INS",
+    "INV",
+    "DEL",
+    "BND",
+    "UNKNOWN",
+    "equivalent-TAD",
+]
 
 # ==============================================================================
 # Data
