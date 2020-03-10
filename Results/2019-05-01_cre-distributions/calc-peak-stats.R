@@ -11,10 +11,8 @@ metadata = fread(
     "../../Data/External/LowC_Samples_Data_Available.tsv",
     sep = "\t",
     header = TRUE,
-    select = c(1, 3),
-    col.names = c("SampleID", "T2E_Status")
 )
-metadata[, SampleID := paste0("Pca", SampleID)]
+metadata[, SampleID := paste0("Pca", get("Sample ID"))]
 
 # ==============================================================================
 # Analysis
@@ -60,13 +58,26 @@ peak_dists[, SampleID := as.factor(SampleID)]
 # Number of peaks
 # ------------------------------------------------------------------------------
 n_peaks = peaks[, .N, by = SampleID]
-sample_order = n_peaks[order(N), as.character(SampleID)]
-n_peaks[, SampleID := factor(SampleID, levels = sample_order, ordered  = TRUE)]
+invisible(lapply(
+    1:n_peaks[, .N],
+    function(i) {
+        t2e = metadata[SampleID == n_peaks[i, SampleID], get("T2E Status")]
+        n_peaks[i, T2E_Status := t2e]
+    }
+))
 
 gg = (
     ggplot(data = n_peaks)
     + geom_col(aes(x = SampleID, y = N / 1000, fill = SampleID))
-    + labs(x = "Patient", y = expression("Number of Peaks (" * 10^3 * ")"), title = "H3K27ac peak counts")
+    + labs(x = NULL, y = expression("Number of Peaks (" * 10^3 * ")"), title = "H3K27ac peak counts")
+    + scale_x_discrete(
+        limits = metadata[order(get("Patient ID")), SampleID],
+        labels = metadata[order(get("Patient ID")), get("Patient ID")]
+    )
+    # + scale_fill_manual(
+    #     limits = c("Yes", "No"),
+    #     values = c("#1692C4", "#E6AB79")
+    # )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
@@ -89,7 +100,11 @@ gg = (
     ggplot(data = peaks)
     + geom_violin(aes(x = SampleID, y = log10(end - start), fill = SampleID))
     + geom_boxplot(aes(x = SampleID, y = log10(end - start)), width = 0.2)
-    + labs(x = "Patient", y = "log10(Peak Size)", title = "H3K27ac peak sizes")
+    + labs(x = NULL, y = "log10(Peak Size)", title = "H3K27ac peak sizes")
+    + scale_x_discrete(
+        limits = metadata[order(get("Patient ID")), SampleID],
+        labels = metadata[order(get("Patient ID")), get("Patient ID")]
+    )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
@@ -113,7 +128,11 @@ gg = (
     ggplot(data = peak_dists)
     + geom_violin(aes(x = SampleID, y = log10(dist), fill = SampleID))
     + geom_boxplot(aes(x = SampleID, y = log10(dist)), width = 0.2)
-    + labs(x = "Patient", y = "log10(Distance (bp))", title = "H3K27ac distance between peaks")
+    + labs(x = NULL, y = "log10(Distance (bp))", title = "H3K27ac distance between peaks")
+    + scale_x_discrete(
+        limits = metadata[order(get("Patient ID")), SampleID],
+        labels = metadata[order(get("Patient ID")), get("Patient ID")]
+    )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
@@ -132,7 +151,11 @@ dist_centres[, Type := rep(c("Median", "Mean"), each = metadata[, .N])]
 gg = (
     ggplot(data = dist_centres)
     + geom_col(aes(x = SampleID, y = Size, fill = SampleID))
-    + labs(x = "Patient", y = "Size (bp)", title = "H3K27ac centres of distance between peaks")
+    + labs(x = NULL, y = "Size (bp)", title = "H3K27ac centres of distance between peaks")
+    + scale_x_discrete(
+        limits = metadata[order(get("Patient ID")), SampleID],
+        labels = metadata[order(get("Patient ID")), get("Patient ID")]
+    )
     + facet_wrap(. ~ Type, scales = "free_y")
     + guides(fill = FALSE)
     + theme_minimal()
