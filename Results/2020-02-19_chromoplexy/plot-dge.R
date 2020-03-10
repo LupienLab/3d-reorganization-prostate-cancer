@@ -107,12 +107,9 @@ tested_genes[, altering_bp := ifelse(breakpoint_index %in% altering_breakpoints,
 # p-value histogram across all connected components (i.e. chromoplexic events)
 gg <- (
     ggplot(data = htest)
-    +
-        geom_histogram(aes(x = p))
-        +
-        labs(x = "p-value", y = "Frequency")
-        +
-        theme_minimal()
+    + geom_histogram(aes(x = p))
+    + labs(x = "p-value", y = "Frequency")
+    + theme_minimal()
 )
 ggsave(
     "Plots/sv-disruption.expression.p-values.png",
@@ -126,36 +123,29 @@ ann_text <- tested_genes[z > 20 & is.finite(z)]
 
 gg <- (
     ggplot(data = tested_genes[is.finite(z)])
-    +
-        geom_text(
-            data = ann_text,
-            aes(x = cpos, y = z + 20, label = name),
-        )
-        +
-        geom_point(
-            aes(x = cpos, y = z, colour = colour),
-            size = 1
-        )
-        +
-        labs(x = "Breakpoint Position", y = "z-score")
-        +
-        scale_x_continuous(
-            limits = c(0, chrom_sizes[chrom == "chrM", offset]),
-            breaks = chrom_sizes[, label_offset],
-            label = chrom_sizes[, chrom]
-        )
-        +
-        guides(colour = FALSE)
-        +
-        theme_minimal()
-        +
-        theme(
-            panel.grid.major.x = element_blank(),
-            panel.grid.minor.x = element_blank(),
-            axis.text.x = element_text(angle = 90, hjust = 0.5),
-            strip.text.x = element_text(angle = 90, hjust = 0.5),
-            legend.position = "bottom"
-        )
+    + geom_text(
+        data = ann_text,
+        aes(x = cpos, y = z + 20, label = name),
+    )
+    + geom_point(
+        aes(x = cpos, y = z, colour = colour),
+        size = 1
+    )
+    + labs(x = "Breakpoint Position", y = "z-score")
+    + scale_x_continuous(
+        limits = c(0, chrom_sizes[chrom == "chrM", offset]),
+        breaks = chrom_sizes[, label_offset],
+        label = chrom_sizes[, chrom]
+    )
+    + guides(colour = FALSE)
+    + theme_minimal()
+    + theme(
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 0.5),
+        strip.text.x = element_text(angle = 90, hjust = 0.5),
+        legend.position = "bottom"
+    )
 )
 ggsave(
     "Plots/sv-disruption.z.png",
@@ -198,36 +188,24 @@ ggsave(
 
 gg <- (
     ggplot(data = tested_genes)
-    +
-        geom_point(aes(x = mut_mean - nonmut_mean, y = log2fold, colour = Pass_Thresh))
-        +
-        geom_hline(yintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
-        +
-        geom_hline(yintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
-        +
-        geom_vline(xintercept = abs_abundance_thresh[1], linetype = "dashed", colour = "red")
-        +
-        geom_vline(xintercept = abs_abundance_thresh[2], linetype = "dashed", colour = "red")
-        # + labs(x = expression("RNA abundance difference ("*\bar{x}[mut] * ")"), y = expression(log[2] * " Expression fold change"))
-        +
-        labs(x = "RNA abundance difference", y = expression(log[2] * " Expression fold change"))
-        +
-        xlim(-100, 100)
-        +
-        scale_y_continuous(
-            breaks = c(-20, -10, -5, -1, 0, 1, 5, 10)
-        )
-        +
-        scale_colour_manual(
-            limits = c(TRUE, FALSE),
-            values = c("#000000", "#ececec")
-        )
-        +
-        theme_minimal()
-        +
-        theme(
-            legend.position = "bottom"
-        )
+    + geom_point(aes(x = mut_mean - nonmut_mean, y = log2fold, colour = Pass_Thresh))
+    + geom_hline(yintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
+    + geom_hline(yintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + geom_vline(xintercept = abs_abundance_thresh[1], linetype = "dashed", colour = "red")
+    + geom_vline(xintercept = abs_abundance_thresh[2], linetype = "dashed", colour = "red")
+    + labs(x = "RNA abundance difference", y = expression(log[2] * " Expression fold change"))
+    + xlim(-100, 100)
+    + scale_y_continuous(
+        breaks = c(-20, -10, -5, -1, 0, 1, 5, 10)
+    )
+    + scale_colour_manual(
+        limits = c(TRUE, FALSE),
+        values = c("#000000", "#ececec")
+    )
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom"
+    )
 )
 ggsave(
     "Plots/sv-disruption.fold-change-vs-difference.png",
@@ -238,19 +216,13 @@ ggsave(
 
 gg <- (
     ggplot(data = exprs)
-    +
-        geom_density(aes(x = Mean))
-        +
-        labs(x = "Mean expression (FPKM)", y = "Density")
-        # + xlim(0, 2000)
-        +
-        scale_x_log10()
-        +
-        theme_minimal()
-        +
-        theme(
-            legend.position = "bottom"
-        )
+    + geom_density(aes(x = Mean))
+    + labs(x = "Mean expression (FPKM)", y = "Density")
+    + scale_x_log10()
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom"
+    )
 )
 ggsave(
     "Plots/all-genes.sd-vs-mean.png",
@@ -267,75 +239,63 @@ ecdf_data <- data.table(
 ecdf_data[, cdf := fold_ecdf(log2fold)]
 gg <- (
     ggplot()
-    +
-        geom_ribbon(
-            data = ecdf_data[log2fold <= log_fold_thresh[1]],
-            mapping = aes(x = log2fold, ymin = 0, ymax = cdf),
-            alpha = 0.5,
-            fill = "red"
-        )
-        +
-        geom_ribbon(
-            data = ecdf_data[log2fold >= log_fold_thresh[2]],
-            mapping = aes(x = log2fold, ymin = cdf, ymax = 1),
-            alpha = 0.5,
-            fill = "red"
-        )
-        +
-        geom_path(
-            data = ecdf_data,
-            aes(x = log2fold, y = cdf)
-        )
-        +
-        geom_vline(xintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
-        +
-        geom_vline(xintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
-        +
-        annotate(
-            x = -6, y = 0.25,
-            label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
-            geom = "text",
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        annotate(
-            x = 4, y = 0.875,
-            label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
-            geom = "text",
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        geom_curve(
-            aes(x = -5, y = 0.25, xend = -3, yend = 0.13),
-            arrow = arrow(angle = 30, length = unit(0.03, "npc")),
-            curvature = -0.3,
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        geom_curve(
-            aes(x = 3, y = 0.875, xend = 2, yend = 0.95),
-            arrow = arrow(angle = 30, length = unit(0.03, "npc")),
-            curvature = -0.3,
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        scale_x_continuous(
-            breaks = seq(-10, 10, 2),
-            limits = c(-10, 10),
-            name = expression(log[2] * " Expression Fold Change")
-        )
-        +
-        scale_y_continuous(,
-            breaks = seq(0, 1, 0.2),
-            labels = seq(0, 100, 20),
-            name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
-        )
-        +
-        theme_minimal()
+    + geom_ribbon(
+        data = ecdf_data[log2fold <= log_fold_thresh[1]],
+        mapping = aes(x = log2fold, ymin = 0, ymax = cdf),
+        alpha = 0.5,
+        fill = "red"
+    )
+    + geom_ribbon(
+        data = ecdf_data[log2fold >= log_fold_thresh[2]],
+        mapping = aes(x = log2fold, ymin = cdf, ymax = 1),
+        alpha = 0.5,
+        fill = "red"
+    )
+    + geom_path(
+        data = ecdf_data,
+        aes(x = log2fold, y = cdf)
+    )
+    + geom_vline(xintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
+    + geom_vline(xintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + annotate(
+        x = -6, y = 0.25,
+        label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
+        geom = "text",
+        colour = "red",
+        alpha = 0.5
+    )
+    + annotate(
+        x = 4, y = 0.875,
+        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
+        geom = "text",
+        colour = "red",
+        alpha = 0.5
+    )
+    + geom_curve(
+        aes(x = -5, y = 0.25, xend = -3, yend = 0.13),
+        arrow = arrow(angle = 30, length = unit(0.03, "npc")),
+        curvature = -0.3,
+        colour = "red",
+        alpha = 0.5
+    )
+    + geom_curve(
+        aes(x = 3, y = 0.875, xend = 2, yend = 0.95),
+        arrow = arrow(angle = 30, length = unit(0.03, "npc")),
+        curvature = -0.3,
+        colour = "red",
+        alpha = 0.5
+    )
+    + scale_x_continuous(
+        breaks = seq(-10, 10, 2),
+        limits = c(-10, 10),
+        name = expression(log[2] * " Expression Fold Change")
+    )
+    + scale_y_continuous(,
+        breaks = seq(0, 1, 0.2),
+        labels = seq(0, 100, 20),
+        name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
+    ) 
+    + theme_minimal()
 )
 ggsave(
     "Plots/sv-disruption.fold.ecdf.png",
@@ -351,75 +311,63 @@ ecdf_data <- data.table(
 ecdf_data[, cdf := fold_ecdf(log2fold)]
 gg <- (
     ggplot()
-    +
-        geom_ribbon(
-            data = ecdf_data[log2fold <= log_fold_thresh[1]],
-            mapping = aes(x = log2fold, ymin = 0, ymax = cdf),
-            alpha = 0.5,
-            fill = "red"
-        )
-        +
-        geom_ribbon(
-            data = ecdf_data[log2fold >= log_fold_thresh[2]],
-            mapping = aes(x = log2fold, ymin = cdf, ymax = 1),
-            alpha = 0.5,
-            fill = "red"
-        )
-        +
-        geom_path(
-            data = ecdf_data,
-            aes(x = log2fold, y = cdf)
-        )
-        +
-        geom_vline(xintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
-        +
-        geom_vline(xintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
-        +
-        annotate(
-            x = -6, y = 0.25,
-            label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
-            geom = "text",
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        annotate(
-            x = 4, y = 0.875,
-            label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
-            geom = "text",
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        geom_curve(
-            aes(x = -5, y = 0.25, xend = -3, yend = 0.13),
-            arrow = arrow(angle = 30, length = unit(0.03, "npc")),
-            curvature = -0.3,
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        geom_curve(
-            aes(x = 3, y = 0.875, xend = 2, yend = 0.95),
-            arrow = arrow(angle = 30, length = unit(0.03, "npc")),
-            curvature = -0.3,
-            colour = "red",
-            alpha = 0.5
-        )
-        +
-        scale_x_continuous(
-            breaks = seq(-10, 10, 2),
-            limits = c(-10, 10),
-            name = expression(log[2] * " Expression Fold Change")
-        )
-        +
-        scale_y_continuous(,
-            breaks = seq(0, 1, 0.2),
-            labels = seq(0, 100, 20),
-            name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
-        )
-        +
-        theme_minimal()
+    + geom_ribbon(
+        data = ecdf_data[log2fold <= log_fold_thresh[1]],
+        mapping = aes(x = log2fold, ymin = 0, ymax = cdf),
+        alpha = 0.5,
+        fill = "red"
+    )
+    + geom_ribbon(
+        data = ecdf_data[log2fold >= log_fold_thresh[2]],
+        mapping = aes(x = log2fold, ymin = cdf, ymax = 1),
+        alpha = 0.5,
+        fill = "red"
+    )
+    + geom_path(
+        data = ecdf_data,
+        aes(x = log2fold, y = cdf)
+    )
+    + geom_vline(xintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
+    + geom_vline(xintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + annotate(
+        x = -6, y = 0.25,
+        label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
+        geom = "text",
+        colour = "red",
+        alpha = 0.5
+    )
+    + annotate(
+        x = 4, y = 0.875,
+        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
+        geom = "text",
+        colour = "red",
+        alpha = 0.5
+    )
+    + geom_curve(
+        aes(x = -5, y = 0.25, xend = -3, yend = 0.13),
+        arrow = arrow(angle = 30, length = unit(0.03, "npc")),
+        curvature = -0.3,
+        colour = "red",
+        alpha = 0.5
+    )
+    + geom_curve(
+        aes(x = 3, y = 0.875, xend = 2, yend = 0.95),
+        arrow = arrow(angle = 30, length = unit(0.03, "npc")),
+        curvature = -0.3,
+        colour = "red",
+        alpha = 0.5
+    )
+    + scale_x_continuous(
+        breaks = seq(-10, 10, 2),
+        limits = c(-10, 10),
+        name = expression(log[2] * " Expression Fold Change")
+    )
+    + scale_y_continuous(,
+        breaks = seq(0, 1, 0.2),
+        labels = seq(0, 100, 20),
+        name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
+    )
+    + theme_minimal()
 )
 ggsave(
     "Plots/sv-disruption.fold.ecdf.thresholded.png",
