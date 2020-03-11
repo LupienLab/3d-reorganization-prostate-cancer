@@ -31,12 +31,11 @@ rule all:
             param=['Default', 'Min_1kbp', 'Low_Thresh_30']
         ),
         expand(
-            path.join(BREAK_DIR, '{param}', 'breakpoints.{ext}'),
-            param=['Default'],
-            ext=['bedpe', 'tsv']
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.bed"),
+            sample=SAMPLES
         ),
         expand(
-            path.join(BREAK_DIR, "Default", "{sample}.breaks.bed"),
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.bed2ddb"),
             sample=SAMPLES
         ),
         path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.tsv"),
@@ -196,3 +195,14 @@ rule tally_inter_intra_events:
             awk -v s=$s  -v FS="\\t" -v OFS="\\t" 'BEGIN{{x=0; y=0;}}{{if ($12 != "ARTEFACT") {{if ($1 == $4) {{x+=1}} else {{y += 1}} }} }}END{{print s, x, y}}' {BREAK_DIR}/Default/$s.breaks.sorted.manually-resolved.tsv >> {output}
         done
         """
+
+rule clodius_2d:
+    input:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.bedpe"),
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.bed2ddb"),
+    params:
+        "--chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
+    shell:
+        "clodius aggregate bedpe {params} -o {output} {input}"
+
