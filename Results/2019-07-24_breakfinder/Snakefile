@@ -31,7 +31,7 @@ rule all:
             param=['Default', 'Min_1kbp', 'Low_Thresh_30']
         ),
         expand(
-            path.join(BREAK_DIR, "Default", "{sample}.breaks.bed"),
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.bed"),
             sample=SAMPLES
         ),
         expand(
@@ -153,13 +153,13 @@ rule sort_vcf:
 
 rule bf2bed:
     input:
-        path.join(BREAK_DIR, "Default", "{sample}.breaks.txt")
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.tsv")
     output:
-        path.join(BREAK_DIR, "Default", "{sample}.breaks.bed")
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.bed")
     params:
         '-v FS="\t" -v OFS="\t"'
     shell:
-        'awk {params} \'{{print $2, $3, $4, "SV"NR, "\\n"$6, $7, $8, "SV"NR}}\' {input} > {output}'
+        'awk {params} \'{{if ($12 != \"ARTEFACT\") print $1, $2, $3, "SV"NR, "\\n"$4, $5, $6, "SV"NR}}\' {input} > {output}'
 
 rule t2e_translocation_genes:
     input:

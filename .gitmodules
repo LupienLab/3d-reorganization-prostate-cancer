@@ -1,6 +1,3 @@
 [submodule "Results/2019-07-24_breakfinder/hic_breakfinder"]
 	path = Results/2019-07-24_breakfinder/hic_breakfinder
 	url = git@github.com:dixonlab/hic_breakfinder.git
-[submodule "Results/2019-07-24_breakfinder/SURVIVOR"]
-	path = Results/2019-07-24_breakfinder/SURVIVOR
-	url = https://github.com/fritzsedlazeck/SURVIVOR.git
