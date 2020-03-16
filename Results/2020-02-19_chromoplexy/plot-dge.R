@@ -11,7 +11,11 @@ suppressMessages(library("ggplot2"))
 htest <- fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
 
 # load z-scores for tested genes
-tested_genes <- fread("sv-disruption-tests.genes.tsv", sep = "\t", header = TRUE)
+tested_genes <- fread(
+    "sv-disruption-tests.genes.tsv",
+    sep = "\t",
+    header = TRUE
+)
 
 # load expression of all genes
 exprs <- fread(
@@ -30,7 +34,10 @@ exprs[, EnsemblID_short := gsub("\\.\\d+", "", EnsemblID)]
 
 # load GENCODE reference annotation (all genes, not just protein-coding)
 gencode <- fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
+    file.path(
+        "..", "..", "Data", "External",
+        "GENCODE", "gencode.v33.all-genes.bed"
+    ),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "EnsemblID", "name"),
@@ -73,12 +80,18 @@ altering_breakpoints <- htest[q < 0.05, breakpoint_index]
 
 # calculate means and variances for all genes
 sample_cols <- 3:15
-exprs[, Mean := rowMeans(.SD), .SDcols = sample_cols]
-exprs[, StdDev := apply(.SD, 1, sd), .SDcols = sample_cols]
+exprs[, means := rowMeans(.SD), .SDcols = sample_cols]
+exprs[, std_dev := apply(.SD, 1, sd), .SDcols = sample_cols]
 
 # classify according to thresholds
-tested_genes[, Pass_Thresh := FALSE]
-tested_genes[abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2] & abs(log2fold) >= log_fold_thresh[2], Pass_Thresh := TRUE]
+tested_genes[, pass_thresh := FALSE]
+tested_genes[
+    (
+        abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2]
+        & abs(log2fold) >= log_fold_thresh[2]
+    ),
+    Pass_Thresh := TRUE
+]
 
 # order chromosomes
 CHRS <- paste0("chr", c(1:22, "X", "Y"))
@@ -88,7 +101,10 @@ tested_genes[, chr := factor(chr, ordered = TRUE, levels = CHRS)]
 tested_genes$cpos <- sapply(
     1:tested_genes[, .N],
     function(i) {
-        return(tested_genes[i, start] + chrom_sizes[chrom == tested_genes[i, chr], offset])
+        return(
+            tested_genes[i, start]
+            + chrom_sizes[chrom == tested_genes[i, chr], offset]
+        )
     }
 )
 tested_genes$colour <- sapply(
@@ -98,8 +114,37 @@ tested_genes$colour <- sapply(
     }
 )
 
-# state whether the genes are related to a breakpoint that significantly alters the set of genes
-tested_genes[, altering_bp := ifelse(breakpoint_index %in% altering_breakpoints, TRUE, FALSE)]
+# state whether the genes are related to a breakpoint that significantly
+# alters the set of genes (doing this calculation per row with ifelse)
+tested_genes[, altering_bp := ifelse(
+    breakpoint_index %in% altering_breakpoints,
+    TRUE,
+    FALSE
+)]
+
+# set of breakpoints where at least 1 gene passes both thresholds
+b_star <- tested_genes[
+    pass_thresh == TRUE,
+    .N,
+    by = breakpoint_index
+]$breakpoint_index
+
+# calculate percentage of genes in these TADs
+b_star_pct_genes <- data.table(
+    breakpoint_index = b_star,
+    n_altered_genes = tested_genes[
+        pass_thresh == TRUE,
+        .N,
+        by = breakpoint_index
+    ]$N,
+    n_genes = tested_genes[
+        breakpoint_index %in% b_star,
+        .N,
+        by = breakpoint_index
+    ]$N
+)
+b_star_pct_genes[, pct_genes := n_altered_genes / n_genes]
+print(b_star_pct_genes[, summary(pct_genes)])
 
 # ==============================================================================
 # Plots
@@ -158,9 +203,6 @@ gg <- (
     ggplot(data = tested_genes)
     + geom_boxplot(
         aes(x = factor(breakpoint_index), y = log2fold, colour = altering_bp)
-        # aes(x = factor(breakpoint_index), y = log2fold, group = factor(log2fold), colour = altering_bp)
-        # position = position_dodge(width = 1),
-        # size = 1
     )
     + labs(x = "Breakpoint", y = expression(log[2] * " Expression fold change"))
     + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
@@ -186,14 +228,77 @@ ggsave(
     units = "cm"
 )
 
+# same as above, but thresholding on absolute difference in mRNA abundance
+gg <- (
+    ggplot(data = tested_genes[
+        abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2],
+        .SD
+    ])
+    + geom_point(
+        aes(
+            x = factor(breakpoint_index),
+            y = log2fold,
+            group = factor(log2fold),
+            colour = (breakpoint_index %% 2 == 0)
+        ),
+        position = position_dodge(width = 1),
+        size = 1
+    )
+    + labs(x = "Breakpoint", y = expression(log[2] * " Expression fold change"))
+    + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
+    + facet_wrap(~mutated_in, scales = "free_y")
+    + guides(fill = guide_legend(title = "Breakpoints"))
+    # + scale_colour_manual(
+    #     limits = c(TRUE, FALSE),
+    #     values = c("#000000", "#cecece"),
+    #     name = "Breakpoint significantly alters expression"
+    # )
+    + coord_flip()
+    + theme_minimal()
+    + theme(
+        strip.text.y = element_text(angle = 0, hjust = 0),
+        axis.text.y = element_blank(),
+        legend.position = "bottom"
+    )
+)
+ggsave(
+    "Plots/sv-disruption.fold-change.thresholded.png",
+    height = 30,
+    width = 20,
+    units = "cm"
+)
+
 gg <- (
     ggplot(data = tested_genes)
-    + geom_point(aes(x = mut_mean - nonmut_mean, y = log2fold, colour = Pass_Thresh))
-    + geom_hline(yintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
-    + geom_hline(yintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
-    + geom_vline(xintercept = abs_abundance_thresh[1], linetype = "dashed", colour = "red")
-    + geom_vline(xintercept = abs_abundance_thresh[2], linetype = "dashed", colour = "red")
-    + labs(x = "RNA abundance difference", y = expression(log[2] * " Expression fold change"))
+    + geom_point(aes(
+        x = mut_mean - nonmut_mean,
+        y = log2fold,
+        colour = Pass_Thresh
+    ))
+    + geom_hline(
+        yintercept = log_fold_thresh[1],
+        linetype = "dashed",
+        colour = "red"
+    )
+    + geom_hline(
+        yintercept = log_fold_thresh[2],
+        linetype = "dashed",
+        colour = "red"
+    )
+    + geom_vline(
+        xintercept = abs_abundance_thresh[1],
+        linetype = "dashed",
+        colour = "red"
+    )
+    + geom_vline(
+        xintercept = abs_abundance_thresh[2],
+        linetype = "dashed",
+        colour = "red"
+    )
+    + labs(
+        x = "RNA abundance difference",
+        y = expression(log[2] * " Expression fold change")
+    )
     + xlim(-100, 100)
     + scale_y_continuous(
         breaks = c(-20, -10, -5, -1, 0, 1, 5, 10)
@@ -202,6 +307,7 @@ gg <- (
         limits = c(TRUE, FALSE),
         values = c("#000000", "#ececec")
     )
+    + guides(colour = FALSE)
     + theme_minimal()
     + theme(
         legend.position = "bottom"
@@ -216,7 +322,7 @@ ggsave(
 
 gg <- (
     ggplot(data = exprs)
-    + geom_density(aes(x = Mean))
+    + geom_density(aes(x = means))
     + labs(x = "Mean expression (FPKM)", y = "Density")
     + scale_x_log10()
     + theme_minimal()
@@ -255,8 +361,16 @@ gg <- (
         data = ecdf_data,
         aes(x = log2fold, y = cdf)
     )
-    + geom_vline(xintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
-    + geom_vline(xintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + geom_vline(
+        xintercept = log_fold_thresh[1],
+        linetype = "dashed",
+        colour = "red"
+    )
+    + geom_vline(
+        xintercept = log_fold_thresh[2],
+        linetype = "dashed",
+        colour = "red"
+    )
     + annotate(
         x = -6, y = 0.25,
         label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
@@ -266,7 +380,9 @@ gg <- (
     )
     + annotate(
         x = 4, y = 0.875,
-        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
+        label = paste0(
+            (1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"
+        ),
         geom = "text",
         colour = "red",
         alpha = 0.5
@@ -294,7 +410,7 @@ gg <- (
         breaks = seq(0, 1, 0.2),
         labels = seq(0, 100, 20),
         name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
-    ) 
+    )
     + theme_minimal()
 )
 ggsave(
@@ -304,9 +420,14 @@ ggsave(
     units = "cm"
 )
 
-fold_ecdf <- tested_genes[abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2], ecdf(log2fold)]
+fold_ecdf <- tested_genes[
+    abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2],
+    ecdf(log2fold)
+]
 ecdf_data <- data.table(
-    log2fold = tested_genes[abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2]][order(log2fold), log2fold]
+    log2fold = tested_genes[
+        abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2]
+    ][order(log2fold), log2fold]
 )
 ecdf_data[, cdf := fold_ecdf(log2fold)]
 gg <- (
@@ -327,8 +448,16 @@ gg <- (
         data = ecdf_data,
         aes(x = log2fold, y = cdf)
     )
-    + geom_vline(xintercept = log_fold_thresh[1], linetype = "dashed", colour = "red")
-    + geom_vline(xintercept = log_fold_thresh[2], linetype = "dashed", colour = "red")
+    + geom_vline(
+        xintercept = log_fold_thresh[1],
+        linetype = "dashed",
+        colour = "red"
+    )
+    + geom_vline(
+        xintercept = log_fold_thresh[2],
+        linetype = "dashed",
+        colour = "red"
+    )
     + annotate(
         x = -6, y = 0.25,
         label = paste0(round(fold_ecdf(log_fold_thresh[1]), 3) * 100, "%"),
@@ -338,7 +467,10 @@ gg <- (
     )
     + annotate(
         x = 4, y = 0.875,
-        label = paste0((1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100, "%"),
+        label = paste0(
+            (1 - round(fold_ecdf(log_fold_thresh[2]), 3)) * 100,
+            "%"
+        ),
         geom = "text",
         colour = "red",
         alpha = 0.5
