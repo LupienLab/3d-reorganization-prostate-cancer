@@ -161,6 +161,8 @@ for s in tqdm(SAMPLES, unit="sample"):
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
 
 print("Connecting proximal breakpoints")
+# create compiled list of all breakpoints for easier parsing
+uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "mutated_in"])
 # connect 2 nodes if their intervals are within 100 kbp of each other
 for n in tqdm(G_all):
     for m in G_all:
@@ -179,6 +181,12 @@ for n in tqdm(G_all):
         # it's not that much of a concern)
         if equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
             G_all.add_edge(n, m, annotation="equivalent-TAD")
+    # save for later
+    uncoupled_breakpoints = uncoupled_breakpoints.append(
+        {"chr": n.chr, "start": n.inf(), "end": n.sup(), "mutated_in": n.data["sample"]},
+        ignore_index=True,
+        sort=False
+    )
 
 for s in SAMPLES:
     for n in tqdm(G_sample[s]):
@@ -199,4 +207,9 @@ for s in SAMPLES:
 print("Saving graphs")
 pickle.dump(G_all, open("breakpoints.all-samples.p", "wb"))
 pickle.dump(G_sample, open("breakpoints.per-sample.p", "wb"))
+uncoupled_breakpoints.to_csv(
+    "sv-breakpoints.tsv",
+    sep="\t",
+    index_label="breakpoint_index"
+)
 print("Done")
