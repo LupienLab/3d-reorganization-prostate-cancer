@@ -225,7 +225,24 @@ for t in tqdm(tests.itertuples(), total=tests.shape[0]):
             data_to_store["altered_TAD"] = True
         altering_bps = altering_bps.append(data_to_store, ignore_index=True, sort=False)
 
+# merge rows for duplicate tests, group by breakpoint
 agg_altering_bps = altering_bps.groupby("breakpoint_index").agg({"test_index": list, "chr": np.unique, "start": np.unique, "end": np.unique, "mutated_in": np.unique, "altered_TAD": list})
-print(agg_altering_bps.loc[agg_altering_bps.altered_TAD.str.contains("True"), :].shape[0] / agg_altering_bps.shape[0])
+print(agg_altering_bps.loc[agg_altering_bps.altered_TAD.apply(lambda x: True in x), :].shape[0] / agg_altering_bps.shape[0])
 
+# find the specific TADs for a given breakpoint
+breakpoint_tads = pd.DataFrame(columns=["chr", "start", "end", "breakpoint_index"])
+for bp in tqdm(G, total=len(G)):
+    # get TAD containing this breakpoint in this sample only, slightly different than above
+    mut_tads = get_neighbouring_TADs(bp, [bp.data["sample"]], w)
+    breakpoint_tads = breakpoint_tads.append(
+        {"chr": bp.chr, "start": mut_tads.start.min(), "end": mut_tads.end.max(), "breakpoint_index": bp.data["index"]},
+        ignore_index=True,
+        sort=False
+    )
+breakpoint_tads.drop_duplicates(inplace=True, ignore_index=True)
+
+# ==============================================================================
+# Save
+# ==============================================================================
 agg_altering_bps.to_csv("sv-disruption-tests.TADs.tsv", sep="\t", index=True)
+breakpoint_tads.to_csv("sv-breakpoints.TADs.tsv", sep="\t", index=False)
