@@ -1,0 +1,58 @@
+# ==============================================================================
+# Environment
+# ==============================================================================
+import os.path as path
+import pandas as pd
+
+CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t",
+    header=0
+)
+SAMPLES = ["PCa" + str(i) for i in CONFIG["Sample ID"].tolist()]
+
+ACETYL_DIR = "Acetylation"
+PLOT_DIR = "Plots"
+BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
+TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        "breakpoints.all-samples.p",
+        "breakpoints.per-sample.p",
+        "sv-breakpoints.tsv",
+        "sv-disruption-tests.tsv",
+        # "sv-breakpoints.TADs.tsv",
+        # "sv-disruption-tests.TADs.tsv",
+        # "sv-disruption-tests.expression.tsv",
+        # "sv-disruption-tests.expression.gene-level.tsv",
+        # "TAD-induced-regions.bed",
+        # expand(
+        #     path.join(ACETYL_DIR, "{sample}.chip-diff.bed"),
+        #     sample=SAMPLES
+        # )
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule graphs:
+    input:
+        script = "breakpoint-components.py",
+        breaks = expand(
+            path.join(BREAK_DIR, "{sample}.breaks.sorted.manually-resolved.tsv"),
+            sample=SAMPLES
+        ),
+        tads = expand(
+            path.join(TAD_DIR, "separated-TADs", "{sample}.40000bp.w_3.domains.bed"),
+            sample=SAMPLES
+        ),
+    output:
+        "breakpoints.all-samples.p",
+        "breakpoints.per-sample.p",
+        "sv-breakpoints.tsv",
+        "sv-disruption-tests.tsv"
+    shell:
+        "python {input.script}"

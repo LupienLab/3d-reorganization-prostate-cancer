@@ -3,7 +3,6 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("DESeq2"))
-suppressMessages(library("rsamtools"))
 suppressMessages(library("GenomicRanges"))
 
 # ==============================================================================
@@ -55,7 +54,7 @@ tests$breakpoint_indices <- split_comma_col(tests$breakpoint_indices, as.numeric
 tests$mutated_in <- split_comma_col(tests$mutated_in)
 
 # create design matrices for each set of mut-vs-nonmut (this depends on the breakpoint being considered)
-all_comparisons <- unique(tests$mutated_in])
+all_comparisons <- unique(tests$mutated_in)
 all_designs <- lapply(
     all_comparisons,
     function(mut_samples) {
@@ -71,6 +70,8 @@ all_designs <- lapply(
 # Analysis
 # ==============================================================================
 
+
 # ==============================================================================
 # Plots
 # ==============================================================================
+
