@@ -36,7 +36,7 @@ rule all:
         expand(
             path.join(PEAK_DIR, '{sample}_peaks.filtered.{ext}'),
             sample=UNIQ_SAMPLES,
-            ext=["narrowPeak", "bdg"],
+            ext=["narrowPeak", "bdg", "beddb"],
         ),
         expand(
             path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.{ext}'),
@@ -158,3 +158,12 @@ rule sort:
     shell:
         "sort -k1,1 -V -k2,2n {input} > {output}"
 
+rule clodius_agg_1d:
+    input:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak'),
+    output:
+        path.join(PEAK_DIR, '{sample}_peaks.filtered.beddb'),
+    params:
+        "-a hg38"
+    shell:
+        "clodius aggregate bedfile {params} -o {output} {input}"

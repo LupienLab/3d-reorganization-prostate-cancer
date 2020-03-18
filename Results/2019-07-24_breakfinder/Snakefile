@@ -210,7 +210,7 @@ rule clodius_2d:
     output:
         path.join(BREAK_DIR, "Default", "{sample}.breaks.bed2ddb"),
     params:
-        "--chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
+        "-a hg38 --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
     shell:
         "clodius aggregate bedpe {params} -o {output} {input}"
 

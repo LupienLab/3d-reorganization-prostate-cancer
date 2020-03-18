@@ -5,7 +5,6 @@ altered-tads
 Determine whether SVs alter TADs
 """
 
-from __future__ import division, absolute_import, print_function
 import os.path as path
 import numpy as np
 import pandas as pd
@@ -170,15 +169,23 @@ tads = {
 # load breakpoint graphs for each patient
 G = pickle.load(open("breakpoints.all-samples.p", "rb"))
 
+# load table of tests
+tests = pd.read_csv("sv-disruption-tests.tsv", sep="\t", header=0, index_col="test_index")
+
+# load table of breakpoints
+breakpoints = pd.read_csv("sv-breakpoints.tsv", sep="\t", header=0, index_col="breakpoint_index")
+
 # ==============================================================================
 # Main
 # ==============================================================================
 # table to track how many breakpoint ends alter TADs
 table_cols = [
+    "test_index",
+    "breakpoint_index",
     "chr",
     "start",
     "end",
-    "mutated_sample",
+    "mutated_in",
     "altered_TAD",
 ]
 altering_bps = pd.DataFrame(columns=table_cols)
@@ -186,30 +193,56 @@ altering_bps = pd.DataFrame(columns=table_cols)
 # window size to check TADs for
 w = 3
 
-# iterate over each breakpoint
-for bp in tqdm(G):
-    data_to_store = {
-        "chr": bp.chr,
-        "start": bp.inf(),
-        "end": bp.sup(),
-        "mutated_sample": bp.data["sample"],
-        "altered_TAD": False,
-    }
-    # find samples where this, or a nearby, breakpoint occurs
-    nbrs = [n for n, v in G[bp].items() if v["annotation"] in ["nearby", "recurrent"]]
-    # only keep unique sample IDs, don't double count them
-    mut_samples = get_mutated_ids_near_breakend(bp, nbrs)
-    nonmut_samples = set([s for s in SAMPLES if s not in mut_samples])
-    # get TADs where this breakpoint end is in, for the mutated and non-mutated samples
-    mut_tads = get_neighbouring_TADs(bp, mut_samples, w)
-    nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples, w)
-    if different_tads(mut_tads, list(mut_samples), nonmut_tads, list(nonmut_samples), bp.inf() - BREAK_FLANK_SIZE, bp.sup() + BREAK_FLANK_SIZE):
-        data_to_store["altered_TAD"] = True
-    # store the result
-    df = pd.DataFrame(data_to_store, index=[0])
-    altering_bps = altering_bps.append(df, ignore_index=True, sort=False)
+# iterate over each set of linked breakpoints
+for t in tqdm(tests.itertuples(), total=tests.shape[0]):
+    # extract breakpoint indices and get the breakpoints from the graph
+    bp_idxs = [int(i) for i in t.breakpoint_indices.split(",")]
+    bps = [n for i in bp_idxs for n in G if n.data["index"] == i]
+    # get (non-)mutated sample IDs
+    mut_samples = [s for s in t.mutated_in.split(",")]
+    nonmut_samples = [s for s in SAMPLES if s not in mut_samples]
+    # since the ends of related breakpoints can be megabases apart, we test each of them individually
+    for i, bp in zip(bp_idxs, bps):
+        data_to_store = {
+            "test_index": t.Index,
+            "breakpoint_index": i,
+            "chr": bp.chr,
+            "start": bp.inf(),
+            "end": bp.sup(),
+            "mutated_in": bp.data["sample"],
+            "altered_TAD": False,
+        }
+        mut_tads = get_neighbouring_TADs(bp, mut_samples, w)
+        nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples, w)
+        if different_tads(
+            mut_tads,
+            mut_samples,
+            nonmut_tads,
+            nonmut_samples,
+            bp.inf() - BREAK_FLANK_SIZE,
+            bp.sup() + BREAK_FLANK_SIZE
+        ):
+            data_to_store["altered_TAD"] = True
+        altering_bps = altering_bps.append(data_to_store, ignore_index=True, sort=False)
 
-print(altering_bps["altered_TAD"].sum() / altering_bps.shape[0])
+# merge rows for duplicate tests, group by breakpoint
+agg_altering_bps = altering_bps.groupby("breakpoint_index").agg({"test_index": list, "chr": np.unique, "start": np.unique, "end": np.unique, "mutated_in": np.unique, "altered_TAD": list})
+print(agg_altering_bps.loc[agg_altering_bps.altered_TAD.apply(lambda x: True in x), :].shape[0] / agg_altering_bps.shape[0])
 
-altering_bps.to_csv("sv-ends-altering-TADs.tsv", sep="\t", index=False)
+# find the specific TADs for a given breakpoint
+breakpoint_tads = pd.DataFrame(columns=["chr", "start", "end", "breakpoint_index"])
+for bp in tqdm(G, total=len(G)):
+    # get TAD containing this breakpoint in this sample only, slightly different than above
+    mut_tads = get_neighbouring_TADs(bp, [bp.data["sample"]], w)
+    breakpoint_tads = breakpoint_tads.append(
+        {"chr": bp.chr, "start": mut_tads.start.min(), "end": mut_tads.end.max(), "breakpoint_index": bp.data["index"]},
+        ignore_index=True,
+        sort=False
+    )
+breakpoint_tads.drop_duplicates(inplace=True, ignore_index=True)
 
+# ==============================================================================
+# Save
+# ==============================================================================
+agg_altering_bps.to_csv("sv-disruption-tests.TADs.tsv", sep="\t", index=True)
+breakpoint_tads.to_csv("sv-breakpoints.TADs.tsv", sep="\t", index=False)

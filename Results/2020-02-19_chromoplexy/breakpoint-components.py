@@ -161,24 +161,55 @@ for s in tqdm(SAMPLES, unit="sample"):
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
 
 print("Connecting proximal breakpoints")
+# create compiled list of all breakpoints for easier parsing
+uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "mutated_in"])
 # connect 2 nodes if their intervals are within 100 kbp of each other
-for n in tqdm(G_all):
+for i, n in tqdm(enumerate(G_all), total=len(G_all)):
     for m in G_all:
         if n == m:
             continue
         # connect these nodes if the identified loci are within 100 kbp of each other
-        if overlapping(n, m, TOL / 2):
+        if overlapping(n, m, TOL // 2):
             # if the two breakpoints are from the same sample, they're nearby
             if n.data["sample"] == m.data["sample"]:
                 G_all.add_edge(n, m, annotation="nearby")
             # if the breakpoints are not from the same sample, this site is recurrent
             else:
                 G_all.add_edge(n, m, annotation="recurrent")
-        # connect these nodes if the identified loci at within the equivalent TADs from their respective samples
+        # connect these nodes if the identified loci are within the equivalent TADs from their respective samples
         # (I know this isn't the most efficient way to do this, but given the number of breakpoints and samples
         # it's not that much of a concern)
         if equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
             G_all.add_edge(n, m, annotation="equivalent-TAD")
+    # add index to this node for later use
+    n.data["index"] = i
+    # save for later (i will be the same as the index in the DataFrame)
+    uncoupled_breakpoints = uncoupled_breakpoints.append(
+        {"chr": n.chr, "start": n.inf(), "end": n.sup(), "mutated_in": n.data["sample"]},
+        ignore_index=True,
+        sort=False
+    )
+
+# add connectivity of related breakpoints
+coupled_tests = pd.DataFrame(columns=["breakpoint_indices", "mutated_in", "n_mut", "n_nonmut"])
+for bp in tqdm(G_all, total=len(G_all)):
+    # find samples where this, or a nearby, breakpoint occurs
+    nbrs = [
+        n
+        for n, v in G_all[bp].items()
+        if v["annotation"] in ["nearby", "recurrent", "equivalent-TAD"]
+    ]
+    connected_bps = [bp] + nbrs
+    indices = ",".join(unique([str(n.data["index"]) for n in connected_bps]))
+    mut_samples = ",".join(unique([n.data["sample"] for n in connected_bps]))
+    n_mut = len(unique([n.data["sample"] for n in connected_bps]))
+    coupled_tests = coupled_tests.append(
+        {"breakpoint_indices": indices, "mutated_in": mut_samples, "n_mut": n_mut, "n_nonmut": len(SAMPLES) - n_mut},
+        ignore_index=True,
+        sort=False
+    )
+# only keep unique rows
+coupled_tests.drop_duplicates(inplace=True, ignore_index=True)
 
 for s in SAMPLES:
     for n in tqdm(G_sample[s]):
@@ -186,7 +217,7 @@ for s in SAMPLES:
             if n == m:
                 continue
             # connect these nodes if the identified loci are within 100 kbp of each other
-            if overlapping(n, m, TOL / 2):
+            if overlapping(n, m, TOL // 2):
                 # if the two breakpoints are from the same sample, they're nearby
                 G_sample[s].add_edge(n, m, annotation="nearby")
             # connect these nodes if the identified loci at within the same TAD
@@ -199,4 +230,14 @@ for s in SAMPLES:
 print("Saving graphs")
 pickle.dump(G_all, open("breakpoints.all-samples.p", "wb"))
 pickle.dump(G_sample, open("breakpoints.per-sample.p", "wb"))
+uncoupled_breakpoints.to_csv(
+    "sv-breakpoints.tsv",
+    sep="\t",
+    index_label="breakpoint_index"
+)
+coupled_tests.to_csv(
+    "sv-disruption-tests.tsv",
+    sep="\t",
+    index_label="test_index"
+)
 print("Done")
