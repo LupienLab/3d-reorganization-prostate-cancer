@@ -262,7 +262,7 @@ for i, bp in tqdm(enumerate(G), total=len(G)):
 # ==============================================================================
 # save hypothesis test results
 htest.to_csv(
-    "sv-disruption-tests.tsv", sep="\t", index=True, index_label="breakpoint_index"
+    "sv-disruption-tests.expression.tsv", sep="\t", index=True, index_label="breakpoint_index"
 )
 
-tested_genes.to_csv("sv-disruption-tests.genes.tsv", sep="\t", index=False)
+tested_genes.to_csv("sv-disruption-tests.expression.gene-level.tsv", sep="\t", index=False)
