@@ -45,6 +45,10 @@ rule all:
         ),
         path.join(PEAK_DIR, "catalogue-peaks.bed"),
         path.join(PEAK_DIR, "correlation.tsv"),
+        expand(
+            path.join(PEAK_DIR, "{sample}_FE.sorted.bdg"),
+            sample=SAMPLES
+        ),
 
 # ==============================================================================
 # Rules
@@ -132,4 +136,25 @@ rule plot_correlation:
         path.join(REPORT_DIR, "correlation.png"),
     shell:
         "Rscript {input.script}"
+
+rule calc_fe:
+    input:
+        chip = path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bdg"),
+        ctrl = path.join(PEAK_DIR, "{sample}_control_lambda.bdg"),
+    output:
+        path.join(PEAK_DIR, "{sample}_FE.bdg"),
+    params:
+        "-m FE" # linear fold enrichment
+    shell:
+        "macs2 bdgcmp {params} -t {input.chip} -c {input.ctrl} -o {output}"
+
+rule sort:
+    input:
+        "{file}.{ext}",
+    output:
+        "{file}.sorted.{ext}",
+    wildcard_constraints:
+        ext = "b(ed|dg)"
+    shell:
+        "sort -k1,1 -V -k2,2n {input} > {output}"
 
