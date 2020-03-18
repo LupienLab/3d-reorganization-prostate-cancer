@@ -25,8 +25,8 @@ rule all:
         "breakpoints.per-sample.p",
         "sv-breakpoints.tsv",
         "sv-disruption-tests.tsv",
-        # "sv-breakpoints.TADs.tsv",
-        # "sv-disruption-tests.TADs.tsv",
+        "sv-breakpoints.TADs.tsv",
+        "sv-disruption-tests.TADs.tsv",
         # "sv-disruption-tests.expression.tsv",
         # "sv-disruption-tests.expression.gene-level.tsv",
         # "TAD-induced-regions.bed",
@@ -54,5 +54,24 @@ rule graphs:
         "breakpoints.per-sample.p",
         "sv-breakpoints.tsv",
         "sv-disruption-tests.tsv"
+    shell:
+        "python {input.script}"
+
+rule altered_TADs:
+    input:
+        script = "altered-tads.py",
+        graph = "breakpoints.all-samples.p",
+        test = "sv-disruption-tests.tsv",
+        breaks = expand(
+            path.join(BREAK_DIR, "{sample}.breaks.sorted.manually-resolved.tsv"),
+            sample=SAMPLES
+        ),
+        tads = expand(
+            path.join(TAD_DIR, "separated-TADs", "{sample}.40000bp.w_3.domains.bed"),
+            sample=SAMPLES
+        ),
+    output:
+        "sv-disruption-tests.TADs.tsv",
+        "sv-breakpoints.TADs.tsv"
     shell:
         "python {input.script}"
