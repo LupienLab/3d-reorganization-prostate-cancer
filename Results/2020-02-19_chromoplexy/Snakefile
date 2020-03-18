@@ -27,8 +27,8 @@ rule all:
         "sv-disruption-tests.tsv",
         "sv-breakpoints.TADs.tsv",
         "sv-disruption-tests.TADs.tsv",
-        # "sv-disruption-tests.expression.tsv",
-        # "sv-disruption-tests.expression.gene-level.tsv",
+        "sv-disruption-tests.expression.tsv",
+        "sv-disruption-tests.expression.gene-level.tsv",
         # "TAD-induced-regions.bed",
         # expand(
         #     path.join(ACETYL_DIR, "{sample}.chip-diff.bed"),
@@ -73,5 +73,25 @@ rule altered_TADs:
     output:
         "sv-disruption-tests.TADs.tsv",
         "sv-breakpoints.TADs.tsv"
+    shell:
+        "python {input.script}"
+
+rule altered_expression:
+    input:
+        script = "altered-expression.py",
+        graph = "breakpoints.all-samples.p",
+        rna = path.join("..", "..", "Data", "External", "CPC-GENE", "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv"),
+        gencode = path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
+        breaks = expand(
+            path.join(BREAK_DIR, "{sample}.breaks.sorted.manually-resolved.tsv"),
+            sample=SAMPLES
+        ),
+        tads = expand(
+            path.join(TAD_DIR, "separated-TADs", "{sample}.40000bp.w_3.domains.bed"),
+            sample=SAMPLES
+        ),
+    output:
+        "sv-disruption-tests.expression.tsv",
+        "sv-disruption-tests.expression.gene-level.tsv"
     shell:
         "python {input.script}"
