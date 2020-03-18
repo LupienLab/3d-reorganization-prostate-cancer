@@ -99,8 +99,8 @@ rule altered_expression:
 rule induced_boundaries:
     input:
         script = "create-induced-regions.py",
-        tads = expand(
-            path.join(TAD_DIR, "separated-TADs", "{sample}.40000bp.w_3.domains.bed"),
+        bounds = expand(
+            path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.tsv"),
             sample=SAMPLES
         ),
     output:
