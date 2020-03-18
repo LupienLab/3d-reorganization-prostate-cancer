@@ -29,7 +29,7 @@ rule all:
         "sv-disruption-tests.TADs.tsv",
         "sv-disruption-tests.expression.tsv",
         "sv-disruption-tests.expression.gene-level.tsv",
-        # "TAD-induced-regions.bed",
+        "TAD-induced-regions.bed",
         # expand(
         #     path.join(ACETYL_DIR, "{sample}.chip-diff.bed"),
         #     sample=SAMPLES
@@ -95,3 +95,16 @@ rule altered_expression:
         "sv-disruption-tests.expression.gene-level.tsv"
     shell:
         "python {input.script}"
+
+rule induced_boundaries:
+    input:
+        script = "create-induced-regions.py",
+        tads = expand(
+            path.join(TAD_DIR, "separated-TADs", "{sample}.40000bp.w_3.domains.bed"),
+            sample=SAMPLES
+        ),
+    output:
+        "TAD-induced-regions.bed",
+    shell:
+        "python {input.script}"
+
