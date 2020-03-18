@@ -31,7 +31,7 @@ rule all:
             param=['Default', 'Min_1kbp', 'Low_Thresh_30']
         ),
         expand(
-            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.bed"),
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.sorted.bed"),
             sample=SAMPLES
         ),
         expand(
@@ -150,6 +150,14 @@ rule sort_vcf:
         "{file}.sorted.vcf"
     shell:
         "awk '/^#/ {{print $0; next}} {{print $0 | \"sort -k1,1 -V -k2,2n\"}}' {input} > {output}"
+
+rule sort_bed:
+    input:
+        "{file}.bed",
+    output:
+        "{file}.sorted.bed",
+    shell:
+        "sort -k1,1 -V -k2,2n {input} > {output}"
 
 rule bf2bed:
     input:
