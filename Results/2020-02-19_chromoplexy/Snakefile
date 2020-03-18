@@ -15,6 +15,7 @@ ACETYL_DIR = "Acetylation"
 PLOT_DIR = "Plots"
 BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
+CHIP_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
 
 # ==============================================================================
 # Meta Rules
@@ -30,10 +31,7 @@ rule all:
         "sv-disruption-tests.expression.tsv",
         "sv-disruption-tests.expression.gene-level.tsv",
         "TAD-induced-regions.bed",
-        # expand(
-        #     path.join(ACETYL_DIR, "{sample}.chip-diff.bed"),
-        #     sample=SAMPLES
-        # )
+        "sv-disruption-tests.acetylation.tsv",
 
 # ==============================================================================
 # Rules
@@ -108,3 +106,30 @@ rule induced_boundaries:
     shell:
         "python {input.script}"
 
+rule count_chip:
+    input:
+        chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
+        bed = "TAD-induced-regions.bed",
+    output:
+        path.join(ACETYL_DIR, "PCa{sampleid}_{type}.induced-region-counts.bed")
+    wildcard_constraints:
+        sampleid = "\d+",
+        type = "(H3K27ac|input)",
+    shell:
+        "bedtools coverage -abam {input.chip} -b {input.bed} | sort -k1,1 -V -k2,2n > {output}"
+
+rule altered_acetyl:
+    input:
+        script = "altered-acetylation.R",
+        breaks = "sv-breakpoints.tsv",
+        tads = "sv-breakpoints.TADs.tsv",
+        tests = "sv-disruption-tests.tsv",
+        counts = expand(
+            path.join(ACETYL_DIR, "{sample}_{type}.induced-region-counts.bed"),
+            sample=SAMPLES,
+            type=["H3K27ac", "input"]
+        )
+    output:
+        "sv-disruption-tests.acetylation.tsv",
+    shell:
+        "Rscript {input.script}"
