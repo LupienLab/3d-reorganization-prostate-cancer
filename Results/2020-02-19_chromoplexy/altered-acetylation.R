@@ -18,7 +18,9 @@ dt2gr <- function(dt) {
             end = dt$end
         )
     )
-    mcols(gr) <- dt[, .SD, .SDcols = non_pos_cols]
+    if (length(non_pos_cols) > 0) {
+        mcols(gr) <- dt[, .SD, .SDcols = non_pos_cols]
+    }
     return(gr)
 }
 
@@ -53,22 +55,69 @@ tests <- fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
 tests$breakpoint_indices <- split_comma_col(tests$breakpoint_indices, as.numeric)
 tests$mutated_in <- split_comma_col(tests$mutated_in)
 
-# create design matrices for each set of mut-vs-nonmut (this depends on the breakpoint being considered)
-all_comparisons <- unique(tests$mutated_in)
-all_designs <- lapply(
-    all_comparisons,
-    function(mut_samples) {
-        dt <- data.table(Sample = SAMPLES, Mutated = FALSE)
-        dt[Sample %in% mut_samples, Mutated := TRUE]
-        design <- model.matrix(~ Mutated, dt)
-        rownames(design) <- SAMPLES
-        return(design)
-    }
+# load raw counts of H3K27ac pull down and input, then take differences
+count_matrix <- NULL
+library_sizes <- sapply(SAMPLES, function(s) 0)
+for (s in SAMPLES) {
+    dt_chip <- fread(
+        file.path("Acetylation", paste0(s, "_H3K27ac.induced-region-counts.bed")),
+        sep = "\t",
+        header = FALSE,
+        col.names = c("chr", "start", "end", "count", "supported", "width", "frac_supported")
+    )
+    dt_input <- fread(
+        file.path("Acetylation", paste0(s, "_input.induced-region-counts.bed")),
+        sep = "\t",
+        header = FALSE,
+        col.names = c("chr", "start", "end", "count", "supported", "width", "frac_supported")
+    )
+    # regions are in the same sorted order, so just taking difference
+    dt_chip[, norm_count := pmax(0, count - dt_input$count)]
+    count_matrix <- cbind(count_matrix, dt_chip$norm_count)
+    library_sizes[s] <- sum(dt_chip$count)
+}
+colnames(count_matrix) <- SAMPLES
+
+# load induced regions (the rows of the count matrix)
+regions <- fread(
+    "TAD-induced-regions.bed",
+    sep = "\t",
+    header = FALSE,
+    col.names = c("chr", "start", "end")
 )
+regions_gr <- dt2gr(regions)
+
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
+# create design matrices for each set of mut-vs-nonmut (this depends on the breakpoint being considered)
+all_comparisons <- unique(tests$mutated_in)
+
+# perform differential analysis for each test
+for (mut_samples in all_comparisons[1]) {
+    print(mut_samples)
+    # create metadata table for samples
+    meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
+    meta[Sample %in% mut_samples, Mutated := "Yes"]
+    meta[, Mutated := factor(Mutated, levels = c("No", "Yes"))]
+    # create DESeqDataSet object
+    dds <- DESeqDataSetFromMatrix(
+        countData = count_matrix,
+        colData = meta,
+        design = ~ Mutated,
+        rowRanges = regions_gr
+    )
+    # filter out regions with few reads in the region
+    cat(">>filtering regions\n")
+    keep <- rowSums(counts(dds)) >= 10
+    dds <- dds[keep, ]
+    cat(">>performing normalization\n")
+    dds <- DESeq(dds)
+    cat(">>extracting results\n")
+    res <- results(dds)
+    print(summary(res))
+}
 
 
 # ==============================================================================
