@@ -4,6 +4,8 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("DESeq2"))
 suppressMessages(library("GenomicRanges"))
+suppressMessages(library("pheatmap"))
+suppressMessages(library("RColorBrewer"))
 
 # ==============================================================================
 # Functions
@@ -91,12 +93,27 @@ regions_gr <- dt2gr(regions)
 # ==============================================================================
 # Analysis
 # ==============================================================================
+# calculcate correlations between acetylation in each sample
+sample_corrs <- diag(ncol = length(SAMPLES), nrow = length(SAMPLES))
+rownames(sample_corrs) <- SAMPLES
+colnames(sample_corrs) <- SAMPLES
+for (i in 1:(length(SAMPLES) - 1)) {
+    for (j in (i + 1):length(SAMPLES)) {
+        pairwise_cor <- cor(
+            x = count_matrix[, i],
+            y = count_matrix[, j],
+            method = "spearman"
+        )
+        sample_corrs[i, j] <- pairwise_cor
+        sample_corrs[j, i] <- pairwise_cor
+    }
+}
+
 # create design matrices for each set of mut-vs-nonmut (this depends on the breakpoint being considered)
 all_comparisons <- unique(tests$mutated_in)
 
 # perform differential analysis for each test
 for (mut_samples in all_comparisons[1]) {
-    print(mut_samples)
     # create metadata table for samples
     meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
     meta[Sample %in% mut_samples, Mutated := "Yes"]
@@ -113,9 +130,16 @@ for (mut_samples in all_comparisons[1]) {
     keep <- rowSums(counts(dds)) >= 10
     dds <- dds[keep, ]
     cat(">>performing normalization\n")
-    dds <- DESeq(dds)
+    # perform steps indivudally, instead of having them wrapped in `DESeq` function
+    # as per DiffBind documentation and other ChIP-seq analysis tools, linearly scale according to the sample with
+    # the smallest library
+    sizeFactors(dds) <- library_sizes / min(library_sizes)
+    dds <- estimateDispersions(dds, fitType="local")
+    dds <- nbinomWaldTest(dds)
     cat(">>extracting results\n")
     res <- results(dds)
+    res[is.na(res$pvalue), "pvalue"] <- 1
+    res[is.na(res$padj), "padj"] <- 1
     print(summary(res))
 }
 
@@ -123,4 +147,21 @@ for (mut_samples in all_comparisons[1]) {
 # ==============================================================================
 # Plots
 # ==============================================================================
+# heatmap of acetylation across the genome for all samples
+ann_cols <- data.frame(
+    T2E = metadata[, get("T2E Status")],
+    LibrarySize = library_sizes
+)
+rownames(ann_cols) <- SAMPLES
+pheatmap(
+    mat = sample_corrs,
+    color = colorRampPalette(brewer.pal(n = 7, name = "YlOrRd"))(100),
+    #breaks = seq(0.8, 1, 0.01),
+    cluster_rows = TRUE,
+    cluster_cols = TRUE,
+    clustering_method = "ward.D2",
+    annotation_col = ann_cols,
+    legend = TRUE,
+    filename = "Plots/H3K27ac-correlation-tad-induced.png"
+)
 
