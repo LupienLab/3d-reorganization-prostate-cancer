@@ -6,6 +6,7 @@ suppressMessages(library("DESeq2"))
 suppressMessages(library("GenomicRanges"))
 suppressMessages(library("pheatmap"))
 suppressMessages(library("RColorBrewer"))
+suppressMessages(library("ggplot2"))
 
 # ==============================================================================
 # Functions
@@ -57,7 +58,7 @@ tests <- fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
 tests$breakpoint_indices <- split_comma_col(tests$breakpoint_indices, as.numeric)
 tests$mutated_in <- split_comma_col(tests$mutated_in)
 
-# load raw counts of H3K27ac pull down and input, then take differences
+# load raw counts of H3K27ac pull down and input, then take differences and get total ChIP library sizes
 count_matrix <- NULL
 library_sizes <- sapply(SAMPLES, function(s) 0)
 for (s in SAMPLES) {
@@ -73,10 +74,26 @@ for (s in SAMPLES) {
         header = FALSE,
         col.names = c("chr", "start", "end", "count", "supported", "width", "frac_supported")
     )
+    # calculate the linear scaling based on library size
+    sample_library_size <- c(
+        "chip" = dt_chip[, sum(count)],
+        "input" = dt_input[, sum(count)]
+    )
+    scales <- c("chip" = 1, "input" = 1)
+    if (sample_library_size["chip"] > sample_library_size["input"]) {
+        scales["chip"] <- sample_library_size["input"] / sample_library_size["chip"]
+        library_sizes[s] <- sample_library_size["input"]
+    } else {
+        scales["input"] <- sample_library_size["chip"] / sample_library_size["input"]
+        library_sizes[s] <- sample_library_size["chip"]
+    }
+
     # regions are in the same sorted order, so just taking difference
-    dt_chip[, norm_count := pmax(0, count - dt_input$count)]
+    dt_chip[, norm_count := pmax(
+        1,
+        ceiling(scales["chip"] * count - scales["input"] * dt_input$count)
+    )]
     count_matrix <- cbind(count_matrix, dt_chip$norm_count)
-    library_sizes[s] <- sum(dt_chip$count)
 }
 colnames(count_matrix) <- SAMPLES
 
@@ -113,7 +130,8 @@ for (i in 1:(length(SAMPLES) - 1)) {
 all_comparisons <- unique(tests$mutated_in)
 
 # perform differential analysis for each test
-for (mut_samples in all_comparisons[1]) {
+for (mut_samples in all_comparisons) {
+    print(mut_samples)
     # create metadata table for samples
     meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
     meta[Sample %in% mut_samples, Mutated := "Yes"]
@@ -137,12 +155,64 @@ for (mut_samples in all_comparisons[1]) {
     dds <- estimateDispersions(dds, fitType="local")
     dds <- nbinomWaldTest(dds)
     cat(">>extracting results\n")
-    res <- results(dds)
-    res[is.na(res$pvalue), "pvalue"] <- 1
-    res[is.na(res$padj), "padj"] <- 1
-    print(summary(res))
-}
+    res <- as.data.table(results(dds))
 
+    # the above is done on all regions to perform proper normalization
+    # we're only interesting in testing the TADs containing the breakpoints
+    # we need to find the indices of all the regions that overlap the TADs of interest
+    # for this particular contrast
+
+    # find all the tests with the contrast of interest
+    # (i.e. mut_samples is equal to the `mutated_in` column)
+    test_idx_of_interest <- tests[
+        which(apply(tests, 1, function(r) identical(r$mutated_in, mut_samples))),
+        test_index
+    ]
+    # find all the breakpoints related to these tests
+    breakpoint_idx_of_interest <- tests[
+        test_index %in% test_idx_of_interest,
+        unique(unlist(breakpoint_indices))
+    ]
+
+    # find all the TADs related to these breakpoints
+    tads_of_interest <- tads_gr[tads_gr$breakpoint_index %in% breakpoint_idx_of_interest]
+    # find all the induced regions that map to these TADs
+    regions_of_interest <- as.data.table(findOverlaps(regions_gr, tads_of_interest))
+    # get differential analysis results for these regions
+    regions_of_interest[, p := res[queryHits, pvalue]]
+    regions_of_interest[, padj := res[queryHits, padj]]
+    # calculate region weights for the TAD it is induced from
+    regions_of_interest[, weight := sqrt(
+        width(pintersect(
+            regions_gr[queryHits],
+            tads_of_interest[subjectHits]
+        )) / width(tads_of_interest[subjectHits])
+    )]
+    # calculate Stouffer's Z with the weights calculated above
+    stouffer_z <- regions_of_interest[
+        !is.na(p) & !is.na(padj),
+        sum(weight * qnorm(1 - p)) / sqrt(sum(weight ^ 2)),
+        by = subjectHits
+    ]
+    colnames(stouffer_z)[2] <- "z"
+    # calculate the associated p-value
+    stouffer_z[, p := 2 * pnorm(-abs(z))]
+    # because we're only testing these regions, not the others, perform p-value adjustment here
+    stouffer_z[, padj := p.adjust(p, method = "fdr")]
+
+    # map these values back to the `tads` object
+    stouffer_z[, breakpoint_index := apply(
+        .SD,
+        1,
+        function(r) tads_of_interest[r["subjectHits"]]$breakpoint_index
+    )]
+    tads <- merge(
+        x = tads,
+        y = stouffer_z[, .SD, .SDcols = -1],
+        by = "breakpoint_index",
+        all.x = TRUE
+    )
+}
 
 # ==============================================================================
 # Plots
@@ -165,3 +235,8 @@ pheatmap(
     filename = "Plots/H3K27ac-correlation-tad-induced.png"
 )
 
+
+# ==============================================================================
+# Save data
+# ==============================================================================
+fwrite(tads, "sv-disruption-tests.acetylation.tsv", sep = "\t", col.names = TRUE)
