@@ -34,7 +34,7 @@ def bpscore(tads_a, tads_b, lower=None, upper=None):
 
     Parameters
     ----------
-    tads_a, tads_b : 
+    tads_a, tads_b :
         TADs to compare
     lower : int
         Lower bound to consider
@@ -57,7 +57,7 @@ def bpscore(tads_a, tads_b, lower=None, upper=None):
     s = 0
     while i < len(a) and j < len(b):
         overlap = min(a[i], b[j]) - max(a[i - 1], b[j - 1])
-        s += overlap ** 2 / max(a[i] - a[i-1], b[j] - b[j - 1])
+        s += overlap ** 2 / max(a[i] - a[i - 1], b[j] - b[j - 1])
         if b[j] > a[i]:
             i += 1
         else:
@@ -90,12 +90,20 @@ def different_tads(mut, mut_ids, nonmut, nonmut_ids, lower, upper):
     all_tads = pd.concat([mut, nonmut])
     # calculate BPscore for all pairwise comparisons
     X = pd.DataFrame(
-        [[bpscore(all_tads.loc[s1], all_tads.loc[s2], lower, upper) for s2 in all_ids] for s1 in all_ids],
+        [
+            [
+                bpscore(all_tads.loc[s1], all_tads.loc[s2], lower, upper)
+                for s2 in all_ids
+            ]
+            for s1 in all_ids
+        ],
         index=all_ids,
-        columns=all_ids
+        columns=all_ids,
     )
     # perform kmeans clustering
-    clustering = AgglomerativeClustering(n_clusters=2, affinity="precomputed", linkage="complete").fit(X)
+    clustering = AgglomerativeClustering(
+        n_clusters=2, affinity="precomputed", linkage="complete"
+    ).fit(X)
     # compare actual mut and non-mut samples to identified clusters
     # mut IDs are always the first few rows/columns
     # thus, if they group together, the firs tlen(mut_ids) should all have the same label
@@ -107,7 +115,7 @@ def different_tads(mut, mut_ids, nonmut, nonmut_ids, lower, upper):
         labels = [1 - x for x in labels]
     # check consistency of clustering with mutated samples
     labels_if_TAD_altered = [1 for i in mut_ids] + [0 for i in nonmut_ids]
-    if np.all(labels == labels_if_TAD_altered) :
+    if np.all(labels == labels_if_TAD_altered):
         return True
     return False
 
@@ -170,10 +178,14 @@ tads = {
 G = pickle.load(open("breakpoints.all-samples.p", "rb"))
 
 # load table of tests
-tests = pd.read_csv("sv-disruption-tests.tsv", sep="\t", header=0, index_col="test_index")
+tests = pd.read_csv(
+    "sv-disruption-tests.tsv", sep="\t", header=0, index_col="test_index"
+)
 
 # load table of breakpoints
-breakpoints = pd.read_csv("sv-breakpoints.tsv", sep="\t", header=0, index_col="breakpoint_index")
+breakpoints = pd.read_csv(
+    "sv-breakpoints.tsv", sep="\t", header=0, index_col="breakpoint_index"
+)
 
 # ==============================================================================
 # Main
@@ -220,14 +232,28 @@ for t in tqdm(tests.itertuples(), total=tests.shape[0]):
             nonmut_tads,
             nonmut_samples,
             bp.inf() - BREAK_FLANK_SIZE,
-            bp.sup() + BREAK_FLANK_SIZE
+            bp.sup() + BREAK_FLANK_SIZE,
         ):
             data_to_store["altered_TAD"] = True
         altering_bps = altering_bps.append(data_to_store, ignore_index=True, sort=False)
 
 # merge rows for duplicate tests, group by breakpoint
-agg_altering_bps = altering_bps.groupby("breakpoint_index").agg({"test_index": list, "chr": np.unique, "start": np.unique, "end": np.unique, "mutated_in": np.unique, "altered_TAD": list})
-print(agg_altering_bps.loc[agg_altering_bps.altered_TAD.apply(lambda x: True in x), :].shape[0] / agg_altering_bps.shape[0])
+agg_altering_bps = altering_bps.groupby("breakpoint_index").agg(
+    {
+        "test_index": list,
+        "chr": np.unique,
+        "start": np.unique,
+        "end": np.unique,
+        "mutated_in": np.unique,
+        "altered_TAD": list,
+    }
+)
+print(
+    agg_altering_bps.loc[
+        agg_altering_bps.altered_TAD.apply(lambda x: True in x), :
+    ].shape[0]
+    / agg_altering_bps.shape[0]
+)
 
 # find the specific TADs for a given breakpoint
 breakpoint_tads = pd.DataFrame(columns=["chr", "start", "end", "breakpoint_index"])
@@ -235,9 +261,14 @@ for bp in tqdm(G, total=len(G)):
     # get TAD containing this breakpoint in this sample only, slightly different than above
     mut_tads = get_neighbouring_TADs(bp, [bp.data["sample"]], w)
     breakpoint_tads = breakpoint_tads.append(
-        {"chr": bp.chr, "start": mut_tads.start.min(), "end": mut_tads.end.max(), "breakpoint_index": bp.data["index"]},
+        {
+            "chr": bp.chr,
+            "start": mut_tads.start.min(),
+            "end": mut_tads.end.max(),
+            "breakpoint_index": bp.data["index"],
+        },
         ignore_index=True,
-        sort=False
+        sort=False,
     )
 breakpoint_tads.drop_duplicates(inplace=True, ignore_index=True)
 
@@ -246,3 +277,6 @@ breakpoint_tads.drop_duplicates(inplace=True, ignore_index=True)
 # ==============================================================================
 agg_altering_bps.to_csv("sv-disruption-tests.TADs.tsv", sep="\t", index=True)
 breakpoint_tads.to_csv("sv-breakpoints.TADs.tsv", sep="\t", index=False)
+
+# how about now
+# how is this working

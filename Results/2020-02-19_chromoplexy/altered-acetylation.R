@@ -4,9 +4,6 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("DESeq2"))
 suppressMessages(library("GenomicRanges"))
-suppressMessages(library("pheatmap"))
-suppressMessages(library("RColorBrewer"))
-suppressMessages(library("ggplot2"))
 
 # ==============================================================================
 # Functions
@@ -130,7 +127,7 @@ for (i in 1:(length(SAMPLES) - 1)) {
 all_comparisons <- unique(tests$mutated_in)
 
 # perform differential analysis for each test
-for (mut_samples in all_comparisons) {
+for (mut_samples in all_comparisons[4:length(all_comparisons)]) {
     print(mut_samples)
     # create metadata table for samples
     meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
@@ -206,37 +203,19 @@ for (mut_samples in all_comparisons) {
         1,
         function(r) tads_of_interest[r["subjectHits"]]$breakpoint_index
     )]
-    tads <- merge(
-        x = tads,
-        y = stouffer_z[, .SD, .SDcols = -1],
-        by = "breakpoint_index",
-        all.x = TRUE
-    )
+    # save to table for later
+    for (i in stouffer_z$breakpoint_index) {
+        if (tads[breakpoint_index == i, !is.na(z)]) {
+            cat("This breakpoint has already been assigned\n")
+        }
+        tads[breakpoint_index == i, z := stouffer_z[breakpoint_index == i, z]]
+        tads[breakpoint_index == i, p := stouffer_z[breakpoint_index == i, p]]
+        tads[breakpoint_index == i, padj := stouffer_z[breakpoint_index == i, padj]]
+    }
 }
-
-# ==============================================================================
-# Plots
-# ==============================================================================
-# heatmap of acetylation across the genome for all samples
-ann_cols <- data.frame(
-    T2E = metadata[, get("T2E Status")],
-    LibrarySize = library_sizes
-)
-rownames(ann_cols) <- SAMPLES
-pheatmap(
-    mat = sample_corrs,
-    color = colorRampPalette(brewer.pal(n = 7, name = "YlOrRd"))(100),
-    #breaks = seq(0.8, 1, 0.01),
-    cluster_rows = TRUE,
-    cluster_cols = TRUE,
-    clustering_method = "ward.D2",
-    annotation_col = ann_cols,
-    legend = TRUE,
-    filename = "Plots/H3K27ac-correlation-tad-induced.png"
-)
-
 
 # ==============================================================================
 # Save data
 # ==============================================================================
 fwrite(tads, "sv-disruption-tests.acetylation.tsv", sep = "\t", col.names = TRUE)
+fwrite(sample_corrs, "acetylation-correlation.tsv", sep = "\t", col.names = TRUE)

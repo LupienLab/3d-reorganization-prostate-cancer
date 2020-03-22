@@ -5,7 +5,6 @@ altered-expression
 Test for differential expression in samples due to connected breakpoints
 """
 
-from __future__ import division, absolute_import, print_function
 import os.path as path
 import pandas as pd
 import numpy as np
