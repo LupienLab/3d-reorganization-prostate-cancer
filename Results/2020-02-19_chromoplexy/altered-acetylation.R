@@ -278,6 +278,10 @@ for (i in 1:length(all_comparisons)) {
 tests$breakpoint_indices <- unlist(lapply(tests$breakpoint_indices, paste, collapse = ","))
 tests$mutated_in <- unlist(lapply(tests$mutated_in, paste, collapse = ","))
 
+# enforce positions as integers to avoid writing to the file with scientific notation
+tests[, start := as.integer(start)]
+tests[, end := as.integer(end)]
+
 # write the tables with columns in a particular order
 fwrite(
     tests[, .SD, .SDcols = c(
