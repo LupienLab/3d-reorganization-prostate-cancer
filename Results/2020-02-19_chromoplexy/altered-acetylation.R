@@ -61,6 +61,9 @@ tests$mutated_in <- split_comma_col(tests$mutated_in)
 tests$z <- as.numeric(NA)
 tests$p <- as.numeric(NA)
 tests$padj <- as.numeric(NA)
+tests$chr <- as.character(NA)
+tests$start <- as.numeric(NA)
+tests$end <- as.numeric(NA)
 
 # load induced regions (the rows of the count matrix)
 regions <- fread(
@@ -140,8 +143,8 @@ all_comparisons <- unique(tests$mutated_in)
 
 # perform differential analysis for each test
 for (i in 1:length(all_comparisons)) {
+    cat(i, "of", length(all_comparisons), "\n")
     mut_samples <- all_comparisons[[i]]
-    print(mut_samples)
     # create metadata table for samples
     meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
     meta[Sample %in% mut_samples, Mutated := "Yes"]
@@ -189,6 +192,9 @@ for (i in 1:length(all_comparisons)) {
         which(apply(tests, 1, function(r) identical(r$mutated_in, mut_samples))),
         test_index
     ]
+    # enforce positions as integers to avoid writing to the file with scientific notation
+    res_dt[, start := as.integer(start)]
+    res_dt[, end := as.integer(end)]
     # save test results
     for (ti in test_idx_of_interest) {
         fwrite(
@@ -252,9 +258,16 @@ for (i in 1:length(all_comparisons)) {
         if (tests[test_index == ti, !is.na(z)]) {
             cat("This test has already been assigned: ", ti, "\n")
         }
-        tests[test_index == ti]$z <- stouffer_z[test_index == ti]$z
-        tests[test_index == ti]$p <- stouffer_z[test_index == ti]$p
-        tests[test_index == ti]$padj <- stouffer_z[test_index == ti]$padj
+        # variables for rows to get/set without performing the same calculation multiple times
+        this_tests_ti = which(tests$test_index == ti)
+        this_stouffer_ti = which(stouffer_z$test_index == ti)
+        this_tad_ti = which(tads_of_interest$test_index == ti)
+        tests[this_tests_ti]$z <- stouffer_z[this_stouffer_ti]$z
+        tests[this_tests_ti]$p <- stouffer_z[this_stouffer_ti]$p
+        tests[this_tests_ti]$padj <- stouffer_z[this_stouffer_ti]$padj
+        tests[this_tests_ti]$chr <- as.character(seqnames(tads_of_interest)[this_tad_ti])
+        tests[this_tests_ti]$start <- start(tads_of_interest[this_tad_ti]) - 1
+        tests[this_tests_ti]$end <- end(tads_of_interest[this_tad_ti])
     }
 }
 
@@ -265,5 +278,16 @@ for (i in 1:length(all_comparisons)) {
 tests$breakpoint_indices <- unlist(lapply(tests$breakpoint_indices, paste, collapse = ","))
 tests$mutated_in <- unlist(lapply(tests$mutated_in, paste, collapse = ","))
 
-fwrite(tests, "sv-disruption-tests.acetylation.tsv", sep = "\t", col.names = TRUE)
+# write the tables with columns in a particular order
+fwrite(
+    tests[, .SD, .SDcols = c(
+        "chr", "start", "end",
+        "test_index", "breakpoint_indices", "mutated_in",
+        "n_mut", "n_nonmut",
+        "z", "p", "padj"
+    )],
+    "sv-disruption-tests.acetylation.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
 fwrite(sample_corrs, "acetylation-correlation.tsv", sep = "\t", col.names = TRUE)
