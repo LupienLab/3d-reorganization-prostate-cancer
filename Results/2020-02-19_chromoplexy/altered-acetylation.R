@@ -25,7 +25,10 @@ dt2gr <- function(dt) {
 }
 
 split_comma_col <- function(v, f=identity) {
+    # split into list
     splitv <- lapply(v, function(x) {strsplit(x, ",")[[1]]})
+    # remove various non-informative characters (spaces, braces)
+    splitv <- lapply(splitv, function(x) {gsub("[][ ]", "", x)})
     return(lapply(splitv, f))
 }
 
@@ -42,11 +45,11 @@ SAMPLES <- paste0("PCa", metadata[, get("Sample ID")])
 metadata[, ChIP_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_H3K27ac.sorted.dedup.bam")]
 metadata[, Ctrl_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_input.sorted.dedup.bam")]
 
-# load breakpoints
-breakpoints <- fread("sv-breakpoints.tsv", sep = "\t", header = TRUE)
-
 # load TADs encompassing each breakpoint
-tads <- fread("sv-breakpoints.TADs.tsv", sep = "\t", header = TRUE)
+tads <- fread("sv-disruption-tests.TADs.tsv", sep = "\t", header = TRUE)
+tads$test_index <- split_comma_col(tads$test_index, as.numeric)
+tads[, any_altered_TAD := grepl("True", altered_TAD)]
+tads$altered_TAD <- split_comma_col(tads$altered_TAD, function(x) grepl("True", x))
 tads_gr <- dt2gr(tads)
 
 # load tests metadata
@@ -54,7 +57,25 @@ tests <- fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
 # convert comma-separated values into lists
 tests$breakpoint_indices <- split_comma_col(tests$breakpoint_indices, as.numeric)
 tests$mutated_in <- split_comma_col(tests$mutated_in)
+# assign placeholders for test data to be calculated
+tests$z <- as.numeric(NA)
+tests$p <- as.numeric(NA)
+tests$padj <- as.numeric(NA)
 
+# load induced regions (the rows of the count matrix)
+regions <- fread(
+    "TAD-induced-regions.bed",
+    sep = "\t",
+    header = FALSE,
+    col.names = c("chr", "start", "end")
+)
+regions_gr <- dt2gr(regions)
+
+# ==============================================================================
+# Analysis
+# ==============================================================================
+# 1. Load ChIP-seq counts and calculate linear scale factors
+# ----------------------------------------------------------
 # load raw counts of H3K27ac pull down and input, then take differences and get total ChIP library sizes
 count_matrix <- NULL
 library_sizes <- sapply(SAMPLES, function(s) 0)
@@ -94,19 +115,8 @@ for (s in SAMPLES) {
 }
 colnames(count_matrix) <- SAMPLES
 
-# load induced regions (the rows of the count matrix)
-regions <- fread(
-    "TAD-induced-regions.bed",
-    sep = "\t",
-    header = FALSE,
-    col.names = c("chr", "start", "end")
-)
-regions_gr <- dt2gr(regions)
-
-
-# ==============================================================================
-# Analysis
-# ==============================================================================
+# 2. Calculate sample correlation based on scaled ChIP-seq counts
+# ---------------------------------------------------------------
 # calculcate correlations between acetylation in each sample
 sample_corrs <- diag(ncol = length(SAMPLES), nrow = length(SAMPLES))
 rownames(sample_corrs) <- SAMPLES
@@ -123,11 +133,14 @@ for (i in 1:(length(SAMPLES) - 1)) {
     }
 }
 
+# 3. Perform differential acetylation testing for each group of TADs
+# ------------------------------------------------------------------
 # create design matrices for each set of mut-vs-nonmut (this depends on the breakpoint being considered)
 all_comparisons <- unique(tests$mutated_in)
 
 # perform differential analysis for each test
-for (mut_samples in all_comparisons[4:length(all_comparisons)]) {
+for (i in 1:length(all_comparisons)) {
+    mut_samples <- all_comparisons[[i]]
     print(mut_samples)
     # create metadata table for samples
     meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
@@ -152,7 +165,18 @@ for (mut_samples in all_comparisons[4:length(all_comparisons)]) {
     dds <- estimateDispersions(dds, fitType="local")
     dds <- nbinomWaldTest(dds)
     cat(">>extracting results\n")
-    res <- as.data.table(results(dds))
+    res <- results(dds)
+    res_dt <- data.table(
+        "chr" = as.character(seqnames(granges(dds))),
+        "start" = start(granges(dds)) - 1,
+        "end" = end(granges(dds)),
+        "baseMean" = res$baseMean,
+        "log2FoldChange" = res$log2FoldChange,
+        "lfcSE" = res$lfcSE,
+        "stat" = res$stat,
+        "p" = res$pvalue,
+        "padj" = res$padj
+    )
 
     # the above is done on all regions to perform proper normalization
     # we're only interesting in testing the TADs containing the breakpoints
@@ -165,57 +189,81 @@ for (mut_samples in all_comparisons[4:length(all_comparisons)]) {
         which(apply(tests, 1, function(r) identical(r$mutated_in, mut_samples))),
         test_index
     ]
-    # find all the breakpoints related to these tests
-    breakpoint_idx_of_interest <- tests[
-        test_index %in% test_idx_of_interest,
-        unique(unlist(breakpoint_indices))
-    ]
+    # save test results
+    for (ti in test_idx_of_interest) {
+        fwrite(
+            res_dt,
+            paste0("Acetylation/Tests/test_", ti, ".results.tsv"),
+            sep = "\t",
+            col.names = TRUE
+        )
+    }
 
-    # find all the TADs related to these breakpoints
-    tads_of_interest <- tads_gr[tads_gr$breakpoint_index %in% breakpoint_idx_of_interest]
+    # find all the TADs related to these tests
+    tads_of_interest <- unlist(GRangesList(lapply(
+        test_idx_of_interest,
+        function(ti) {
+            these_tads <- range(
+                tads_gr[which(
+                    apply(
+                        tads,
+                        1,
+                        function(r) {
+                            # only get the TADs related to this test index
+                            ti %in% r$test_index
+                        }
+                    )
+                )]
+            )
+            these_tads$test_index <- ti
+            return(these_tads)
+        }
+    )))
+
     # find all the induced regions that map to these TADs
     regions_of_interest <- as.data.table(findOverlaps(regions_gr, tads_of_interest))
+    regions_of_interest[, test_index := tads_of_interest[subjectHits]$test_index]
     # get differential analysis results for these regions
-    regions_of_interest[, p := res[queryHits, pvalue]]
-    regions_of_interest[, padj := res[queryHits, padj]]
+    regions_of_interest[, p := res_dt[queryHits, p]]
     # calculate region weights for the TAD it is induced from
     regions_of_interest[, weight := sqrt(
-        width(pintersect(
+        width(GenomicRanges::pintersect(
             regions_gr[queryHits],
             tads_of_interest[subjectHits]
         )) / width(tads_of_interest[subjectHits])
     )]
     # calculate Stouffer's Z with the weights calculated above
-    stouffer_z <- regions_of_interest[
-        !is.na(p) & !is.na(padj),
-        sum(weight * qnorm(1 - p)) / sqrt(sum(weight ^ 2)),
-        by = subjectHits
+    stouffer_z <- regions_of_interest[,
+        #!is.na(p) & !is.na(padj),
+        sum(weight * qnorm(1 - p), na.rm = TRUE) / sqrt(sum(weight ^ 2)),
+        by = test_index
     ]
     colnames(stouffer_z)[2] <- "z"
+    # for any test that has all NAs, make sure it's listed as such (because the sum will be 0)
+    tests_with_all_nas <- regions_of_interest[, all(is.na(p)), by = "test_index"][V1 == TRUE, test_index]
+    stouffer_z[test_index %in% tests_with_all_nas, z := NA]
     # calculate the associated p-value
     stouffer_z[, p := 2 * pnorm(-abs(z))]
     # because we're only testing these regions, not the others, perform p-value adjustment here
-    stouffer_z[, padj := p.adjust(p, method = "fdr")]
+    stouffer_z[, padj := p.adjust(p, method = "fdr", n = .N)]
 
-    # map these values back to the `tads` object
-    stouffer_z[, breakpoint_index := apply(
-        .SD,
-        1,
-        function(r) tads_of_interest[r["subjectHits"]]$breakpoint_index
-    )]
     # save to table for later
-    for (i in stouffer_z$breakpoint_index) {
-        if (tads[breakpoint_index == i, !is.na(z)]) {
-            cat("This breakpoint has already been assigned\n")
+    for (ti in test_idx_of_interest) {
+        if (tests[test_index == ti, !is.na(z)]) {
+            cat("This test has already been assigned: ", ti, "\n")
         }
-        tads[breakpoint_index == i, z := stouffer_z[breakpoint_index == i, z]]
-        tads[breakpoint_index == i, p := stouffer_z[breakpoint_index == i, p]]
-        tads[breakpoint_index == i, padj := stouffer_z[breakpoint_index == i, padj]]
+        tests[test_index == ti]$z <- stouffer_z[test_index == ti]$z
+        tests[test_index == ti]$p <- stouffer_z[test_index == ti]$p
+        tests[test_index == ti]$padj <- stouffer_z[test_index == ti]$padj
     }
 }
 
 # ==============================================================================
 # Save data
 # ==============================================================================
-fwrite(tads, "sv-disruption-tests.acetylation.tsv", sep = "\t", col.names = TRUE)
+# convert lists back to comma-separated columns
+tests$breakpoint_indices <- unlist(lapply(tests$breakpoint_indices, paste, collapse = ","))
+tests$mutated_in <- unlist(lapply(tests$mutated_in, paste, collapse = ","))
+
+fwrite(tests, "sv-disruption-tests.acetylation.tsv", sep = "\t", col.names = TRUE)
 fwrite(sample_corrs, "acetylation-correlation.tsv", sep = "\t", col.names = TRUE)
