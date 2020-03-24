@@ -5,6 +5,7 @@ suppressMessages(library("data.table"))
 suppressMessages(library("pheatmap"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("ggplot2"))
+
 # ==============================================================================
 # Data
 # ==============================================================================
@@ -34,7 +35,7 @@ for (s in SAMPLES) {
         col.names = c("chr", "start", "end", "count", "supported", "width", "frac_supported")
     )
     # calculate the linear scaling based on library size
-    library_sizes[s] <- min(sample_library_size["chip"], sample_library_size["input"])
+    library_sizes[s] <- min(dt_chip[, sum(count)], dt_input[, sum(count)])
 }
 
 # load acetylation correlations
@@ -42,7 +43,7 @@ sample_corrs <- as.matrix(fread("acetylation-correlation.tsv", sep = "\t", heade
 rownames(sample_corrs) <- SAMPLES
 
 # load TAD acetylation hypothesis test values
-tads <- fread(
+acetyl <- fread(
     "sv-disruption-tests.acetylation.tsv",
     sep = "\t",
     header = TRUE
@@ -70,8 +71,8 @@ pheatmap(
 )
 
 gg = (
-    ggplot(data = tads[order(p)])
-    + geom_point(aes(x = -log10(ppoints(tads[, .N])), y = -log10(p)))
+    ggplot(data = acetyl[order(p)])
+    + geom_point(aes(x = -log10(ppoints(acetyl[, .N])), y = -log10(p)))
     + geom_abline(aes(intercept = 0, slope = 1), linetype = "dashed")
     + labs(
         x = expression(-log[10] * "(Uniform quantile)"),
@@ -87,7 +88,7 @@ ggsave(
 )
 
 gg = (
-    ggplot(data = tads)
+    ggplot(data = acetyl)
     + geom_histogram(aes(x = p))
     + labs(x = "p-value", y = "Frequency")
     + theme_minimal()
@@ -101,7 +102,7 @@ ggsave(
 
 
 gg = (
-    ggplot(data = tads)
+    ggplot(data = acetyl)
     + geom_point(aes(x = z, y = -log10(padj)))
     + geom_hline(aes(yintercept = -log10(0.05)), linetype = "dashed")
     + labs(x = "Stouffer's Z", y = expression(-log[10] * " FDR"))
