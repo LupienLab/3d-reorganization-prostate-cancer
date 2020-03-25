@@ -2,32 +2,8 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
-suppressMessages(library("argparse"))
 suppressMessages(library("RCircos"))
 suppressMessages(library("ggplot2"))
-
-if (!interactive()) {
-    PARSER <- argparse::ArgumentParser(
-        description = "Make circos and other plots for breakpoint calls"
-    )
-    PARSER$add_argument(
-        "breaks",
-        type = "character",
-        help = "Aggregated breakpoint call TSV file"
-    )
-    PARSER$add_argument(
-        "-o", "--output",
-        type = "character",
-        help = "Output summed breakpoints file",
-        default = "Breakpoints/Default/breakpoints.binned.tsv"
-    )
-    ARGS <- PARSER$parse_args()
-} else {
-    ARGS = list(
-        breaks = "Breakpoints/Default/breakpoints.tsv",
-        output = "Breakpoints/Default/breakpoints.binned.tsv"
-    )
-}
 
 CHRS = paste0('chr', c(1:22, "X", "Y"))
 
@@ -65,10 +41,35 @@ hg38[, Bins := ceiling(Length / 10^6)]
 # ==============================================================================
 # Data
 # ==============================================================================
+# load metadata
+metadata <- fread("../../Data/External/LowC_Samples_Data_Available.tsv", sep = "\t", header = TRUE)
+SAMPLES <- paste0("PCa", metadata[, get("Sample ID")])
+
 # load breakpoint data
 breakpoints = fread(ARGS$breaks, sep = "\t", header = TRUE)
+breakpoints <- rbindlist(lapply(
+    SAMPLES,
+    function(s) {
+        dt <- fread(
+            paste0("Breakpoints/Default/", s, ".breaks.sorted.manually-resolved.tsv"),
+            sep = "\t",
+            header = FALSE,
+            col.names = c(
+                "chr_from", "start_from", "end_from", "chr_to", "start_to", "end_to",
+                "name", "score", "strand_from", "strand_to", "resolution",
+                "type", "notes"
+            )
+        )
+        dt[, Sample := s]
+        return(dt)
+    }
+))
+# remove ARTEFACTS
+breakpoints <- breakpoints[type != "ARTEFACT"]
 n_breaks = breakpoints[, .N]
-breakpoints[, Colour := ifelse(Chrom1 == Chrom2, "blue", "orange")]
+
+# load hg38 ideogram
+data(UCSC.HG38.Human.CytoBandIdeogram)
 
 # manual aggregate by locus, since you can't melt them all together at once
 breakpoints_melted = rbindlist(list(
@@ -93,8 +94,6 @@ colnames(breakpoints_melted) = c(
 # convert Chrom to ordered factor
 breakpoints_melted[, Chrom := factor(Chrom, levels = CHRS, ordered = TRUE)]
 
-# load hg38 ideogram
-data(UCSC.HG38.Human.CytoBandIdeogram)
 
 # ==============================================================================
 # Analysis
@@ -141,7 +140,7 @@ RCircos.Set.Core.Components(
     tracks.outside = 0
 )
 # plot circos plots for each patient
-for (s in unique(breakpoints$Sample)) {
+for (s in SAMPLES) {
     cat(s, "\n")
     png(
         paste0("Plots/", s, ".circos.png"),
@@ -155,7 +154,7 @@ for (s in unique(breakpoints$Sample)) {
     RCircos.Link.Plot(
         link.data = breakpoints[
             Sample == s,
-            .(Chrom1, Start1, End1, Chrom2, Start2, End2)
+            .(chr_from, start_from, end_from, chr_to, start_to, end_to)
         ],
         track.num = 1,
         by.chromosome = TRUE
