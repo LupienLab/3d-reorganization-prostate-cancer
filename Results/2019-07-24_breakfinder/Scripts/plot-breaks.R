@@ -46,7 +46,6 @@ metadata <- fread("../../Data/External/LowC_Samples_Data_Available.tsv", sep = "
 SAMPLES <- paste0("PCa", metadata[, get("Sample ID")])
 
 # load breakpoint data
-breakpoints = fread(ARGS$breaks, sep = "\t", header = TRUE)
 breakpoints <- rbindlist(lapply(
     SAMPLES,
     function(s) {
@@ -77,16 +76,19 @@ breakpoints_melted = rbindlist(list(
     copy(breakpoints)
 ))
 #   copy relevant locus info from second position to first
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), Chrom1 := Chrom2]
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), Start1 := Start2]
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), End1 := End2]
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), Strand1 := Strand2]
+breakpoints_melted[(n_breaks + 1):(2 * n_breaks), chr_from := chr_to]
+breakpoints_melted[(n_breaks + 1):(2 * n_breaks), start_from := start_to]
+breakpoints_melted[(n_breaks + 1):(2 * n_breaks), end_from := end_to]
+breakpoints_melted[(n_breaks + 1):(2 * n_breaks), strand_from := strand_to]
 #   drop second information since it's already duplicated
-breakpoints_melted[, Chrom2:= NULL]
-breakpoints_melted[, Start2:= NULL]
-breakpoints_melted[, End2:= NULL]
-breakpoints_melted[, Strand2:= NULL]
+breakpoints_melted[, chr_to:= NULL]
+breakpoints_melted[, start_to:= NULL]
+breakpoints_melted[, end_to:= NULL]
+breakpoints_melted[, strand_to:= NULL]
 #   fix column names
+breakpoints_melted <- breakpoints_melted[, .SD, .SDcols = c(
+    "Sample", "chr_from", "start_from", "end_from", "strand_from", "score", "resolution"
+)]
 colnames(breakpoints_melted) = c(
     "Sample", "Chrom", "Start", "End",
     "Strand", "Odds", "Resolution"
@@ -124,7 +126,7 @@ colnames(breakpoints_summed) = c("Sample", "Chrom", "Bin", "Count")
 
 fwrite(
     breakpoints_summed[order(Sample, Chrom, Bin)],
-    ARGS$output,
+    "Breakpoints/Default/breakpoints.binned.tsv",
     sep = "\t",
     col.names = TRUE
 )
@@ -170,7 +172,7 @@ for (s in SAMPLES) {
 gg = (
     ggplot(data = breakpoints[, .N, by = Sample])
     + geom_col(aes(x = Sample, y = N, fill = Sample))
-    + labs(x = "Patient", y = "Number of SVs")
+    + labs(x = NULL, y = "Breakpoint pairs")
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(
@@ -187,12 +189,13 @@ ggsave(
 gg = (
     ggplot(data = breakpoints_melted[, .N, by = c("Sample", "Chrom")])
     + geom_col(aes(x = Sample, y = N, fill = Sample))
-    + labs(x = "Patient", y = "Number of SVs")
-    + guides(fill = FALSE)
+    + labs(x = NULL, y = "Number of SVs")
+    + guides(fill = guide_legend(title = "Patient"))
     + facet_grid(. ~ Chrom)
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
+        axis.text.x = element_blank(),
+        legend.position = "bottom"
     )
 )
 ggsave(
@@ -208,7 +211,7 @@ ggsave(
     units = "cm"
 )
 
-for (s in breakpoints_melted[, unique(Sample)]) {
+for (s in SAMPLES) {
     cat(s, "\n")
     gg = (
         ggplot(data = breakpoints_melted[Sample == s, .N, by = "Chrom"])

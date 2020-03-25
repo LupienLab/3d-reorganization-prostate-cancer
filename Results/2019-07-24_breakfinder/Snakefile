@@ -111,19 +111,6 @@ rule sort_breaks:
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{print $2, $3, $4, $6, $7, $8, \".\", $1, $5, $9, $10}}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n > {output}"
 
-rule agg_breaks:
-    input:
-        script = path.join(SCRIPT_DIR, 'agg-breaks.R'),
-        data = expand(
-            path.join(BREAK_DIR, '{{calltype}}', '{sample}.breaks.txt'),
-            sample=SAMPLES
-        )
-    output:
-        path.join(BREAK_DIR, '{calltype}', 'breakpoints.bedpe'),
-        path.join(BREAK_DIR, '{calltype}', 'breakpoints.tsv'),
-    shell:
-        'Rscript {input.script} {input.data} -p {BREAK_DIR}/{wildcards.calltype}/breakpoints'
-
 rule plot_breakpoints:
     input:
         wrapper = path.join(SCRIPT_DIR, 'plot-breakpoint-matrices.sh'),
