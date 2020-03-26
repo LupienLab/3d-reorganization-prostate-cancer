@@ -10,6 +10,7 @@ import networkx as nx
 import pickle
 import numpy as np
 from genomic_interval import GenomicInterval, overlapping
+from adjustText import adjust_text
 import matplotlib
 
 matplotlib.use("Agg")
@@ -33,6 +34,35 @@ unique_annots = [
 ]
 chroms = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
+chrom_colours = [
+    "#cf4336",
+    "#5dbe4a",
+    "#a35bce",
+    "#a6b535",
+    "#5e6ace",
+    "#d7a036",
+    "#5d88c7",
+    "#d46e2b",
+    "#47bcd2",
+    "#dc406f",
+    "#52c39a",
+    "#d14da5",
+    "#458631",
+    "#c08ed8",
+    "#7aba6f",
+    "#924d89",
+    "#b7ab5d",
+    "#9f455c",
+    "#37835c",
+    "#df83a3",
+    "#6a762c",
+    "#bb5a53",
+    "#92662d",
+    "#e49670",
+]
+
+chrom_colour_map = {c: v for c, v in zip(chroms, chrom_colours)}
+
 # ==============================================================================
 # Functions
 # ==============================================================================
@@ -49,9 +79,11 @@ def locus_to_plotpos(bp: GenomicInterval) -> (float, float):
     """
     # find row and column for this breakpoint
     i = chroms.index(bp.chr)
-    y = 6 - i // 6
+    y = 4 - i // 6
     x = i % 6
     return (x, y)
+
+
 
 # ==============================================================================
 # Data
@@ -64,72 +96,63 @@ samples = list(G_sample.keys())
 # ==============================================================================
 # Plots
 # ==============================================================================
-# colours for edges between breakpoints (only get edges with an annotation, not the ones made for positioning)
-#edges, e_annots = zip(*nx.get_edge_attributes(G_all, "annotation").items())
-#n_colours = [plt.cm.tab20b(samples.index(n.data["sample"])) for n in G_all]
-#e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
-#pos = nx.circular_layout(G_all)
-#nx.draw(
-#    G_all,
-#    pos,
-#    edgelist=None,
-#    node_color=n_colours,
-#    edge_color=e_colours,
-#    with_labels=False,
-#    width=1,
-#)
-#plt.savefig(path.join("Plots", "breakpoint-graph.png"), dpi=96)
-#plt.close()
-
-# create phantom points for each chromosome and place them in a grid
-# this, coupled with the edges and spring_layout will approximately force
-# breakpoints on a particular chromosome to roughly be in the same spot
-# these points and edges are then not shown in the resulting graph
-# create weights between nodes based on their positions just for plotting
-n_centres = 4
 for i, s in enumerate(samples):
-    # create phantom points for each chromosome and place them in a grid
-    # this, coupled with the edges and spring_layout will approximately force
-    # breakpoints on a particular chromosome to roughly be in the same spot
-    # these points and edges are then not shown in the resulting graph
-    for c in chroms:
-        for j in range(n_centres):
-            chrom_node = GenomicInterval(c, 0, 1, {"sample": None})
-            G_sample[s].add_node(chrom_node)
-
-for i, s in enumerate(samples):
+    print(s)
     # get nodes and colours corresponding to breakpoints
     bp_nodes = [n for n in G_sample[s] if n.data["sample"] is not None]
     # get colours for the nodes
-    n_colours = [plt.cm.tab20b(i)] * len(bp_nodes)
+    #n_colours = [plt.cm.tab20b(i)] * len(bp_nodes)
+    n_colours = [chrom_colour_map[n.chr] for n in bp_nodes]
     # get edges and colours corresponding to SV type
     edges, e_annots = zip(*nx.get_edge_attributes(G_sample[s], "annotation").items())
     e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
-    # get phantom nodes for each chromosomes
-    chrom_nodes = [n for n in G_sample[s] if n.data["sample"] is None]
-    # add edges between each breakpoint and its chromosome's phantom node
-    for n in bp_nodes:
-        for cn in [m for m in chrom_nodes if m.chr == n.chr]:
-            G_sample[s].add_edge(n, cn)
-    # get spring layout for the entire graph, fixing the phantom nodes at pre-defined points
-    pos = nx.spring_layout(
-        G=G_sample[s],
-        fixed=chrom_nodes,
-        pos={n: locus_to_plotpos(n) for n in chrom_nodes},
-    )
-    # get positions for bp_nodes, not the phantom ones
-    nodes_pos = {k: v for k, v in pos.items() if k in bp_nodes}
+    # get spring layout for the entire graph
+    pos = nx.spring_layout(G_sample[s])
     # plot this graph
     fig, ax = plt.subplots()
     nx.draw(
-        G_sample[s].subgraph(bp_nodes),
-        nodes_pos,
+        G=G_sample[s],
+        pos=pos,
+        ax=ax,
         edgelist=edges,
         node_color=n_colours,
         #edge_color=e_colours,
-        with_labels=True,
+        with_labels=False,
         #width=10,
     )
-    #fig.tight_layout()
+    fig.tight_layout()
+    fig.savefig(path.join("Plots", s + ".no-labels.png"), dpi=96, bbox_inches="tight")
+    fig.savefig(path.join("Plots", s + ".no-labels.pdf"), dpi=96, bbox_inches="tight")
+    labels = [
+        plt.text(
+            x=pos[n][0],
+            y=pos[n][1],
+            s=n.__str__(),
+            ha="center",
+            va="center",
+        ) for n in G_sample[s]
+    ]
+    adjust_text(
+        texts=labels,
+        ax=ax,
+        lim=10,
+    )
     fig.savefig(path.join("Plots", s + ".png"), dpi=96, bbox_inches="tight")
+    fig.savefig(path.join("Plots", s + ".pdf"), dpi=96, bbox_inches="tight")
     plt.close()
+
+# figure for chromosome colour legend
+fig_leg, ax_leg = plt.subplots()
+cols = [locus_to_plotpos(GenomicInterval(c, 0, 1)) for c in chroms]
+ax_leg.scatter(
+    x=[a for (a, b) in cols],
+    y=[b for (a, b) in cols],
+    s=2000,
+    c=chrom_colours,
+)
+ax_leg.set_ylim([0, 5])
+for i, c in enumerate(chroms):
+    ax_leg.annotate(c, cols[i], ha="center", va="center")
+
+plt.axis("off")
+fig_leg.savefig(path.join("Plots", "chrom-colour-map.png"))
