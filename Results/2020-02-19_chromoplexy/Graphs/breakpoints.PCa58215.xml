@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="chr4 26.4 27.5" />
+    <node id="chr3 77.4 79.1" />
+    <node id="chr12 108.1 108.6" />
+    <node id="chr7 113.7 116.1" />
+    <node id="chr12 128.1 129.4" />
+    <node id="chr7 138.2 139.2" />
+    <node id="chr12 129.4 130.4" />
+    <node id="chr7 106.5 108.0" />
+    <node id="chr12 106.1 106.3" />
+    <node id="chr12 130.0 130.5" />
+    <node id="chr13 30.1 30.6" />
+    <node id="chr13 73.7 75.3" />
+    <edge source="chr4 26.4 27.5" target="chr3 77.4 79.1">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 108.1 108.6" target="chr7 113.7 116.1">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 128.1 129.4" target="chr7 138.2 139.2">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 128.1 129.4" target="chr12 129.4 130.4">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr12 129.4 130.4" target="chr7 106.5 108.0">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 129.4 130.4" target="chr12 130.0 130.5">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr12 106.1 106.3" target="chr12 130.0 130.5">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr13 30.1 30.6" target="chr13 73.7 75.3">
+      <data key="d0">DEL</data>
+    </edge>
+  </graph>
+</graphml>

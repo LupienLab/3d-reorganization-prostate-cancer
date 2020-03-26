@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="chr8 60.8 61.1" />
+    <node id="chr8 113.1 113.6" />
+    <node id="chr12 6.68 6.78" />
+    <node id="chr2 11.23 11.5" />
+    <node id="chr12 6.78 6.84" />
+    <node id="chr2 11.07 11.22" />
+    <node id="chr12 58.2 59.4" />
+    <node id="chr16 23.7 24.3" />
+    <node id="chr15 43.8 44.7" />
+    <node id="chr7 128.3 128.7" />
+    <node id="chr17 41.91 41.98" />
+    <node id="chr19 50.88 51.13" />
+    <node id="chr17 41.98 42.19" />
+    <node id="chr19 50.77 50.88" />
+    <node id="chr21 38.4 38.5" />
+    <node id="chr21 41.5 41.62" />
+    <edge source="chr8 60.8 61.1" target="chr8 113.1 113.6">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr12 6.68 6.78" target="chr2 11.23 11.5">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 6.68 6.78" target="chr12 6.78 6.84">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr2 11.23 11.5" target="chr2 11.07 11.22">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr12 6.78 6.84" target="chr2 11.07 11.22">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 58.2 59.4" target="chr16 23.7 24.3">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr15 43.8 44.7" target="chr7 128.3 128.7">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr17 41.91 41.98" target="chr19 50.88 51.13">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr17 41.91 41.98" target="chr17 41.98 42.19">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr19 50.88 51.13" target="chr19 50.77 50.88">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr17 41.98 42.19" target="chr19 50.77 50.88">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
+      <data key="d0">DEL</data>
+    </edge>
+  </graph>
+</graphml>

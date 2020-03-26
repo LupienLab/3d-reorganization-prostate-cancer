@@ -240,4 +240,9 @@ coupled_tests.to_csv(
     sep="\t",
     index_label="test_index"
 )
+
+# export to GraphML format
+nx.write_graphml(G_all, "Graphs/breakpoints.all-samples.xml")
+for s in samples:
+    nx.write_graphml(G_sample[s], "Graphs/breakpoints." + s + ".xml")
 print("Done")

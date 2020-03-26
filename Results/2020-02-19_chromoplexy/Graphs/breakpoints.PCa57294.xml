@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="chr12 111.2 111.8" />
+    <node id="chr16 14.0 15.1" />
+    <node id="chr12 113.3 114.7" />
+    <node id="chr16 15.1 18.0" />
+    <node id="chr12 124.4 125.1" />
+    <node id="chr16 27.2 28.3" />
+    <node id="chr12 110.99 111.17" />
+    <node id="chr22 43.14 43.19" />
+    <node id="chr16 13.76 13.8" />
+    <node id="chr22 42.89 42.98" />
+    <edge source="chr12 111.2 111.8" target="chr16 14.0 15.1">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 111.2 111.8" target="chr12 110.99 111.17">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr16 14.0 15.1" target="chr16 15.1 18.0">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr12 113.3 114.7" target="chr16 15.1 18.0">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 124.4 125.1" target="chr16 27.2 28.3">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr12 110.99 111.17" target="chr22 43.14 43.19">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr16 13.76 13.8" target="chr22 42.89 42.98">
+      <data key="d0">BND</data>
+    </edge>
+  </graph>
+</graphml>

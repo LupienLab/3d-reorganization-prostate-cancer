@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="chr1 57.03 57.08" />
+    <node id="chr1 85.3 85.39" />
+    <node id="chr1 57.63 57.75" />
+    <node id="chr1 154.96 154.99" />
+    <node id="chr1 58.1 58.6" />
+    <node id="chr1 85.0 85.3" />
+    <node id="chr1 84.82 84.96" />
+    <node id="chr1 116.55 116.62" />
+    <node id="chr1 58.5 60.1" />
+    <node id="chr4 76.8 78.5" />
+    <node id="chr1 155.0 155.07" />
+    <node id="chr4 71.47 71.61" />
+    <node id="chr1 231.72 232.58" />
+    <node id="chr7 107.71 107.74" />
+    <node id="chr1 232.58 232.65" />
+    <node id="chr7 107.43 107.7" />
+    <node id="chr1 81.9 84.8" />
+    <node id="chr9 0.0 1.9" />
+    <node id="chr3 36.17 36.34" />
+    <node id="chr3 115.5 115.62" />
+    <node id="chr4 69.4 69.9" />
+    <node id="chr4 78.5 79.0" />
+    <node id="chr8 56.12 56.21" />
+    <node id="chr8 138.61 138.72" />
+    <node id="chr8 56.22 56.26" />
+    <node id="chr8 138.14 138.59" />
+    <node id="chr15 46.8 47.2" />
+    <node id="chr15 70.8 71.0" />
+    <node id="chr15 47.0 48.1" />
+    <node id="chr15 71.5 71.7" />
+    <node id="chr19 15.76 15.92" />
+    <node id="chr7 140.63 140.78" />
+    <node id="chr19 15.92 16.04" />
+    <node id="chr7 140.79 141.04" />
+    <edge source="chr1 57.03 57.08" target="chr1 85.3 85.39">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr1 85.3 85.39" target="chr1 85.0 85.3">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 57.63 57.75" target="chr1 154.96 154.99">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr1 154.96 154.99" target="chr1 155.0 155.07">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 58.1 58.6" target="chr1 85.0 85.3">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr1 58.1 58.6" target="chr1 58.5 60.1">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 85.0 85.3" target="chr1 84.82 84.96">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 84.82 84.96" target="chr1 116.55 116.62">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr1 84.82 84.96" target="chr1 81.9 84.8">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 58.5 60.1" target="chr4 76.8 78.5">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr4 76.8 78.5" target="chr4 78.5 79.0">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 155.0 155.07" target="chr4 71.47 71.61">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr1 231.72 232.58" target="chr7 107.71 107.74">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr1 231.72 232.58" target="chr1 232.58 232.65">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr7 107.71 107.74" target="chr7 107.43 107.7">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr1 232.58 232.65" target="chr7 107.43 107.7">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr1 81.9 84.8" target="chr9 0.0 1.9">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr3 36.17 36.34" target="chr3 115.5 115.62">
+      <data key="d0">DUP</data>
+    </edge>
+    <edge source="chr4 69.4 69.9" target="chr4 78.5 79.0">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr8 56.12 56.21" target="chr8 138.61 138.72">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr8 56.12 56.21" target="chr8 56.22 56.26">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr8 138.61 138.72" target="chr8 138.14 138.59">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr8 56.22 56.26" target="chr8 138.14 138.59">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr15 46.8 47.2" target="chr15 70.8 71.0">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr15 46.8 47.2" target="chr15 47.0 48.1">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr15 47.0 48.1" target="chr15 71.5 71.7">
+      <data key="d0">UNKNOWN</data>
+    </edge>
+    <edge source="chr19 15.76 15.92" target="chr7 140.63 140.78">
+      <data key="d0">BND</data>
+    </edge>
+    <edge source="chr19 15.76 15.92" target="chr19 15.92 16.04">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr7 140.63 140.78" target="chr7 140.79 141.04">
+      <data key="d0">nearby</data>
+    </edge>
+    <edge source="chr19 15.92 16.04" target="chr7 140.79 141.04">
+      <data key="d0">BND</data>
+    </edge>
+  </graph>
+</graphml>
