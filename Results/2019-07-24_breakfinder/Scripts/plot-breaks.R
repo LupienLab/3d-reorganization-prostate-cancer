@@ -149,7 +149,31 @@ for (s in SAMPLES) {
         width = 12,
         height = 12,
         units = "cm",
-        res = 300
+        res = 400,
+        dpi = 400
+    )
+    RCircos.Set.Plot.Area()
+    RCircos.Chromosome.Ideogram.Plot()
+    RCircos.Link.Plot(
+        link.data = breakpoints[
+            Sample == s,
+            .(chr_from, start_from, end_from, chr_to, start_to, end_to)
+        ],
+        track.num = 1,
+        by.chromosome = TRUE
+    )
+    # change colour of inter vs intra chromosomal events
+    # params = RCircos.Get.Plot.Parameters()
+    # params$PlotColor = breakpoints$Colour
+    # RCircos.Reset.Plot.Parameters(params)
+    dev.off()
+    png(
+        paste0("Plots/", s, ".circos.pdf"),
+        width = 12,
+        height = 12,
+        units = "cm",
+        res = 400,
+        dpi = 400
     )
     RCircos.Set.Plot.Area()
     RCircos.Chromosome.Ideogram.Plot()
@@ -183,17 +207,19 @@ ggsave(
     "Plots/sv-counts.png",
     height = 12,
     width = 20,
-    units = "cm"
+    units = "cm",
+    dpi = 400
 )
 
 gg = (
     ggplot(data = breakpoints_melted[, .N, by = c("Sample", "Chrom")])
     + geom_col(aes(x = Sample, y = N, fill = Sample))
-    + labs(x = NULL, y = "Number of SVs")
+    + labs(x = NULL, y = "Breakpoints")
     + guides(fill = guide_legend(title = "Patient"))
     + facet_grid(. ~ Chrom)
     + theme_minimal()
     + theme(
+        panel.grid.major.x = element_blank(),
         axis.text.x = element_blank(),
         legend.position = "bottom"
     )
@@ -202,13 +228,46 @@ ggsave(
     "Plots/sv-counts-by-chrom.png",
     height = 12,
     width = 40,
-    units = "cm"
+    units = "cm",
+    dpi = 400
 )
 ggsave(
     "Plots/sv-counts-by-chrom.pdf",
     height = 12,
     width = 40,
-    units = "cm"
+    units = "cm",
+    dpi = 400
+)
+
+# save as above without any text
+gg = (
+    ggplot(data = breakpoints_melted[, .N, by = c("Sample", "Chrom")])
+    + geom_col(aes(x = Sample, y = N, fill = Sample))
+    + labs(x = NULL, y = NULL)
+    + guides(fill = guide_legend(title = NULL))
+    + facet_grid(. ~ Chrom)
+    + theme_minimal()
+    + theme(
+        panel.grid.major.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = "bottom",
+        strip.text.x = element_blank()
+    )
+)
+ggsave(
+    "Plots/sv-counts-by-chrom.no-labels.png",
+    height = 12,
+    width = 40,
+    units = "cm",
+    dpi = 400
+)
+ggsave(
+    "Plots/sv-counts-by-chrom.no-labels.pdf",
+    height = 12,
+    width = 40,
+    units = "cm",
+    dpi = 400
 )
 
 for (s in SAMPLES) {
@@ -216,7 +275,7 @@ for (s in SAMPLES) {
     gg = (
         ggplot(data = breakpoints_melted[Sample == s, .N, by = "Chrom"])
         + geom_col(aes(x = Chrom, y = N))
-        + labs(x = NULL, y = "Number of SVs")
+        + labs(x = NULL, y = "Breakpoints")
         + guides(fill = FALSE)
         + scale_x_discrete(drop=FALSE)
         + ylim(0, 31)
@@ -230,13 +289,15 @@ for (s in SAMPLES) {
         paste0("Plots/", s, ".sv-counts-by-chrom.png"),
         height = 12,
         width = 40,
-        units = "cm"
+        units = "cm",
+        dpi = 400
     )
     ggsave(
         paste0("Plots/", s, ".sv-counts-by-chrom.pdf"),
         height = 12,
         width = 40,
-        units = "cm"
+        units = "cm",
+        dpi = 400
     )
 }
 
@@ -264,7 +325,8 @@ ggsave(
     "Plots/sv-loci.png",
     height = 12,
     width = 40,
-    units = "cm"
+    units = "cm",
+    dpi = 400
 )
 
 gg = (
@@ -282,5 +344,6 @@ ggsave(
     "Plots/sv-recurrence.png",
     height = 12,
     width = 20,
-    units = "cm"
+    units = "cm",
+    dpi = 400
 )
