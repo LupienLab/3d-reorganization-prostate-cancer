@@ -121,23 +121,6 @@ rule plot_breakpoints:
     shell:
         'bash {input.wrapper} -i {input.data} -p {PLOT_DIR}/Breakpoints/{wildcards.sample} > {output}'
 
-rule bf2vcf:
-    input:
-        script = path.join(SCRIPT_DIR, "bf2vcf.py"),
-        data = path.join(BREAK_DIR, "Default", "{sample}.breaks.txt")
-    output:
-        path.join(BREAK_DIR, "Default", "{sample}.vcf")
-    shell:
-        'python {input.script} {input.data} -o {output}'
-
-rule sort_vcf:
-    input:
-        "{file}.vcf"
-    output:
-        "{file}.sorted.vcf"
-    shell:
-        "awk '/^#/ {{print $0; next}} {{print $0 | \"sort -k1,1 -V -k2,2n\"}}' {input} > {output}"
-
 rule sort_bed:
     input:
         "{file}.bed",
@@ -176,7 +159,7 @@ rule plot_t2e_translocation_genes:
     shell:
         "Rscript {input.script}"
 
-rule tally_inter_intra_events:
+rule tally_breakpoints:
     input:
         expand(
             path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.tsv"),
@@ -184,6 +167,21 @@ rule tally_inter_intra_events:
         )
     output:
         path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.tsv"),
+    shell:
+        """echo -e "Sample\tIntra-chromosomal\tInter-chromosomal" > {output};
+        for s in PCa{{13266,13848,14121,19121,3023,33173,40507,51852,53687,56413,57054,57294,58215}}; do
+            awk -v s=$s  -v FS="\\t" -v OFS="\\t" 'BEGIN{{x=0; y=0;}}{{ if ($1 == $4) {{x+=1}} else {{y += 1}} }}END{{print s, x, y}}' {BREAK_DIR}/Default/$s.breaks.sorted.manually-resolved.tsv >> {output}
+        done
+        """
+
+rule tally_curated_breakpoints:
+    input:
+        expand(
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.tsv"),
+            sample=SAMPLES
+        )
+    output:
+        path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.manually-resolved.tsv"),
     shell:
         """echo -e "Sample\tIntra-chromosomal\tInter-chromosomal" > {output};
         for s in PCa{{13266,13848,14121,19121,3023,33173,40507,51852,53687,56413,57054,57294,58215}}; do
