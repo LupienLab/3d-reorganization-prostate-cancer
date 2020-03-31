@@ -6,7 +6,7 @@ chr1	58500000	60100000	chr4	76800000	78500000	.	3973.71	-	+	100kb	BND	Multiple s
 chr1	155000000	155070000	chr4	71470000	71610000	.	165.701	+	+	10kb	BND	Multiple simultaneous events; related to rows 1, 2, 3, 4, 5, 9, 12
 chr1	231720000	232580000	chr7	107710000	107740000	.	217.158	-	-	10kb	BND	Possible chromosome arm swap; one half of event detected in row 8
 chr1	232580000	232650000	chr7	107430000	107700000	.	297.404	-	+	10kb	BND	Possible chromosome arm swap; one half of event detected in row 7
-chr1	81900000	84800000	chr9	0	1900000	.	2138.68	+	+	100kb	BND	Multiple simultaneous events; related to rows 1, 2, 3, 4, 5, 6, 12
+chr1	81900000	84800000	chr9	0	1900000	.	2138.68	+	+	100kb	ARTEFACT	Compartmentalization, end-chromosome effect; possibly related to multiple simultaneous events; related to rows 1, 2, 3, 4, 5, 6, 12
 chr3	27830000	27900000	chr3	89210000	89310000	.	121.3	+	-	10kb	ARTEFACT	Sparsity
 chr3	36170000	36340000	chr3	115500000	115620000	.	147.829	-	-	10kb	DUP	Type 3; possibly related to nearby undetected aberration on chr3
 chr4	69400000	69900000	chr4	78500000	79000000	.	160.765	+	-	100kb	UNKNOWN	Multiple simultaneous events; related to rows 1, 2, 3, 4, 5, 6, 9; end of chr9, possible unbalanced translocation
