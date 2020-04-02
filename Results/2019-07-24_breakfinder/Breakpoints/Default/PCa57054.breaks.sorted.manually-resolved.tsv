@@ -26,7 +26,6 @@ chr16	23500000	24600000	chr10	91200000	91900000	.	698.902	-	-	100kb	BND	Possibly
 chr21	16070000	16380000	chr7	44720000	44870000	.	893.966	-	-	10kb	BND	One half of translocation of TMPRSS2-MIR125B2 fusion into chr7 (row 27); related to 2 other undetected aberrations earlier in chr7 in chr7xchr21 and row 28
 chr21	41100000	41460000	chr7	44560000	44720000	.	1435.94	+	+	10kb	BND	One half of translocation of TMPRSS2-MIR125B2 fusion into chr7 (row 26); related to 2 other undetected aberrations earlier in chr7 in chr7xchr21 and row 28
 chr21	15800000	16100000	chr21	41500000	42100000	.	147.775	-	-	100kb	DEL	Deletion involving TMPRSS2 and MIR125B2; related to rows 26, 27
-chr21	38400000	38500000	chr21	41500000	41620000	.	322.447	+	-	10kb	DEL	TMPRSS2-ERG fusion event; added manually since not detected by hic_breakfinder
 chr22	29290000	29370000	chr10	24550000	24580000	.	59.1762	+	-	10kb	BND	Possible broken translocation from chr10 into chr22; related to nearby undetected aberration
 chrX	11120000	11360000	chrX	16700000	16750000	.	192.987	+	-	10kb	DEL	
 chrY	13500000	15300000	chrY	15900000	17400000	.	56.9348	+	-	100kb	ARTEFACT	Sparsity
