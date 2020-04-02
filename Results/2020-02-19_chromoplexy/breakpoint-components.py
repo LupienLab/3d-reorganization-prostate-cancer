@@ -175,7 +175,6 @@ all_tads = all_tads.reset_index(level=0).rename(columns={"level_0": "Sample"})
 # 1. Create graphs
 # --------------------------------------
 print("Creating graphs of breakpoints")
-G_all = nx.Graph()
 G_sample = {s: nx.Graph() for s in SAMPLES}
 
 # add each detected breakpoint as a node to the graph
@@ -282,29 +281,44 @@ for stm in confirmed_bp_sets_to_merge:
     s = nodes[0].data["sample"]
     G_sample[s] = merge_nodes(G_sample[s], nodes)
 
+# add a unique ID to the breakpoint in the dataset for future reference
+bp_counter = 0
+for s in SAMPLES:
+    for n in G_sample[s]:
+        n.data["breakpoint_ID"] = bp_counter
+        bp_counter += 1
+
 # save merged breakpoints
 pickle.dump(G_sample, open("breakpoints.per-sample.merged-breakpoints.p", "wb"))
 
 # create compiled list of all breakpoints for easier parsing and saving in a table
-uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "mutated_in"])
+uncoupled_breakpoints = pd.DataFrame(columns=["breakpoint_ID", "chr", "start", "end", "mutated_in"])
 for s in SAMPLES:
     for n in G_sample[s]:
         uncoupled_breakpoints = uncoupled_breakpoints.append(
-            {"chr": n.chr, "start": n.inf(), "end": n.sup(), "mutated_in": n.data["sample"]},
+            {
+                "breakpoint_ID": n.data["breakpoint_ID"],
+                "chr": n.chr,
+                "start": n.inf(),
+                "end": n.sup(),
+                "mutated_in": n.data["sample"]
+            },
             ignore_index=True,
             sort=False
         )
+# set ID to be the index
+uncoupled_breakpoints.set_index("breakpoint_ID", inplace=True)
 # save in a table
 uncoupled_breakpoints.to_csv(
     "sv-breakpoints.tsv",
     sep="\t",
-    index_label="breakpoint_index"
 )
 
 # 3. Connecting points in graph containing all samples based on their TADs and locations
 # --------------------------------------
 print("Connecting proximal breakpoints")
 # create graph containing all samples
+G_all = nx.Graph()
 for s in SAMPLES:
     for n1, n2, data in G_sample[s].edges(data=True):
         G_all.add_edge(n1, n2, **data)
@@ -323,57 +337,49 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
         # it's not that much of a concern)
         if equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
             G_all.add_edge(n, m, annotation="equivalent-TAD")
-    # add index to this node for later use
-    n.data["index"] = i
-    # save for later (i will be the same as the index in the DataFrame)
+
+# save graph to pickle object
+pickle.dump(G_all, open("breakpoints.all-samples.p", "wb"))
 
 # add connectivity of related breakpoints
-coupled_tests = pd.DataFrame(columns=["breakpoint_indices", "mutated_in", "n_mut", "n_nonmut"])
+coupled_tests = pd.DataFrame(columns=["breakpoint_IDs", "mutated_in", "n_mut", "n_nonmut"])
 for bp in tqdm(G_all, total=len(G_all)):
     # find samples where this, or a nearby, breakpoint occurs
     nbrs = [
         n
         for n, v in G_all[bp].items()
-        if v["annotation"] in ["nearby", "recurrent", "equivalent-TAD"]
+        if v["annotation"] in ["recurrent", "equivalent-TAD"]
     ]
     connected_bps = [bp] + nbrs
-    indices = ",".join(np.unique([str(n.data["index"]) for n in connected_bps]))
+    indices = ",".join(np.unique([str(n.data["breakpoint_ID"]) for n in connected_bps]))
     mut_samples = ",".join(np.unique([n.data["sample"] for n in connected_bps]))
     n_mut = len(np.unique([n.data["sample"] for n in connected_bps]))
     coupled_tests = coupled_tests.append(
-        {"breakpoint_indices": indices, "mutated_in": mut_samples, "n_mut": n_mut, "n_nonmut": len(SAMPLES) - n_mut},
+        {
+            "breakpoint_IDs": indices,
+            "mutated_in": mut_samples,
+            "n_mut": n_mut,
+            "n_nonmut": len(SAMPLES) - n_mut
+        },
         ignore_index=True,
         sort=False
     )
 # only keep unique rows
 coupled_tests.drop_duplicates(inplace=True, ignore_index=True)
 
-for s in SAMPLES:
-    for n in tqdm(G_sample[s]):
-        for m in G_sample[s]:
-            if n == m:
-                continue
-            # connect these nodes if the identified loci are within 100 kbp of each other
-            if overlapping(n, m, TOL // 2):
-                # if the two breakpoints are from the same sample, they're nearby
-                G_sample[s].add_edge(n, m, annotation="nearby")
-            # connect these nodes if the identified loci at within the same TAD
-            if equivalent_tad(n, m, tads[s], tads[s]):
-                G_all.add_edge(n, m, annotation="equivalent-TAD")
-
-# ==============================================================================
-# Save data
-# ==============================================================================
-print("Saving graphs")
-pickle.dump(G_all, open("breakpoints.all-samples.p", "wb"))
+# save coupled tests
 coupled_tests.to_csv(
     "sv-disruption-tests.tsv",
     sep="\t",
     index_label="test_index"
 )
 
+# ==============================================================================
+# Save data
+# ==============================================================================
+print("Exporting graphs to GraphML")
 # export to GraphML format
 nx.write_graphml(G_all, "Graphs/breakpoints.all-samples.xml")
-for s in samples:
+for s in SAMPLES:
     nx.write_graphml(G_sample[s], "Graphs/breakpoints." + s + ".xml")
 print("Done")
