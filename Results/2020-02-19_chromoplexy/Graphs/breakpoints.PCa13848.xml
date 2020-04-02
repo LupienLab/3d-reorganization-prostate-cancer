@@ -1,142 +1,113 @@
 <?xml version='1.0' encoding='utf-8'?>
-<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
-  <graph edgedefault="undirected">
-    <node id="chr1 75.46 75.56" />
-    <node id="chr1 79.35 79.42" />
-    <node id="chr1 205.0 205.6" />
-    <node id="chr6 109.5 110.5" />
-    <node id="chr2 212.7 215.0" />
-    <node id="chr3 23.7 25.0" />
-    <node id="chr2 226.0 227.3" />
-    <node id="chr6 165.3 166.4" />
-    <node id="chr3 25.4 27.3" />
-    <node id="chr6 163.1 163.4" />
-    <node id="chr4 69.2 69.9" />
-    <node id="chr9 98.0 98.9" />
-    <node id="chr5 59.0 59.2" />
-    <node id="chr5 172.4 173.0" />
-    <node id="chr10 5.97 6.09" />
-    <node id="chr10 96.63 96.72" />
-    <node id="chr10 96.7 99.3" />
-    <node id="chr20 21.0 23.5" />
-    <node id="chr11 104.0 105.8" />
-    <node id="chr2 198.3 199.8" />
-    <node id="chr11 123.0 123.3" />
-    <node id="chr3 25.4 27.2" />
-    <node id="chr11 118.5 118.9" />
-    <node id="chr6 160.9 162.9" />
-    <node id="chr13 98.7 99.2" />
-    <node id="chr1 201.1 201.9" />
-    <node id="chr13 99.4 100.6" />
-    <node id="chr1 151.0 151.3" />
-    <node id="chr13 21.4 22.9" />
-    <node id="chr6 168.6 169.6" />
-    <node id="chr13 42.1 42.8" />
-    <node id="chr6 165.6 166.4" />
-    <node id="chr13 20.0 20.4" />
-    <node id="chr13 39.6 40.0" />
-    <node id="chr13 41.7 42.2" />
-    <node id="chr13 88.8 89.2" />
-    <node id="chr13 58.9 59.3" />
-    <node id="chr13 106.8 107.2" />
-    <node id="chr14 35.44 35.7" />
-    <node id="chr21 41.45 41.5" />
-    <node id="chr14 35.7 35.83" />
-    <node id="chr21 38.5 38.78" />
-    <node id="chr18 76.34 76.46" />
-    <node id="chr20 57.7 58.22" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <edge source="chr1 75.46 75.56" target="chr1 79.35 79.42">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr1 205.0 205.6" target="chr6 109.5 110.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 212.7 215.0" target="chr3 23.7 25.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 226.0 227.3" target="chr6 165.3 166.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr6 165.3 166.4" target="chr6 165.6 166.4">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr3 25.4 27.3" target="chr6 163.1 163.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 25.4 27.3" target="chr3 25.4 27.2">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr4 69.2 69.9" target="chr9 98.0 98.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 59.0 59.2" target="chr5 172.4 173.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr10 5.97 6.09" target="chr10 96.63 96.72">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr10 96.63 96.72" target="chr10 96.7 99.3">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr10 96.7 99.3" target="chr20 21.0 23.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr11 104.0 105.8" target="chr2 198.3 199.8">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr11 123.0 123.3" target="chr3 25.4 27.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr11 118.5 118.9" target="chr6 160.9 162.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 98.7 99.2" target="chr1 201.1 201.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 99.4 100.6" target="chr1 151.0 151.3">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 21.4 22.9" target="chr6 168.6 169.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 42.1 42.8" target="chr6 165.6 166.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 42.1 42.8" target="chr13 41.7 42.2">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr13 20.0 20.4" target="chr13 39.6 40.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr13 41.7 42.2" target="chr13 88.8 89.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr13 58.9 59.3" target="chr13 106.8 107.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 35.44 35.7" target="chr21 41.45 41.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 35.44 35.7" target="chr14 35.7 35.83">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr14 35.7 35.83" target="chr21 38.5 38.78">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr18 76.34 76.46" target="chr20 57.7 58.22">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-  </graph>
-</graphml>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="annotation" attr.type="string"/>
+<graph edgedefault="undirected"><node id="chr1:75.46Mb-75.56Mb"/>
+<node id="chr1:79.35Mb-79.42Mb"/>
+<node id="chr1:205.0Mb-205.6Mb"/>
+<node id="chr6:109.5Mb-110.5Mb"/>
+<node id="chr2:212.7Mb-215.0Mb"/>
+<node id="chr3:23.7Mb-25.0Mb"/>
+<node id="chr2:226.0Mb-227.3Mb"/>
+<node id="chr6:165.3Mb-166.4Mb"/>
+<node id="chr6:163.1Mb-163.4Mb"/>
+<node id="chr4:69.2Mb-69.9Mb"/>
+<node id="chr9:98.0Mb-98.9Mb"/>
+<node id="chr5:59.0Mb-59.2Mb"/>
+<node id="chr5:172.4Mb-173.0Mb"/>
+<node id="chr10:5.97Mb-6.09Mb"/>
+<node id="chr20:21.0Mb-23.5Mb"/>
+<node id="chr11:104.0Mb-105.8Mb"/>
+<node id="chr2:198.3Mb-199.8Mb"/>
+<node id="chr11:123.0Mb-123.3Mb"/>
+<node id="chr11:118.5Mb-118.9Mb"/>
+<node id="chr6:160.9Mb-162.9Mb"/>
+<node id="chr13:98.7Mb-99.2Mb"/>
+<node id="chr1:201.1Mb-201.9Mb"/>
+<node id="chr13:99.4Mb-100.6Mb"/>
+<node id="chr1:151.0Mb-151.3Mb"/>
+<node id="chr13:21.4Mb-22.9Mb"/>
+<node id="chr6:168.6Mb-169.6Mb"/>
+<node id="chr13:42.1Mb-42.8Mb"/>
+<node id="chr6:165.6Mb-166.4Mb"/>
+<node id="chr13:20.0Mb-20.4Mb"/>
+<node id="chr13:39.6Mb-40.0Mb"/>
+<node id="chr13:41.7Mb-42.2Mb"/>
+<node id="chr13:88.8Mb-89.2Mb"/>
+<node id="chr13:58.9Mb-59.3Mb"/>
+<node id="chr13:106.8Mb-107.2Mb"/>
+<node id="chr18:76.34Mb-76.46Mb"/>
+<node id="chr20:57.7Mb-58.22Mb"/>
+<node id="chr3:25.4Mb-27.3Mb"/>
+<node id="chr10:96.63Mb-99.3Mb"/>
+<node id="chr14:35.44Mb-35.83Mb"/>
+<node id="chr21:41.45Mb-41.62Mb"/>
+<node id="chr21:38.4Mb-38.78Mb"/>
+<edge source="chr1:75.46Mb-75.56Mb" target="chr1:79.35Mb-79.42Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr1:205.0Mb-205.6Mb" target="chr6:109.5Mb-110.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:212.7Mb-215.0Mb" target="chr3:23.7Mb-25.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:226.0Mb-227.3Mb" target="chr6:165.3Mb-166.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:163.1Mb-163.4Mb" target="chr3:25.4Mb-27.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:69.2Mb-69.9Mb" target="chr9:98.0Mb-98.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:59.0Mb-59.2Mb" target="chr5:172.4Mb-173.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:5.97Mb-6.09Mb" target="chr10:96.63Mb-99.3Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr20:21.0Mb-23.5Mb" target="chr10:96.63Mb-99.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:104.0Mb-105.8Mb" target="chr2:198.3Mb-199.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:123.0Mb-123.3Mb" target="chr3:25.4Mb-27.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:118.5Mb-118.9Mb" target="chr6:160.9Mb-162.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:98.7Mb-99.2Mb" target="chr1:201.1Mb-201.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:99.4Mb-100.6Mb" target="chr1:151.0Mb-151.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:21.4Mb-22.9Mb" target="chr6:168.6Mb-169.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:42.1Mb-42.8Mb" target="chr6:165.6Mb-166.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:20.0Mb-20.4Mb" target="chr13:39.6Mb-40.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:41.7Mb-42.2Mb" target="chr13:88.8Mb-89.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:58.9Mb-59.3Mb" target="chr13:106.8Mb-107.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr18:76.34Mb-76.46Mb" target="chr20:57.7Mb-58.22Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:35.44Mb-35.83Mb" target="chr21:41.45Mb-41.62Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:35.44Mb-35.83Mb" target="chr21:38.4Mb-38.78Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:38.4Mb-38.78Mb">
+  <data key="d0">DEL</data>
+</edge>
+</graph></graphml>

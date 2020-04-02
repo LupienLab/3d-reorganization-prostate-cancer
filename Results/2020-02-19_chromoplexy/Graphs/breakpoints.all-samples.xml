@@ -1,2199 +1,1497 @@
 <?xml version='1.0' encoding='utf-8'?>
-<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
-  <graph edgedefault="undirected">
-    <node id="chr4 179.1 179.6" />
-    <node id="chr3 73.8 75.0" />
-    <node id="chr4 181.68 181.71" />
-    <node id="chr3 76.01 76.13" />
-    <node id="chr6 84.3 84.6" />
-    <node id="chr6 127.7 128.3" />
-    <node id="chr1 75.46 75.56" />
-    <node id="chr1 79.35 79.42" />
-    <node id="chr1 205.0 205.6" />
-    <node id="chr6 109.5 110.5" />
-    <node id="chr2 212.7 215.0" />
-    <node id="chr3 23.7 25.0" />
-    <node id="chr2 226.0 227.3" />
-    <node id="chr6 165.3 166.4" />
-    <node id="chr3 25.4 27.3" />
-    <node id="chr6 163.1 163.4" />
-    <node id="chr4 69.2 69.9" />
-    <node id="chr9 98.0 98.9" />
-    <node id="chr5 59.0 59.2" />
-    <node id="chr5 172.4 173.0" />
-    <node id="chr10 5.97 6.09" />
-    <node id="chr10 96.63 96.72" />
-    <node id="chr10 96.7 99.3" />
-    <node id="chr20 21.0 23.5" />
-    <node id="chr11 104.0 105.8" />
-    <node id="chr2 198.3 199.8" />
-    <node id="chr11 123.0 123.3" />
-    <node id="chr3 25.4 27.2" />
-    <node id="chr11 118.5 118.9" />
-    <node id="chr6 160.9 162.9" />
-    <node id="chr13 98.7 99.2" />
-    <node id="chr1 201.1 201.9" />
-    <node id="chr13 99.4 100.6" />
-    <node id="chr1 151.0 151.3" />
-    <node id="chr13 21.4 22.9" />
-    <node id="chr6 168.6 169.6" />
-    <node id="chr13 42.1 42.8" />
-    <node id="chr6 165.6 166.4" />
-    <node id="chr13 20.0 20.4" />
-    <node id="chr13 39.6 40.0" />
-    <node id="chr13 41.7 42.2" />
-    <node id="chr13 88.8 89.2" />
-    <node id="chr13 58.9 59.3" />
-    <node id="chr13 106.8 107.2" />
-    <node id="chr14 35.44 35.7" />
-    <node id="chr21 41.45 41.5" />
-    <node id="chr14 35.7 35.83" />
-    <node id="chr21 38.5 38.78" />
-    <node id="chr18 76.34 76.46" />
-    <node id="chr20 57.7 58.22" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chr2 115.4 115.8" />
-    <node id="chr2 127.2 127.5" />
-    <node id="chr2 112.73 112.8" />
-    <node id="chr4 125.47 125.6" />
-    <node id="chr2 114.6 115.18" />
-    <node id="chr4 125.34 125.38" />
-    <node id="chr13 30.67 30.94" />
-    <node id="chr11 32.28 32.31" />
-    <node id="chr14 72.71 72.87" />
-    <node id="chr4 157.73 157.88" />
-    <node id="chr14 73.0 73.12" />
-    <node id="chr4 154.87 154.93" />
-    <node id="chr2 73.65 73.77" />
-    <node id="chr3 28.29 28.34" />
-    <node id="chr3 121.6 121.88" />
-    <node id="chr3 156.14 156.17" />
-    <node id="chr3 123.8 124.6" />
-    <node id="chr3 156.3 157.1" />
-    <node id="chr3 79.63 79.75" />
-    <node id="chr9 92.03 92.08" />
-    <node id="chr5 69.03 69.3" />
-    <node id="chr3 68.97 69.06" />
-    <node id="chr5 73.01 73.5" />
-    <node id="chr3 73.08 73.1" />
-    <node id="chr16 4.45 4.7" />
-    <node id="chr8 41.51 41.55" />
-    <node id="chr16 4.8 5.1" />
-    <node id="chr16 71.1 71.6" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chr2 137.2 137.8" />
-    <node id="chr2 142.8 143.1" />
-    <node id="chr2 138.77 138.8" />
-    <node id="chr2 155.2 155.32" />
-    <node id="chr2 142.73 142.79" />
-    <node id="chr2 153.84 153.9" />
-    <node id="chr3 63.89 64.0" />
-    <node id="chr3 73.86 73.9" />
-    <node id="chr4 16.25 16.28" />
-    <node id="chr4 95.14 95.46" />
-    <node id="chr4 16.3 17.5" />
-    <node id="chr4 97.7 98.2" />
-    <node id="chr4 114.7 115.0" />
-    <node id="chr4 119.0 120.1" />
-    <node id="chr4 115.01 115.15" />
-    <node id="chr4 133.42 133.45" />
-    <node id="chr4 115.48 115.66" />
-    <node id="chr4 133.44 133.48" />
-    <node id="chr4 118.6 119.0" />
-    <node id="chr4 125.2 125.8" />
-    <node id="chr4 118.9 119.0" />
-    <node id="chr4 133.4 135.0" />
-    <node id="chr5 42.3 42.34" />
-    <node id="chr5 94.6 94.67" />
-    <node id="chr6 76.24 76.3" />
-    <node id="chr6 97.9 97.96" />
-    <node id="chr8 48.3 49.0" />
-    <node id="chr8 64.7 65.6" />
-    <node id="chr8 49.0 49.6" />
-    <node id="chr8 59.9 60.2" />
-    <node id="chr8 51.83 52.04" />
-    <node id="chr8 65.62 65.65" />
-    <node id="chr8 144.4 145.0" />
-    <node id="chr10 35.0 37.1" />
-    <node id="chr10 54.8 55.3" />
-    <node id="chr10 92.5 93.1" />
-    <node id="chr10 80.12 80.17" />
-    <node id="chr10 110.2 110.3" />
-    <node id="chr10 101.2 101.4" />
-    <node id="chr10 108.5 109.3" />
-    <node id="chr12 50.9 51.4" />
-    <node id="chr12 110.4 110.7" />
-    <node id="chr12 111.17 111.22" />
-    <node id="chr17 16.04 16.21" />
-    <node id="chr16 60.2 62.6" />
-    <node id="chr8 48.3 49.6" />
-    <node id="chr16 61.0 62.6" />
-    <node id="chr8 64.7 65.6" />
-    <node id="chr16 61.7 62.5" />
-    <node id="chr8 58.7 60.2" />
-    <node id="chr17 78.93 79.0" />
-    <node id="chr10 34.65 34.98" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chr4 94.2 94.7" />
-    <node id="chr7 12.4 14.1" />
-    <node id="chr4 94.8 95.7" />
-    <node id="chr7 14.0 15.3" />
-    <node id="chr1 105.9 108.0" />
-    <node id="chr11 64.0 64.2" />
-    <node id="chr1 230.35 230.5" />
-    <node id="chr11 64.26 64.31" />
-    <node id="chr1 230.6 231.3" />
-    <node id="chr17 8.2 8.9" />
-    <node id="chr2 6.81 6.89" />
-    <node id="chr17 50.44 50.48" />
-    <node id="chr3 12.0 12.3" />
-    <node id="chr3 151.0 152.0" />
-    <node id="chr3 12.01 12.2" />
-    <node id="chr3 149.82 149.89" />
-    <node id="chr5 69.1 69.5" />
-    <node id="chr1 108.4 109.6" />
-    <node id="chr5 54.5 55.3" />
-    <node id="chr2 3.7 6.8" />
-    <node id="chr5 55.3 55.8" />
-    <node id="chr5 69.1 69.3" />
-    <node id="chr8 93.0 93.13" />
-    <node id="chr7 155.4 155.52" />
-    <node id="chr8 129.47 129.62" />
-    <node id="chr7 70.74 70.81" />
-    <node id="chr8 136.0 137.7" />
-    <node id="chr7 69.5 70.7" />
-    <node id="chr10 49.41 49.54" />
-    <node id="chr1 234.33 234.42" />
-    <node id="chr10 111.0 111.9" />
-    <node id="chr1 223.0 223.9" />
-    <node id="chr10 68.6 69.0" />
-    <node id="chr10 110.8 112.0" />
-    <node id="chr10 69.4 69.9" />
-    <node id="chr10 93.4 93.7" />
-    <node id="chr10 79.35 79.4" />
-    <node id="chr10 112.05 112.16" />
-    <node id="chr12 70.48 70.57" />
-    <node id="chr8 128.1 128.15" />
-    <node id="chr12 123.7 124.9" />
-    <node id="chr8 134.7 136.0" />
-    <node id="chr12 124.9 126.8" />
-    <node id="chr8 128.2 129.2" />
-    <node id="chr16 13.7 14.4" />
-    <node id="chr16 46.8 47.2" />
-    <node id="chr16 14.6 14.7" />
-    <node id="chr16 59.1 60.5" />
-    <node id="chr16 48.0 48.3" />
-    <node id="chr16 81.2 81.9" />
-    <node id="chr16 48.7 49.7" />
-    <node id="chr16 77.6 78.0" />
-    <node id="chr17 5.3 6.6" />
-    <node id="chr17 47.5 47.9" />
-    <node id="chr17 9.7 10.7" />
-    <node id="chr17 45.6 45.8" />
-    <node id="chr17 11.3 11.8" />
-    <node id="chr17 50.1 50.5" />
-    <node id="chr17 46.3 47.4" />
-    <node id="chr18 55.0 57.6" />
-    <node id="chr17 51.72 51.76" />
-    <node id="chr18 67.2 67.43" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chr8 60.8 61.1" />
-    <node id="chr8 113.1 113.6" />
-    <node id="chr12 6.68 6.78" />
-    <node id="chr2 11.23 11.5" />
-    <node id="chr12 6.78 6.84" />
-    <node id="chr2 11.07 11.22" />
-    <node id="chr12 58.2 59.4" />
-    <node id="chr16 23.7 24.3" />
-    <node id="chr15 43.8 44.7" />
-    <node id="chr7 128.3 128.7" />
-    <node id="chr17 41.91 41.98" />
-    <node id="chr19 50.88 51.13" />
-    <node id="chr17 41.98 42.19" />
-    <node id="chr19 50.77 50.88" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chr1 57.03 57.08" />
-    <node id="chr1 85.3 85.39" />
-    <node id="chr1 57.63 57.75" />
-    <node id="chr1 154.96 154.99" />
-    <node id="chr1 58.1 58.6" />
-    <node id="chr1 85.0 85.3" />
-    <node id="chr1 84.82 84.96" />
-    <node id="chr1 116.55 116.62" />
-    <node id="chr1 58.5 60.1" />
-    <node id="chr4 76.8 78.5" />
-    <node id="chr1 155.0 155.07" />
-    <node id="chr4 71.47 71.61" />
-    <node id="chr1 231.72 232.58" />
-    <node id="chr7 107.71 107.74" />
-    <node id="chr1 232.58 232.65" />
-    <node id="chr7 107.43 107.7" />
-    <node id="chr1 81.9 84.8" />
-    <node id="chr9 0.0 1.9" />
-    <node id="chr3 36.17 36.34" />
-    <node id="chr3 115.5 115.62" />
-    <node id="chr4 69.4 69.9" />
-    <node id="chr4 78.5 79.0" />
-    <node id="chr8 56.12 56.21" />
-    <node id="chr8 138.61 138.72" />
-    <node id="chr8 56.22 56.26" />
-    <node id="chr8 138.14 138.59" />
-    <node id="chr15 46.8 47.2" />
-    <node id="chr15 70.8 71.0" />
-    <node id="chr15 47.0 48.1" />
-    <node id="chr15 71.5 71.7" />
-    <node id="chr19 15.76 15.92" />
-    <node id="chr7 140.63 140.78" />
-    <node id="chr19 15.92 16.04" />
-    <node id="chr7 140.79 141.04" />
-    <node id="chr1 99.8 101.6" />
-    <node id="chr15 25.1 29.1" />
-    <node id="chr2 7.0 8.0" />
-    <node id="chr2 46.1 46.9" />
-    <node id="chr3 44.39 44.51" />
-    <node id="chr2 97.74 97.81" />
-    <node id="chr3 73.6 75.8" />
-    <node id="chr2 97.7 98.6" />
-    <node id="chr3 41.7 41.89" />
-    <node id="chr3 134.55 134.57" />
-    <node id="chr3 41.9 42.0" />
-    <node id="chr3 130.95 131.03" />
-    <node id="chr3 41.91 41.97" />
-    <node id="chr3 156.83 157.14" />
-    <node id="chr3 44.35 44.39" />
-    <node id="chr3 73.61 73.69" />
-    <node id="chr3 44.87 44.96" />
-    <node id="chr3 131.42 131.56" />
-    <node id="chr3 61.2 63.6" />
-    <node id="chr3 114.3 114.6" />
-    <node id="chr3 66.12 66.2" />
-    <node id="chr3 109.33 109.39" />
-    <node id="chr3 70.78 70.84" />
-    <node id="chr3 131.53 131.65" />
-    <node id="chr3 108.6 109.4" />
-    <node id="chr3 156.7 156.8" />
-    <node id="chr3 108.9 109.3" />
-    <node id="chr3 146.7 149.3" />
-    <node id="chr3 130.0 131.1" />
-    <node id="chr3 156.8 157.2" />
-    <node id="chr3 149.11 149.27" />
-    <node id="chr3 156.7 156.79" />
-    <node id="chr3 94.6 96.2" />
-    <node id="chr5 90.9 91.5" />
-    <node id="chr3 96.1 96.8" />
-    <node id="chr5 90.3 90.5" />
-    <node id="chr3 177.03 177.3" />
-    <node id="chrX 57.97 58.06" />
-    <node id="chr3 177.31 177.4" />
-    <node id="chrX 68.0 68.14" />
-    <node id="chr5 177.06 177.09" />
-    <node id="chr2 45.61 45.8" />
-    <node id="chr5 177.1 177.12" />
-    <node id="chr2 8.0 8.18" />
-    <node id="chr6 66.02 66.1" />
-    <node id="chr6 119.9 119.95" />
-    <node id="chr6 92.7 93.3" />
-    <node id="chr6 109.1 109.4" />
-    <node id="chr6 136.23 136.3" />
-    <node id="chr7 105.44 105.52" />
-    <node id="chr8 38.4 38.8" />
-    <node id="chr2 68.4 69.9" />
-    <node id="chr8 18.09 18.15" />
-    <node id="chr8 41.24 41.54" />
-    <node id="chr10 26.32 26.55" />
-    <node id="chr10 68.07 68.1" />
-    <node id="chr10 28.6 28.67" />
-    <node id="chr10 90.95 91.1" />
-    <node id="chr10 68.74 68.9" />
-    <node id="chr10 89.22 89.26" />
-    <node id="chr10 83.8 84.1" />
-    <node id="chr10 91.9 92.5" />
-    <node id="chr12 10.21 10.36" />
-    <node id="chr4 39.15 39.46" />
-    <node id="chr12 27.31 27.74" />
-    <node id="chr4 38.05 38.18" />
-    <node id="chr12 68.8 69.8" />
-    <node id="chr6 12.3 13.6" />
-    <node id="chr12 59.19 59.42" />
-    <node id="chr10 86.31 86.37" />
-    <node id="chr12 60.54 60.84" />
-    <node id="chr10 84.56 84.6" />
-    <node id="chr12 61.93 62.22" />
-    <node id="chr10 87.8 87.93" />
-    <node id="chr12 103.84 103.89" />
-    <node id="chr10 87.94 88.0" />
-    <node id="chr12 105.57 106.25" />
-    <node id="chr10 88.78 88.83" />
-    <node id="chr12 58.64 58.78" />
-    <node id="chr12 104.03 104.06" />
-    <node id="chr12 60.8 62.3" />
-    <node id="chr12 103.8 104.1" />
-    <node id="chr12 105.41 105.49" />
-    <node id="chr12 121.9 122.02" />
-    <node id="chr12 44.9 46.0" />
-    <node id="chr14 88.6 90.0" />
-    <node id="chr12 69.74 69.87" />
-    <node id="chr14 106.47 106.54" />
-    <node id="chr12 60.8 62.7" />
-    <node id="chr21 32.3 33.2" />
-    <node id="chr12 103.6 103.83" />
-    <node id="chr21 32.26 32.35" />
-    <node id="chr12 121.81 121.89" />
-    <node id="chr21 31.62 31.66" />
-    <node id="chr12 46.0 49.3" />
-    <node id="chrX 53.0 53.9" />
-    <node id="chr14 21.52 21.7" />
-    <node id="chr1 91.81 92.02" />
-    <node id="chr14 54.3 54.45" />
-    <node id="chr1 91.47 91.56" />
-    <node id="chr14 56.0 57.4" />
-    <node id="chr1 48.0 48.2" />
-    <node id="chr14 100.04 100.2" />
-    <node id="chr1 47.93 48.12" />
-    <node id="chr14 99.88 99.99" />
-    <node id="chr10 103.21 103.37" />
-    <node id="chr14 103.31 103.44" />
-    <node id="chr10 100.29 100.51" />
-    <node id="chr14 103.52 103.67" />
-    <node id="chr10 102.5 102.66" />
-    <node id="chr14 22.45 22.53" />
-    <node id="chr14 31.36 31.48" />
-    <node id="chr14 23.47 23.5" />
-    <node id="chr14 30.58 30.73" />
-    <node id="chr14 24.03 24.17" />
-    <node id="chr14 102.3 102.36" />
-    <node id="chr14 56.0 56.3" />
-    <node id="chr14 101.77 101.8" />
-    <node id="chr14 56.3 56.49" />
-    <node id="chr14 101.66 101.8" />
-    <node id="chr14 88.48 88.6" />
-    <node id="chrX 144.7 144.74" />
-    <node id="chr17 22.7 28.3" />
-    <node id="chr10 85.0 86.0" />
-    <node id="chr21 32.35 32.41" />
-    <node id="chr10 87.94 88.0" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chrX 67.67 67.83" />
-    <node id="chrX 144.62 144.69" />
-    <node id="chr2 99.5 100.5" />
-    <node id="chr4 173.2 173.6" />
-    <node id="chr2 98.9 99.5" />
-    <node id="chr10 106.5 107.2" />
-    <node id="chr3 73.5 75.3" />
-    <node id="chrX 93.0 94.4" />
-    <node id="chr4 95.1 98.1" />
-    <node id="chr3 121.2 121.5" />
-    <node id="chr4 172.9 173.3" />
-    <node id="chr10 60.7 62.1" />
-    <node id="chr5 34.2 35.2" />
-    <node id="chr10 92.3 92.8" />
-    <node id="chr5 56.3 58.5" />
-    <node id="chr22 40.8 41.4" />
-    <node id="chr5 74.6 75.5" />
-    <node id="chr22 29.3 30.6" />
-    <node id="chr6 148.7 149.5" />
-    <node id="chr3 128.0 128.5" />
-    <node id="chr8 16.7 17.4" />
-    <node id="chr10 89.0 89.6" />
-    <node id="chr8 22.0 22.4" />
-    <node id="chr10 89.5 91.0" />
-    <node id="chr8 73.7 74.9" />
-    <node id="chrX 13.8 15.4" />
-    <node id="chr8 77.0 78.4" />
-    <node id="chrX 15.2 16.7" />
-    <node id="chr9 33.0 39.0" />
-    <node id="chr3 50.0 53.0" />
-    <node id="chr10 81.1 81.4" />
-    <node id="chr10 87.9 88.4" />
-    <node id="chr12 118.33 118.36" />
-    <node id="chr21 41.47 41.63" />
-    <node id="chr12 125.0 133.0" />
-    <node id="chr21 10.0 28.0" />
-    <node id="chr13 29.47 29.52" />
-    <node id="chr3 52.42 52.7" />
-    <node id="chr13 21.56 21.59" />
-    <node id="chr13 94.42 94.69" />
-    <node id="chr13 94.0 101.0" />
-    <node id="chrY 19.0 21.0" />
-    <node id="chr14 87.65 87.77" />
-    <node id="chr3 52.71 52.86" />
-    <node id="chr14 86.1 87.7" />
-    <node id="chr13 24.0 24.8" />
-    <node id="chr16 74.2 74.5" />
-    <node id="chr1 117.6 118.9" />
-    <node id="chr16 23.5 24.6" />
-    <node id="chr10 91.2 91.9" />
-    <node id="chr21 16.07 16.38" />
-    <node id="chr7 44.72 44.87" />
-    <node id="chr21 41.1 41.46" />
-    <node id="chr7 44.56 44.72" />
-    <node id="chr21 15.8 16.1" />
-    <node id="chr21 41.5 42.1" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <node id="chr22 29.29 29.37" />
-    <node id="chr10 24.55 24.58" />
-    <node id="chrX 11.12 11.36" />
-    <node id="chrX 16.7 16.75" />
-    <node id="chr12 111.2 111.8" />
-    <node id="chr16 14.0 15.1" />
-    <node id="chr12 113.3 114.7" />
-    <node id="chr16 15.1 18.0" />
-    <node id="chr12 124.4 125.1" />
-    <node id="chr16 27.2 28.3" />
-    <node id="chr12 110.99 111.17" />
-    <node id="chr22 43.14 43.19" />
-    <node id="chr16 13.76 13.8" />
-    <node id="chr22 42.89 42.98" />
-    <node id="chr4 26.4 27.5" />
-    <node id="chr3 77.4 79.1" />
-    <node id="chr12 108.1 108.6" />
-    <node id="chr7 113.7 116.1" />
-    <node id="chr12 128.1 129.4" />
-    <node id="chr7 138.2 139.2" />
-    <node id="chr12 129.4 130.4" />
-    <node id="chr7 106.5 108.0" />
-    <node id="chr12 106.1 106.3" />
-    <node id="chr12 130.0 130.5" />
-    <node id="chr13 30.1 30.6" />
-    <node id="chr13 73.7 75.3" />
-    <edge source="chr4 179.1 179.6" target="chr3 73.8 75.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 73.8 75.0" target="chr3 73.08 73.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.8 75.0" target="chr3 73.86 73.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.8 75.0" target="chr3 73.6 75.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.8 75.0" target="chr3 73.61 73.69">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.8 75.0" target="chr3 73.5 75.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 181.68 181.71" target="chr3 76.01 76.13">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 76.01 76.13" target="chr3 73.6 75.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr6 84.3 84.6" target="chr6 127.7 128.3">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr1 75.46 75.56" target="chr1 79.35 79.42">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr1 205.0 205.6" target="chr6 109.5 110.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr6 109.5 110.5" target="chr6 109.1 109.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 212.7 215.0" target="chr3 23.7 25.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 23.7 25.0" target="chr3 25.4 27.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 23.7 25.0" target="chr3 25.4 27.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 226.0 227.3" target="chr6 165.3 166.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr6 165.3 166.4" target="chr6 165.6 166.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 25.4 27.3" target="chr6 163.1 163.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 25.4 27.3" target="chr3 25.4 27.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr6 163.1 163.4" target="chr6 160.9 162.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 69.2 69.9" target="chr9 98.0 98.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 69.2 69.9" target="chr4 69.4 69.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 59.0 59.2" target="chr5 172.4 173.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr5 59.0 59.2" target="chr5 56.3 58.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 5.97 6.09" target="chr10 96.63 96.72">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr10 96.63 96.72" target="chr10 96.7 99.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 96.7 99.3" target="chr20 21.0 23.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr11 104.0 105.8" target="chr2 198.3 199.8">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr11 123.0 123.3" target="chr3 25.4 27.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr11 118.5 118.9" target="chr6 160.9 162.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 98.7 99.2" target="chr1 201.1 201.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 98.7 99.2" target="chr13 99.4 100.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 98.7 99.2" target="chr13 94.0 101.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 99.4 100.6" target="chr1 151.0 151.3">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 99.4 100.6" target="chr13 94.0 101.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 21.4 22.9" target="chr6 168.6 169.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 21.4 22.9" target="chr13 21.56 21.59">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 42.1 42.8" target="chr6 165.6 166.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 42.1 42.8" target="chr13 41.7 42.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 20.0 20.4" target="chr13 39.6 40.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr13 41.7 42.2" target="chr13 88.8 89.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr13 58.9 59.3" target="chr13 106.8 107.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 35.44 35.7" target="chr21 41.45 41.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 35.44 35.7" target="chr14 35.7 35.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.45 41.5" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 35.7 35.83" target="chr21 38.5 38.78">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.5 38.78" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr18 76.34 76.46" target="chr20 57.7 58.22">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 115.4 115.8" target="chr2 127.2 127.5">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr2 115.4 115.8" target="chr2 114.6 115.18">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 112.73 112.8" target="chr4 125.47 125.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 125.47 125.6" target="chr4 125.34 125.38">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 125.47 125.6" target="chr4 125.2 125.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 114.6 115.18" target="chr4 125.34 125.38">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 125.34 125.38" target="chr4 125.2 125.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 30.67 30.94" target="chr11 32.28 32.31">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 30.67 30.94" target="chr13 30.1 30.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 72.71 72.87" target="chr4 157.73 157.88">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 72.71 72.87" target="chr14 73.0 73.12">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 73.0 73.12" target="chr4 154.87 154.93">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 73.65 73.77" target="chr3 28.29 28.34">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 121.6 121.88" target="chr3 156.14 156.17">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 121.6 121.88" target="chr3 121.2 121.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.14 156.17" target="chr3 156.3 157.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 123.8 124.6" target="chr3 156.3 157.1">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 156.3 157.1" target="chr3 156.83 157.14">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.3 157.1" target="chr3 156.7 156.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.3 157.1" target="chr3 156.8 157.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.3 157.1" target="chr3 156.7 156.79">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 79.63 79.75" target="chr9 92.03 92.08">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 69.03 69.3" target="chr3 68.97 69.06">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 69.03 69.3" target="chr5 69.1 69.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 69.03 69.3" target="chr5 69.1 69.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 73.01 73.5" target="chr3 73.08 73.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 73.01 73.5" target="chr5 74.6 75.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.08 73.1" target="chr3 73.5 75.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 4.45 4.7" target="chr8 41.51 41.55">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 4.45 4.7" target="chr16 4.8 5.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 41.51 41.55" target="chr8 41.24 41.54">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 4.8 5.1" target="chr16 71.1 71.6">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 137.2 137.8" target="chr2 142.8 143.1">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr2 142.8 143.1" target="chr2 142.73 142.79">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 138.77 138.8" target="chr2 155.2 155.32">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr2 142.73 142.79" target="chr2 153.84 153.9">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr3 63.89 64.0" target="chr3 73.86 73.9">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr3 63.89 64.0" target="chr3 61.2 63.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.86 73.9" target="chr3 73.6 75.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.86 73.9" target="chr3 73.61 73.69">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.86 73.9" target="chr3 73.5 75.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 16.25 16.28" target="chr4 95.14 95.46">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr4 16.25 16.28" target="chr4 16.3 17.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 95.14 95.46" target="chr4 97.7 98.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 95.14 95.46" target="chr4 94.2 94.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 95.14 95.46" target="chr4 94.8 95.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 95.14 95.46" target="chr4 95.1 98.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 16.3 17.5" target="chr4 97.7 98.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr4 97.7 98.2" target="chr4 94.8 95.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 97.7 98.2" target="chr4 95.1 98.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 114.7 115.0" target="chr4 119.0 120.1">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr4 114.7 115.0" target="chr4 115.01 115.15">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 114.7 115.0" target="chr4 115.48 115.66">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 119.0 120.1" target="chr4 118.6 119.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 119.0 120.1" target="chr4 118.9 119.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 115.01 115.15" target="chr4 133.42 133.45">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr4 115.01 115.15" target="chr4 115.48 115.66">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 133.42 133.45" target="chr4 133.44 133.48">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 133.42 133.45" target="chr4 133.4 135.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 115.48 115.66" target="chr4 133.44 133.48">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr4 133.44 133.48" target="chr4 133.4 135.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 118.6 119.0" target="chr4 125.2 125.8">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr4 118.6 119.0" target="chr4 118.9 119.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 118.9 119.0" target="chr4 133.4 135.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr5 42.3 42.34" target="chr5 94.6 94.67">
-      <data key="d0">INV</data>
-    </edge>
-    <edge source="chr6 76.24 76.3" target="chr6 97.9 97.96">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr8 48.3 49.0" target="chr8 64.7 65.6">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr8 48.3 49.0" target="chr8 49.0 49.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 48.3 49.0" target="chr8 48.3 49.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 64.7 65.6" target="chr8 65.62 65.65">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 64.7 65.6" target="chr8 64.7 65.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 49.0 49.6" target="chr8 59.9 60.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr8 49.0 49.6" target="chr8 48.3 49.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 59.9 60.2" target="chr8 58.7 60.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 51.83 52.04" target="chr8 65.62 65.65">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr8 65.62 65.65" target="chr8 64.7 65.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 144.4 145.0" target="chr10 35.0 37.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 35.0 37.1" target="chr10 34.65 34.98">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 54.8 55.3" target="chr10 92.5 93.1">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr10 92.5 93.1" target="chr10 93.4 93.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 92.5 93.1" target="chr10 91.9 92.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 92.5 93.1" target="chr10 92.3 92.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 80.12 80.17" target="chr10 110.2 110.3">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr10 101.2 101.4" target="chr10 108.5 109.3">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr10 108.5 109.3" target="chr10 106.5 107.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 50.9 51.4" target="chr12 110.4 110.7">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr12 110.4 110.7" target="chr12 111.17 111.22">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 110.4 110.7" target="chr12 111.2 111.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 110.4 110.7" target="chr12 110.99 111.17">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 111.17 111.22" target="chr17 16.04 16.21">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 111.17 111.22" target="chr12 111.2 111.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 111.17 111.22" target="chr12 110.99 111.17">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 60.2 62.6" target="chr8 48.3 49.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 60.2 62.6" target="chr16 61.0 62.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 60.2 62.6" target="chr16 61.7 62.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 60.2 62.6" target="chr16 59.1 60.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 61.0 62.6" target="chr8 64.7 65.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 61.0 62.6" target="chr16 61.7 62.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 61.7 62.5" target="chr8 58.7 60.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr17 78.93 79.0" target="chr10 34.65 34.98">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 94.2 94.7" target="chr7 12.4 14.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 94.2 94.7" target="chr4 94.8 95.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 94.2 94.7" target="chr4 95.1 98.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr7 12.4 14.1" target="chr7 14.0 15.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 94.8 95.7" target="chr7 14.0 15.3">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 94.8 95.7" target="chr4 95.1 98.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 105.9 108.0" target="chr11 64.0 64.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr1 105.9 108.0" target="chr1 108.4 109.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr11 64.0 64.2" target="chr11 64.26 64.31">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 230.35 230.5" target="chr11 64.26 64.31">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr1 230.35 230.5" target="chr1 230.6 231.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 230.6 231.3" target="chr17 8.2 8.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 6.81 6.89" target="chr17 50.44 50.48">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 6.81 6.89" target="chr2 3.7 6.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 6.81 6.89" target="chr2 7.0 8.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr17 50.44 50.48" target="chr17 50.1 50.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 12.0 12.3" target="chr3 151.0 152.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 12.0 12.3" target="chr3 12.01 12.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 12.01 12.2" target="chr3 149.82 149.89">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr5 69.1 69.5" target="chr1 108.4 109.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 69.1 69.5" target="chr5 69.1 69.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 54.5 55.3" target="chr2 3.7 6.8">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 54.5 55.3" target="chr5 55.3 55.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 3.7 6.8" target="chr2 7.0 8.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 55.3 55.8" target="chr5 69.1 69.3">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr8 93.0 93.13" target="chr7 155.4 155.52">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 129.47 129.62" target="chr7 70.74 70.81">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 129.47 129.62" target="chr8 128.1 128.15">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 129.47 129.62" target="chr8 128.2 129.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr7 70.74 70.81" target="chr7 69.5 70.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 136.0 137.7" target="chr7 69.5 70.7">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 136.0 137.7" target="chr8 134.7 136.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 136.0 137.7" target="chr8 138.61 138.72">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 136.0 137.7" target="chr8 138.14 138.59">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 49.41 49.54" target="chr1 234.33 234.42">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 111.0 111.9" target="chr1 223.0 223.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 111.0 111.9" target="chr10 110.8 112.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 111.0 111.9" target="chr10 112.05 112.16">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 68.6 69.0" target="chr10 110.8 112.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr10 68.6 69.0" target="chr10 69.4 69.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 68.6 69.0" target="chr10 68.07 68.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 68.6 69.0" target="chr10 68.74 68.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 110.8 112.0" target="chr10 112.05 112.16">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 69.4 69.9" target="chr10 93.4 93.7">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr10 79.35 79.4" target="chr10 112.05 112.16">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr12 70.48 70.57" target="chr8 128.1 128.15">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 128.1 128.15" target="chr8 128.2 129.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 123.7 124.9" target="chr8 134.7 136.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 123.7 124.9" target="chr12 124.9 126.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 123.7 124.9" target="chr12 125.0 133.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 123.7 124.9" target="chr12 124.4 125.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 124.9 126.8" target="chr8 128.2 129.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 124.9 126.8" target="chr12 125.0 133.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 124.9 126.8" target="chr12 124.4 125.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 13.7 14.4" target="chr16 46.8 47.2">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr16 13.7 14.4" target="chr16 14.6 14.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 13.7 14.4" target="chr16 14.0 15.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 13.7 14.4" target="chr16 15.1 18.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 13.7 14.4" target="chr16 13.76 13.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 46.8 47.2" target="chr16 48.0 48.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 14.6 14.7" target="chr16 59.1 60.5">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr16 14.6 14.7" target="chr16 14.0 15.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 14.6 14.7" target="chr16 15.1 18.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 48.0 48.3" target="chr16 81.2 81.9">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr16 48.0 48.3" target="chr16 48.7 49.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 48.7 49.7" target="chr16 77.6 78.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr17 5.3 6.6" target="chr17 47.5 47.9">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr17 47.5 47.9" target="chr17 46.3 47.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr17 9.7 10.7" target="chr17 45.6 45.8">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr17 11.3 11.8" target="chr17 50.1 50.5">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr17 46.3 47.4" target="chr18 55.0 57.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr17 51.72 51.76" target="chr18 67.2 67.43">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 60.8 61.1" target="chr8 113.1 113.6">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr12 6.68 6.78" target="chr2 11.23 11.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 6.68 6.78" target="chr12 6.78 6.84">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 11.23 11.5" target="chr2 11.07 11.22">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 6.78 6.84" target="chr2 11.07 11.22">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 58.2 59.4" target="chr16 23.7 24.3">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 58.2 59.4" target="chr12 59.19 59.42">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 58.2 59.4" target="chr12 58.64 58.78">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 23.7 24.3" target="chr16 23.5 24.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr15 43.8 44.7" target="chr7 128.3 128.7">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr17 41.91 41.98" target="chr19 50.88 51.13">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr17 41.91 41.98" target="chr17 41.98 42.19">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr19 50.88 51.13" target="chr19 50.77 50.88">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr17 41.98 42.19" target="chr19 50.77 50.88">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 57.03 57.08" target="chr1 85.3 85.39">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr1 57.03 57.08" target="chr1 57.63 57.75">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 85.3 85.39" target="chr1 85.0 85.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 85.3 85.39" target="chr1 84.82 84.96">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 57.63 57.75" target="chr1 154.96 154.99">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr1 57.63 57.75" target="chr1 58.1 58.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 57.63 57.75" target="chr1 58.5 60.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 154.96 154.99" target="chr1 155.0 155.07">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 58.1 58.6" target="chr1 85.0 85.3">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr1 58.1 58.6" target="chr1 58.5 60.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 85.0 85.3" target="chr1 84.82 84.96">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 85.0 85.3" target="chr1 81.9 84.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 84.82 84.96" target="chr1 116.55 116.62">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr1 84.82 84.96" target="chr1 81.9 84.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 58.5 60.1" target="chr4 76.8 78.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 76.8 78.5" target="chr4 78.5 79.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 155.0 155.07" target="chr4 71.47 71.61">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr1 231.72 232.58" target="chr7 107.71 107.74">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr1 231.72 232.58" target="chr1 232.58 232.65">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr7 107.71 107.74" target="chr7 107.43 107.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr7 107.71 107.74" target="chr7 106.5 108.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 232.58 232.65" target="chr7 107.43 107.7">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr7 107.43 107.7" target="chr7 106.5 108.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 81.9 84.8" target="chr9 0.0 1.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 36.17 36.34" target="chr3 115.5 115.62">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr3 115.5 115.62" target="chr3 114.3 114.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 69.4 69.9" target="chr4 78.5 79.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr8 56.12 56.21" target="chr8 138.61 138.72">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr8 56.12 56.21" target="chr8 56.22 56.26">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 138.61 138.72" target="chr8 138.14 138.59">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 56.22 56.26" target="chr8 138.14 138.59">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr15 46.8 47.2" target="chr15 70.8 71.0">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr15 46.8 47.2" target="chr15 47.0 48.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr15 47.0 48.1" target="chr15 71.5 71.7">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr19 15.76 15.92" target="chr7 140.63 140.78">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr19 15.76 15.92" target="chr19 15.92 16.04">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr7 140.63 140.78" target="chr7 140.79 141.04">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr19 15.92 16.04" target="chr7 140.79 141.04">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr1 99.8 101.6" target="chr15 25.1 29.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 7.0 8.0" target="chr2 46.1 46.9">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr2 7.0 8.0" target="chr2 8.0 8.18">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 46.1 46.9" target="chr2 45.61 45.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 44.39 44.51" target="chr2 97.74 97.81">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 44.39 44.51" target="chr3 44.35 44.39">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 44.39 44.51" target="chr3 44.87 44.96">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 97.74 97.81" target="chr2 97.7 98.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.6 75.8" target="chr2 97.7 98.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 73.6 75.8" target="chr3 73.61 73.69">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.6 75.8" target="chr3 73.5 75.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 41.7 41.89" target="chr3 134.55 134.57">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 41.7 41.89" target="chr3 41.9 42.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 41.7 41.89" target="chr3 41.91 41.97">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 41.9 42.0" target="chr3 130.95 131.03">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 41.9 42.0" target="chr3 41.91 41.97">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 130.95 131.03" target="chr3 130.0 131.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 41.91 41.97" target="chr3 156.83 157.14">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 156.83 157.14" target="chr3 156.7 156.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.83 157.14" target="chr3 156.8 157.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.83 157.14" target="chr3 156.7 156.79">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 44.35 44.39" target="chr3 73.61 73.69">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 44.35 44.39" target="chr3 44.87 44.96">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 73.61 73.69" target="chr3 73.5 75.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 44.87 44.96" target="chr3 131.42 131.56">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 131.42 131.56" target="chr3 131.53 131.65">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 131.42 131.56" target="chr3 130.0 131.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 61.2 63.6" target="chr3 114.3 114.6">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 66.12 66.2" target="chr3 109.33 109.39">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 109.33 109.39" target="chr3 108.6 109.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 109.33 109.39" target="chr3 108.9 109.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 70.78 70.84" target="chr3 131.53 131.65">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 131.53 131.65" target="chr3 130.0 131.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 108.6 109.4" target="chr3 156.7 156.8">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 108.6 109.4" target="chr3 108.9 109.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.7 156.8" target="chr3 156.8 157.2">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 156.7 156.8" target="chr3 156.7 156.79">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 108.9 109.3" target="chr3 146.7 149.3">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 146.7 149.3" target="chr3 149.11 149.27">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 130.0 131.1" target="chr3 156.8 157.2">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 156.8 157.2" target="chr3 156.7 156.79">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 149.11 149.27" target="chr3 156.7 156.79">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 94.6 96.2" target="chr5 90.9 91.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 94.6 96.2" target="chr3 96.1 96.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 96.1 96.8" target="chr5 90.3 90.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 177.03 177.3" target="chrX 57.97 58.06">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 177.03 177.3" target="chr3 177.31 177.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 177.31 177.4" target="chrX 68.0 68.14">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chrX 68.0 68.14" target="chrX 67.67 67.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 177.06 177.09" target="chr2 45.61 45.8">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 177.06 177.09" target="chr5 177.1 177.12">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 177.1 177.12" target="chr2 8.0 8.18">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr6 66.02 66.1" target="chr6 119.9 119.95">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr6 92.7 93.3" target="chr6 109.1 109.4">
-      <data key="d0">INV</data>
-    </edge>
-    <edge source="chr6 136.23 136.3" target="chr7 105.44 105.52">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 38.4 38.8" target="chr2 68.4 69.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 18.09 18.15" target="chr8 41.24 41.54">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr10 26.32 26.55" target="chr10 68.07 68.1">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr10 28.6 28.67" target="chr10 90.95 91.1">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr10 90.95 91.1" target="chr10 89.5 91.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 90.95 91.1" target="chr10 91.2 91.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 68.74 68.9" target="chr10 89.22 89.26">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr10 89.22 89.26" target="chr10 89.0 89.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 89.22 89.26" target="chr10 89.5 91.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 83.8 84.1" target="chr10 91.9 92.5">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr10 91.9 92.5" target="chr10 92.3 92.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 91.9 92.5" target="chr10 91.2 91.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 10.21 10.36" target="chr4 39.15 39.46">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 27.31 27.74" target="chr4 38.05 38.18">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 68.8 69.8" target="chr6 12.3 13.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 68.8 69.8" target="chr12 69.74 69.87">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 59.19 59.42" target="chr10 86.31 86.37">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 86.31 86.37" target="chr10 85.0 86.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 60.54 60.84" target="chr10 84.56 84.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 60.54 60.84" target="chr12 61.93 62.22">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 60.54 60.84" target="chr12 60.8 62.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 60.54 60.84" target="chr12 60.8 62.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 84.56 84.6" target="chr10 85.0 86.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 61.93 62.22" target="chr10 87.8 87.93">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 61.93 62.22" target="chr12 60.8 62.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 61.93 62.22" target="chr12 60.8 62.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.8 87.93" target="chr10 87.94 88.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.8 87.93" target="chr10 88.78 88.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.8 87.93" target="chr10 87.94 88.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.8 87.93" target="chr10 87.9 88.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 103.84 103.89" target="chr10 87.94 88.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 103.84 103.89" target="chr12 104.03 104.06">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 103.84 103.89" target="chr12 103.8 104.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 103.84 103.89" target="chr12 103.6 103.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.94 88.0" target="chr10 88.78 88.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.94 88.0" target="chr10 87.94 88.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 87.94 88.0" target="chr10 87.9 88.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 105.57 106.25" target="chr10 88.78 88.83">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 105.57 106.25" target="chr12 105.41 105.49">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 105.57 106.25" target="chr12 106.1 106.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 88.78 88.83" target="chr10 87.94 88.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 88.78 88.83" target="chr10 89.0 89.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 58.64 58.78" target="chr12 104.03 104.06">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr12 104.03 104.06" target="chr12 103.8 104.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 104.03 104.06" target="chr12 103.6 103.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 60.8 62.3" target="chr12 103.8 104.1">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr12 60.8 62.3" target="chr12 60.8 62.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 103.8 104.1" target="chr12 103.6 103.83">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 105.41 105.49" target="chr12 121.9 122.02">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr12 105.41 105.49" target="chr12 106.1 106.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 121.9 122.02" target="chr12 121.81 121.89">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 44.9 46.0" target="chr14 88.6 90.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 44.9 46.0" target="chr12 46.0 49.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 88.6 90.0" target="chr14 88.48 88.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 69.74 69.87" target="chr14 106.47 106.54">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 60.8 62.7" target="chr21 32.3 33.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 32.3 33.2" target="chr21 32.26 32.35">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 32.3 33.2" target="chr21 31.62 31.66">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 32.3 33.2" target="chr21 32.35 32.41">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 103.6 103.83" target="chr21 32.26 32.35">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 32.26 32.35" target="chr21 31.62 31.66">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 32.26 32.35" target="chr21 32.35 32.41">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 121.81 121.89" target="chr21 31.62 31.66">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 31.62 31.66" target="chr21 32.35 32.41">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 46.0 49.3" target="chrX 53.0 53.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 21.52 21.7" target="chr1 91.81 92.02">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr1 91.81 92.02" target="chr1 91.47 91.56">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 54.3 54.45" target="chr1 91.47 91.56">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 56.0 57.4" target="chr1 48.0 48.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 56.0 57.4" target="chr14 56.0 56.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 56.0 57.4" target="chr14 56.3 56.49">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr1 48.0 48.2" target="chr1 47.93 48.12">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 100.04 100.2" target="chr1 47.93 48.12">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 100.04 100.2" target="chr14 99.88 99.99">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 99.88 99.99" target="chr10 103.21 103.37">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 103.31 103.44" target="chr10 100.29 100.51">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 103.31 103.44" target="chr14 103.52 103.67">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 103.52 103.67" target="chr10 102.5 102.66">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 22.45 22.53" target="chr14 31.36 31.48">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 31.36 31.48" target="chr14 30.58 30.73">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 23.47 23.5" target="chr14 30.58 30.73">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 24.03 24.17" target="chr14 102.3 102.36">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 102.3 102.36" target="chr14 101.77 101.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 102.3 102.36" target="chr14 101.66 101.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 56.0 56.3" target="chr14 101.77 101.8">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 56.0 56.3" target="chr14 56.3 56.49">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 101.77 101.8" target="chr14 101.66 101.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 56.3 56.49" target="chr14 101.66 101.8">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr14 88.48 88.6" target="chrX 144.7 144.74">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chrX 144.7 144.74" target="chrX 144.62 144.69">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr17 22.7 28.3" target="chr10 85.0 86.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 32.35 32.41" target="chr10 87.94 88.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 87.94 88.0" target="chr10 87.9 88.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 38.4 38.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.47 41.63">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.5 41.62" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chrX 67.67 67.83" target="chrX 144.62 144.69">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr2 99.5 100.5" target="chr4 173.2 173.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr2 99.5 100.5" target="chr2 98.9 99.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr4 173.2 173.6" target="chr4 172.9 173.3">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr2 98.9 99.5" target="chr10 106.5 107.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 73.5 75.3" target="chrX 93.0 94.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 95.1 98.1" target="chr3 121.2 121.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 172.9 173.3" target="chr10 60.7 62.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 34.2 35.2" target="chr10 92.3 92.8">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 92.3 92.8" target="chr10 91.2 91.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr5 56.3 58.5" target="chr22 40.8 41.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 74.6 75.5" target="chr22 29.3 30.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr22 29.3 30.6" target="chr22 29.29 29.37">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr6 148.7 149.5" target="chr3 128.0 128.5">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr8 16.7 17.4" target="chr10 89.0 89.6">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 89.0 89.6" target="chr10 89.5 91.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 22.0 22.4" target="chr10 89.5 91.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr10 89.5 91.0" target="chr10 91.2 91.9">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 73.7 74.9" target="chrX 13.8 15.4">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chrX 13.8 15.4" target="chrX 15.2 16.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr8 77.0 78.4" target="chrX 15.2 16.7">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chrX 15.2 16.7" target="chrX 16.7 16.75">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr9 33.0 39.0" target="chr3 50.0 53.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 50.0 53.0" target="chr3 52.42 52.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 50.0 53.0" target="chr3 52.71 52.86">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr10 81.1 81.4" target="chr10 87.9 88.4">
-      <data key="d0">DUP</data>
-    </edge>
-    <edge source="chr12 118.33 118.36" target="chr21 41.47 41.63">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 41.47 41.63" target="chr21 41.1 41.46">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.47 41.63" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.47 41.63" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 125.0 133.0" target="chr21 10.0 28.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 125.0 133.0" target="chr12 124.4 125.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 125.0 133.0" target="chr12 128.1 129.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 125.0 133.0" target="chr12 129.4 130.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 125.0 133.0" target="chr12 130.0 130.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 10.0 28.0" target="chr21 16.07 16.38">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 10.0 28.0" target="chr21 15.8 16.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 29.47 29.52" target="chr3 52.42 52.7">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr13 29.47 29.52" target="chr13 30.1 30.6">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr3 52.42 52.7" target="chr3 52.71 52.86">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 21.56 21.59" target="chr13 94.42 94.69">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr13 94.42 94.69" target="chr13 94.0 101.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr13 94.0 101.0" target="chrY 19.0 21.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 87.65 87.77" target="chr3 52.71 52.86">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr14 87.65 87.77" target="chr14 86.1 87.7">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr14 86.1 87.7" target="chr13 24.0 24.8">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 74.2 74.5" target="chr1 117.6 118.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 23.5 24.6" target="chr10 91.2 91.9">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 16.07 16.38" target="chr7 44.72 44.87">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 16.07 16.38" target="chr21 15.8 16.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr7 44.72 44.87" target="chr7 44.56 44.72">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.1 41.46" target="chr7 44.56 44.72">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr21 41.1 41.46" target="chr21 41.5 42.1">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 41.1 41.46" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 15.8 16.1" target="chr21 41.5 42.1">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr21 41.5 42.1" target="chr21 41.5 41.62">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr22 29.29 29.37" target="chr10 24.55 24.58">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chrX 11.12 11.36" target="chrX 16.7 16.75">
-      <data key="d0">DEL</data>
-    </edge>
-    <edge source="chr12 111.2 111.8" target="chr16 14.0 15.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 111.2 111.8" target="chr12 110.99 111.17">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 14.0 15.1" target="chr16 15.1 18.0">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr16 14.0 15.1" target="chr16 13.76 13.8">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 113.3 114.7" target="chr16 15.1 18.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 124.4 125.1" target="chr16 27.2 28.3">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 110.99 111.17" target="chr22 43.14 43.19">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 13.76 13.8" target="chr22 42.89 42.98">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr4 26.4 27.5" target="chr3 77.4 79.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 108.1 108.6" target="chr7 113.7 116.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 128.1 129.4" target="chr7 138.2 139.2">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 128.1 129.4" target="chr12 129.4 130.4">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 128.1 129.4" target="chr12 130.0 130.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 129.4 130.4" target="chr7 106.5 108.0">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr12 129.4 130.4" target="chr12 130.0 130.5">
-      <data key="d0">equivalent-TAD</data>
-    </edge>
-    <edge source="chr12 106.1 106.3" target="chr12 130.0 130.5">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr13 30.1 30.6" target="chr13 73.7 75.3">
-      <data key="d0">DEL</data>
-    </edge>
-  </graph>
-</graphml>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="annotation" attr.type="string"/>
+<graph edgedefault="undirected"><node id="chr4:179.1Mb-179.6Mb"/>
+<node id="chr3:73.8Mb-75.0Mb"/>
+<node id="chr4:181.68Mb-181.71Mb"/>
+<node id="chr3:76.01Mb-76.13Mb"/>
+<node id="chr6:84.3Mb-84.6Mb"/>
+<node id="chr6:127.7Mb-128.3Mb"/>
+<node id="chr1:75.46Mb-75.56Mb"/>
+<node id="chr1:79.35Mb-79.42Mb"/>
+<node id="chr1:205.0Mb-205.6Mb"/>
+<node id="chr6:109.5Mb-110.5Mb"/>
+<node id="chr2:212.7Mb-215.0Mb"/>
+<node id="chr3:23.7Mb-25.0Mb"/>
+<node id="chr2:226.0Mb-227.3Mb"/>
+<node id="chr6:165.3Mb-166.4Mb"/>
+<node id="chr6:163.1Mb-163.4Mb"/>
+<node id="chr3:25.4Mb-27.3Mb"/>
+<node id="chr4:69.2Mb-69.9Mb"/>
+<node id="chr9:98.0Mb-98.9Mb"/>
+<node id="chr5:59.0Mb-59.2Mb"/>
+<node id="chr5:172.4Mb-173.0Mb"/>
+<node id="chr10:5.97Mb-6.09Mb"/>
+<node id="chr10:96.63Mb-99.3Mb"/>
+<node id="chr20:21.0Mb-23.5Mb"/>
+<node id="chr11:104.0Mb-105.8Mb"/>
+<node id="chr2:198.3Mb-199.8Mb"/>
+<node id="chr11:123.0Mb-123.3Mb"/>
+<node id="chr11:118.5Mb-118.9Mb"/>
+<node id="chr6:160.9Mb-162.9Mb"/>
+<node id="chr13:98.7Mb-99.2Mb"/>
+<node id="chr1:201.1Mb-201.9Mb"/>
+<node id="chr13:99.4Mb-100.6Mb"/>
+<node id="chr1:151.0Mb-151.3Mb"/>
+<node id="chr13:21.4Mb-22.9Mb"/>
+<node id="chr6:168.6Mb-169.6Mb"/>
+<node id="chr13:42.1Mb-42.8Mb"/>
+<node id="chr6:165.6Mb-166.4Mb"/>
+<node id="chr13:20.0Mb-20.4Mb"/>
+<node id="chr13:39.6Mb-40.0Mb"/>
+<node id="chr13:41.7Mb-42.2Mb"/>
+<node id="chr13:88.8Mb-89.2Mb"/>
+<node id="chr13:58.9Mb-59.3Mb"/>
+<node id="chr13:106.8Mb-107.2Mb"/>
+<node id="chr18:76.34Mb-76.46Mb"/>
+<node id="chr20:57.7Mb-58.22Mb"/>
+<node id="chr14:35.44Mb-35.83Mb"/>
+<node id="chr21:41.45Mb-41.62Mb"/>
+<node id="chr21:38.4Mb-38.78Mb"/>
+<node id="chr2:115.4Mb-115.8Mb"/>
+<node id="chr2:127.2Mb-127.5Mb"/>
+<node id="chr2:112.73Mb-112.8Mb"/>
+<node id="chr4:125.47Mb-125.6Mb"/>
+<node id="chr2:114.6Mb-115.18Mb"/>
+<node id="chr4:125.34Mb-125.38Mb"/>
+<node id="chr13:30.67Mb-30.94Mb"/>
+<node id="chr11:32.28Mb-32.31Mb"/>
+<node id="chr14:72.71Mb-72.87Mb"/>
+<node id="chr4:157.73Mb-157.88Mb"/>
+<node id="chr14:73.0Mb-73.12Mb"/>
+<node id="chr4:154.87Mb-154.93Mb"/>
+<node id="chr2:73.65Mb-73.77Mb"/>
+<node id="chr3:28.29Mb-28.34Mb"/>
+<node id="chr3:121.6Mb-121.88Mb"/>
+<node id="chr3:156.14Mb-156.17Mb"/>
+<node id="chr3:123.8Mb-124.6Mb"/>
+<node id="chr3:156.3Mb-157.1Mb"/>
+<node id="chr3:79.63Mb-79.75Mb"/>
+<node id="chr9:92.03Mb-92.08Mb"/>
+<node id="chr5:69.03Mb-69.3Mb"/>
+<node id="chr3:68.97Mb-69.06Mb"/>
+<node id="chr5:73.01Mb-73.5Mb"/>
+<node id="chr3:73.08Mb-73.1Mb"/>
+<node id="chr16:4.45Mb-4.7Mb"/>
+<node id="chr8:41.51Mb-41.55Mb"/>
+<node id="chr16:4.8Mb-5.1Mb"/>
+<node id="chr16:71.1Mb-71.6Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr2:137.2Mb-137.8Mb"/>
+<node id="chr2:142.73Mb-143.1Mb"/>
+<node id="chr2:138.77Mb-138.8Mb"/>
+<node id="chr2:155.2Mb-155.32Mb"/>
+<node id="chr2:153.84Mb-153.9Mb"/>
+<node id="chr3:63.89Mb-64.0Mb"/>
+<node id="chr3:73.86Mb-73.9Mb"/>
+<node id="chr4:95.14Mb-95.46Mb"/>
+<node id="chr4:16.25Mb-17.5Mb"/>
+<node id="chr4:97.7Mb-98.2Mb"/>
+<node id="chr4:115.48Mb-115.66Mb"/>
+<node id="chr4:133.4Mb-135.0Mb"/>
+<node id="chr4:125.2Mb-125.8Mb"/>
+<node id="chr4:118.6Mb-120.1Mb"/>
+<node id="chr5:42.3Mb-42.34Mb"/>
+<node id="chr5:94.6Mb-94.67Mb"/>
+<node id="chr6:76.24Mb-76.3Mb"/>
+<node id="chr6:97.9Mb-97.96Mb"/>
+<node id="chr8:51.83Mb-52.04Mb"/>
+<node id="chr8:64.7Mb-65.65Mb"/>
+<node id="chr8:144.4Mb-145.0Mb"/>
+<node id="chr10:34.65Mb-37.1Mb"/>
+<node id="chr10:54.8Mb-55.3Mb"/>
+<node id="chr10:92.5Mb-93.1Mb"/>
+<node id="chr10:80.12Mb-80.17Mb"/>
+<node id="chr10:110.2Mb-110.3Mb"/>
+<node id="chr10:101.2Mb-101.4Mb"/>
+<node id="chr10:108.5Mb-109.3Mb"/>
+<node id="chr12:50.9Mb-51.4Mb"/>
+<node id="chr12:110.4Mb-110.7Mb"/>
+<node id="chr12:111.17Mb-111.22Mb"/>
+<node id="chr17:16.04Mb-16.21Mb"/>
+<node id="chr17:78.93Mb-79.0Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr4:114.7Mb-115.15Mb"/>
+<node id="chr8:48.3Mb-49.6Mb"/>
+<node id="chr8:58.7Mb-60.2Mb"/>
+<node id="chr16:60.2Mb-62.6Mb"/>
+<node id="chr4:94.2Mb-94.7Mb"/>
+<node id="chr7:12.4Mb-15.3Mb"/>
+<node id="chr4:94.8Mb-95.7Mb"/>
+<node id="chr1:105.9Mb-108.0Mb"/>
+<node id="chr11:64.0Mb-64.2Mb"/>
+<node id="chr1:230.35Mb-230.5Mb"/>
+<node id="chr11:64.26Mb-64.31Mb"/>
+<node id="chr1:230.6Mb-231.3Mb"/>
+<node id="chr17:8.2Mb-8.9Mb"/>
+<node id="chr3:151.0Mb-152.0Mb"/>
+<node id="chr3:12.0Mb-12.3Mb"/>
+<node id="chr3:149.82Mb-149.89Mb"/>
+<node id="chr1:108.4Mb-109.6Mb"/>
+<node id="chr5:69.1Mb-69.5Mb"/>
+<node id="chr8:93.0Mb-93.13Mb"/>
+<node id="chr7:155.4Mb-155.52Mb"/>
+<node id="chr8:129.47Mb-129.62Mb"/>
+<node id="chr7:69.5Mb-70.81Mb"/>
+<node id="chr10:49.41Mb-49.54Mb"/>
+<node id="chr1:234.33Mb-234.42Mb"/>
+<node id="chr1:223.0Mb-223.9Mb"/>
+<node id="chr10:110.8Mb-112.16Mb"/>
+<node id="chr10:68.6Mb-69.0Mb"/>
+<node id="chr10:69.4Mb-69.9Mb"/>
+<node id="chr10:93.4Mb-93.7Mb"/>
+<node id="chr10:79.35Mb-79.4Mb"/>
+<node id="chr12:70.48Mb-70.57Mb"/>
+<node id="chr8:128.1Mb-129.2Mb"/>
+<node id="chr16:13.7Mb-14.4Mb"/>
+<node id="chr16:46.8Mb-47.2Mb"/>
+<node id="chr16:14.6Mb-14.7Mb"/>
+<node id="chr16:59.1Mb-60.5Mb"/>
+<node id="chr16:48.0Mb-48.3Mb"/>
+<node id="chr16:81.2Mb-81.9Mb"/>
+<node id="chr16:48.7Mb-49.7Mb"/>
+<node id="chr16:77.6Mb-78.0Mb"/>
+<node id="chr17:5.3Mb-6.6Mb"/>
+<node id="chr17:47.5Mb-47.9Mb"/>
+<node id="chr17:9.7Mb-10.7Mb"/>
+<node id="chr17:45.6Mb-45.8Mb"/>
+<node id="chr17:11.3Mb-11.8Mb"/>
+<node id="chr17:50.1Mb-50.5Mb"/>
+<node id="chr17:46.3Mb-47.4Mb"/>
+<node id="chr18:55.0Mb-57.6Mb"/>
+<node id="chr17:51.72Mb-51.76Mb"/>
+<node id="chr18:67.2Mb-67.43Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr2:3.7Mb-6.89Mb"/>
+<node id="chr5:54.5Mb-55.8Mb"/>
+<node id="chr8:134.7Mb-137.7Mb"/>
+<node id="chr12:123.7Mb-126.8Mb"/>
+<node id="chr8:60.8Mb-61.1Mb"/>
+<node id="chr8:113.1Mb-113.6Mb"/>
+<node id="chr12:58.2Mb-59.4Mb"/>
+<node id="chr16:23.7Mb-24.3Mb"/>
+<node id="chr15:43.8Mb-44.7Mb"/>
+<node id="chr7:128.3Mb-128.7Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr12:6.68Mb-6.84Mb"/>
+<node id="chr2:11.07Mb-11.5Mb"/>
+<node id="chr17:41.91Mb-42.19Mb"/>
+<node id="chr19:50.77Mb-51.13Mb"/>
+<node id="chr1:57.03Mb-57.08Mb"/>
+<node id="chr1:85.0Mb-85.39Mb"/>
+<node id="chr1:57.63Mb-57.75Mb"/>
+<node id="chr1:154.96Mb-155.07Mb"/>
+<node id="chr1:84.82Mb-84.96Mb"/>
+<node id="chr1:116.55Mb-116.62Mb"/>
+<node id="chr4:71.47Mb-71.61Mb"/>
+<node id="chr3:36.17Mb-36.34Mb"/>
+<node id="chr3:115.5Mb-115.62Mb"/>
+<node id="chr4:69.4Mb-69.9Mb"/>
+<node id="chr4:76.8Mb-79.0Mb"/>
+<node id="chr15:46.8Mb-47.2Mb"/>
+<node id="chr15:70.8Mb-71.0Mb"/>
+<node id="chr15:47.0Mb-48.1Mb"/>
+<node id="chr15:71.5Mb-71.7Mb"/>
+<node id="chr1:58.1Mb-60.1Mb"/>
+<node id="chr1:231.72Mb-232.65Mb"/>
+<node id="chr7:107.43Mb-107.74Mb"/>
+<node id="chr8:56.12Mb-56.26Mb"/>
+<node id="chr8:138.14Mb-138.72Mb"/>
+<node id="chr19:15.76Mb-16.04Mb"/>
+<node id="chr7:140.63Mb-141.04Mb"/>
+<node id="chr1:99.8Mb-101.6Mb"/>
+<node id="chr15:25.1Mb-29.1Mb"/>
+<node id="chr2:46.1Mb-46.9Mb"/>
+<node id="chr2:7.0Mb-8.18Mb"/>
+<node id="chr3:134.55Mb-134.57Mb"/>
+<node id="chr3:41.7Mb-42.0Mb"/>
+<node id="chr3:44.87Mb-44.96Mb"/>
+<node id="chr3:131.42Mb-131.65Mb"/>
+<node id="chr3:61.2Mb-63.6Mb"/>
+<node id="chr3:114.3Mb-114.6Mb"/>
+<node id="chr3:66.12Mb-66.2Mb"/>
+<node id="chr3:108.6Mb-109.4Mb"/>
+<node id="chr3:70.78Mb-70.84Mb"/>
+<node id="chr5:90.9Mb-91.5Mb"/>
+<node id="chr3:94.6Mb-96.8Mb"/>
+<node id="chr5:90.3Mb-90.5Mb"/>
+<node id="chrX:57.97Mb-58.06Mb"/>
+<node id="chr3:177.03Mb-177.4Mb"/>
+<node id="chrX:68.0Mb-68.14Mb"/>
+<node id="chr2:45.61Mb-45.8Mb"/>
+<node id="chr5:177.06Mb-177.12Mb"/>
+<node id="chr6:66.02Mb-66.1Mb"/>
+<node id="chr6:119.9Mb-119.95Mb"/>
+<node id="chr6:92.7Mb-93.3Mb"/>
+<node id="chr6:109.1Mb-109.4Mb"/>
+<node id="chr6:136.23Mb-136.3Mb"/>
+<node id="chr7:105.44Mb-105.52Mb"/>
+<node id="chr8:38.4Mb-38.8Mb"/>
+<node id="chr2:68.4Mb-69.9Mb"/>
+<node id="chr8:18.09Mb-18.15Mb"/>
+<node id="chr8:41.24Mb-41.54Mb"/>
+<node id="chr10:26.32Mb-26.55Mb"/>
+<node id="chr10:68.07Mb-68.1Mb"/>
+<node id="chr10:28.6Mb-28.67Mb"/>
+<node id="chr10:90.95Mb-91.1Mb"/>
+<node id="chr10:68.74Mb-68.9Mb"/>
+<node id="chr10:89.22Mb-89.26Mb"/>
+<node id="chr10:83.8Mb-84.1Mb"/>
+<node id="chr10:91.9Mb-92.5Mb"/>
+<node id="chr12:10.21Mb-10.36Mb"/>
+<node id="chr4:39.15Mb-39.46Mb"/>
+<node id="chr12:27.31Mb-27.74Mb"/>
+<node id="chr4:38.05Mb-38.18Mb"/>
+<node id="chr6:12.3Mb-13.6Mb"/>
+<node id="chr12:68.8Mb-69.87Mb"/>
+<node id="chr12:59.19Mb-59.42Mb"/>
+<node id="chr10:86.31Mb-86.37Mb"/>
+<node id="chr10:84.56Mb-84.6Mb"/>
+<node id="chr12:60.54Mb-62.7Mb"/>
+<node id="chr12:61.93Mb-62.22Mb"/>
+<node id="chr10:87.8Mb-88.0Mb"/>
+<node id="chr12:105.57Mb-106.25Mb"/>
+<node id="chr10:88.78Mb-88.83Mb"/>
+<node id="chr12:58.64Mb-58.78Mb"/>
+<node id="chr12:104.03Mb-104.06Mb"/>
+<node id="chr12:105.41Mb-105.49Mb"/>
+<node id="chr12:121.81Mb-122.02Mb"/>
+<node id="chr14:106.47Mb-106.54Mb"/>
+<node id="chr21:31.62Mb-31.66Mb"/>
+<node id="chrX:53.0Mb-53.9Mb"/>
+<node id="chr12:44.9Mb-49.3Mb"/>
+<node id="chr14:21.52Mb-21.7Mb"/>
+<node id="chr1:91.81Mb-92.02Mb"/>
+<node id="chr14:54.3Mb-54.45Mb"/>
+<node id="chr1:91.47Mb-91.56Mb"/>
+<node id="chr10:103.21Mb-103.37Mb"/>
+<node id="chr14:99.88Mb-100.2Mb"/>
+<node id="chr14:103.31Mb-103.44Mb"/>
+<node id="chr10:100.29Mb-100.51Mb"/>
+<node id="chr14:103.52Mb-103.67Mb"/>
+<node id="chr10:102.5Mb-102.66Mb"/>
+<node id="chr14:22.45Mb-22.53Mb"/>
+<node id="chr14:31.36Mb-31.48Mb"/>
+<node id="chr14:23.47Mb-23.5Mb"/>
+<node id="chr14:30.58Mb-30.73Mb"/>
+<node id="chr14:24.03Mb-24.17Mb"/>
+<node id="chr14:102.3Mb-102.36Mb"/>
+<node id="chr17:22.7Mb-28.3Mb"/>
+<node id="chr10:85.0Mb-86.0Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chrX:67.67Mb-67.83Mb"/>
+<node id="chrX:144.62Mb-144.74Mb"/>
+<node id="chr3:44.35Mb-44.51Mb"/>
+<node id="chr2:97.7Mb-98.6Mb"/>
+<node id="chr3:73.6Mb-75.8Mb"/>
+<node id="chr3:130.0Mb-131.1Mb"/>
+<node id="chr3:156.7Mb-157.2Mb"/>
+<node id="chr3:146.7Mb-149.3Mb"/>
+<node id="chr12:103.6Mb-104.1Mb"/>
+<node id="chr21:32.26Mb-33.2Mb"/>
+<node id="chr14:88.48Mb-90.0Mb"/>
+<node id="chr14:56.0Mb-57.4Mb"/>
+<node id="chr1:47.93Mb-48.2Mb"/>
+<node id="chr14:101.66Mb-101.8Mb"/>
+<node id="chr10:106.5Mb-107.2Mb"/>
+<node id="chr2:98.9Mb-100.5Mb"/>
+<node id="chr3:73.5Mb-75.3Mb"/>
+<node id="chrX:93.0Mb-94.4Mb"/>
+<node id="chr4:95.1Mb-98.1Mb"/>
+<node id="chr3:121.2Mb-121.5Mb"/>
+<node id="chr10:60.7Mb-62.1Mb"/>
+<node id="chr4:172.9Mb-173.6Mb"/>
+<node id="chr5:34.2Mb-35.2Mb"/>
+<node id="chr10:92.3Mb-92.8Mb"/>
+<node id="chr5:56.3Mb-58.5Mb"/>
+<node id="chr22:40.8Mb-41.4Mb"/>
+<node id="chr5:74.6Mb-75.5Mb"/>
+<node id="chr22:29.29Mb-30.6Mb"/>
+<node id="chr6:148.7Mb-149.5Mb"/>
+<node id="chr3:128.0Mb-128.5Mb"/>
+<node id="chr8:16.7Mb-17.4Mb"/>
+<node id="chr10:89.0Mb-89.6Mb"/>
+<node id="chr8:22.0Mb-22.4Mb"/>
+<node id="chr10:89.5Mb-91.0Mb"/>
+<node id="chr8:73.7Mb-74.9Mb"/>
+<node id="chrX:13.8Mb-15.4Mb"/>
+<node id="chr8:77.0Mb-78.4Mb"/>
+<node id="chrX:15.2Mb-16.75Mb"/>
+<node id="chr9:33.0Mb-39.0Mb"/>
+<node id="chr3:50.0Mb-53.0Mb"/>
+<node id="chr10:81.1Mb-81.4Mb"/>
+<node id="chr10:87.9Mb-88.4Mb"/>
+<node id="chr12:118.33Mb-118.36Mb"/>
+<node id="chr21:41.1Mb-42.1Mb"/>
+<node id="chr12:125.0Mb-133.0Mb"/>
+<node id="chr21:10.0Mb-28.0Mb"/>
+<node id="chr13:29.47Mb-29.52Mb"/>
+<node id="chr13:21.56Mb-21.59Mb"/>
+<node id="chr13:94.0Mb-101.0Mb"/>
+<node id="chrY:19.0Mb-21.0Mb"/>
+<node id="chr13:24.0Mb-24.8Mb"/>
+<node id="chr14:86.1Mb-87.77Mb"/>
+<node id="chr16:74.2Mb-74.5Mb"/>
+<node id="chr1:117.6Mb-118.9Mb"/>
+<node id="chr16:23.5Mb-24.6Mb"/>
+<node id="chr10:91.2Mb-91.9Mb"/>
+<node id="chr10:24.55Mb-24.58Mb"/>
+<node id="chrX:11.12Mb-11.36Mb"/>
+<node id="chr21:15.8Mb-16.38Mb"/>
+<node id="chr7:44.56Mb-44.87Mb"/>
+<node id="chr16:14.0Mb-15.1Mb"/>
+<node id="chr12:110.99Mb-111.8Mb"/>
+<node id="chr12:113.3Mb-114.7Mb"/>
+<node id="chr16:15.1Mb-18.0Mb"/>
+<node id="chr12:124.4Mb-125.1Mb"/>
+<node id="chr16:27.2Mb-28.3Mb"/>
+<node id="chr22:43.14Mb-43.19Mb"/>
+<node id="chr16:13.76Mb-13.8Mb"/>
+<node id="chr22:42.89Mb-42.98Mb"/>
+<node id="chr4:26.4Mb-27.5Mb"/>
+<node id="chr3:77.4Mb-79.1Mb"/>
+<node id="chr12:108.1Mb-108.6Mb"/>
+<node id="chr7:113.7Mb-116.1Mb"/>
+<node id="chr7:138.2Mb-139.2Mb"/>
+<node id="chr12:128.1Mb-130.4Mb"/>
+<node id="chr7:106.5Mb-108.0Mb"/>
+<node id="chr12:106.1Mb-106.3Mb"/>
+<node id="chr12:130.0Mb-130.5Mb"/>
+<node id="chr13:30.1Mb-30.6Mb"/>
+<node id="chr13:73.7Mb-75.3Mb"/>
+<edge source="chr4:179.1Mb-179.6Mb" target="chr3:73.8Mb-75.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.08Mb-73.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.86Mb-73.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.5Mb-75.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:181.68Mb-181.71Mb" target="chr3:76.01Mb-76.13Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:76.01Mb-76.13Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr6:84.3Mb-84.6Mb" target="chr6:127.7Mb-128.3Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr1:75.46Mb-75.56Mb" target="chr1:79.35Mb-79.42Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr1:205.0Mb-205.6Mb" target="chr6:109.5Mb-110.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:109.5Mb-110.5Mb" target="chr6:109.1Mb-109.4Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:212.7Mb-215.0Mb" target="chr3:23.7Mb-25.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:23.7Mb-25.0Mb" target="chr3:25.4Mb-27.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:226.0Mb-227.3Mb" target="chr6:165.3Mb-166.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:165.3Mb-166.4Mb" target="chr6:165.6Mb-166.4Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr6:163.1Mb-163.4Mb" target="chr3:25.4Mb-27.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:163.1Mb-163.4Mb" target="chr6:160.9Mb-162.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:25.4Mb-27.3Mb" target="chr11:123.0Mb-123.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:69.2Mb-69.9Mb" target="chr9:98.0Mb-98.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:69.2Mb-69.9Mb" target="chr4:69.4Mb-69.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr5:59.0Mb-59.2Mb" target="chr5:172.4Mb-173.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr5:59.0Mb-59.2Mb" target="chr5:56.3Mb-58.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:5.97Mb-6.09Mb" target="chr10:96.63Mb-99.3Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr10:96.63Mb-99.3Mb" target="chr20:21.0Mb-23.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:104.0Mb-105.8Mb" target="chr2:198.3Mb-199.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:118.5Mb-118.9Mb" target="chr6:160.9Mb-162.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:98.7Mb-99.2Mb" target="chr1:201.1Mb-201.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:98.7Mb-99.2Mb" target="chr13:99.4Mb-100.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:98.7Mb-99.2Mb" target="chr13:94.0Mb-101.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:99.4Mb-100.6Mb" target="chr1:151.0Mb-151.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:99.4Mb-100.6Mb" target="chr13:94.0Mb-101.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:21.4Mb-22.9Mb" target="chr6:168.6Mb-169.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:21.4Mb-22.9Mb" target="chr13:21.56Mb-21.59Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:42.1Mb-42.8Mb" target="chr6:165.6Mb-166.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:42.1Mb-42.8Mb" target="chr13:41.7Mb-42.2Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:20.0Mb-20.4Mb" target="chr13:39.6Mb-40.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:41.7Mb-42.2Mb" target="chr13:88.8Mb-89.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:58.9Mb-59.3Mb" target="chr13:106.8Mb-107.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr18:76.34Mb-76.46Mb" target="chr20:57.7Mb-58.22Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:35.44Mb-35.83Mb" target="chr21:41.45Mb-41.62Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:35.44Mb-35.83Mb" target="chr21:38.4Mb-38.78Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:38.4Mb-38.78Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:115.4Mb-115.8Mb" target="chr2:127.2Mb-127.5Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr2:115.4Mb-115.8Mb" target="chr2:114.6Mb-115.18Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:112.73Mb-112.8Mb" target="chr4:125.47Mb-125.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:125.47Mb-125.6Mb" target="chr4:125.34Mb-125.38Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:125.47Mb-125.6Mb" target="chr4:125.2Mb-125.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:114.6Mb-115.18Mb" target="chr4:125.34Mb-125.38Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:125.34Mb-125.38Mb" target="chr4:125.2Mb-125.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:30.67Mb-30.94Mb" target="chr11:32.28Mb-32.31Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:30.67Mb-30.94Mb" target="chr13:30.1Mb-30.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr14:72.71Mb-72.87Mb" target="chr4:157.73Mb-157.88Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:72.71Mb-72.87Mb" target="chr14:73.0Mb-73.12Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr14:73.0Mb-73.12Mb" target="chr4:154.87Mb-154.93Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:73.65Mb-73.77Mb" target="chr3:28.29Mb-28.34Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:121.6Mb-121.88Mb" target="chr3:156.14Mb-156.17Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:121.6Mb-121.88Mb" target="chr3:121.2Mb-121.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:156.14Mb-156.17Mb" target="chr3:156.3Mb-157.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:123.8Mb-124.6Mb" target="chr3:156.3Mb-157.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:156.3Mb-157.1Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:79.63Mb-79.75Mb" target="chr9:92.03Mb-92.08Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.03Mb-69.3Mb" target="chr3:68.97Mb-69.06Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.03Mb-69.3Mb" target="chr5:69.1Mb-69.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr5:73.01Mb-73.5Mb" target="chr3:73.08Mb-73.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:73.01Mb-73.5Mb" target="chr5:74.6Mb-75.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:73.08Mb-73.1Mb" target="chr3:73.5Mb-75.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:4.45Mb-4.7Mb" target="chr8:41.51Mb-41.55Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:4.45Mb-4.7Mb" target="chr16:4.8Mb-5.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:41.51Mb-41.55Mb" target="chr8:41.24Mb-41.54Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:4.8Mb-5.1Mb" target="chr16:71.1Mb-71.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:137.2Mb-137.8Mb" target="chr2:142.73Mb-143.1Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:142.73Mb-143.1Mb" target="chr2:153.84Mb-153.9Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:138.77Mb-138.8Mb" target="chr2:155.2Mb-155.32Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr3:63.89Mb-64.0Mb" target="chr3:73.86Mb-73.9Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr3:63.89Mb-64.0Mb" target="chr3:61.2Mb-63.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:73.86Mb-73.9Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:73.86Mb-73.9Mb" target="chr3:73.5Mb-75.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:95.14Mb-95.46Mb" target="chr4:16.25Mb-17.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:95.14Mb-95.46Mb" target="chr4:97.7Mb-98.2Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:95.14Mb-95.46Mb" target="chr4:94.2Mb-94.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:95.14Mb-95.46Mb" target="chr4:94.8Mb-95.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:95.14Mb-95.46Mb" target="chr4:95.1Mb-98.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:16.25Mb-17.5Mb" target="chr4:97.7Mb-98.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:97.7Mb-98.2Mb" target="chr4:94.8Mb-95.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:97.7Mb-98.2Mb" target="chr4:95.1Mb-98.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:115.48Mb-115.66Mb" target="chr4:133.4Mb-135.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:115.48Mb-115.66Mb" target="chr4:114.7Mb-115.15Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:133.4Mb-135.0Mb" target="chr4:114.7Mb-115.15Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:133.4Mb-135.0Mb" target="chr4:118.6Mb-120.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:125.2Mb-125.8Mb" target="chr4:118.6Mb-120.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:118.6Mb-120.1Mb" target="chr4:114.7Mb-115.15Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr5:42.3Mb-42.34Mb" target="chr5:94.6Mb-94.67Mb">
+  <data key="d0">INV</data>
+</edge>
+<edge source="chr6:76.24Mb-76.3Mb" target="chr6:97.9Mb-97.96Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr8:51.83Mb-52.04Mb" target="chr8:64.7Mb-65.65Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:64.7Mb-65.65Mb" target="chr8:48.3Mb-49.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:64.7Mb-65.65Mb" target="chr16:60.2Mb-62.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:144.4Mb-145.0Mb" target="chr10:34.65Mb-37.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:34.65Mb-37.1Mb" target="chr17:78.93Mb-79.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:54.8Mb-55.3Mb" target="chr10:92.5Mb-93.1Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:92.5Mb-93.1Mb" target="chr10:93.4Mb-93.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:92.5Mb-93.1Mb" target="chr10:91.9Mb-92.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:92.5Mb-93.1Mb" target="chr10:92.3Mb-92.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:80.12Mb-80.17Mb" target="chr10:110.2Mb-110.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:101.2Mb-101.4Mb" target="chr10:108.5Mb-109.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:108.5Mb-109.3Mb" target="chr10:106.5Mb-107.2Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:50.9Mb-51.4Mb" target="chr12:110.4Mb-110.7Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr12:110.4Mb-110.7Mb" target="chr12:111.17Mb-111.22Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:110.4Mb-110.7Mb" target="chr12:110.99Mb-111.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:111.17Mb-111.22Mb" target="chr17:16.04Mb-16.21Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:111.17Mb-111.22Mb" target="chr12:110.99Mb-111.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:48.3Mb-49.6Mb" target="chr8:58.7Mb-60.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:48.3Mb-49.6Mb" target="chr16:60.2Mb-62.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:58.7Mb-60.2Mb" target="chr16:60.2Mb-62.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:60.2Mb-62.6Mb" target="chr16:59.1Mb-60.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:94.2Mb-94.7Mb" target="chr7:12.4Mb-15.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:94.2Mb-94.7Mb" target="chr4:94.8Mb-95.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:94.2Mb-94.7Mb" target="chr4:95.1Mb-98.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr7:12.4Mb-15.3Mb" target="chr4:94.8Mb-95.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:94.8Mb-95.7Mb" target="chr4:95.1Mb-98.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr1:105.9Mb-108.0Mb" target="chr11:64.0Mb-64.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:105.9Mb-108.0Mb" target="chr1:108.4Mb-109.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr11:64.0Mb-64.2Mb" target="chr11:64.26Mb-64.31Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr1:230.35Mb-230.5Mb" target="chr11:64.26Mb-64.31Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:230.35Mb-230.5Mb" target="chr1:230.6Mb-231.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr1:230.6Mb-231.3Mb" target="chr17:8.2Mb-8.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:151.0Mb-152.0Mb" target="chr3:12.0Mb-12.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:12.0Mb-12.3Mb" target="chr3:149.82Mb-149.89Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:108.4Mb-109.6Mb" target="chr5:69.1Mb-69.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.1Mb-69.5Mb" target="chr5:54.5Mb-55.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:93.0Mb-93.13Mb" target="chr7:155.4Mb-155.52Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:129.47Mb-129.62Mb" target="chr7:69.5Mb-70.81Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:129.47Mb-129.62Mb" target="chr8:128.1Mb-129.2Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr7:69.5Mb-70.81Mb" target="chr8:134.7Mb-137.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:49.41Mb-49.54Mb" target="chr1:234.33Mb-234.42Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:223.0Mb-223.9Mb" target="chr10:110.8Mb-112.16Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:110.8Mb-112.16Mb" target="chr10:68.6Mb-69.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:110.8Mb-112.16Mb" target="chr10:79.35Mb-79.4Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:68.6Mb-69.0Mb" target="chr10:69.4Mb-69.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:68.6Mb-69.0Mb" target="chr10:68.07Mb-68.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:68.6Mb-69.0Mb" target="chr10:68.74Mb-68.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:69.4Mb-69.9Mb" target="chr10:93.4Mb-93.7Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:70.48Mb-70.57Mb" target="chr8:128.1Mb-129.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:128.1Mb-129.2Mb" target="chr12:123.7Mb-126.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:46.8Mb-47.2Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:14.6Mb-14.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:14.0Mb-15.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:15.1Mb-18.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:13.76Mb-13.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:46.8Mb-47.2Mb" target="chr16:48.0Mb-48.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:14.6Mb-14.7Mb" target="chr16:59.1Mb-60.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:14.6Mb-14.7Mb" target="chr16:14.0Mb-15.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:14.6Mb-14.7Mb" target="chr16:15.1Mb-18.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:48.0Mb-48.3Mb" target="chr16:81.2Mb-81.9Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:48.0Mb-48.3Mb" target="chr16:48.7Mb-49.7Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:48.7Mb-49.7Mb" target="chr16:77.6Mb-78.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:5.3Mb-6.6Mb" target="chr17:47.5Mb-47.9Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:47.5Mb-47.9Mb" target="chr17:46.3Mb-47.4Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr17:9.7Mb-10.7Mb" target="chr17:45.6Mb-45.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:11.3Mb-11.8Mb" target="chr17:50.1Mb-50.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:50.1Mb-50.5Mb" target="chr2:3.7Mb-6.89Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:46.3Mb-47.4Mb" target="chr18:55.0Mb-57.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:51.72Mb-51.76Mb" target="chr18:67.2Mb-67.43Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:3.7Mb-6.89Mb" target="chr5:54.5Mb-55.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:3.7Mb-6.89Mb" target="chr2:7.0Mb-8.18Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:134.7Mb-137.7Mb" target="chr12:123.7Mb-126.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:134.7Mb-137.7Mb" target="chr8:138.14Mb-138.72Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:123.7Mb-126.8Mb" target="chr12:125.0Mb-133.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:123.7Mb-126.8Mb" target="chr12:124.4Mb-125.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:60.8Mb-61.1Mb" target="chr8:113.1Mb-113.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:58.2Mb-59.4Mb" target="chr16:23.7Mb-24.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:58.2Mb-59.4Mb" target="chr12:59.19Mb-59.42Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:58.2Mb-59.4Mb" target="chr12:58.64Mb-58.78Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:23.7Mb-24.3Mb" target="chr16:23.5Mb-24.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr15:43.8Mb-44.7Mb" target="chr7:128.3Mb-128.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:6.68Mb-6.84Mb" target="chr2:11.07Mb-11.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:41.91Mb-42.19Mb" target="chr19:50.77Mb-51.13Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:57.03Mb-57.08Mb" target="chr1:85.0Mb-85.39Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:57.03Mb-57.08Mb" target="chr1:57.63Mb-57.75Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr1:85.0Mb-85.39Mb" target="chr1:58.1Mb-60.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:85.0Mb-85.39Mb" target="chr1:84.82Mb-84.96Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr1:57.63Mb-57.75Mb" target="chr1:154.96Mb-155.07Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:57.63Mb-57.75Mb" target="chr1:58.1Mb-60.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr1:154.96Mb-155.07Mb" target="chr4:71.47Mb-71.61Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:84.82Mb-84.96Mb" target="chr1:116.55Mb-116.62Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:36.17Mb-36.34Mb" target="chr3:115.5Mb-115.62Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr3:115.5Mb-115.62Mb" target="chr3:114.3Mb-114.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr4:69.4Mb-69.9Mb" target="chr4:76.8Mb-79.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:76.8Mb-79.0Mb" target="chr1:58.1Mb-60.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr15:46.8Mb-47.2Mb" target="chr15:70.8Mb-71.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr15:46.8Mb-47.2Mb" target="chr15:47.0Mb-48.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr15:47.0Mb-48.1Mb" target="chr15:71.5Mb-71.7Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:231.72Mb-232.65Mb" target="chr7:107.43Mb-107.74Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr7:107.43Mb-107.74Mb" target="chr7:106.5Mb-108.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:56.12Mb-56.26Mb" target="chr8:138.14Mb-138.72Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr19:15.76Mb-16.04Mb" target="chr7:140.63Mb-141.04Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:99.8Mb-101.6Mb" target="chr15:25.1Mb-29.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:46.1Mb-46.9Mb" target="chr2:7.0Mb-8.18Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:46.1Mb-46.9Mb" target="chr2:45.61Mb-45.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:7.0Mb-8.18Mb" target="chr5:177.06Mb-177.12Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:134.55Mb-134.57Mb" target="chr3:41.7Mb-42.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:41.7Mb-42.0Mb" target="chr3:130.0Mb-131.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:41.7Mb-42.0Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:44.87Mb-44.96Mb" target="chr3:131.42Mb-131.65Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:44.87Mb-44.96Mb" target="chr3:44.35Mb-44.51Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:131.42Mb-131.65Mb" target="chr3:70.78Mb-70.84Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:131.42Mb-131.65Mb" target="chr3:130.0Mb-131.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:61.2Mb-63.6Mb" target="chr3:114.3Mb-114.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:66.12Mb-66.2Mb" target="chr3:108.6Mb-109.4Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:108.6Mb-109.4Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:108.6Mb-109.4Mb" target="chr3:146.7Mb-149.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr5:90.9Mb-91.5Mb" target="chr3:94.6Mb-96.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:94.6Mb-96.8Mb" target="chr5:90.3Mb-90.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chrX:57.97Mb-58.06Mb" target="chr3:177.03Mb-177.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:177.03Mb-177.4Mb" target="chrX:68.0Mb-68.14Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chrX:68.0Mb-68.14Mb" target="chrX:67.67Mb-67.83Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr2:45.61Mb-45.8Mb" target="chr5:177.06Mb-177.12Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:66.02Mb-66.1Mb" target="chr6:119.9Mb-119.95Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr6:92.7Mb-93.3Mb" target="chr6:109.1Mb-109.4Mb">
+  <data key="d0">INV</data>
+</edge>
+<edge source="chr6:136.23Mb-136.3Mb" target="chr7:105.44Mb-105.52Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:38.4Mb-38.8Mb" target="chr2:68.4Mb-69.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:18.09Mb-18.15Mb" target="chr8:41.24Mb-41.54Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:26.32Mb-26.55Mb" target="chr10:68.07Mb-68.1Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr10:28.6Mb-28.67Mb" target="chr10:90.95Mb-91.1Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:90.95Mb-91.1Mb" target="chr10:89.5Mb-91.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:90.95Mb-91.1Mb" target="chr10:91.2Mb-91.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:68.74Mb-68.9Mb" target="chr10:89.22Mb-89.26Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr10:89.22Mb-89.26Mb" target="chr10:89.0Mb-89.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:89.22Mb-89.26Mb" target="chr10:89.5Mb-91.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:83.8Mb-84.1Mb" target="chr10:91.9Mb-92.5Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:91.9Mb-92.5Mb" target="chr10:92.3Mb-92.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:91.9Mb-92.5Mb" target="chr10:91.2Mb-91.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:10.21Mb-10.36Mb" target="chr4:39.15Mb-39.46Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:27.31Mb-27.74Mb" target="chr4:38.05Mb-38.18Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:12.3Mb-13.6Mb" target="chr12:68.8Mb-69.87Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:68.8Mb-69.87Mb" target="chr14:106.47Mb-106.54Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:59.19Mb-59.42Mb" target="chr10:86.31Mb-86.37Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:86.31Mb-86.37Mb" target="chr10:85.0Mb-86.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:84.56Mb-84.6Mb" target="chr12:60.54Mb-62.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:84.56Mb-84.6Mb" target="chr10:85.0Mb-86.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:60.54Mb-62.7Mb" target="chr12:103.6Mb-104.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:60.54Mb-62.7Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:60.54Mb-62.7Mb" target="chr12:61.93Mb-62.22Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:61.93Mb-62.22Mb" target="chr10:87.8Mb-88.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:87.8Mb-88.0Mb" target="chr12:103.6Mb-104.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:87.8Mb-88.0Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:87.8Mb-88.0Mb" target="chr10:88.78Mb-88.83Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:87.8Mb-88.0Mb" target="chr10:87.9Mb-88.4Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:105.57Mb-106.25Mb" target="chr10:88.78Mb-88.83Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:105.57Mb-106.25Mb" target="chr12:105.41Mb-105.49Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:105.57Mb-106.25Mb" target="chr12:106.1Mb-106.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr10:88.78Mb-88.83Mb" target="chr10:89.0Mb-89.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:58.64Mb-58.78Mb" target="chr12:104.03Mb-104.06Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:104.03Mb-104.06Mb" target="chr12:103.6Mb-104.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:105.41Mb-105.49Mb" target="chr12:121.81Mb-122.02Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:105.41Mb-105.49Mb" target="chr12:106.1Mb-106.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:121.81Mb-122.02Mb" target="chr21:31.62Mb-31.66Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:31.62Mb-31.66Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chrX:53.0Mb-53.9Mb" target="chr12:44.9Mb-49.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:44.9Mb-49.3Mb" target="chr14:88.48Mb-90.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:21.52Mb-21.7Mb" target="chr1:91.81Mb-92.02Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:91.81Mb-92.02Mb" target="chr1:91.47Mb-91.56Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr14:54.3Mb-54.45Mb" target="chr1:91.47Mb-91.56Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:103.21Mb-103.37Mb" target="chr14:99.88Mb-100.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:99.88Mb-100.2Mb" target="chr1:47.93Mb-48.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:103.31Mb-103.44Mb" target="chr10:100.29Mb-100.51Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:103.31Mb-103.44Mb" target="chr14:103.52Mb-103.67Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr14:103.52Mb-103.67Mb" target="chr10:102.5Mb-102.66Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:22.45Mb-22.53Mb" target="chr14:31.36Mb-31.48Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr14:31.36Mb-31.48Mb" target="chr14:30.58Mb-30.73Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr14:23.47Mb-23.5Mb" target="chr14:30.58Mb-30.73Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr14:24.03Mb-24.17Mb" target="chr14:102.3Mb-102.36Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr14:102.3Mb-102.36Mb" target="chr14:101.66Mb-101.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr17:22.7Mb-28.3Mb" target="chr10:85.0Mb-86.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chrX:67.67Mb-67.83Mb" target="chrX:144.62Mb-144.74Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chrX:144.62Mb-144.74Mb" target="chr14:88.48Mb-90.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:44.35Mb-44.51Mb" target="chr2:97.7Mb-98.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:44.35Mb-44.51Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr2:97.7Mb-98.6Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:73.6Mb-75.8Mb" target="chr3:73.5Mb-75.3Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr3:130.0Mb-131.1Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:156.7Mb-157.2Mb" target="chr3:146.7Mb-149.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:103.6Mb-104.1Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:56.0Mb-57.4Mb" target="chr1:47.93Mb-48.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:56.0Mb-57.4Mb" target="chr14:101.66Mb-101.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:106.5Mb-107.2Mb" target="chr2:98.9Mb-100.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:98.9Mb-100.5Mb" target="chr4:172.9Mb-173.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:73.5Mb-75.3Mb" target="chrX:93.0Mb-94.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:95.1Mb-98.1Mb" target="chr3:121.2Mb-121.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:60.7Mb-62.1Mb" target="chr4:172.9Mb-173.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:34.2Mb-35.2Mb" target="chr10:92.3Mb-92.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:92.3Mb-92.8Mb" target="chr10:91.2Mb-91.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr5:56.3Mb-58.5Mb" target="chr22:40.8Mb-41.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:74.6Mb-75.5Mb" target="chr22:29.29Mb-30.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr22:29.29Mb-30.6Mb" target="chr10:24.55Mb-24.58Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:148.7Mb-149.5Mb" target="chr3:128.0Mb-128.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:16.7Mb-17.4Mb" target="chr10:89.0Mb-89.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:89.0Mb-89.6Mb" target="chr10:89.5Mb-91.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:22.0Mb-22.4Mb" target="chr10:89.5Mb-91.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:89.5Mb-91.0Mb" target="chr10:91.2Mb-91.9Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:73.7Mb-74.9Mb" target="chrX:13.8Mb-15.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chrX:13.8Mb-15.4Mb" target="chrX:15.2Mb-16.75Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr8:77.0Mb-78.4Mb" target="chrX:15.2Mb-16.75Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chrX:15.2Mb-16.75Mb" target="chrX:11.12Mb-11.36Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr9:33.0Mb-39.0Mb" target="chr3:50.0Mb-53.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:50.0Mb-53.0Mb" target="chr13:29.47Mb-29.52Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:50.0Mb-53.0Mb" target="chr14:86.1Mb-87.77Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:81.1Mb-81.4Mb" target="chr10:87.9Mb-88.4Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr12:118.33Mb-118.36Mb" target="chr21:41.1Mb-42.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:41.1Mb-42.1Mb" target="chr21:15.8Mb-16.38Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr21:41.1Mb-42.1Mb" target="chr7:44.56Mb-44.87Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:125.0Mb-133.0Mb" target="chr21:10.0Mb-28.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:125.0Mb-133.0Mb" target="chr12:124.4Mb-125.1Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:125.0Mb-133.0Mb" target="chr12:128.1Mb-130.4Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:125.0Mb-133.0Mb" target="chr12:130.0Mb-130.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr21:10.0Mb-28.0Mb" target="chr21:15.8Mb-16.38Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:29.47Mb-29.52Mb" target="chr13:30.1Mb-30.6Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr13:21.56Mb-21.59Mb" target="chr13:94.0Mb-101.0Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr13:94.0Mb-101.0Mb" target="chrY:19.0Mb-21.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:24.0Mb-24.8Mb" target="chr14:86.1Mb-87.77Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:74.2Mb-74.5Mb" target="chr1:117.6Mb-118.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:23.5Mb-24.6Mb" target="chr10:91.2Mb-91.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:15.8Mb-16.38Mb" target="chr7:44.56Mb-44.87Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:14.0Mb-15.1Mb" target="chr12:110.99Mb-111.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:14.0Mb-15.1Mb" target="chr16:15.1Mb-18.0Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr16:14.0Mb-15.1Mb" target="chr16:13.76Mb-13.8Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:110.99Mb-111.8Mb" target="chr22:43.14Mb-43.19Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:113.3Mb-114.7Mb" target="chr16:15.1Mb-18.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:124.4Mb-125.1Mb" target="chr16:27.2Mb-28.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:13.76Mb-13.8Mb" target="chr22:42.89Mb-42.98Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:26.4Mb-27.5Mb" target="chr3:77.4Mb-79.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:108.1Mb-108.6Mb" target="chr7:113.7Mb-116.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr7:138.2Mb-139.2Mb" target="chr12:128.1Mb-130.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:128.1Mb-130.4Mb" target="chr7:106.5Mb-108.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:128.1Mb-130.4Mb" target="chr12:130.0Mb-130.5Mb">
+  <data key="d0">equivalent-TAD</data>
+</edge>
+<edge source="chr12:106.1Mb-106.3Mb" target="chr12:130.0Mb-130.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:30.1Mb-30.6Mb" target="chr13:73.7Mb-75.3Mb">
+  <data key="d0">DEL</data>
+</edge>
+</graph></graphml>

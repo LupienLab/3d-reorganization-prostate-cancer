@@ -1,57 +1,48 @@
 <?xml version='1.0' encoding='utf-8'?>
-<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key attr.name="annotation" attr.type="string" for="edge" id="d0" />
-  <graph edgedefault="undirected">
-    <node id="chr2 73.65 73.77" />
-    <node id="chr3 28.29 28.34" />
-    <node id="chr3 121.6 121.88" />
-    <node id="chr3 156.14 156.17" />
-    <node id="chr3 123.8 124.6" />
-    <node id="chr3 156.3 157.1" />
-    <node id="chr3 79.63 79.75" />
-    <node id="chr9 92.03 92.08" />
-    <node id="chr5 69.03 69.3" />
-    <node id="chr3 68.97 69.06" />
-    <node id="chr5 73.01 73.5" />
-    <node id="chr3 73.08 73.1" />
-    <node id="chr16 4.45 4.7" />
-    <node id="chr8 41.51 41.55" />
-    <node id="chr16 4.8 5.1" />
-    <node id="chr16 71.1 71.6" />
-    <node id="chr21 38.4 38.5" />
-    <node id="chr21 41.5 41.62" />
-    <edge source="chr2 73.65 73.77" target="chr3 28.29 28.34">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr3 121.6 121.88" target="chr3 156.14 156.17">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 156.14 156.17" target="chr3 156.3 157.1">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr3 123.8 124.6" target="chr3 156.3 157.1">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr3 79.63 79.75" target="chr9 92.03 92.08">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 69.03 69.3" target="chr3 68.97 69.06">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr5 73.01 73.5" target="chr3 73.08 73.1">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 4.45 4.7" target="chr8 41.51 41.55">
-      <data key="d0">BND</data>
-    </edge>
-    <edge source="chr16 4.45 4.7" target="chr16 4.8 5.1">
-      <data key="d0">nearby</data>
-    </edge>
-    <edge source="chr16 4.8 5.1" target="chr16 71.1 71.6">
-      <data key="d0">UNKNOWN</data>
-    </edge>
-    <edge source="chr21 38.4 38.5" target="chr21 41.5 41.62">
-      <data key="d0">DEL</data>
-    </edge>
-  </graph>
-</graphml>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="annotation" attr.type="string"/>
+<graph edgedefault="undirected"><node id="chr2:73.65Mb-73.77Mb"/>
+<node id="chr3:28.29Mb-28.34Mb"/>
+<node id="chr3:121.6Mb-121.88Mb"/>
+<node id="chr3:156.14Mb-156.17Mb"/>
+<node id="chr3:123.8Mb-124.6Mb"/>
+<node id="chr3:156.3Mb-157.1Mb"/>
+<node id="chr3:79.63Mb-79.75Mb"/>
+<node id="chr9:92.03Mb-92.08Mb"/>
+<node id="chr5:69.03Mb-69.3Mb"/>
+<node id="chr3:68.97Mb-69.06Mb"/>
+<node id="chr5:73.01Mb-73.5Mb"/>
+<node id="chr3:73.08Mb-73.1Mb"/>
+<node id="chr16:4.45Mb-4.7Mb"/>
+<node id="chr8:41.51Mb-41.55Mb"/>
+<node id="chr16:4.8Mb-5.1Mb"/>
+<node id="chr16:71.1Mb-71.6Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<edge source="chr2:73.65Mb-73.77Mb" target="chr3:28.29Mb-28.34Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:121.6Mb-121.88Mb" target="chr3:156.14Mb-156.17Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:123.8Mb-124.6Mb" target="chr3:156.3Mb-157.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:79.63Mb-79.75Mb" target="chr9:92.03Mb-92.08Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.03Mb-69.3Mb" target="chr3:68.97Mb-69.06Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:73.01Mb-73.5Mb" target="chr3:73.08Mb-73.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:4.45Mb-4.7Mb" target="chr8:41.51Mb-41.55Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:4.8Mb-5.1Mb" target="chr16:71.1Mb-71.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+</graph></graphml>
