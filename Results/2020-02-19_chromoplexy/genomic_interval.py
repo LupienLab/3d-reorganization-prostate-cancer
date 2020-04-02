@@ -23,11 +23,14 @@ class GenomicInterval:
         )
 
     def plot_str(self):
-        return " ".join(
+        return "".join(
             [
                 self.chr,
+                ":",
                 coord_pos_str(int(self.interval[0].inf)),
+                "Mb-",
                 coord_pos_str(int(self.interval[0].sup)),
+                "Mb",
             ]
         )
 
@@ -35,13 +38,18 @@ class GenomicInterval:
         return self.plot_str()
 
     def __repr__(self):
-        return self.coord_str()
+        return self.plot_str()
 
     def inf(self):
         return int(self.interval[0].inf)
 
     def sup(self):
         return int(self.interval[0].sup)
+    
+    def __lt__(self, other):
+        if self.chr == other.chr:
+            return self.sup() < other.sup()
+        return self.chr < other.chr
 
 
 class TopologicalDomain(GenomicInterval):

@@ -5,6 +5,7 @@ breakpoint-bridging
 Take Breakfinder results and link breakpoints together by their positions
 """
 
+from typing import List
 import os.path as path
 import numpy as np
 import pandas as pd
@@ -65,6 +66,48 @@ def equivalent_tad(
         bp_j.chr, parent_tads_j["start"].min(), parent_tads_j["end"].max()
     )
     return overlapping(locus_i, locus_j, 0)
+
+
+def merge_nodes(G: nx.Graph, nodes: List[GenomicInterval]) -> nx.Graph:
+    # relabel nodes such that the GenomicInterval is the union of all the merged GenomicIntervals
+    merged_node = GenomicInterval(
+        chrom=nodes[0].chr,
+        # get smallest position
+        start=np.min([i.inf() for i in nodes]),
+        # get largest position
+        end=np.max([i.sup() for i in nodes]),
+        # choose what information to append to the node as data
+        data={
+            "sample": nodes[0].data["sample"],
+            "notes": [i.data["notes"] for i in nodes],
+            "strand": [i.data["strand"] for i in nodes]
+        }
+    )
+    G.add_node(merged_node)
+    # iterate over all edges, and copy them to merged_node the edge connects to one of the nodes
+    edges_to_add = {}
+    for n1, n2, data in G.edges(data=True):
+        n1_being_merged = n1 in nodes
+        n2_being_merged = n2 in nodes
+        if n1_being_merged and n2_being_merged:
+            # don't create self loops, since this is the same breakpoint
+            continue
+        # can't modify G while iterating over it, so the old edges and nodes have to be
+        # modified afterwards
+        elif n1 in nodes:
+            edges_to_add[n2] = data
+        elif n2 in nodes:
+            edges_to_add[n1] = data
+    
+    # add edges
+    for node, data in edges_to_add.items():
+        G.add_edge(merged_node, node, **data)
+    # remove old nodes
+    for n in nodes:
+        # removing a node also removes all edges connected to that node
+        G.remove_node(n)
+    return G
+
 
 
 # ==============================================================================
@@ -129,7 +172,8 @@ all_tads = all_tads.reset_index(level=0).rename(columns={"level_0": "Sample"})
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# create graph
+# 1. Create graphs
+# --------------------------------------
 print("Creating graphs of breakpoints")
 G_all = nx.Graph()
 G_sample = {s: nx.Graph() for s in SAMPLES}
@@ -159,9 +203,11 @@ for s in tqdm(SAMPLES, unit="sample"):
             G_sample[s].add_node(i)
         # link these two nodes since they are linked breakpoints
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
-print([len(G_sample[s]) for s in SAMPLES])
 
-# breakpoints were detected in pairs, so merge similar ones together
+# 2. Merge redundant breakpoints
+# --------------------------------------
+# hic_breakfinder identifies breakpoint pairs, so the same breakpoint can be called multiple times
+# if it interacts with multiple other breakpoints
 print("Merging redundant breakpoint calls")
 pp = pprint.PrettyPrinter(indent=2)
 bps_to_merge = []
@@ -190,12 +236,15 @@ for s in tqdm(SAMPLES):
                     for stm in bp_sets_to_merge:
                         if m in stm:
                             stm.add(m)
-                #else:
-                    #print("Not merging")
-                    #continue
-pp.pprint([[(i.data["sample"], i.data["row"]) for i in stm] for stm in bp_sets_to_merge])
 
-## manually inspect breakpoints that are in proximity, to see which calls truly need to be merged
+#pp.pprint([[(i.data["sample"], i.data["row"]) for i in stm] for stm in bp_sets_to_merge])
+
+# 2. a) manually inspect breakpoints that are in proximity, to see which calls truly need to be merged
+# --------------------------------------
+
+# this commented out section is run once, manually, to inspect each set of nearby breakpoints
+# this list is then saved to "confirmed-breakpoints-to-merge.p"
+
 # confirmed_bp_sets_to_merge = []
 # for stm in bp_sets_to_merge:
 #     pp.pprint([(i.data["sample"], i.data["row"], i) for i in stm])
@@ -218,55 +267,53 @@ pp.pprint([[(i.data["sample"], i.data["row"]) for i in stm] for stm in bp_sets_t
 #                 set([stm_list[j] for j in selection_ints])
 #             )
 #             break
-# pickle.dump(confirmed_bp_sets_to_merge, open("confirmed-breakpoints-to-merge.p", "wb"))
+# pickle.dump([G_sample, confirmed_bp_sets_to_merge], open("breakpoints.per-sample.with-multiplicity.p", "wb"))
 
-confirmed_bp_sets_to_merge = pickle.load(open("confirmed-breakpoints-to-merge.p", "rb"))
+# after the manual confirmation of these breakpoints, the redundant breakpoints are loaded
+# note that these objects have to be saved and loaded together, because of how networkx stores nodes in its graphs
+G_sample_copy, confirmed_bp_sets_to_merge_copy = pickle.load(open("breakpoints.per-sample.with-multiplicity.p", "rb"))
+G_sample = G_sample_copy
+confirmed_bp_sets_to_merge = confirmed_bp_sets_to_merge_copy
 
+# 2. b) contract the redundant breakpoints in the graphs
+# --------------------------------------
+for stm in confirmed_bp_sets_to_merge:
+    nodes = list(stm)
+    s = nodes[0].data["sample"]
+    G_sample[s] = merge_nodes(G_sample[s], nodes)
 
-for stm in bp_sets_to_merge:
-    G_merged = nx.quotient_graph(
-        G=G_sample[s],
-        partition=lambda u, v: overlapping(u, v, TOL // 2) and not G_sample[s].has_edge(u, v),
-        edge_data=lambda b, c: {
-            "annotation": np.unique(
-                [G_sample[s].edges[u, v]["annotation"] for u in b for v in c if G_sample[s].has_edge(u, v)]
-            )[0] # there should only be one unique SV type (might need to come back to this if it errors)
-        }
-    )
-    # relabel nodes such that the GenomicInterval is the union of all the merged GenomicIntervals
-    # each node in G_merged is a frozenset of all the merged nodes
-    G_sample[s] = nx.relabel_nodes(
-        G_merged,
-        {
-            nodes: GenomicInterval(
-                # they all share the same chromosome, so just get the first value instead of iterating
-                np.unique([i.chr for i in nodes])[0],
-                # get smallest position
-                np.min([i.inf() for i in nodes]),
-                # get largest position
-                np.max([i.sup() for i in nodes]),
-                # choose what information to append to the node as data
-                {"sample": s, "notes": [i.data["notes"] for i in nodes], "strand": [i.data["strand"] for i in nodes]}
-            ) for nodes in G_merged
-        }
-    )
+# save merged breakpoints
+pickle.dump(G_sample, open("breakpoints.per-sample.merged-breakpoints.p", "wb"))
 
-print([len(G_sample[s]) for s in SAMPLES])
-for s in SAMPLES:
-    print(s)
-    counts = np.unique([len(cc) for cc in nx.connected_components(G_sample[s])], return_counts=True)
-    print(counts[0])
-    print(counts[1])
-
-print("Connecting proximal breakpoints")
-# create compiled list of all breakpoints for easier parsing
+# create compiled list of all breakpoints for easier parsing and saving in a table
 uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "mutated_in"])
-# connect 2 nodes if their intervals are within 100 kbp of each other
+for s in SAMPLES:
+    for n in G_sample[s]:
+        uncoupled_breakpoints = uncoupled_breakpoints.append(
+            {"chr": n.chr, "start": n.inf(), "end": n.sup(), "mutated_in": n.data["sample"]},
+            ignore_index=True,
+            sort=False
+        )
+# save in a table
+uncoupled_breakpoints.to_csv(
+    "sv-breakpoints.tsv",
+    sep="\t",
+    index_label="breakpoint_index"
+)
+
+# 3. Connecting points in graph containing all samples based on their TADs and locations
+# --------------------------------------
+print("Connecting proximal breakpoints")
+# create graph containing all samples
+for s in SAMPLES:
+    for n1, n2, data in G_sample[s].edges(data=True):
+        G_all.add_edge(n1, n2, **data)
+
+# connect 2 nodes if their intervals are within the tolerance distance of each other
 for i, n in tqdm(enumerate(G_all), total=len(G_all)):
     for m in G_all:
         if n == m:
             continue
-        # connect these nodes if the identified loci are within 100 kbp of each other
         # the breakpoints are not from the same sample, so this site is recurrent
         # (any nearby points from the same sample have already been merged)
         if overlapping(n, m, TOL // 2):
@@ -279,11 +326,6 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
     # add index to this node for later use
     n.data["index"] = i
     # save for later (i will be the same as the index in the DataFrame)
-    uncoupled_breakpoints = uncoupled_breakpoints.append(
-        {"chr": n.chr, "start": n.inf(), "end": n.sup(), "mutated_in": n.data["sample"]},
-        ignore_index=True,
-        sort=False
-    )
 
 # add connectivity of related breakpoints
 coupled_tests = pd.DataFrame(columns=["breakpoint_indices", "mutated_in", "n_mut", "n_nonmut"])
@@ -324,12 +366,6 @@ for s in SAMPLES:
 # ==============================================================================
 print("Saving graphs")
 pickle.dump(G_all, open("breakpoints.all-samples.p", "wb"))
-pickle.dump(G_sample, open("breakpoints.per-sample.p", "wb"))
-uncoupled_breakpoints.to_csv(
-    "sv-breakpoints.tsv",
-    sep="\t",
-    index_label="breakpoint_index"
-)
 coupled_tests.to_csv(
     "sv-disruption-tests.tsv",
     sep="\t",
