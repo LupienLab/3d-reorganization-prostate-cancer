@@ -23,6 +23,7 @@ BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join(
     "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
 )
+GRAPH_DIR = "Graphs"
 # distance tolerance for comparisons
 TOL = 50000
 
@@ -266,11 +267,17 @@ for s in tqdm(SAMPLES):
 #                 set([stm_list[j] for j in selection_ints])
 #             )
 #             break
-# pickle.dump([G_sample, confirmed_bp_sets_to_merge], open("breakpoints.per-sample.with-multiplicity.p", "wb"))
+# pickle.dump(
+#     [G_sample, confirmed_bp_sets_to_merge],
+#     open(path.join(GRAPH_DIR, "breakpoints.per-sample.with-multiplicity.p"), "wb")
+# )
 
 # after the manual confirmation of these breakpoints, the redundant breakpoints are loaded
 # note that these objects have to be saved and loaded together, because of how networkx stores nodes in its graphs
-G_sample_copy, confirmed_bp_sets_to_merge_copy = pickle.load(open("breakpoints.per-sample.with-multiplicity.p", "rb"))
+G_sample_copy, confirmed_bp_sets_to_merge_copy = pickle.load(open(
+    path.join(GRAPH_DIR, "breakpoints.per-sample.with-multiplicity.p"),
+    "rb"
+))
 G_sample = G_sample_copy
 confirmed_bp_sets_to_merge = confirmed_bp_sets_to_merge_copy
 
@@ -288,8 +295,10 @@ for s in SAMPLES:
         n.data["breakpoint_ID"] = bp_counter
         bp_counter += 1
 
-# save merged breakpoints
-pickle.dump(G_sample, open("breakpoints.per-sample.merged-breakpoints.p", "wb"))
+# 2. c) save merged breakpoints in various formats
+# --------------------------------------
+# save merged breakpoints in pickle file
+pickle.dump(G_sample, open(path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"), "wb"))
 
 # create compiled list of all breakpoints for easier parsing and saving in a table
 uncoupled_breakpoints = pd.DataFrame(columns=["breakpoint_ID", "chr", "start", "end", "mutated_in"])
@@ -310,8 +319,45 @@ for s in SAMPLES:
 uncoupled_breakpoints.set_index("breakpoint_ID", inplace=True)
 # save in a table
 uncoupled_breakpoints.to_csv(
-    "sv-breakpoints.tsv",
+    path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
     sep="\t",
+)
+
+# produce global list of merged breakpoints
+paired_breakpoints = pd.DataFrame(
+    columns=[
+        "chr_x", "start_x", "end_x",
+        "chr_y", "start_y", "end_y",
+        "breakpoint_ID_x", "breakpoint_ID_y",
+        "SampleID", "sv_type"
+    ]
+)
+for s in SAMPLES:
+    for n1, n2, data in G_sample[s].edges(data=True):
+        # sort the nodes prior to listing, so the lesser of the two breakpoints is always in the first column
+        nodes = sorted([n1, n2])
+        paired_breakpoints = paired_breakpoints.append(
+            {
+                "chr_x": nodes[0].chr,
+                "start_x": nodes[0].inf(),
+                "end_x": nodes[0].sup(),
+                "chr_y": nodes[1].chr,
+                "start_y": nodes[1].inf(),
+                "end_y": nodes[1].sup(),
+                "breakpoint_ID_x": nodes[0].data["breakpoint_ID"],
+                "breakpoint_ID_y": nodes[1].data["breakpoint_ID"],
+                "SampleID": s,
+                "sv_type": data["annotation"]
+            },
+            ignore_index = True,
+            sort=False
+        )
+
+# save as table
+paired_breakpoints.to_csv(
+    path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+    sep="\t",
+    index=False
 )
 
 # 3. Connecting points in graph containing all samples based on their TADs and locations
@@ -339,7 +385,7 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
             G_all.add_edge(n, m, annotation="equivalent-TAD")
 
 # save graph to pickle object
-pickle.dump(G_all, open("breakpoints.all-samples.p", "wb"))
+pickle.dump(G_all, open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "wb"))
 
 # add connectivity of related breakpoints
 coupled_tests = pd.DataFrame(columns=["breakpoint_IDs", "mutated_in", "n_mut", "n_nonmut"])
@@ -369,7 +415,7 @@ coupled_tests.drop_duplicates(inplace=True, ignore_index=True)
 
 # save coupled tests
 coupled_tests.to_csv(
-    "sv-disruption-tests.tsv",
+    path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
     sep="\t",
     index_label="test_index"
 )
