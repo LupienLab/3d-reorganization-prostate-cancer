@@ -295,32 +295,38 @@ for s in SAMPLES:
         n.data["breakpoint_ID"] = bp_counter
         bp_counter += 1
 
+# add an ID for the component to which each breakpoint belongs (each connected component is a different SV event)
+for s in SAMPLES:
+    for component_counter, cc in enumerate(nx.connected_components(G_sample[s])):
+        for n in cc:
+            n.data["component_ID"] = component_counter
+
 # 2. c) save merged breakpoints in various formats
 # --------------------------------------
 # save merged breakpoints in pickle file
 pickle.dump(G_sample, open(path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"), "wb"))
 
 # create compiled list of all breakpoints for easier parsing and saving in a table
-uncoupled_breakpoints = pd.DataFrame(columns=["breakpoint_ID", "chr", "start", "end", "mutated_in"])
+uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "mutated_in", "breakpoint_ID", "component_ID"])
 for s in SAMPLES:
     for n in G_sample[s]:
         uncoupled_breakpoints = uncoupled_breakpoints.append(
             {
-                "breakpoint_ID": n.data["breakpoint_ID"],
                 "chr": n.chr,
                 "start": n.inf(),
                 "end": n.sup(),
-                "mutated_in": n.data["sample"]
+                "mutated_in": n.data["sample"],
+                "breakpoint_ID": n.data["breakpoint_ID"],
+                "component_ID": n.data["component_ID"],
             },
             ignore_index=True,
             sort=False
         )
-# set ID to be the index
-uncoupled_breakpoints.set_index("breakpoint_ID", inplace=True)
 # save in a table
 uncoupled_breakpoints.to_csv(
     path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
     sep="\t",
+    index=False
 )
 
 # produce global list of merged breakpoints
@@ -329,6 +335,7 @@ paired_breakpoints = pd.DataFrame(
         "chr_x", "start_x", "end_x",
         "chr_y", "start_y", "end_y",
         "breakpoint_ID_x", "breakpoint_ID_y",
+        "component_ID_x", "component_ID_y",
         "SampleID", "sv_type"
     ]
 )
@@ -346,6 +353,8 @@ for s in SAMPLES:
                 "end_y": nodes[1].sup(),
                 "breakpoint_ID_x": nodes[0].data["breakpoint_ID"],
                 "breakpoint_ID_y": nodes[1].data["breakpoint_ID"],
+                "component_ID_x": nodes[0].data["component_ID"],
+                "component_ID_y": nodes[1].data["component_ID"],
                 "SampleID": s,
                 "sv_type": data["annotation"]
             },
