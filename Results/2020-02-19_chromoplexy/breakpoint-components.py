@@ -307,7 +307,7 @@ for s in SAMPLES:
 pickle.dump(G_sample, open(path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"), "wb"))
 
 # create compiled list of all breakpoints for easier parsing and saving in a table
-uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "mutated_in", "breakpoint_ID", "component_ID"])
+uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "SampleID", "breakpoint_ID", "component_ID"])
 for s in SAMPLES:
     for n in G_sample[s]:
         uncoupled_breakpoints = uncoupled_breakpoints.append(
@@ -315,7 +315,7 @@ for s in SAMPLES:
                 "chr": n.chr,
                 "start": n.inf(),
                 "end": n.sup(),
-                "mutated_in": n.data["sample"],
+                "SampleID": n.data["sample"],
                 "breakpoint_ID": n.data["breakpoint_ID"],
                 "component_ID": n.data["component_ID"],
             },
