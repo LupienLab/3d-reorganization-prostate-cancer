@@ -10,11 +10,12 @@ import networkx as nx
 import pickle
 import numpy as np
 from genomic_interval import GenomicInterval, overlapping
-from adjustText import adjust_text
+import random
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from adjustText import adjust_text
 
 plt.rcParams["figure.figsize"] = (20 / 2.54, 20 / 2.54)  # 20x20 cm
 
@@ -32,6 +33,14 @@ unique_annots = [
     "UNKNOWN",
     "equivalent-TAD",
 ]
+
+annot_map = {
+    "INV": "V",
+    "DEL": "Δ",
+    "DUP": "+",
+    "UNKNOWN": "?"
+}
+
 chroms = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
 chrom_colours = [
@@ -84,6 +93,13 @@ def locus_to_plotpos(bp: GenomicInterval) -> (float, float):
     return (x, y)
 
 
+def savefig(fig, prefix="figure", exts=["png", "pdf"], dpi=400, **kwargs):
+    for ext in exts:
+        fig.savefig(
+            prefix + "." + ext,
+            dpi=dpi,
+            **kwargs
+        )
 
 # ==============================================================================
 # Data
@@ -91,12 +107,56 @@ def locus_to_plotpos(bp: GenomicInterval) -> (float, float):
 # load graphs
 G_all = pickle.load(open("breakpoints.all-samples.p", "rb"))
 G_sample = pickle.load(open("breakpoints.per-sample.p", "rb"))
-samples = list(G_sample.keys())
+SAMPLES = list(G_sample.keys())
 
 # ==============================================================================
 # Plots
 # ==============================================================================
-for i, s in enumerate(samples):
+n_centres = 10
+for c in chroms:
+    for n in [m for m in G_all if m.chr == c]:
+        for i in range(n_centres):
+            chrom_node = GenomicInterval(c, 0, 1, {"sample": None})
+            G_all.add_node(chrom_node)
+            G_all.add_edge(chrom_node, n)
+
+bp_nodes = [n for n in G_all if n.data["sample"] is not None]
+# get colours for the nodes
+chrom_nodes = [n for n in G_all if n.data["sample"] is None]
+#n_colours = [plt.cm.tab20b(i)] * len(bp_nodes)
+n_colours = [chrom_colour_map[n.chr] for n in bp_nodes]
+# get edges and colours corresponding to SV type
+edges, e_annots = zip(*nx.get_edge_attributes(G_all, "annotation").items())
+e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
+# get spring layout for the entire graph
+pos = nx.spring_layout(
+    G=G_all,
+    pos={n: locus_to_plotpos(n) for n in chrom_nodes},
+    fixed=chrom_nodes,
+)
+# plot this graph
+fig, ax = plt.subplots()
+nx.draw(
+    G=G_all.subgraph(bp_nodes),
+    pos=pos,
+    ax=ax,
+    edgelist=edges,
+    node_color=n_colours,
+    linewidths=1,
+    edgecolors="#000000",
+    with_labels=False,
+)
+savefig(fig, path.join("Plots", "all-breakpoints.no-labels"), dpi=400, bbox_inches="tight")
+
+nx.draw_networkx_edge_labels(
+    G=G_all,
+    pos=pos,
+    ax=ax,
+    edge_labels={edge: annot_map[ann] for (edge, ann) in zip(edges, e_annots) if ann in annot_map.keys()}
+)
+
+random.seed(42)
+for i, s in enumerate(SAMPLES):
     print(s)
     # get nodes and colours corresponding to breakpoints
     bp_nodes = [n for n in G_sample[s] if n.data["sample"] is not None]
@@ -108,6 +168,21 @@ for i, s in enumerate(samples):
     e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
     # get spring layout for the entire graph
     pos = nx.spring_layout(G_sample[s])
+    # calculate optimal distances for nodes
+    optimal_dists = {}
+    for n in G_sample[s]:
+        optimal_dists[n] = {}
+        for m in G_sample[s]:
+            if G_sample[s].has_edge(n, m):
+                optimal_dists[n][m] = 0.2
+            else:
+                optimal_dists[n][m] = 1
+    # use the spring_layout as the initial layout before applying the Kamada Kawai optimiziation
+    pos = nx.kamada_kawai_layout(
+        G=G_sample[s],
+        dist=optimal_dists,
+        pos=pos
+    )
     # plot this graph
     fig, ax = plt.subplots()
     nx.draw(
@@ -116,13 +191,19 @@ for i, s in enumerate(samples):
         ax=ax,
         edgelist=edges,
         node_color=n_colours,
-        #edge_color=e_colours,
+        linewidths=1,
+        edgecolors="#000000",
         with_labels=False,
         #width=10,
     )
-    fig.tight_layout()
-    fig.savefig(path.join("Plots", s + ".no-labels.png"), dpi=96, bbox_inches="tight")
-    fig.savefig(path.join("Plots", s + ".no-labels.pdf"), dpi=96, bbox_inches="tight")
+    nx.draw_networkx_edge_labels(
+        G=G_sample[s],
+        pos=pos,
+        ax=ax,
+        edge_labels={edge: annot_map[ann] for (edge, ann) in zip(edges, e_annots) if ann in annot_map.keys()}
+    )
+    savefig(fig, path.join("Plots", s + ".no-labels"), dpi=96, bbox_inches="tight")
+    plt.close()
     labels = [
         plt.text(
             x=pos[n][0],
@@ -137,8 +218,7 @@ for i, s in enumerate(samples):
         ax=ax,
         lim=10,
     )
-    fig.savefig(path.join("Plots", s + ".png"), dpi=96, bbox_inches="tight")
-    fig.savefig(path.join("Plots", s + ".pdf"), dpi=96, bbox_inches="tight")
+    savefig(fig, path.join("Plots", s), dpi=96, bbox_inches="tight")
     plt.close()
 
 # figure for chromosome colour legend
@@ -155,4 +235,4 @@ for i, c in enumerate(chroms):
     ax_leg.annotate(c, cols[i], ha="center", va="center")
 
 plt.axis("off")
-fig_leg.savefig(path.join("Plots", "chrom-colour-map.png"))
+savefig(fig_leg, path.join("Plots", "chrom-colour-map"), bbox_inches="tight")
