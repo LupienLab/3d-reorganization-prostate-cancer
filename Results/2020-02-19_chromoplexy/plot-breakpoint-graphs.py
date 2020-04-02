@@ -11,6 +11,7 @@ import pickle
 import numpy as np
 from genomic_interval import GenomicInterval, overlapping
 import random
+from tqdm import tqdm
 import matplotlib
 
 matplotlib.use("Agg")
