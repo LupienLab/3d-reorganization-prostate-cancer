@@ -102,7 +102,7 @@ def savefig(fig, prefix="figure", exts=["png", "pdf"], dpi=400, **kwargs):
         )
 
 
-def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, **kwargs):
+def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, node_labels=False, **kwargs):
     if colocate_chroms:
         for c in chroms:
             for n in [m for m in G if m.chr == c]:
@@ -113,11 +113,11 @@ def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, **kwargs):
         # get colours for the nodes
         chrom_nodes = [n for n in G if n.data["sample"] is None]
     # get nodes and colours corresponding to breakpoints
-    bp_nodes = [n for n in G_sample[s] if n.data["sample"] is not None]
+    bp_nodes = [n for n in G if n.data["sample"] is not None]
     # get colours for the nodes
     n_colours = [chrom_colour_map[n.chr] for n in bp_nodes]
     # get edges and colours corresponding to SV type
-    edges, e_annots = zip(*nx.get_edge_attributes(G_sample[s], "annotation").items())
+    edges, e_annots = zip(*nx.get_edge_attributes(G, "annotation").items())
     e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
     # get spring layout for the entire graph
     if colocate_chroms:
@@ -163,24 +163,24 @@ def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, **kwargs):
         edge_labels={edge: annot_map[ann] for (edge, ann) in zip(edges, e_annots) if ann in annot_map.keys()}
     )
     # save without node labels
-    savefig(fig, prefix + ".no-labels", **kwargs)
-    plt.close()
-    labels = [
-        plt.text(
-            x=pos[n][0],
-            y=pos[n][1],
-            s=n.__str__(),
-            ha="center",
-            va="center",
-        ) for n in G_sample[s]
-    ]
-    adjust_text(
-        texts=labels,
-        ax=ax,
-        lim=10,
-    )
-    # save again but with node labels
     savefig(fig, prefix, **kwargs)
+    if node_labels:
+        labels = [
+            plt.text(
+                x=pos[n][0],
+                y=pos[n][1],
+                s=n.__str__(),
+                ha="center",
+                va="center",
+            ) for n in G
+        ]
+        adjust_text(
+            texts=labels,
+            ax=ax,
+            lim=10,
+        )
+        # save again but with node labels
+        savefig(fig, prefix + ".labelled", **kwargs)
     plt.close()
 
 
@@ -189,7 +189,7 @@ def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, **kwargs):
 # ==============================================================================
 # load graphs
 G_all = pickle.load(open("breakpoints.all-samples.p", "rb"))
-G_sample = pickle.load(open("breakpoints.per-sample.p", "rb"))
+G_sample = pickle.load(open("breakpoints.per-sample.merged-breakpoints.p", "rb"))
 SAMPLES = list(G_sample.keys())
 
 # ==============================================================================
@@ -198,9 +198,8 @@ SAMPLES = list(G_sample.keys())
 plot_graph(G_all, path.join("Plots", "all-breakpoints"), dpi=400, bbox_inches="tight")
 
 random.seed(42)
-for i, s in enumerate(SAMPLES):
-    print(s)
-    plot_graph(G_sample[s], path.join("Plots", s), dpi=96, bbox_inches="tight")
+for s in tqdm(SAMPLES):
+    plot_graph(G_sample[s], path.join("Plots", s), node_labels=True, dpi=96, bbox_inches="tight")
 
 # figure for chromosome colour legend
 fig_leg, ax_leg = plt.subplots()
