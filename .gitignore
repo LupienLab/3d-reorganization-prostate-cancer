@@ -108,6 +108,7 @@ venv.bak/
 Logs/
 .snakemake/
 ._*
+*~
 
 # HTS files
 *.fastq.gz
