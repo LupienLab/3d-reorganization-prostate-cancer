@@ -16,7 +16,6 @@ BAM_DIR = path.join(
     '..', '..', 'Data', 'Processed', '2019-06-18_PCa-LowC-sequencing', 'Aligned'
 )
 BREAK_DIR = 'Breakpoints'
-SCRIPT_DIR = 'Scripts'
 PLOT_DIR = 'Plots'
 REPORT_DIR = 'Reports'
 
@@ -113,7 +112,7 @@ rule sort_breaks:
 
 rule plot_breakpoints:
     input:
-        wrapper = path.join(SCRIPT_DIR, 'plot-breakpoint-matrices.sh'),
+        wrapper = 'plot-breakpoint-matrices.sh',
         script = path.join('..', '2019-07-08_TADs', 'plot-tads.py'),
         data = path.join(BREAK_DIR, 'Default', '{sample}.breakspoints.bedpe')
     output:
@@ -152,42 +151,12 @@ rule t2e_translocation_genes:
 
 rule plot_t2e_translocation_genes:
     input:
-        script = path.join(SCRIPT_DIR, "plot-translocation-disrupted-genes.R"),
+        script = "plot-translocation-disrupted-genes.R",
         data = "translocation-disrupted-genes.tsv",
     output:
         path.join(PLOT_DIR, "translocation-disrupted-genes.png"),
     shell:
         "Rscript {input.script}"
-
-rule tally_breakpoints:
-    input:
-        expand(
-            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.tsv"),
-            sample=SAMPLES
-        )
-    output:
-        path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.tsv"),
-    shell:
-        """echo -e "Sample\tIntra-chromosomal\tInter-chromosomal" > {output};
-        for s in PCa{{13266,13848,14121,19121,3023,33173,40507,51852,53687,56413,57054,57294,58215}}; do
-            awk -v s=$s  -v FS="\\t" -v OFS="\\t" 'BEGIN{{x=0; y=0;}}{{ if ($1 == $4) {{x+=1}} else {{y += 1}} }}END{{print s, x, y}}' {BREAK_DIR}/Default/$s.breaks.sorted.manually-resolved.tsv >> {output}
-        done
-        """
-
-rule tally_curated_breakpoints:
-    input:
-        expand(
-            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.tsv"),
-            sample=SAMPLES
-        )
-    output:
-        path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.manually-resolved.tsv"),
-    shell:
-        """echo -e "Sample\tIntra-chromosomal\tInter-chromosomal" > {output};
-        for s in PCa{{13266,13848,14121,19121,3023,33173,40507,51852,53687,56413,57054,57294,58215}}; do
-            awk -v s=$s  -v FS="\\t" -v OFS="\\t" 'BEGIN{{x=0; y=0;}}{{if ($12 != "ARTEFACT") {{if ($1 == $4) {{x+=1}} else {{y += 1}} }} }}END{{print s, x, y}}' {BREAK_DIR}/Default/$s.breaks.sorted.manually-resolved.tsv >> {output}
-        done
-        """
 
 rule clodius_2d:
     input:
