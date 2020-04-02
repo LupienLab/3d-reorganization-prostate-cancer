@@ -46,74 +46,30 @@ metadata <- fread("../../Data/External/LowC_Samples_Data_Available.tsv", sep = "
 SAMPLES <- paste0("PCa", metadata[, get("Sample ID")])
 
 # load breakpoint data
-breakpoints <- rbindlist(lapply(
-    SAMPLES,
-    function(s) {
-        dt <- fread(
-            paste0("Breakpoints/Default/", s, ".breaks.sorted.manually-resolved.tsv"),
-            sep = "\t",
-            header = FALSE,
-            col.names = c(
-                "chr_from", "start_from", "end_from", "chr_to", "start_to", "end_to",
-                "name", "score", "strand_from", "strand_to", "resolution",
-                "type", "notes"
-            )
-        )
-        dt[, Sample := s]
-        return(dt)
-    }
-))
-# remove ARTEFACTS
-breakpoints <- breakpoints[type != "ARTEFACT"]
-n_breaks = breakpoints[, .N]
+breakpoints <- fread("Graphs/sv-breakpoints.tsv", sep = "\t", header = TRUE)
+# convert chr to ordered factor
+breakpoints[, chr := factor(chr, levels = CHRS, ordered = TRUE)]
+breakpoint_pairs <- fread("Graphs/sv-breakpoints.paired.tsv", sep = "\t", header = TRUE)
 
 # load hg38 ideogram
 data(UCSC.HG38.Human.CytoBandIdeogram)
-
-# manual aggregate by locus, since you can't melt them all together at once
-breakpoints_melted = rbindlist(list(
-    copy(breakpoints),
-    copy(breakpoints)
-))
-#   copy relevant locus info from second position to first
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), chr_from := chr_to]
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), start_from := start_to]
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), end_from := end_to]
-breakpoints_melted[(n_breaks + 1):(2 * n_breaks), strand_from := strand_to]
-#   drop second information since it's already duplicated
-breakpoints_melted[, chr_to:= NULL]
-breakpoints_melted[, start_to:= NULL]
-breakpoints_melted[, end_to:= NULL]
-breakpoints_melted[, strand_to:= NULL]
-#   fix column names
-breakpoints_melted <- breakpoints_melted[, .SD, .SDcols = c(
-    "Sample", "chr_from", "start_from", "end_from", "strand_from", "score", "resolution"
-)]
-colnames(breakpoints_melted) = c(
-    "Sample", "Chrom", "Start", "End",
-    "Strand", "Odds", "Resolution"
-)
-# convert Chrom to ordered factor
-breakpoints_melted[, Chrom := factor(Chrom, levels = CHRS, ordered = TRUE)]
-
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
 # convert breakpoints into Mbp bins and counts the rearrangements
-breakpoints_melted[, StartBin := floor(Start / 10^6)]
-breakpoints_melted[, EndBin := floor(End / 10^6)]
+breakpoints[, StartBin := floor(start / 10^6)]
+breakpoints[, EndBin := floor(end / 10^6)]
 
 # convert breakpoints in genomic regions into bins
 breakpoints_binned = rbindlist(lapply(
-    1:breakpoints_melted[, .N],
+    1:breakpoints[, .N],
     function(i) {
-        print(i)
-        start_bin = breakpoints_melted[i, StartBin]
-        end_bin = breakpoints_melted[i, EndBin]
+        start_bin = breakpoints[i, StartBin]
+        end_bin = breakpoints[i, EndBin]
         dt = data.table(
-            Sample = breakpoints_melted[i, Sample],
-            Chrom = breakpoints_melted[i, Chrom],
+            SampleID = breakpoints[i, SampleID],
+            chr = breakpoints[i, chr],
             Bin = start_bin:end_bin,
             Count = 1
         )
@@ -121,12 +77,12 @@ breakpoints_binned = rbindlist(lapply(
     }
 ))
 # count all breakpoints in each bin
-breakpoints_summed = breakpoints_binned[, sum(Count), by = c("Sample", "Chrom", "Bin")]
-colnames(breakpoints_summed) = c("Sample", "Chrom", "Bin", "Count")
+breakpoints_summed = breakpoints_binned[, sum(Count), by = c("SampleID", "chr", "Bin")]
+colnames(breakpoints_summed) = c("SampleID", "chr", "Bin", "Count")
 
 fwrite(
-    breakpoints_summed[order(Sample, Chrom, Bin)],
-    "Breakpoints/Default/breakpoints.binned.tsv",
+    breakpoints_summed[order(SampleID, chr, Bin)],
+    "Statistics/breakpoints.binned.tsv",
     sep = "\t",
     col.names = TRUE
 )
@@ -145,19 +101,18 @@ RCircos.Set.Core.Components(
 for (s in SAMPLES) {
     cat(s, "\n")
     png(
-        paste0("Plots/", s, ".circos.png"),
+        paste0("Plots/Circos/", s, ".circos.png"),
         width = 12,
         height = 12,
         units = "cm",
-        res = 400,
-        dpi = 400
+        res = 400
     )
     RCircos.Set.Plot.Area()
     RCircos.Chromosome.Ideogram.Plot()
     RCircos.Link.Plot(
-        link.data = breakpoints[
-            Sample == s,
-            .(chr_from, start_from, end_from, chr_to, start_to, end_to)
+        link.data = breakpoint_pairs[
+            SampleID == s,
+            .(chr_x, start_x, end_x, chr_y, start_y, end_y)
         ],
         track.num = 1,
         by.chromosome = TRUE
@@ -168,19 +123,18 @@ for (s in SAMPLES) {
     # RCircos.Reset.Plot.Parameters(params)
     dev.off()
     png(
-        paste0("Plots/", s, ".circos.pdf"),
+        paste0("Plots/Circos/", s, ".circos.pdf"),
         width = 12,
         height = 12,
         units = "cm",
-        res = 400,
-        dpi = 400
+        res = 400
     )
     RCircos.Set.Plot.Area()
     RCircos.Chromosome.Ideogram.Plot()
     RCircos.Link.Plot(
-        link.data = breakpoints[
-            Sample == s,
-            .(chr_from, start_from, end_from, chr_to, start_to, end_to)
+        link.data = breakpoint_pairs[
+            SampleID == s,
+            .(chr_x, start_x, end_x, chr_y, start_y, end_y)
         ],
         track.num = 1,
         by.chromosome = TRUE
@@ -194,9 +148,9 @@ for (s in SAMPLES) {
 
 # number of SVs detected per patient
 gg = (
-    ggplot(data = breakpoints[, .N, by = Sample])
-    + geom_col(aes(x = Sample, y = N, fill = Sample))
-    + labs(x = NULL, y = "Breakpoint pairs")
+    ggplot(data = breakpoints[, .N, by = SampleID])
+    + geom_col(aes(x = SampleID, y = N, fill = SampleID))
+    + labs(x = NULL, y = "Unique Breakpoints")
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(
@@ -204,7 +158,7 @@ gg = (
     )
 )
 ggsave(
-    "Plots/sv-counts.png",
+    "Plots/breakpoint-stats/sv-counts.png",
     height = 12,
     width = 20,
     units = "cm",
@@ -212,11 +166,11 @@ ggsave(
 )
 
 gg = (
-    ggplot(data = breakpoints_melted[, .N, by = c("Sample", "Chrom")])
-    + geom_col(aes(x = Sample, y = N, fill = Sample))
+    ggplot(data = breakpoints[, .N, by = c("SampleID", "chr")])
+    + geom_col(aes(x = SampleID, y = N, fill = SampleID))
     + labs(x = NULL, y = "Breakpoints")
     + guides(fill = guide_legend(title = "Patient"))
-    + facet_grid(. ~ Chrom)
+    + facet_grid(. ~ chr)
     + theme_minimal()
     + theme(
         panel.grid.major.x = element_blank(),
@@ -225,14 +179,14 @@ gg = (
     )
 )
 ggsave(
-    "Plots/sv-counts-by-chrom.png",
+    "Plots/breakpoint-stats/sv-counts-by-chrom.labelled.png",
     height = 12,
     width = 40,
     units = "cm",
     dpi = 400
 )
 ggsave(
-    "Plots/sv-counts-by-chrom.pdf",
+    "Plots/breakpoint-stats/sv-counts-by-chrom.labelled.pdf",
     height = 12,
     width = 40,
     units = "cm",
@@ -241,11 +195,11 @@ ggsave(
 
 # save as above without any text
 gg = (
-    ggplot(data = breakpoints_melted[, .N, by = c("Sample", "Chrom")])
-    + geom_col(aes(x = Sample, y = N, fill = Sample))
+    ggplot(data = breakpoints[, .N, by = c("SampleID", "chr")])
+    + geom_col(aes(x = SampleID, y = N, fill = SampleID))
     + labs(x = NULL, y = NULL)
     + guides(fill = guide_legend(title = NULL))
-    + facet_grid(. ~ Chrom)
+    + facet_grid(. ~ chr)
     + theme_minimal()
     + theme(
         panel.grid.major.x = element_blank(),
@@ -256,63 +210,32 @@ gg = (
     )
 )
 ggsave(
-    "Plots/sv-counts-by-chrom.no-labels.png",
+    "Plots/breakpoint-stats/sv-counts-by-chrom.png",
     height = 12,
     width = 40,
     units = "cm",
     dpi = 400
 )
 ggsave(
-    "Plots/sv-counts-by-chrom.no-labels.pdf",
+    "Plots/breakpoint-stats/sv-counts-by-chrom.pdf",
     height = 12,
     width = 40,
     units = "cm",
     dpi = 400
 )
 
-for (s in SAMPLES) {
-    cat(s, "\n")
-    gg = (
-        ggplot(data = breakpoints_melted[Sample == s, .N, by = "Chrom"])
-        + geom_col(aes(x = Chrom, y = N))
-        + labs(x = NULL, y = "Breakpoints")
-        + guides(fill = FALSE)
-        + scale_x_discrete(drop=FALSE)
-        + ylim(0, 31)
-        + theme_minimal()
-        + theme(
-            axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5),
-            panel.grid.major.x = element_blank()
-        )
-    )
-    ggsave(
-        paste0("Plots/", s, ".sv-counts-by-chrom.png"),
-        height = 12,
-        width = 40,
-        units = "cm",
-        dpi = 400
-    )
-    ggsave(
-        paste0("Plots/", s, ".sv-counts-by-chrom.pdf"),
-        height = 12,
-        width = 40,
-        units = "cm",
-        dpi = 400
-    )
-}
-
 # number and location of SVs across all patients
 gg = (
     ggplot()
     + geom_col(
         data = breakpoints_summed,
-        mapping = aes(x = Bin, y = Count, fill = Sample),
+        mapping = aes(x = Bin, y = Count, fill = SampleID),
         position = "stack"
     )
     # add geom_blank to ensure each facet is the correct size
     + geom_blank(data = hg38, mapping = aes(x = Bins, y = 0))
     + labs(x = "Position", y = "Count")
-    + facet_grid(. ~ Chrom, scales = "free_x", space = "free_x", switch = "x")
+    + facet_grid(. ~ chr, scales = "free_x", space = "free_x", switch = "x")
     + theme_classic()
     + theme(
         axis.text.x = element_blank(),
@@ -322,7 +245,14 @@ gg = (
     )
 )
 ggsave(
-    "Plots/sv-loci.png",
+    "Plots/breakpoint-stats/sv-loci.png",
+    height = 12,
+    width = 40,
+    units = "cm",
+    dpi = 400
+)
+ggsave(
+    "Plots/breakpoint-stats/sv-loci.pdf",
     height = 12,
     width = 40,
     units = "cm",
@@ -330,7 +260,7 @@ ggsave(
 )
 
 gg = (
-    ggplot(data = breakpoints_summed[, length(unique(Sample)), by = c("Chrom", "Bin")])
+    ggplot(data = breakpoints_summed[, length(unique(SampleID)), by = c("chr", "Bin")])
     + geom_bar(aes(x = V1))
     + labs(x = "Number of patients", y = "Number of Mbp bins with a breakpoint")
     + scale_x_discrete(
@@ -341,7 +271,14 @@ gg = (
     + theme_minimal()
 )
 ggsave(
-    "Plots/sv-recurrence.png",
+    "Plots/breakpoint-stats/sv-recurrence.png",
+    height = 12,
+    width = 20,
+    units = "cm",
+    dpi = 400
+)
+ggsave(
+    "Plots/breakpoint-stats/sv-recurrence.pdf",
     height = 12,
     width = 20,
     units = "cm",
