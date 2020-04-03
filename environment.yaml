@@ -178,7 +178,7 @@ dependencies:
   - numpy=1.18.1
   - olefile=0.46
   - openjdk=11.0.1
-  - openssl=1.1.1e
+  - openssl=1.1.1f
   - packaging=20.1
   - pairix=0.3.7
   - pairtools=0.3.0
@@ -187,6 +187,7 @@ dependencies:
   - pango=1.42.4
   - parso=0.6.2
   - partd=1.1.0
+  - patsy=0.5.1
   - pbgzip=2016.08.04
   - pcre=8.44
   - perl=5.26.2
@@ -375,6 +376,7 @@ dependencies:
   - sortedcontainers=2.1.0
   - spectra=0.0.11
   - sqlite=3.30.1
+  - statsmodels=0.11.1
   - tabix=0.2.6
   - tbb=2020.1
   - tblib=1.6.0
