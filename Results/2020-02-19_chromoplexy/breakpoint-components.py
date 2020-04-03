@@ -199,8 +199,8 @@ for s in tqdm(SAMPLES, unit="sample"):
             ),
         ]
         # create nodes in the graph
-        for i in intvls:
-            G_sample[s].add_node(i)
+        for intvl in intvls:
+            G_sample[s].add_node(intvl)
         # link these two nodes since they are linked breakpoints
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
 
@@ -250,11 +250,11 @@ for s in tqdm(SAMPLES):
 #     pp.pprint([(i.data["sample"], i.data["row"], i) for i in stm])
 #     print("Merge breakpoints? [y]es to all, [n]o, or [s]ome: ")
 #     while True:
-#         i = input()
-#         if i == "y":
+#         user_input = input()
+#         if user_input == "y":
 #             confirmed_bp_sets_to_merge.append(stm)
 #             break
-#         elif i == "n":
+#         elif user_input == "n":
 #             break
 #         else:
 #             print("Enter a comma-separated list of breakpoints to merge")
@@ -322,6 +322,7 @@ for s in SAMPLES:
             ignore_index=True,
             sort=False
         )
+
 # save in a table
 uncoupled_breakpoints.to_csv(
     path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
@@ -378,55 +379,139 @@ for s in SAMPLES:
     for n1, n2, data in G_sample[s].edges(data=True):
         G_all.add_edge(n1, n2, **data)
 
-# connect 2 nodes if their intervals are within the tolerance distance of each other
+# determine which breakpoints need to be grouped together for hypothesis testing
+test_ID_status = {}
+test_IDs_to_merge = []
+test_IDs_to_never_merge = []
 for i, n in tqdm(enumerate(G_all), total=len(G_all)):
-    for m in G_all:
-        if n == m:
+    # find all SV types that this breakpoint is involved in
+    n_sv_types = set([e["annotation"] for e in G_all[n].values()])
+    # determine whether this breakpoint has already been assigned to a testing group
+    n_previously_assigned_test = "test_ID" in n.data
+    if not n_previously_assigned_test:
+        n.data["test_ID"] = i
+        test_ID_status[i] = True
+    for j, m in enumerate(G_all):
+        # iteration is always in the same order, skip any node that has already been assessed with this one
+        if j <= i:
             continue
-        # the breakpoints are not from the same sample, so this site is recurrent
-        # (any nearby points from the same sample have already been merged)
-        if overlapping(n, m, TOL // 2):
-            G_all.add_edge(n, m, annotation="recurrent")
         # connect these nodes if the identified loci are within the equivalent TADs from their respective samples
         # (I know this isn't the most efficient way to do this, but given the number of breakpoints and samples
         # it's not that much of a concern)
-        if equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
-            G_all.add_edge(n, m, annotation="equivalent-TAD")
+        if overlapping(m, n, TOL // 2) or equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
+            # find all SV types that this breakpoint is involved in
+            m_sv_types = set([e["annotation"] for e in G_all[m].values()])
+            # determine whether this breakpoint has already been assigned to a testing group
+            m_previously_assigned_test = "test_ID" in m.data
+            # determine how to group these breakpoints for hypothesis testing
+            if not n_sv_types.isdisjoint(m_sv_types):
+                # if there is a compatible SV types between them
+                # (e.g. they both have DEL in the same TAD)
+                # group these breakpoints together in the same testing group and test them
+                if m_previously_assigned_test:
+                    # if both nodes have already been assigned test groups, be sure to merge them
+                    if n.data["test_ID"] != m.data["test_ID"]:
+                        test_IDs_to_merge.append([n.data["test_ID"], m.data["test_ID"]])
+                else:
+                    # if m has not been assigned a test group yet, assign it to n's test group
+                    m.data["test_ID"] = n.data["test_ID"]
+                    if n.data["test_ID"] not in test_ID_status:
+                        test_ID_status[n.data["test_ID"]] = True
+            elif n.data["sample"] != m.data["sample"]:
+                # if different events from different samples
+                # group separately and test separately
+                if not m_previously_assigned_test:
+                    m.data["test_ID"] = j
+                test_IDs_to_never_merge.append([n.data["test_ID"], m.data["test_ID"]])
+                if j not in test_ID_status:
+                    test_ID_status[j] = True
+            else:
+                # group these breakpoints together in the same testing group but don't test them
+                # can't disambiguate the effect of one event vs the other at this region
+                if m_previously_assigned_test:
+                    if n.data["test_ID"] != m.data["test_ID"]:
+                        test_IDs_to_merge.append([n.data["test_ID"], m.data["test_ID"]])
+                else:
+                    m.data["test_ID"] = n.data["test_ID"]
+                # this sets this entire testing group to False, if any of its members are ambiguous
+                test_ID_status[n.data["test_ID"]] = False
+
+# merge testing groups that were initially given separate IDs but were later discovered to be part of the same group
+# if the pair of test groups are never to be merged (i.e. are ambiguous), be sure to separate the samples for background tests
+ttm_graph = nx.Graph()
+ttnm_graph = nx.Graph()
+ttm_new_IDs = {}
+for ttm in test_IDs_to_merge:
+    ttm_graph.add_edge(ttm[0], ttm[1])
+for ttnm in test_IDs_to_never_merge:
+    ttnm_graph.add_edge(ttnm[0], ttnm[1])
+
+# reduce each test_ID to the smallest in that component
+for cc in nx.connected_components(ttm_graph):
+    min_test_ID = min(n for n in cc)
+    for n in cc:
+        ttm_new_IDs[n] = min_test_ID
+
+# apply this reduction to the nodes that should not be merged (i.e. distinct SV events proximal to each other)
+ttnm_graph = nx.relabel_nodes(ttnm_graph, ttm_new_IDs)
+# change testing status for any test group that cannot be merged with itself
+for e in ttnm_graph.edges():
+    if e[0] == e[1]:
+        # this may already be the case, but this ensures it
+        test_ID_status[e[0]] = False
+
+# finalize unique tests
+reduced_test_IDs = set([])
+for n in G_all:
+    if n.data["test_ID"] in ttm_new_IDs:
+        # if one group is ambiguous and not to be tested, then the aggregated group should not be either
+        test_ID_status[ttm_new_IDs[n.data["test_ID"]]] = test_ID_status[ttm_new_IDs[n.data["test_ID"]]] and test_ID_status[n.data["test_ID"]]
+        # re-label the test_IDs for any test in test_IDs_to_merge
+        n.data["test_ID"] = ttm_new_IDs[n.data["test_ID"]]
+    reduced_test_IDs.add(n.data["test_ID"])
+
+# remove unnecessary test IDs
+test_ID_status = {k:v for k, v in test_ID_status.items() if k in reduced_test_IDs}
 
 # save graph to pickle object
 pickle.dump(G_all, open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "wb"))
 
-# add connectivity of related breakpoints
-coupled_tests = pd.DataFrame(columns=["breakpoint_IDs", "mutated_in", "n_mut", "n_nonmut"])
-for bp in tqdm(G_all, total=len(G_all)):
-    # find samples where this, or a nearby, breakpoint occurs
-    nbrs = [
-        n
-        for n, v in G_all[bp].items()
-        if v["annotation"] in ["recurrent", "equivalent-TAD"]
-    ]
-    connected_bps = [bp] + nbrs
-    indices = ",".join(np.unique([str(n.data["breakpoint_ID"]) for n in connected_bps]))
-    mut_samples = ",".join(np.unique([n.data["sample"] for n in connected_bps]))
-    n_mut = len(np.unique([n.data["sample"] for n in connected_bps]))
+# create table of test IDs and metadata
+coupled_tests = pd.DataFrame(columns=["test_ID", "breakpoint_IDs", "mut_samples", "nonmut_samples", "n_mut", "n_nonmut", "testing"])
+for t_id in test_ID_status:
+    # get IDs of all breakpoints in this test group
+    b_ids = set([n.data["breakpoint_ID"] for n in G_all if n.data["test_ID"] == t_id])
+    # get all the samples involved in this test group
+    mut_samples = set([n.data["sample"] for n in G_all if n.data["test_ID"] == t_id])
+    # get all the non-mutated samples that will be used as the null distribution
+    nonmut_samples = set(SAMPLES) - mut_samples
+    # be sure to remove any samples in the tests that are incompatible with this one
+    for e in ttnm_graph.edges():
+        incompatible_samples = set([])
+        if t_id == e[0]:
+            incompatible_samples = set([n.data["sample"] for n in G_all if n.data["test_ID"] == e[1]])
+        elif t_id == e[1]:
+            incompatible_samples = set([n.data["sample"] for n in G_all if n.data["test_ID"] == e[0]])
+        nonmut_samples = nonmut_samples - incompatible_samples
     coupled_tests = coupled_tests.append(
         {
-            "breakpoint_IDs": indices,
-            "mutated_in": mut_samples,
-            "n_mut": n_mut,
-            "n_nonmut": len(SAMPLES) - n_mut
+            "test_ID": t_id,
+            "breakpoint_IDs": ",".join([str(i) for i in b_ids]),
+            "mut_samples": ",".join(mut_samples),
+            "nonmut_samples": ",".join(nonmut_samples),
+            "n_mut": len(mut_samples),
+            "n_nonmut": len(nonmut_samples),
+            "testing": test_ID_status[t_id]
         },
         ignore_index=True,
         sort=False
     )
-# only keep unique rows
-coupled_tests.drop_duplicates(inplace=True, ignore_index=True)
 
 # save coupled tests
 coupled_tests.to_csv(
     path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
     sep="\t",
-    index_label="test_index"
+    index=False
 )
 
 # ==============================================================================

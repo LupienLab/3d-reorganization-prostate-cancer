@@ -366,23 +366,8 @@
 <edge source="chr4:179.1Mb-179.6Mb" target="chr3:73.8Mb-75.0Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.08Mb-73.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.86Mb-73.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.6Mb-75.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:73.8Mb-75.0Mb" target="chr3:73.5Mb-75.3Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr4:181.68Mb-181.71Mb" target="chr3:76.01Mb-76.13Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr3:76.01Mb-76.13Mb" target="chr3:73.6Mb-75.8Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr6:84.3Mb-84.6Mb" target="chr6:127.7Mb-128.3Mb">
   <data key="d0">DUP</data>
@@ -393,26 +378,14 @@
 <edge source="chr1:205.0Mb-205.6Mb" target="chr6:109.5Mb-110.5Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr6:109.5Mb-110.5Mb" target="chr6:109.1Mb-109.4Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr2:212.7Mb-215.0Mb" target="chr3:23.7Mb-25.0Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr3:23.7Mb-25.0Mb" target="chr3:25.4Mb-27.3Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr2:226.0Mb-227.3Mb" target="chr6:165.3Mb-166.4Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr6:165.3Mb-166.4Mb" target="chr6:165.6Mb-166.4Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr6:163.1Mb-163.4Mb" target="chr3:25.4Mb-27.3Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr6:163.1Mb-163.4Mb" target="chr6:160.9Mb-162.9Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr3:25.4Mb-27.3Mb" target="chr11:123.0Mb-123.3Mb">
   <data key="d0">BND</data>
@@ -420,14 +393,8 @@
 <edge source="chr4:69.2Mb-69.9Mb" target="chr9:98.0Mb-98.9Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr4:69.2Mb-69.9Mb" target="chr4:69.4Mb-69.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr5:59.0Mb-59.2Mb" target="chr5:172.4Mb-173.0Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr5:59.0Mb-59.2Mb" target="chr5:56.3Mb-58.5Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr10:5.97Mb-6.09Mb" target="chr10:96.63Mb-99.3Mb">
   <data key="d0">DUP</data>
@@ -444,29 +411,14 @@
 <edge source="chr13:98.7Mb-99.2Mb" target="chr1:201.1Mb-201.9Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr13:98.7Mb-99.2Mb" target="chr13:99.4Mb-100.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr13:98.7Mb-99.2Mb" target="chr13:94.0Mb-101.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr13:99.4Mb-100.6Mb" target="chr1:151.0Mb-151.3Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr13:99.4Mb-100.6Mb" target="chr13:94.0Mb-101.0Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr13:21.4Mb-22.9Mb" target="chr6:168.6Mb-169.6Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr13:21.4Mb-22.9Mb" target="chr13:21.56Mb-21.59Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr13:42.1Mb-42.8Mb" target="chr6:165.6Mb-166.4Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr13:42.1Mb-42.8Mb" target="chr13:41.7Mb-42.2Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr13:20.0Mb-20.4Mb" target="chr13:39.6Mb-40.0Mb">
   <data key="d0">UNKNOWN</data>
@@ -489,71 +441,20 @@
 <edge source="chr21:41.45Mb-41.62Mb" target="chr21:38.4Mb-38.78Mb">
   <data key="d0">DEL</data>
 </edge>
-<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.45Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.78Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr2:115.4Mb-115.8Mb" target="chr2:127.2Mb-127.5Mb">
   <data key="d0">DUP</data>
-</edge>
-<edge source="chr2:115.4Mb-115.8Mb" target="chr2:114.6Mb-115.18Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr2:112.73Mb-112.8Mb" target="chr4:125.47Mb-125.6Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr4:125.47Mb-125.6Mb" target="chr4:125.34Mb-125.38Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr4:125.47Mb-125.6Mb" target="chr4:125.2Mb-125.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr2:114.6Mb-115.18Mb" target="chr4:125.34Mb-125.38Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr4:125.34Mb-125.38Mb" target="chr4:125.2Mb-125.8Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr13:30.67Mb-30.94Mb" target="chr11:32.28Mb-32.31Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr13:30.67Mb-30.94Mb" target="chr13:30.1Mb-30.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr14:72.71Mb-72.87Mb" target="chr4:157.73Mb-157.88Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr14:72.71Mb-72.87Mb" target="chr14:73.0Mb-73.12Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr14:73.0Mb-73.12Mb" target="chr4:154.87Mb-154.93Mb">
   <data key="d0">BND</data>
@@ -564,17 +465,8 @@
 <edge source="chr3:121.6Mb-121.88Mb" target="chr3:156.14Mb-156.17Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr3:121.6Mb-121.88Mb" target="chr3:121.2Mb-121.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:156.14Mb-156.17Mb" target="chr3:156.3Mb-157.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr3:123.8Mb-124.6Mb" target="chr3:156.3Mb-157.1Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr3:156.3Mb-157.1Mb" target="chr3:156.7Mb-157.2Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr3:79.63Mb-79.75Mb" target="chr9:92.03Mb-92.08Mb">
   <data key="d0">BND</data>
@@ -582,59 +474,17 @@
 <edge source="chr5:69.03Mb-69.3Mb" target="chr3:68.97Mb-69.06Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr5:69.03Mb-69.3Mb" target="chr5:69.1Mb-69.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr5:73.01Mb-73.5Mb" target="chr3:73.08Mb-73.1Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr5:73.01Mb-73.5Mb" target="chr5:74.6Mb-75.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:73.08Mb-73.1Mb" target="chr3:73.5Mb-75.3Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr16:4.45Mb-4.7Mb" target="chr8:41.51Mb-41.55Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr16:4.45Mb-4.7Mb" target="chr16:4.8Mb-5.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr8:41.51Mb-41.55Mb" target="chr8:41.24Mb-41.54Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr16:4.8Mb-5.1Mb" target="chr16:71.1Mb-71.6Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
 <edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr2:137.2Mb-137.8Mb" target="chr2:142.73Mb-143.1Mb">
   <data key="d0">DEL</data>
@@ -648,44 +498,14 @@
 <edge source="chr3:63.89Mb-64.0Mb" target="chr3:73.86Mb-73.9Mb">
   <data key="d0">DEL</data>
 </edge>
-<edge source="chr3:63.89Mb-64.0Mb" target="chr3:61.2Mb-63.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:73.86Mb-73.9Mb" target="chr3:73.6Mb-75.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr3:73.86Mb-73.9Mb" target="chr3:73.5Mb-75.3Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr4:95.14Mb-95.46Mb" target="chr4:16.25Mb-17.5Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr4:95.14Mb-95.46Mb" target="chr4:97.7Mb-98.2Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr4:95.14Mb-95.46Mb" target="chr4:94.2Mb-94.7Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr4:95.14Mb-95.46Mb" target="chr4:94.8Mb-95.7Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr4:95.14Mb-95.46Mb" target="chr4:95.1Mb-98.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr4:16.25Mb-17.5Mb" target="chr4:97.7Mb-98.2Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr4:97.7Mb-98.2Mb" target="chr4:94.8Mb-95.7Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr4:97.7Mb-98.2Mb" target="chr4:95.1Mb-98.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr4:115.48Mb-115.66Mb" target="chr4:133.4Mb-135.0Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr4:115.48Mb-115.66Mb" target="chr4:114.7Mb-115.15Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr4:133.4Mb-135.0Mb" target="chr4:114.7Mb-115.15Mb">
   <data key="d0">UNKNOWN</data>
@@ -723,62 +543,20 @@
 <edge source="chr10:54.8Mb-55.3Mb" target="chr10:92.5Mb-93.1Mb">
   <data key="d0">DEL</data>
 </edge>
-<edge source="chr10:92.5Mb-93.1Mb" target="chr10:93.4Mb-93.7Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:92.5Mb-93.1Mb" target="chr10:91.9Mb-92.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:92.5Mb-93.1Mb" target="chr10:92.3Mb-92.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr10:80.12Mb-80.17Mb" target="chr10:110.2Mb-110.3Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
 <edge source="chr10:101.2Mb-101.4Mb" target="chr10:108.5Mb-109.3Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr10:108.5Mb-109.3Mb" target="chr10:106.5Mb-107.2Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr12:50.9Mb-51.4Mb" target="chr12:110.4Mb-110.7Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr12:110.4Mb-110.7Mb" target="chr12:111.17Mb-111.22Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:110.4Mb-110.7Mb" target="chr12:110.99Mb-111.8Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:111.17Mb-111.22Mb" target="chr17:16.04Mb-16.21Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr12:111.17Mb-111.22Mb" target="chr12:110.99Mb-111.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr8:48.3Mb-49.6Mb" target="chr8:58.7Mb-60.2Mb">
   <data key="d0">UNKNOWN</data>
@@ -789,38 +567,17 @@
 <edge source="chr8:58.7Mb-60.2Mb" target="chr16:60.2Mb-62.6Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr16:60.2Mb-62.6Mb" target="chr16:59.1Mb-60.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr4:94.2Mb-94.7Mb" target="chr7:12.4Mb-15.3Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr4:94.2Mb-94.7Mb" target="chr4:94.8Mb-95.7Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr4:94.2Mb-94.7Mb" target="chr4:95.1Mb-98.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr7:12.4Mb-15.3Mb" target="chr4:94.8Mb-95.7Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr4:94.8Mb-95.7Mb" target="chr4:95.1Mb-98.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr1:105.9Mb-108.0Mb" target="chr11:64.0Mb-64.2Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr1:105.9Mb-108.0Mb" target="chr1:108.4Mb-109.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr11:64.0Mb-64.2Mb" target="chr11:64.26Mb-64.31Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr1:230.35Mb-230.5Mb" target="chr11:64.26Mb-64.31Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr1:230.35Mb-230.5Mb" target="chr1:230.6Mb-231.3Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr1:230.6Mb-231.3Mb" target="chr17:8.2Mb-8.9Mb">
   <data key="d0">BND</data>
@@ -843,9 +600,6 @@
 <edge source="chr8:129.47Mb-129.62Mb" target="chr7:69.5Mb-70.81Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr8:129.47Mb-129.62Mb" target="chr8:128.1Mb-129.2Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr7:69.5Mb-70.81Mb" target="chr8:134.7Mb-137.7Mb">
   <data key="d0">BND</data>
 </edge>
@@ -861,15 +615,6 @@
 <edge source="chr10:110.8Mb-112.16Mb" target="chr10:79.35Mb-79.4Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr10:68.6Mb-69.0Mb" target="chr10:69.4Mb-69.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:68.6Mb-69.0Mb" target="chr10:68.07Mb-68.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:68.6Mb-69.0Mb" target="chr10:68.74Mb-68.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr10:69.4Mb-69.9Mb" target="chr10:93.4Mb-93.7Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
@@ -882,44 +627,17 @@
 <edge source="chr16:13.7Mb-14.4Mb" target="chr16:46.8Mb-47.2Mb">
   <data key="d0">DUP</data>
 </edge>
-<edge source="chr16:13.7Mb-14.4Mb" target="chr16:14.6Mb-14.7Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:13.7Mb-14.4Mb" target="chr16:14.0Mb-15.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:13.7Mb-14.4Mb" target="chr16:15.1Mb-18.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:13.7Mb-14.4Mb" target="chr16:13.76Mb-13.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:46.8Mb-47.2Mb" target="chr16:48.0Mb-48.3Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr16:14.6Mb-14.7Mb" target="chr16:59.1Mb-60.5Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr16:14.6Mb-14.7Mb" target="chr16:14.0Mb-15.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:14.6Mb-14.7Mb" target="chr16:15.1Mb-18.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr16:48.0Mb-48.3Mb" target="chr16:81.2Mb-81.9Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr16:48.0Mb-48.3Mb" target="chr16:48.7Mb-49.7Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr16:48.7Mb-49.7Mb" target="chr16:77.6Mb-78.0Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
 <edge source="chr17:5.3Mb-6.6Mb" target="chr17:47.5Mb-47.9Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr17:47.5Mb-47.9Mb" target="chr17:46.3Mb-47.4Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr17:9.7Mb-10.7Mb" target="chr17:45.6Mb-45.8Mb">
   <data key="d0">UNKNOWN</data>
@@ -939,38 +657,11 @@
 <edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
   <data key="d0">DEL</data>
 </edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr2:3.7Mb-6.89Mb" target="chr5:54.5Mb-55.8Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr2:3.7Mb-6.89Mb" target="chr2:7.0Mb-8.18Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr8:134.7Mb-137.7Mb" target="chr12:123.7Mb-126.8Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr8:134.7Mb-137.7Mb" target="chr8:138.14Mb-138.72Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:123.7Mb-126.8Mb" target="chr12:125.0Mb-133.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:123.7Mb-126.8Mb" target="chr12:124.4Mb-125.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr8:60.8Mb-61.1Mb" target="chr8:113.1Mb-113.6Mb">
   <data key="d0">UNKNOWN</data>
@@ -978,29 +669,11 @@
 <edge source="chr12:58.2Mb-59.4Mb" target="chr16:23.7Mb-24.3Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr12:58.2Mb-59.4Mb" target="chr12:59.19Mb-59.42Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:58.2Mb-59.4Mb" target="chr12:58.64Mb-58.78Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:23.7Mb-24.3Mb" target="chr16:23.5Mb-24.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr15:43.8Mb-44.7Mb" target="chr7:128.3Mb-128.7Mb">
   <data key="d0">BND</data>
 </edge>
 <edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr21:38.4Mb-38.5Mb" target="chr21:38.4Mb-38.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.5Mb-41.62Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:6.68Mb-6.84Mb" target="chr2:11.07Mb-11.5Mb">
   <data key="d0">BND</data>
@@ -1011,20 +684,11 @@
 <edge source="chr1:57.03Mb-57.08Mb" target="chr1:85.0Mb-85.39Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr1:57.03Mb-57.08Mb" target="chr1:57.63Mb-57.75Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr1:85.0Mb-85.39Mb" target="chr1:58.1Mb-60.1Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr1:85.0Mb-85.39Mb" target="chr1:84.82Mb-84.96Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr1:57.63Mb-57.75Mb" target="chr1:154.96Mb-155.07Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr1:57.63Mb-57.75Mb" target="chr1:58.1Mb-60.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr1:154.96Mb-155.07Mb" target="chr4:71.47Mb-71.61Mb">
   <data key="d0">BND</data>
@@ -1035,9 +699,6 @@
 <edge source="chr3:36.17Mb-36.34Mb" target="chr3:115.5Mb-115.62Mb">
   <data key="d0">DUP</data>
 </edge>
-<edge source="chr3:115.5Mb-115.62Mb" target="chr3:114.3Mb-114.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr4:69.4Mb-69.9Mb" target="chr4:76.8Mb-79.0Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
@@ -1047,17 +708,11 @@
 <edge source="chr15:46.8Mb-47.2Mb" target="chr15:70.8Mb-71.0Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr15:46.8Mb-47.2Mb" target="chr15:47.0Mb-48.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr15:47.0Mb-48.1Mb" target="chr15:71.5Mb-71.7Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
 <edge source="chr1:231.72Mb-232.65Mb" target="chr7:107.43Mb-107.74Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr7:107.43Mb-107.74Mb" target="chr7:106.5Mb-108.0Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr8:56.12Mb-56.26Mb" target="chr8:138.14Mb-138.72Mb">
   <data key="d0">UNKNOWN</data>
@@ -1070,9 +725,6 @@
 </edge>
 <edge source="chr2:46.1Mb-46.9Mb" target="chr2:7.0Mb-8.18Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr2:46.1Mb-46.9Mb" target="chr2:45.61Mb-45.8Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr2:7.0Mb-8.18Mb" target="chr5:177.06Mb-177.12Mb">
   <data key="d0">BND</data>
@@ -1089,14 +741,8 @@
 <edge source="chr3:44.87Mb-44.96Mb" target="chr3:131.42Mb-131.65Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr3:44.87Mb-44.96Mb" target="chr3:44.35Mb-44.51Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr3:131.42Mb-131.65Mb" target="chr3:70.78Mb-70.84Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr3:131.42Mb-131.65Mb" target="chr3:130.0Mb-131.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr3:61.2Mb-63.6Mb" target="chr3:114.3Mb-114.6Mb">
   <data key="d0">UNKNOWN</data>
@@ -1122,9 +768,6 @@
 <edge source="chr3:177.03Mb-177.4Mb" target="chrX:68.0Mb-68.14Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chrX:68.0Mb-68.14Mb" target="chrX:67.67Mb-67.83Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr2:45.61Mb-45.8Mb" target="chr5:177.06Mb-177.12Mb">
   <data key="d0">BND</data>
 </edge>
@@ -1149,29 +792,11 @@
 <edge source="chr10:28.6Mb-28.67Mb" target="chr10:90.95Mb-91.1Mb">
   <data key="d0">DEL</data>
 </edge>
-<edge source="chr10:90.95Mb-91.1Mb" target="chr10:89.5Mb-91.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:90.95Mb-91.1Mb" target="chr10:91.2Mb-91.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr10:68.74Mb-68.9Mb" target="chr10:89.22Mb-89.26Mb">
   <data key="d0">DUP</data>
 </edge>
-<edge source="chr10:89.22Mb-89.26Mb" target="chr10:89.0Mb-89.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:89.22Mb-89.26Mb" target="chr10:89.5Mb-91.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr10:83.8Mb-84.1Mb" target="chr10:91.9Mb-92.5Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr10:91.9Mb-92.5Mb" target="chr10:92.3Mb-92.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:91.9Mb-92.5Mb" target="chr10:91.2Mb-91.9Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:10.21Mb-10.36Mb" target="chr4:39.15Mb-39.46Mb">
   <data key="d0">BND</data>
@@ -1188,23 +813,14 @@
 <edge source="chr12:59.19Mb-59.42Mb" target="chr10:86.31Mb-86.37Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr10:86.31Mb-86.37Mb" target="chr10:85.0Mb-86.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr10:84.56Mb-84.6Mb" target="chr12:60.54Mb-62.7Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr10:84.56Mb-84.6Mb" target="chr10:85.0Mb-86.0Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:60.54Mb-62.7Mb" target="chr12:103.6Mb-104.1Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
 <edge source="chr12:60.54Mb-62.7Mb" target="chr21:32.26Mb-33.2Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr12:60.54Mb-62.7Mb" target="chr12:61.93Mb-62.22Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:61.93Mb-62.22Mb" target="chr10:87.8Mb-88.0Mb">
   <data key="d0">BND</data>
@@ -1215,41 +831,17 @@
 <edge source="chr10:87.8Mb-88.0Mb" target="chr21:32.26Mb-33.2Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr10:87.8Mb-88.0Mb" target="chr10:88.78Mb-88.83Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:87.8Mb-88.0Mb" target="chr10:87.9Mb-88.4Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr12:105.57Mb-106.25Mb" target="chr10:88.78Mb-88.83Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr12:105.57Mb-106.25Mb" target="chr12:105.41Mb-105.49Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:105.57Mb-106.25Mb" target="chr12:106.1Mb-106.3Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr10:88.78Mb-88.83Mb" target="chr10:89.0Mb-89.6Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:58.64Mb-58.78Mb" target="chr12:104.03Mb-104.06Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr12:104.03Mb-104.06Mb" target="chr12:103.6Mb-104.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr12:105.41Mb-105.49Mb" target="chr12:121.81Mb-122.02Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr12:105.41Mb-105.49Mb" target="chr12:106.1Mb-106.3Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr12:121.81Mb-122.02Mb" target="chr21:31.62Mb-31.66Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr21:31.62Mb-31.66Mb" target="chr21:32.26Mb-33.2Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chrX:53.0Mb-53.9Mb" target="chr12:44.9Mb-49.3Mb">
   <data key="d0">BND</data>
@@ -1259,9 +851,6 @@
 </edge>
 <edge source="chr14:21.52Mb-21.7Mb" target="chr1:91.81Mb-92.02Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr1:91.81Mb-92.02Mb" target="chr1:91.47Mb-91.56Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr14:54.3Mb-54.45Mb" target="chr1:91.47Mb-91.56Mb">
   <data key="d0">BND</data>
@@ -1275,17 +864,11 @@
 <edge source="chr14:103.31Mb-103.44Mb" target="chr10:100.29Mb-100.51Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr14:103.31Mb-103.44Mb" target="chr14:103.52Mb-103.67Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr14:103.52Mb-103.67Mb" target="chr10:102.5Mb-102.66Mb">
   <data key="d0">BND</data>
 </edge>
 <edge source="chr14:22.45Mb-22.53Mb" target="chr14:31.36Mb-31.48Mb">
   <data key="d0">UNKNOWN</data>
-</edge>
-<edge source="chr14:31.36Mb-31.48Mb" target="chr14:30.58Mb-30.73Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr14:23.47Mb-23.5Mb" target="chr14:30.58Mb-30.73Mb">
   <data key="d0">UNKNOWN</data>
@@ -1293,17 +876,11 @@
 <edge source="chr14:24.03Mb-24.17Mb" target="chr14:102.3Mb-102.36Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
-<edge source="chr14:102.3Mb-102.36Mb" target="chr14:101.66Mb-101.8Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr17:22.7Mb-28.3Mb" target="chr10:85.0Mb-86.0Mb">
   <data key="d0">BND</data>
 </edge>
 <edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
   <data key="d0">DEL</data>
-</edge>
-<edge source="chr21:41.5Mb-41.62Mb" target="chr21:41.1Mb-42.1Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chrX:67.67Mb-67.83Mb" target="chrX:144.62Mb-144.74Mb">
   <data key="d0">DUP</data>
@@ -1319,9 +896,6 @@
 </edge>
 <edge source="chr2:97.7Mb-98.6Mb" target="chr3:73.6Mb-75.8Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr3:73.6Mb-75.8Mb" target="chr3:73.5Mb-75.3Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr3:130.0Mb-131.1Mb" target="chr3:156.7Mb-157.2Mb">
   <data key="d0">UNKNOWN</data>
@@ -1356,9 +930,6 @@
 <edge source="chr5:34.2Mb-35.2Mb" target="chr10:92.3Mb-92.8Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr10:92.3Mb-92.8Mb" target="chr10:91.2Mb-91.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr5:56.3Mb-58.5Mb" target="chr22:40.8Mb-41.4Mb">
   <data key="d0">BND</data>
 </edge>
@@ -1374,20 +945,11 @@
 <edge source="chr8:16.7Mb-17.4Mb" target="chr10:89.0Mb-89.6Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr10:89.0Mb-89.6Mb" target="chr10:89.5Mb-91.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr8:22.0Mb-22.4Mb" target="chr10:89.5Mb-91.0Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr10:89.5Mb-91.0Mb" target="chr10:91.2Mb-91.9Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr8:73.7Mb-74.9Mb" target="chrX:13.8Mb-15.4Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chrX:13.8Mb-15.4Mb" target="chrX:15.2Mb-16.75Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr8:77.0Mb-78.4Mb" target="chrX:15.2Mb-16.75Mb">
   <data key="d0">BND</data>
@@ -1419,21 +981,6 @@
 <edge source="chr12:125.0Mb-133.0Mb" target="chr21:10.0Mb-28.0Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr12:125.0Mb-133.0Mb" target="chr12:124.4Mb-125.1Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:125.0Mb-133.0Mb" target="chr12:128.1Mb-130.4Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr12:125.0Mb-133.0Mb" target="chr12:130.0Mb-130.5Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr21:10.0Mb-28.0Mb" target="chr21:15.8Mb-16.38Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr13:29.47Mb-29.52Mb" target="chr13:30.1Mb-30.6Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
 <edge source="chr13:21.56Mb-21.59Mb" target="chr13:94.0Mb-101.0Mb">
   <data key="d0">DEL</data>
 </edge>
@@ -1454,12 +1001,6 @@
 </edge>
 <edge source="chr16:14.0Mb-15.1Mb" target="chr12:110.99Mb-111.8Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr16:14.0Mb-15.1Mb" target="chr16:15.1Mb-18.0Mb">
-  <data key="d0">equivalent-TAD</data>
-</edge>
-<edge source="chr16:14.0Mb-15.1Mb" target="chr16:13.76Mb-13.8Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:110.99Mb-111.8Mb" target="chr22:43.14Mb-43.19Mb">
   <data key="d0">BND</data>
@@ -1484,9 +1025,6 @@
 </edge>
 <edge source="chr12:128.1Mb-130.4Mb" target="chr7:106.5Mb-108.0Mb">
   <data key="d0">BND</data>
-</edge>
-<edge source="chr12:128.1Mb-130.4Mb" target="chr12:130.0Mb-130.5Mb">
-  <data key="d0">equivalent-TAD</data>
 </edge>
 <edge source="chr12:106.1Mb-106.3Mb" target="chr12:130.0Mb-130.5Mb">
   <data key="d0">UNKNOWN</data>

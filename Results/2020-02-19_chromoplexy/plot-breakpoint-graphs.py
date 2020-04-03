@@ -73,6 +73,9 @@ chrom_colours = [
 
 chrom_colour_map = {c: v for c, v in zip(chroms, chrom_colours)}
 
+GRAPH_DIR = "Graphs"
+PLOT_DIR = path.join("Plots", "breakpoint-graphs")
+
 # ==============================================================================
 # Functions
 # ==============================================================================
@@ -103,7 +106,15 @@ def savefig(fig, prefix="figure", exts=["png", "pdf"], dpi=400, **kwargs):
         )
 
 
-def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, node_labels=False, **kwargs):
+def plot_graph(
+    G,
+    prefix,
+    colocate_chroms=False,
+    n_centres=10,
+    node_labels=False,
+    edge_labels=False,
+    **kwargs
+):
     if colocate_chroms:
         for c in chroms:
             for n in [m for m in G if m.chr == c]:
@@ -156,13 +167,14 @@ def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, node_labels=False
         edgecolors="#000000",
         with_labels=False,
     )
-    # add labels to the edges for the SV type
-    nx.draw_networkx_edge_labels(
-        G=G,
-        pos=pos,
-        ax=ax,
-        edge_labels={edge: annot_map[ann] for (edge, ann) in zip(edges, e_annots) if ann in annot_map.keys()}
-    )
+    if edge_labels:
+        # add labels to the edges for the SV type
+        nx.draw_networkx_edge_labels(
+            G=G,
+            pos=pos,
+            ax=ax,
+            edge_labels={edge: annot_map[ann] for (edge, ann) in zip(edges, e_annots) if ann in annot_map.keys()}
+        )
     # save without node labels
     savefig(fig, prefix, **kwargs)
     if node_labels:
@@ -189,18 +201,18 @@ def plot_graph(G, prefix, colocate_chroms=False, n_centres=10, node_labels=False
 # data
 # ==============================================================================
 # load graphs
-G_all = pickle.load(open("breakpoints.all-samples.p", "rb"))
-G_sample = pickle.load(open("breakpoints.per-sample.merged-breakpoints.p", "rb"))
+G_all = pickle.load(open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "rb"))
+G_sample = pickle.load(open(path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"), "rb"))
 SAMPLES = list(G_sample.keys())
 
 # ==============================================================================
 # Plots
 # ==============================================================================
-plot_graph(G_all, path.join("Plots", "all-breakpoints"), dpi=400, bbox_inches="tight")
+plot_graph(G_all, path.join(PLOT_DIR, "all-breakpoints"), dpi=400, bbox_inches="tight")
 
 random.seed(42)
 for s in tqdm(SAMPLES):
-    plot_graph(G_sample[s], path.join("Plots", s), node_labels=True, dpi=96, bbox_inches="tight")
+    plot_graph(G_sample[s], path.join(PLOT_DIR, s), node_labels=True, dpi=96, bbox_inches="tight")
 
 # figure for chromosome colour legend
 fig_leg, ax_leg = plt.subplots()
