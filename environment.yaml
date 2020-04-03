@@ -364,6 +364,7 @@ dependencies:
   - samtools=1.9
   - scikit-learn=0.22.2.post1
   - scipy=1.4.1
+  - seaborn=0.10.0
   - sed=4.7
   - send2trash=1.5.0
   - seqkit=0.11.0
