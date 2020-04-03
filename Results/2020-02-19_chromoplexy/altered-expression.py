@@ -12,6 +12,7 @@ import networkx as nx
 from interval import interval
 from tqdm import tqdm
 from scipy import stats
+from statsmodels.stats.multitest import multipletests
 import pickle
 
 from genomic_interval import (
@@ -253,9 +254,17 @@ for test in tqdm(tests.itertuples(), total=tests.shape[0]):
     tests.loc[test.Index, "t"] = t
     tests.loc[test.Index, "p"] = p
 
+# add multiple test correction column
+tests.loc[~tests.p.isna(), "FDR"] = multipletests(tests.loc[~tests.p.isna(), "p"], method="fdr_bh")[1]
+
 # ==============================================================================
 # Save data
 # ==============================================================================
+# convert columns with lists into comma-separated strings
+tests.breakpoint_IDs = [",".join([str(i) for i in l]) for l in tests.breakpoint_IDs]
+tests.mut_samples = [",".join(l) for l in tests.mut_samples]
+tests.nonmut_samples = [",".join(l) for l in tests.nonmut_samples]
+
 # save hypothesis test results
 tests.to_csv(
     path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
