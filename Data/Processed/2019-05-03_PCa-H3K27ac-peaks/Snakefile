@@ -36,7 +36,7 @@ rule all:
         expand(
             path.join(PEAK_DIR, '{sample}_peaks.filtered.{ext}'),
             sample=UNIQ_SAMPLES,
-            ext=["narrowPeak", "bdg", "beddb"],
+            ext=["narrowPeak", "bdg"],
         ),
         expand(
             path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.{ext}'),
@@ -47,8 +47,12 @@ rule all:
         path.join(PEAK_DIR, "correlation.tsv"),
         expand(
             path.join(PEAK_DIR, "{sample}_FE.sorted.bdg"),
-            sample=SAMPLES
+            sample=UNIQ_SAMPLES
         ),
+        expand(
+            path.join(PEAK_DIR, "{sample}_FE.sorted.beddb"),
+            sample=UNIQ_SAMPLES
+        )
 
 # ==============================================================================
 # Rules
@@ -160,9 +164,9 @@ rule sort:
 
 rule clodius_agg_1d:
     input:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak'),
+        path.join(PEAK_DIR, '{sample}_FE.sorted.bdg'),
     output:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.beddb'),
+        path.join(PEAK_DIR, '{sample}_FE.sorted.beddb'),
     params:
         "-a hg38"
     shell:
