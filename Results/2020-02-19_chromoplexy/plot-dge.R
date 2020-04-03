@@ -4,15 +4,17 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
+GRAPH_DIR <- "Graphs"
+
 # ==============================================================================
 # Data
 # ==============================================================================
 # load hypothesis testing results
-htest <- fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
+htest <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.expression.tsv"), sep = "\t", header = TRUE)
 
 # load z-scores for tested genes
 tested_genes <- fread(
-    "sv-disruption-tests.genes.tsv",
+    file.path(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
     sep = "\t",
     header = TRUE
 )
@@ -74,9 +76,8 @@ chrom_sizes[, label_offset := (offset + c(0, head(offset, -1))) / 2]
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# calculate FDR
-htest[, q := p.adjust(p, "fdr")]
-altering_breakpoints <- htest[q < 0.05, breakpoint_index]
+# get IDs of test groups where there is significantly altered gene expression
+altering_tests <- htest[FDR < 0.05, test_ID]
 
 # calculate means and variances for all genes
 sample_cols <- 3:15
@@ -84,7 +85,7 @@ exprs[, means := rowMeans(.SD), .SDcols = sample_cols]
 exprs[, std_dev := apply(.SD, 1, sd), .SDcols = sample_cols]
 
 # classify according to thresholds
-tested_genes[, pass_thresh := FALSE]
+tested_genes[, Pass_Thresh := FALSE]
 tested_genes[
     (
         abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2]
@@ -116,35 +117,35 @@ tested_genes$colour <- sapply(
 
 # state whether the genes are related to a breakpoint that significantly
 # alters the set of genes (doing this calculation per row with ifelse)
-tested_genes[, altering_bp := ifelse(
-    breakpoint_index %in% altering_breakpoints,
+tested_genes[, altering_test := ifelse(
+    test_ID %in% altering_tests,
     TRUE,
     FALSE
 )]
 
-# set of breakpoints where at least 1 gene passes both thresholds
-b_star <- tested_genes[
-    pass_thresh == TRUE,
+# set of tests where at least 1 gene passes both thresholds
+tests_with_some_deg <- tested_genes[
+    Pass_Thresh == TRUE,
     .N,
-    by = breakpoint_index
-]$breakpoint_index
+    by = test_ID
+]$test_ID
 
 # calculate percentage of genes in these TADs
-b_star_pct_genes <- data.table(
-    breakpoint_index = b_star,
+tests_altered_genes <- data.table(
+    test_ID = tests_with_some_deg,
     n_altered_genes = tested_genes[
-        pass_thresh == TRUE,
+        Pass_Thresh == TRUE,
         .N,
-        by = breakpoint_index
+        by = test_ID
     ]$N,
     n_genes = tested_genes[
-        breakpoint_index %in% b_star,
+        test_ID %in% tests_with_some_deg,
         .N,
-        by = breakpoint_index
+        by = test_ID
     ]$N
 )
-b_star_pct_genes[, pct_genes := n_altered_genes / n_genes]
-print(b_star_pct_genes[, summary(pct_genes)])
+tests_altered_genes[, pct_genes := n_altered_genes / n_genes]
+print(tests_altered_genes[, summary(pct_genes)])
 
 # ==============================================================================
 # Plots
@@ -157,7 +158,7 @@ gg <- (
     + theme_minimal()
 )
 ggsave(
-    "Plots/sv-disruption.expression.p-values.png",
+    "Plots/sv-disruption/expression.p-values.png",
     height = 12,
     width = 20,
     units = "cm"
@@ -193,7 +194,7 @@ gg <- (
     )
 )
 ggsave(
-    "Plots/sv-disruption.z.png",
+    "Plots/sv-disruption/expression.z.png",
     height = 10,
     width = 40,
     units = "cm"
@@ -202,16 +203,15 @@ ggsave(
 gg <- (
     ggplot(data = tested_genes)
     + geom_boxplot(
-        aes(x = factor(breakpoint_index), y = log2fold, colour = altering_bp)
+        aes(x = factor(test_ID), y = log2fold, colour = altering_test)
     )
-    + labs(x = "Breakpoint", y = expression(log[2] * " Expression fold change"))
+    + labs(x = "Test", y = expression(log[2] * " Expression fold change"))
     + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
-    + facet_wrap(~mutated_in, scales = "free_y")
-    + guides(fill = guide_legend(title = "Breakpoints"))
+    + guides(fill = guide_legend(title = "Related breakpoints"))
     + scale_colour_manual(
         limits = c(TRUE, FALSE),
         values = c("#000000", "#cecece"),
-        name = "Breakpoint significantly alters expression"
+        name = "Breakpoints significantly alters expression"
     )
     + coord_flip()
     + theme_minimal()
@@ -222,7 +222,7 @@ gg <- (
     )
 )
 ggsave(
-    "Plots/sv-disruption.fold-change.png",
+    "Plots/sv-disruption/expression.fold-change.png",
     height = 30,
     width = 20,
     units = "cm"
@@ -236,18 +236,17 @@ gg <- (
     ])
     + geom_point(
         aes(
-            x = factor(breakpoint_index),
+            x = factor(test_ID),
             y = log2fold,
             group = factor(log2fold),
-            colour = (breakpoint_index %% 2 == 0)
+            colour = (test_ID %% 2 == 0)
         ),
         position = position_dodge(width = 1),
         size = 1
     )
-    + labs(x = "Breakpoint", y = expression(log[2] * " Expression fold change"))
+    + labs(x = "Test", y = expression(log[2] * " Expression fold change"))
     + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
-    + facet_wrap(~mutated_in, scales = "free_y")
-    + guides(fill = guide_legend(title = "Breakpoints"))
+    + guides(fill = FALSE)
     # + scale_colour_manual(
     #     limits = c(TRUE, FALSE),
     #     values = c("#000000", "#cecece"),
@@ -262,7 +261,7 @@ gg <- (
     )
 )
 ggsave(
-    "Plots/sv-disruption.fold-change.thresholded.png",
+    "Plots/sv-disruption/expression.fold-change.thresholded.png",
     height = 30,
     width = 20,
     units = "cm"
@@ -314,7 +313,7 @@ gg <- (
     )
 )
 ggsave(
-    "Plots/sv-disruption.fold-change-vs-difference.png",
+    "Plots/sv-disruption/expression.fold-change-vs-difference.png",
     height = 20,
     width = 20,
     units = "cm"
@@ -414,7 +413,7 @@ gg <- (
     + theme_minimal()
 )
 ggsave(
-    "Plots/sv-disruption.fold.ecdf.png",
+    "Plots/sv-disruption/expression.fold-change.ecdf.png",
     height = 12,
     width = 20,
     units = "cm"
@@ -502,7 +501,7 @@ gg <- (
     + theme_minimal()
 )
 ggsave(
-    "Plots/sv-disruption.fold.ecdf.thresholded.png",
+    "Plots/sv-disruption/expression.fold-change.ecdf.thresholded.png",
     height = 12,
     width = 20,
     units = "cm"
