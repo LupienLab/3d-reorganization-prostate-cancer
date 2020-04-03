@@ -383,6 +383,7 @@ for s in SAMPLES:
 test_ID_status = {}
 test_IDs_to_merge = []
 test_IDs_to_never_merge = []
+test_ID_SV_types = {}
 for i, n in tqdm(enumerate(G_all), total=len(G_all)):
     # find all SV types that this breakpoint is involved in
     n_sv_types = set([e["annotation"] for e in G_all[n].values()])
@@ -391,6 +392,7 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
     if not n_previously_assigned_test:
         n.data["test_ID"] = i
         test_ID_status[i] = True
+        test_ID_SV_types[i] = set([e["annotation"] for e in G_all[n].values()])
     for j, m in enumerate(G_all):
         # iteration is always in the same order, skip any node that has already been assessed with this one
         if j <= i:
@@ -404,7 +406,8 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
             # determine whether this breakpoint has already been assigned to a testing group
             m_previously_assigned_test = "test_ID" in m.data
             # determine how to group these breakpoints for hypothesis testing
-            if not n_sv_types.isdisjoint(m_sv_types):
+            compatible_types = n_sv_types & m_sv_types
+            if len(compatible_types) > 0:
                 # if there is a compatible SV types between them
                 # (e.g. they both have DEL in the same TAD)
                 # group these breakpoints together in the same testing group and test them
@@ -417,14 +420,18 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
                     m.data["test_ID"] = n.data["test_ID"]
                     if n.data["test_ID"] not in test_ID_status:
                         test_ID_status[n.data["test_ID"]] = True
+                if n.data["test_ID"] in test_ID_SV_types:
+                    test_ID_SV_types[n.data["test_ID"]] = test_ID_SV_types[n.data["test_ID"]].union(compatible_types)
+                else:
+                    test_ID_SV_types[n.data["test_ID"]] = compatible_types
             elif n.data["sample"] != m.data["sample"]:
                 # if different events from different samples
                 # group separately and test separately
                 if not m_previously_assigned_test:
                     m.data["test_ID"] = j
-                test_IDs_to_never_merge.append([n.data["test_ID"], m.data["test_ID"]])
-                if j not in test_ID_status:
                     test_ID_status[j] = True
+                    test_ID_SV_types[j] = set([e["annotation"] for e in G_all[m].values()])
+                test_IDs_to_never_merge.append([n.data["test_ID"], m.data["test_ID"]])
             else:
                 # group these breakpoints together in the same testing group but don't test them
                 # can't disambiguate the effect of one event vs the other at this region
@@ -451,6 +458,9 @@ for cc in nx.connected_components(ttm_graph):
     min_test_ID = min(n for n in cc)
     for n in cc:
         ttm_new_IDs[n] = min_test_ID
+        # take the union of SV types across these similar test groups
+        if n in test_ID_SV_types:
+            test_ID_SV_types[min_test_ID] = test_ID_SV_types[min_test_ID].union(test_ID_SV_types[n])
 
 # apply this reduction to the nodes that should not be merged (i.e. distinct SV events proximal to each other)
 ttnm_graph = nx.relabel_nodes(ttnm_graph, ttm_new_IDs)
@@ -477,7 +487,18 @@ test_ID_status = {k:v for k, v in test_ID_status.items() if k in reduced_test_ID
 pickle.dump(G_all, open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "wb"))
 
 # create table of test IDs and metadata
-coupled_tests = pd.DataFrame(columns=["test_ID", "breakpoint_IDs", "mut_samples", "nonmut_samples", "n_mut", "n_nonmut", "testing"])
+coupled_tests = pd.DataFrame(
+    columns=[
+        "test_ID",
+        "breakpoint_IDs",
+        "mut_samples",
+        "nonmut_samples",
+        "n_mut",
+        "n_nonmut",
+        "SV_type",
+        "testing",
+    ]
+)
 for t_id in test_ID_status:
     # get IDs of all breakpoints in this test group
     b_ids = set([n.data["breakpoint_ID"] for n in G_all if n.data["test_ID"] == t_id])
@@ -501,6 +522,7 @@ for t_id in test_ID_status:
             "nonmut_samples": ",".join(nonmut_samples),
             "n_mut": len(mut_samples),
             "n_nonmut": len(nonmut_samples),
+            "SV_type": ",".join(test_ID_SV_types[t_id]),
             "testing": test_ID_status[t_id]
         },
         ignore_index=True,
