@@ -8,6 +8,7 @@ Determine whether SVs alter TADs
 import os.path as path
 import numpy as np
 import pandas as pd
+import networkx as nx
 import pickle
 from tqdm import tqdm
 from interval import interval
@@ -21,9 +22,15 @@ BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join(
     "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
 )
+GRAPH_DIR = "Graphs"
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 WINDOWS = list(range(3, 31))
+
+# region around breakpoints to look for TAD boundaries
 BREAK_FLANK_SIZE = 5e5
+
+# window size to check TADs for
+w = 3
 
 # ==============================================================================
 # Functions
@@ -175,108 +182,71 @@ tads = {
 }
 
 # load breakpoint graphs for each patient
-G = pickle.load(open("breakpoints.all-samples.p", "rb"))
+G = pickle.load(open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "rb"))
 
 # load table of tests
 tests = pd.read_csv(
-    "sv-disruption-tests.tsv", sep="\t", header=0, index_col="test_index"
+    path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+    sep="\t",
+    header=0,
+    index_col="test_ID"
 )
 
 # load table of breakpoints
 breakpoints = pd.read_csv(
-    "sv-breakpoints.tsv", sep="\t", header=0, index_col="breakpoint_index"
+    path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+    sep="\t",
+    header=0,
+    index_col="breakpoint_ID"
 )
 
 # ==============================================================================
 # Main
 # ==============================================================================
 # table to track how many breakpoint ends alter TADs
-table_cols = [
-    "test_index",
-    "breakpoint_index",
-    "chr",
-    "start",
-    "end",
-    "mutated_in",
-    "altered_TAD",
-]
-altering_bps = pd.DataFrame(columns=table_cols)
-
-# window size to check TADs for
-w = 3
+altering_bps = pd.DataFrame({
+    "test_ID": tests.index,
+    "altered_TAD": [False] * tests.shape[0],
+    "chr": [None] * tests.shape[0],
+    "start": [0] * tests.shape[0],
+    "end": [0] * tests.shape[0],
+})
 
 # iterate over each set of linked breakpoints
 for t in tqdm(tests.itertuples(), total=tests.shape[0]):
     # extract breakpoint indices and get the breakpoints from the graph
-    bp_idxs = [int(i) for i in t.breakpoint_indices.split(",")]
-    bps = [n for i in bp_idxs for n in G if n.data["index"] == i]
+    bp_ids = [int(i) for i in t.breakpoint_IDs.split(",")]
+    nodes = [n for i in bp_ids for n in G if n.data["breakpoint_ID"] == i]
     # get (non-)mutated sample IDs
-    mut_samples = [s for s in t.mutated_in.split(",")]
-    nonmut_samples = [s for s in SAMPLES if s not in mut_samples]
-    # since the ends of related breakpoints can be megabases apart, we test each of them individually
-    for i, bp in zip(bp_idxs, bps):
-        data_to_store = {
-            "test_index": t.Index,
-            "breakpoint_index": i,
-            "chr": bp.chr,
-            "start": bp.inf(),
-            "end": bp.sup(),
-            "mutated_in": bp.data["sample"],
-            "altered_TAD": False,
-        }
-        mut_tads = get_neighbouring_TADs(bp, mut_samples, w)
-        nonmut_tads = get_neighbouring_TADs(bp, nonmut_samples, w)
-        if different_tads(
-            mut_tads,
-            mut_samples,
-            nonmut_tads,
-            nonmut_samples,
-            bp.inf() - BREAK_FLANK_SIZE,
-            bp.sup() + BREAK_FLANK_SIZE,
-        ):
-            data_to_store["altered_TAD"] = True
-        altering_bps = altering_bps.append(data_to_store, ignore_index=True, sort=False)
-
-# merge rows for duplicate tests, group by breakpoint
-agg_altering_bps = altering_bps.groupby("breakpoint_index").agg(
-    {
-        "test_index": list,
-        "chr": np.unique,
-        "start": np.unique,
-        "end": np.unique,
-        "mutated_in": np.unique,
-        "altered_TAD": list,
-    }
-)
-print(
-    agg_altering_bps.loc[
-        agg_altering_bps.altered_TAD.apply(lambda x: True in x), :
-    ].shape[0]
-    / agg_altering_bps.shape[0]
-)
-
-# find the specific TADs for a given breakpoint
-breakpoint_tads = pd.DataFrame(columns=["chr", "start", "end", "breakpoint_index"])
-for bp in tqdm(G, total=len(G)):
-    # get TAD containing this breakpoint in this sample only, slightly different than above
-    mut_tads = get_neighbouring_TADs(bp, [bp.data["sample"]], w)
-    breakpoint_tads = breakpoint_tads.append(
-        {
-            "chr": bp.chr,
-            "start": mut_tads.start.min(),
-            "end": mut_tads.end.max(),
-            "breakpoint_index": bp.data["index"],
-        },
-        ignore_index=True,
-        sort=False,
+    mut_samples = [s for s in t.mut_samples.split(",")]
+    nonmut_samples = [s for s in t.nonmut_samples.split(",")]
+    # get flanking regions around median of breakpoints
+    search_locus = GenomicInterval(
+        nodes[0].chr,
+        np.median([n.inf() for n in nodes]) - BREAK_FLANK_SIZE,
+        np.median([n.sup() for n in nodes]) + BREAK_FLANK_SIZE
     )
-breakpoint_tads.drop_duplicates(inplace=True, ignore_index=True)
+    mut_tads = get_neighbouring_TADs(search_locus, mut_samples, w)
+    nonmut_tads = get_neighbouring_TADs(search_locus, nonmut_samples, w)
+    # save position searched for this test
+    altering_bps.loc[altering_bps.test_ID == t.Index, "chr"] = search_locus.chr
+    altering_bps.loc[altering_bps.test_ID == t.Index, "start"] = search_locus.inf()
+    altering_bps.loc[altering_bps.test_ID == t.Index, "end"] = search_locus.sup()
+    if different_tads(
+        mut_tads,
+        mut_samples,
+        nonmut_tads,
+        nonmut_samples,
+        search_locus.inf(),
+        search_locus.sup(),
+    ):
+        altering_bps.loc[altering_bps.test_ID == t.Index, "altered_TAD"] = True
+
+print(
+    altering_bps.loc[altering_bps.altered_TAD == True, :].shape[0] / altering_bps.shape[0]
+)
 
 # ==============================================================================
 # Save
 # ==============================================================================
-agg_altering_bps.to_csv("sv-disruption-tests.TADs.tsv", sep="\t", index=True)
-breakpoint_tads.to_csv("sv-breakpoints.TADs.tsv", sep="\t", index=False)
-
-# how about now
-# how is this working
+altering_bps.to_csv(path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"), sep="\t", index=False)
