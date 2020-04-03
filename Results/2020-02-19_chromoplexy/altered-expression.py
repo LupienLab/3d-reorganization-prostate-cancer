@@ -28,6 +28,7 @@ BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join(
     "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
 )
+GRAPH_DIR = "Graphs"
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
 # window size to check TADs for
@@ -80,20 +81,23 @@ def normalize_genes(genes, fg_ids, bg_ids, offset=1e-3):
         "bg": genes_to_normalize.loc[:, bg_ids].mean(axis=1),
     }
     # sample standard deviation
-    dev = genes_to_normalize[bg_ids].std(axis=1)
+    devs={
+        "fg": genes_to_normalize[fg_ids].std(axis=1),
+        "bg": genes_to_normalize[bg_ids].std(axis=1),
+    }
     # keep track of which genes have no expression in the background samples
-    bg_no_exprs_idx = means["bg"].loc[means["bg"] == 0].index & dev.loc[dev == 0].index
+    bg_no_exprs_idx = means["bg"].loc[means["bg"] == 0].index & devs["bg"].loc[devs["bg"] == 0].index
     # keep track of which genes are expressed in the foreground sample(s)
     fg_exprs_idx = genes_to_normalize.loc[means["fg"] > 0].index
     # calculate z-score normalization
-    z = (means["fg"] - means["bg"]) / dev
+    z = (means["fg"] - means["bg"]) / devs["bg"]
     # calculate fold change (log2(FPKM + offset) - log2(mean + offset) to ensure no divide by 0)
     fc = np.log2((means["fg"] + offset) / (means["bg"] + offset))
     # for the samples with 0 variance, if the sample of interest also has no expression, replace NaN with 0
     z.loc[bg_no_exprs_idx] = 0
     # for the samples with 0 variance, if the sample of interest has some non-zero expression, replace NaN with Infinity
     z.loc[fg_exprs_idx & bg_no_exprs_idx] = np.inf
-    return z, fc, means, dev
+    return z, fc, means, devs
 
 
 # ==============================================================================
@@ -121,7 +125,7 @@ tads = {
 }
 
 # load breakpoint graphs for each patient
-G = pickle.load(open("breakpoints.all-samples.p", "rb"))
+G = pickle.load(open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "rb"))
 
 # load gene expression data
 exprs = pd.read_csv(
@@ -170,72 +174,68 @@ exprs = exprs[exprs_cols]
 # ==============================================================================
 # Analysis
 # ==============================================================================
-
-
-# number of breakpoints in the entire graph
-n_bps = len(G)
-
 # store hypothesis testing results
-htest = pd.DataFrame(
-    {
-        "chr": [bp.chr for bp in G],
-        "start": [bp.inf() for bp in G],
-        "end": [bp.sup() for bp in G],
-        "strand": [bp.data["strand"] for bp in G],
-        "mutated_in": [""] * n_bps,
-        "n_genes": [0] * n_bps,
-        "n_mut": [0] * n_bps,
-        "n_nonmut": [0] * n_bps,
-        "t": [0.0] * n_bps,
-        "p": [1.0] * n_bps,
-    }
+tests = pd.read_csv(
+    path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+    sep="\t",
+    header=0,
+    index_col="test_ID"
 )
+# convert comma-separated columns into lists of values
+tests.breakpoint_IDs = [[int(i) for i in l.split(",")] for l in tests.breakpoint_IDs]
+tests.mut_samples = [l.split(",") for l in tests.mut_samples]
+tests.nonmut_samples = [l.split(",") for l in tests.nonmut_samples]
+# initialize columns for hypothesis testing results
+tests["n_genes"] = 0
+tests["t"] = 0.0
+tests["p"] = 1.0
 
-# store genes invoved in hypothesis tests
+# store genes involved in hypothesis tests, explicitly, for future exploration/validation
 tested_genes = pd.DataFrame(
     columns=exprs_cols
     + [
+        "test_ID",
         "z",
         "log2fold",
         "mut_mean",
         "nonmut_mean",
+        "mut_sd",
         "nonmut_sd",
-        "mutated_in",
-        "breakpoint_index",
     ]
 )
 
 # and identify all the TADs that are involved (usually just 1 or 2)
-for i, bp in tqdm(enumerate(G), total=len(G)):
-    # find samples where this, or a nearby, breakpoint occurs
-    nbrs = [
-        n
-        for n, v in G[bp].items()
-        if v["annotation"] in ["nearby", "recurrent", "equivalent-TAD"]
-    ]
+for test in tqdm(tests.itertuples(), total=tests.shape[0]):
+    if not test.testing:
+        tests.loc[test.Index, "n_genes"] = np.nan
+        tests.loc[test.Index, "t"] = np.nan
+        tests.loc[test.Index, "p"] = np.nan
+        continue
+
     # only keep unique sample IDs, don't double count them
-    mut_samples = get_mutated_ids_near_breakend(bp, nbrs)
-    nonmut_samples = [s for s in SAMPLES if s not in mut_samples]
     # find the parent TAD(s) of this breakpoint
-    affected_tads = find_tad(bp, tads[bp.data["sample"]][W])
+    nodes = [n for n in G if n.data["test_ID"] == test.Index]
+    affected_tads = pd.concat(
+        [find_tad(n, tads[n.data["sample"]][W]) for n in nodes],
+        ignore_index=True,
+        keys=[n.data["sample"] for n in nodes]
+    )
     affected_intvl = GenomicInterval(
-        bp.chr, affected_tads["start"].min(), affected_tads["end"].max()
+        nodes[0].chr, affected_tads["start"].min(), affected_tads["end"].max()
     )
     # get all the genes across all the affected interval
     genes = genes_in_interval(affected_intvl)
     # normalize them according to the samples without this mutation
-    z, fc, means, dev = normalize_genes(genes, mut_samples, nonmut_samples)
-    # order is preserved, so just append the column
+    z, fc, means, devs = normalize_genes(genes, test.mut_samples, test.nonmut_samples)
+    # append testing results as new columns
+    genes["test_ID"] = test.Index
     genes["z"] = z.tolist()
     genes["log2fold"] = fc.tolist()
     genes["mut_mean"] = means["fg"].tolist()
     genes["nonmut_mean"] = means["bg"].tolist()
-    genes["nonmut_sd"] = dev.tolist()
-    genes["mutated_in"] = bp.data["sample"]
-    genes["n_mut"] = len(mut_samples)
-    genes["n_nonmut"] = len(nonmut_samples)
-    genes["breakpoint_index"] = i
-    # store tested genes for later
+    genes["mut_sd"] = devs["fg"].tolist()
+    genes["nonmut_sd"] = devs["bg"].tolist()
+    # store results in global table
     tested_genes = pd.concat([tested_genes, genes], ignore_index=True, sort=False)
     # conduct the hypothesis test, since all genes have their expression values normalized across samples
     finite_idx = genes.loc[~np.isinf(genes["z"])].index
@@ -249,19 +249,22 @@ for i, bp in tqdm(enumerate(G), total=len(G)):
         t = np.nan
         p = np.nan
     # store the data
-    htest.loc[i, "mutated_in"] = ",".join(mut_samples)
-    htest.loc[i, "n_genes"] = n_genes_tested
-    htest.loc[i, "n_mut"] = len(mut_samples)
-    htest.loc[i, "n_nonmut"] = len(nonmut_samples)
-    htest.loc[i, "t"] = t
-    htest.loc[i, "p"] = p
+    tests.loc[test.Index, "n_genes"] = n_genes_tested
+    tests.loc[test.Index, "t"] = t
+    tests.loc[test.Index, "p"] = p
 
 # ==============================================================================
 # Save data
 # ==============================================================================
 # save hypothesis test results
-htest.to_csv(
-    "sv-disruption-tests.expression.tsv", sep="\t", index=True, index_label="breakpoint_index"
+tests.to_csv(
+    path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
+    sep="\t",
+    index=True,
 )
 
-tested_genes.to_csv("sv-disruption-tests.expression.gene-level.tsv", sep="\t", index=False)
+tested_genes.to_csv(
+    path.join(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
+    sep="\t",
+    index=False
+)
