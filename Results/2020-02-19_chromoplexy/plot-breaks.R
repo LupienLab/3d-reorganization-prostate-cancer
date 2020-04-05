@@ -101,7 +101,7 @@ RCircos.Set.Core.Components(
 for (s in SAMPLES) {
     cat(s, "\n")
     png(
-        paste0("Plots/Circos/", s, ".circos.png"),
+        paste0("Plots/circos/", s, ".circos.png"),
         width = 12,
         height = 12,
         units = "cm",
@@ -122,12 +122,10 @@ for (s in SAMPLES) {
     # params$PlotColor = breakpoints$Colour
     # RCircos.Reset.Plot.Parameters(params)
     dev.off()
-    png(
-        paste0("Plots/Circos/", s, ".circos.pdf"),
+    pdf(
+        paste0("Plots/circos/", s, ".circos.pdf"),
         width = 12,
-        height = 12,
-        units = "cm",
-        res = 400
+        height = 12
     )
     RCircos.Set.Plot.Area()
     RCircos.Chromosome.Ideogram.Plot()
