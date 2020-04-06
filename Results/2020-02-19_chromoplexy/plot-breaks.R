@@ -89,6 +89,18 @@ fwrite(
     col.names = TRUE
 )
 
+# count the number of inter-/intra-chromosomal pairs
+inter_intra_counts <- breakpoint_pairs[, .N, by = "SampleID"]
+inter_intra_counts$Intrachromosomal <- breakpoint_pairs[, chr_x == chr_y, by = "SampleID"][, sum(V1), by = "SampleID"]$V1
+inter_intra_counts$Interchromosomal <- breakpoint_pairs[, chr_x != chr_y, by = "SampleID"][, sum(V1), by = "SampleID"]$V1
+
+fwrite(
+    inter_intra_counts,
+    "Statistics/breakpoint-pairs.inter-intra-chromosomal.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
 # calculate the length of events in each sample (i.e. size of each connected component)
 breakpoint_components <- breakpoints[, .N, by = c("SampleID", "component_ID")]
 
