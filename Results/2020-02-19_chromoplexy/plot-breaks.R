@@ -230,10 +230,13 @@ ggsave(
 
 gg_breakpoints_per_chrom = (
     ggplot(data = breakpoints[, .N, by = c("SampleID", "chr")])
-    + geom_col(aes(x = SampleID, y = N, fill = SampleID))
+    + geom_col(
+        aes(x = chr, y = N, fill = SampleID),
+        position = "stack",
+        colour = "#000000"
+    )
     + labs(x = NULL, y = "Breakpoints")
     + guides(fill = guide_legend(title = "Patient"))
-    + facet_grid(. ~ chr)
     + theme_minimal()
     + theme(
         panel.grid.major.x = element_blank(),
