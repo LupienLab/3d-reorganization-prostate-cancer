@@ -354,6 +354,48 @@ ggsave(
     dpi = 400
 )
 
+gg_inter_intra = (
+    ggplot(data = melt(
+        inter_intra_counts,
+        id.vars = c("SampleID"),
+        measure.vars = c("Intrachromosomal", "Interchromosomal"),
+        variable.name = "Class",
+        value.name = "Count"
+    ))
+    + geom_col(
+        aes(x = SampleID, y = Count, fill = Class),
+        colour = "#000000",
+        position = "dodge"
+    )
+    + scale_fill_manual(
+        breaks = c("Interchromosomal", "Intrachromosomal"),
+        labels = c("Inter-chromosomal", "Intra-chromosomal"),
+        values = c("#3F3FFF", "#FF7F7F"),
+        name = NULL
+    )
+    + labs(x = NULL, y = "Breakpoints")
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+    )
+)
+ggsave(
+    "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.png",
+    gg_inter_intra,
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.pdf",
+    gg_inter_intra,
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
+
 # 3. length and distribution of complex events
 # --------------------------------------
 gg_component_length = (
