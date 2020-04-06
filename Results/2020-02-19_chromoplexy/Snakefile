@@ -34,6 +34,23 @@ rule all:
             sample=SAMPLES
         ),
         "TAD-induced-regions.bed",
+        path.join("Statistics", "breakpoints.binned.tsv"),
+        path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        path.join("Statistics", "breakpoints-components.tsv"),
+        expand(
+            path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
+            plot=[
+                "sv-counts",
+                "sv-counts-by-chrom",
+                "sv-counts-by-chrom.labelled",
+                "sv-loci",
+                "sv-recurrence",
+                "sv-event-size",
+                "sv-events.total.T2E-comparison",
+                "sv-events.complex.T2E-comparison"
+            ],
+            ext=["png", "pdf"]
+        ),
         path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"),
         path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
         path.join(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
@@ -74,9 +91,24 @@ rule plot_breaks:
         paired = path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
     output:
         path.join("Statistics", "breakpoints.binned.tsv"),
-        path.join("Statistics", "breakpoints.inter-intra-chromosomal.tsv"),
+        path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
         path.join("Statistics", "breakpoints-components.tsv"),
-
+        expand(
+            path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
+            plot=[
+                "sv-counts",
+                "sv-counts-by-chrom",
+                "sv-counts-by-chrom.labelled",
+                "sv-loci",
+                "sv-recurrence",
+                "sv-event-size",
+                "sv-events.total.T2E-comparison",
+                "sv-events.complex.T2E-comparison"
+            ],
+            ext=["png", "pdf"]
+        ),
+    shell:
+        "Rscript {input.script}"
 
 rule altered_TADs:
     input:
