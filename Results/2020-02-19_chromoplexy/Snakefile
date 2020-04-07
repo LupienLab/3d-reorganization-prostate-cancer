@@ -36,7 +36,7 @@ rule all:
         "TAD-induced-regions.bed",
         path.join("Statistics", "breakpoints.binned.tsv"),
         path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
-        path.join("Statistics", "breakpoints-components.tsv"),
+        path.join("Statistics", "breakpoint-components.tsv"),
         expand(
             path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
             plot=[
@@ -52,6 +52,10 @@ rule all:
             ext=["png", "pdf"]
         ),
         path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"),
+        expand(
+            path.join(PLOT_DIR, "sv-disruption", "tads.count.{ext}"),
+            ext=["png", "pdf"]
+        ),
         path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
         path.join(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
         path.join(GRAPH_DIR, "sv-disruption-tests.acetylation.tsv"),
@@ -92,7 +96,7 @@ rule plot_breaks:
     output:
         path.join("Statistics", "breakpoints.binned.tsv"),
         path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
-        path.join("Statistics", "breakpoints-components.tsv"),
+        path.join("Statistics", "breakpoint-components.tsv"),
         expand(
             path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
             plot=[
