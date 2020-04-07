@@ -181,8 +181,8 @@ rule altered_acetyl:
     input:
         script = "altered-acetylation.R",
         breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
-        tads = "sv-breakpoints.TADs.tsv",
-        tests = "sv-disruption-tests.tsv",
+        tads = path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"),
+        tests = path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
         counts = expand(
             path.join(ACETYL_DIR, "{sample}_{type}.induced-region-counts.bed"),
             sample=SAMPLES,

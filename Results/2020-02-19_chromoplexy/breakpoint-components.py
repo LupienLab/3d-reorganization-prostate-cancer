@@ -5,7 +5,7 @@ breakpoint-bridging
 Take Breakfinder results and link breakpoints together by their positions
 """
 
-from typing import List
+from typing import List, Set, Tuple
 import os.path as path
 import numpy as np
 import pandas as pd
@@ -110,6 +110,31 @@ def merge_nodes(G: nx.Graph, nodes: List[GenomicInterval]) -> nx.Graph:
     return G
 
 
+def compatible_sv_pair(a: str, b: str) -> bool:
+    """
+    Determine whether a pair of structural variant types are compatible
+    """
+    always_compatible = ["BND", "UNKNOWN"]
+    if a in always_compatible:
+        return True
+    elif b in always_compatible:
+        return True
+    else:
+        return a == b
+
+
+def compatible_sv_types(type_a: Set[str], type_b: Set[str]) -> Tuple[bool, Set[str]]:
+    """
+    List all compatible structural variant types between two sets
+    """
+    # find whether all pairs of SV types are compatible, return if they are not
+    for a in type_a:
+        for b in type_b:
+            if not compatible_sv_pair(a, b):
+                return (False, set([]))
+    # if no incompatible pair has been found, return True
+    return (True, type_a.union(type_b))
+    
 
 # ==============================================================================
 # Data
@@ -406,8 +431,8 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
             # determine whether this breakpoint has already been assigned to a testing group
             m_previously_assigned_test = "test_ID" in m.data
             # determine how to group these breakpoints for hypothesis testing
-            compatible_types = n_sv_types & m_sv_types
-            if len(compatible_types) > 0:
+            is_compatible, compatible_types = compatible_sv_types(n_sv_types, m_sv_types)
+            if is_compatible:
                 # if there is a compatible SV types between them
                 # (e.g. they both have DEL in the same TAD)
                 # group these breakpoints together in the same testing group and test them
@@ -518,11 +543,11 @@ for t_id in test_ID_status:
         {
             "test_ID": t_id,
             "breakpoint_IDs": ",".join([str(i) for i in b_ids]),
-            "mut_samples": ",".join(mut_samples),
-            "nonmut_samples": ",".join(nonmut_samples),
+            "mut_samples": ",".join(sorted(mut_samples)),
+            "nonmut_samples": ",".join(sorted(nonmut_samples)),
             "n_mut": len(mut_samples),
             "n_nonmut": len(nonmut_samples),
-            "SV_type": ",".join(test_ID_SV_types[t_id]),
+            "SV_type": ",".join(sorted(test_ID_SV_types[t_id])),
             "testing": test_ID_status[t_id]
         },
         ignore_index=True,
