@@ -266,7 +266,7 @@ tests.mut_samples = [",".join(l) for l in tests.mut_samples]
 tests.nonmut_samples = [",".join(l) for l in tests.nonmut_samples]
 
 # save hypothesis test results
-tests.to_csv(
+tests.loc[:, ["n_genes", "t", "p", "FDR"]].to_csv(
     path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
     sep="\t",
     index=True,

@@ -151,7 +151,7 @@ print(tests_altered_genes[, summary(pct_genes)])
 # Plots
 # ==============================================================================
 # p-value histogram across all connected components (i.e. chromoplexic events)
-gg <- (
+gg_pval_hist <- (
     ggplot(data = htest)
     + geom_histogram(aes(x = p))
     + labs(x = "p-value", y = "Frequency")
@@ -159,6 +159,14 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.p-values.png",
+    gg_pval_hist,
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.p-values.pdf",
+    gg_pval_hist,
     height = 12,
     width = 20,
     units = "cm"
@@ -167,7 +175,7 @@ ggsave(
 # plot z-scores for each breakpoint
 ann_text <- tested_genes[z > 20 & is.finite(z)]
 
-gg <- (
+gg_z <- (
     ggplot(data = tested_genes[is.finite(z)])
     + geom_text(
         data = ann_text,
@@ -195,12 +203,20 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.z.png",
+    gg_z,
+    height = 10,
+    width = 40,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.z.pdf",
+    gg_z,
     height = 10,
     width = 40,
     units = "cm"
 )
 
-gg <- (
+gg_fc <- (
     ggplot(data = tested_genes)
     + geom_boxplot(
         aes(x = factor(test_ID), y = log2fold, colour = altering_test)
@@ -223,13 +239,21 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change.png",
+    gg_fc,
+    height = 30,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.fold-change.pdf",
+    gg_fc,
     height = 30,
     width = 20,
     units = "cm"
 )
 
 # same as above, but thresholding on absolute difference in mRNA abundance
-gg <- (
+gg_fc_thresh <- (
     ggplot(data = tested_genes[
         abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2],
         .SD
@@ -247,11 +271,6 @@ gg <- (
     + labs(x = "Test", y = expression(log[2] * " Expression fold change"))
     + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
     + guides(fill = FALSE)
-    # + scale_colour_manual(
-    #     limits = c(TRUE, FALSE),
-    #     values = c("#000000", "#cecece"),
-    #     name = "Breakpoint significantly alters expression"
-    # )
     + coord_flip()
     + theme_minimal()
     + theme(
@@ -262,12 +281,20 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change.thresholded.png",
+    gg_fc_thresh,
+    height = 30,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.fold-change.thresholded.pdf",
+    gg_fc_thresh,
     height = 30,
     width = 20,
     units = "cm"
 )
 
-gg <- (
+gg_fc_diff <- (
     ggplot(data = tested_genes)
     + geom_point(aes(
         x = mut_mean - nonmut_mean,
@@ -314,12 +341,20 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change-vs-difference.png",
+    gg_fc_diff,
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.fold-change-vs-difference.pdf",
+    gg_fc_diff,
     height = 20,
     width = 20,
     units = "cm"
 )
 
-gg <- (
+gg_genes <- (
     ggplot(data = exprs)
     + geom_density(aes(x = means))
     + labs(x = "Mean expression (FPKM)", y = "Density")
@@ -331,6 +366,14 @@ gg <- (
 )
 ggsave(
     "Plots/all-genes.sd-vs-mean.png",
+    gg_genes,
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/all-genes.sd-vs-mean.pdf",
+    gg_genes,
     height = 20,
     width = 20,
     units = "cm"
@@ -342,7 +385,7 @@ ecdf_data <- data.table(
     log2fold = tested_genes[order(log2fold), log2fold]
 )
 ecdf_data[, cdf := fold_ecdf(log2fold)]
-gg <- (
+gg_fc_cdf <- (
     ggplot()
     + geom_ribbon(
         data = ecdf_data[log2fold <= log_fold_thresh[1]],
@@ -414,6 +457,14 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change.ecdf.png",
+    gg_fc_cdf,
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.fold-change.ecdf.pdf",
+    gg_fc_cdf,
     height = 12,
     width = 20,
     units = "cm"
@@ -429,7 +480,7 @@ ecdf_data <- data.table(
     ][order(log2fold), log2fold]
 )
 ecdf_data[, cdf := fold_ecdf(log2fold)]
-gg <- (
+gg_fc_thresh_cdf <- (
     ggplot()
     + geom_ribbon(
         data = ecdf_data[log2fold <= log_fold_thresh[1]],
@@ -502,6 +553,14 @@ gg <- (
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change.ecdf.thresholded.png",
+    gg_fc_thresh_cdf,
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption/expression.fold-change.ecdf.thresholded.pdf",
+    gg_fc_thresh_cdf,
     height = 12,
     width = 20,
     units = "cm"
