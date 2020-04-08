@@ -5,6 +5,8 @@ suppressMessages(library("data.table"))
 suppressMessages(library("DESeq2"))
 suppressMessages(library("GenomicRanges"))
 
+GRAPH_DIR <- "Graphs"
+
 # ==============================================================================
 # Functions
 # ==============================================================================
@@ -41,29 +43,25 @@ metadata <- fread(
     sep = "\t",
     header = TRUE
 )
-SAMPLES <- paste0("PCa", metadata[, get("Sample ID")])
+metadata[, SampleID :=  paste0("PCa", get("Sample ID"))]
+SAMPLES <- metadata$SampleID
 metadata[, ChIP_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_H3K27ac.sorted.dedup.bam")]
 metadata[, Ctrl_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_input.sorted.dedup.bam")]
 
 # load TADs encompassing each breakpoint
-tads <- fread("sv-disruption-tests.TADs.tsv", sep = "\t", header = TRUE)
-tads$test_index <- split_comma_col(tads$test_index, as.numeric)
-tads[, any_altered_TAD := grepl("True", altered_TAD)]
-tads$altered_TAD <- split_comma_col(tads$altered_TAD, function(x) grepl("True", x))
+tads <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"), sep = "\t", header = TRUE)
 tads_gr <- dt2gr(tads)
 
 # load tests metadata
-tests <- fread("sv-disruption-tests.tsv", sep = "\t", header = TRUE)
+tests <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.tsv"), sep = "\t", header = TRUE)
 # convert comma-separated values into lists
-tests$breakpoint_indices <- split_comma_col(tests$breakpoint_indices, as.numeric)
-tests$mutated_in <- split_comma_col(tests$mutated_in)
+tests$breakpoint_IDs <- split_comma_col(tests$breakpoint_IDs, as.numeric)
+tests$mut_samples <- split_comma_col(tests$mut_samples)
+tests$nonmut_samples <- split_comma_col(tests$nonmut_samples)
 # assign placeholders for test data to be calculated
 tests$z <- as.numeric(NA)
 tests$p <- as.numeric(NA)
 tests$padj <- as.numeric(NA)
-tests$chr <- as.character(NA)
-tests$start <- as.numeric(NA)
-tests$end <- as.numeric(NA)
 
 # load induced regions (the rows of the count matrix)
 regions <- fread(
@@ -138,20 +136,55 @@ for (i in 1:(length(SAMPLES) - 1)) {
 
 # 3. Perform differential acetylation testing for each group of TADs
 # ------------------------------------------------------------------
-# create design matrices for each set of mut-vs-nonmut (this depends on the breakpoint being considered)
-all_comparisons <- unique(tests$mutated_in)
+# create design matrices for each set of mut-vs-nonmut (this depends on the test group)
+# find all the unique combinations of foreground and background samples (mut vs nonmut)
+# this will make creating the design matrices easier
+test_combos <- lapply(
+    1:tests[, .N],
+    function(i) {
+        return(list(
+            "mut" = tests[i, unlist(mut_samples)],
+            "nonmut" = tests[i, unlist(nonmut_samples)]
+        ))
+    }
+)
+all_comparisons <- unique(test_combos)
+
+# map all the unique comparisons back to the corresponding test IDs
+for (i in 1:length(all_comparisons)) {
+    comp_mut <- all_comparisons[[i]]$mut
+    comp_nonmut <- all_comparisons[[i]]$nonmut
+    for (j in 1:tests[, .N]) {
+        test_mut <- tests[j, unlist(mut_samples)]
+        test_nonmut <- tests[j, unlist(nonmut_samples)]
+        # only add this test_ID if the foreground and background mutations match
+        # and this region is being tested in the first place
+        if (identical(test_mut, comp_mut) && identical(test_nonmut, comp_nonmut)) {
+            all_comparisons[[i]]$test_IDs <- c(all_comparisons[[i]]$test_IDs, tests[j, test_ID])
+        }
+    }
+}
 
 # perform differential analysis for each test
 for (i in 1:length(all_comparisons)) {
     cat(i, "of", length(all_comparisons), "\n")
-    mut_samples <- all_comparisons[[i]]
+    mut_samples <- all_comparisons[[i]]$mut
+    nonmut_samples <- all_comparisons[[i]]$nonmut
+    testing_samples <- c(mut_samples, nonmut_samples)
+    test_IDs <- all_comparisons[[i]]$test_IDs
     # create metadata table for samples
-    meta <- data.table(Sample = SAMPLES, Mutated = "No", Size = library_sizes)
-    meta[Sample %in% mut_samples, Mutated := "Yes"]
+    meta <- data.table(
+        Sample = testing_samples,
+        Mutated = rep(
+            c("Yes", "No"),
+            c(length(mut_samples), length(nonmut_samples))
+        ),
+        Size = library_sizes[testing_samples]
+    )
     meta[, Mutated := factor(Mutated, levels = c("No", "Yes"))]
     # create DESeqDataSet object
     dds <- DESeqDataSetFromMatrix(
-        countData = count_matrix,
+        countData = count_matrix[, testing_samples],
         colData = meta,
         design = ~ Mutated,
         rowRanges = regions_gr
@@ -164,7 +197,7 @@ for (i in 1:length(all_comparisons)) {
     # perform steps indivudally, instead of having them wrapped in `DESeq` function
     # as per DiffBind documentation and other ChIP-seq analysis tools, linearly scale according to the sample with
     # the smallest library
-    sizeFactors(dds) <- library_sizes / min(library_sizes)
+    sizeFactors(dds) <- library_sizes[testing_samples] / min(library_sizes[testing_samples])
     dds <- estimateDispersions(dds, fitType="local")
     dds <- nbinomWaldTest(dds)
     cat(">>extracting results\n")
@@ -187,16 +220,11 @@ for (i in 1:length(all_comparisons)) {
     # for this particular contrast
 
     # find all the tests with the contrast of interest
-    # (i.e. mut_samples is equal to the `mutated_in` column)
-    test_idx_of_interest <- tests[
-        which(apply(tests, 1, function(r) identical(r$mutated_in, mut_samples))),
-        test_index
-    ]
     # enforce positions as integers to avoid writing to the file with scientific notation
     res_dt[, start := as.integer(start)]
     res_dt[, end := as.integer(end)]
     # save test results
-    for (ti in test_idx_of_interest) {
+    for (ti in test_IDs) {
         fwrite(
             res_dt,
             paste0("Acetylation/Tests/test_", ti, ".results.tsv"),
@@ -206,29 +234,11 @@ for (i in 1:length(all_comparisons)) {
     }
 
     # find all the TADs related to these tests
-    tads_of_interest <- unlist(GRangesList(lapply(
-        test_idx_of_interest,
-        function(ti) {
-            these_tads <- range(
-                tads_gr[which(
-                    apply(
-                        tads,
-                        1,
-                        function(r) {
-                            # only get the TADs related to this test index
-                            ti %in% r$test_index
-                        }
-                    )
-                )]
-            )
-            these_tads$test_index <- ti
-            return(these_tads)
-        }
-    )))
+    tads_of_interest <- tads_gr[tads_gr$test_ID %in% test_IDs]
 
     # find all the induced regions that map to these TADs
     regions_of_interest <- as.data.table(findOverlaps(regions_gr, tads_of_interest))
-    regions_of_interest[, test_index := tads_of_interest[subjectHits]$test_index]
+    regions_of_interest[, test_ID := tads_of_interest[subjectHits]$test_ID]
     # get differential analysis results for these regions
     regions_of_interest[, p := res_dt[queryHits, p]]
     # calculate region weights for the TAD it is induced from
@@ -242,32 +252,25 @@ for (i in 1:length(all_comparisons)) {
     stouffer_z <- regions_of_interest[,
         #!is.na(p) & !is.na(padj),
         sum(weight * qnorm(1 - p), na.rm = TRUE) / sqrt(sum(weight ^ 2)),
-        by = test_index
+        by = test_ID
     ]
     colnames(stouffer_z)[2] <- "z"
     # for any test that has all NAs, make sure it's listed as such (because the sum will be 0)
-    tests_with_all_nas <- regions_of_interest[, all(is.na(p)), by = "test_index"][V1 == TRUE, test_index]
-    stouffer_z[test_index %in% tests_with_all_nas, z := NA]
+    tests_with_all_nas <- regions_of_interest[, all(is.na(p)), by = "test_ID"][V1 == TRUE, test_ID]
+    stouffer_z[test_ID %in% tests_with_all_nas, z := NA]
     # calculate the associated p-value
     stouffer_z[, p := 2 * pnorm(-abs(z))]
     # because we're only testing these regions, not the others, perform p-value adjustment here
     stouffer_z[, padj := p.adjust(p, method = "fdr", n = .N)]
 
     # save to table for later
-    for (ti in test_idx_of_interest) {
-        if (tests[test_index == ti, !is.na(z)]) {
-            cat("This test has already been assigned: ", ti, "\n")
-        }
-        # variables for rows to get/set without performing the same calculation multiple times
-        this_tests_ti = which(tests$test_index == ti)
-        this_stouffer_ti = which(stouffer_z$test_index == ti)
-        this_tad_ti = which(tads_of_interest$test_index == ti)
-        tests[this_tests_ti]$z <- stouffer_z[this_stouffer_ti]$z
-        tests[this_tests_ti]$p <- stouffer_z[this_stouffer_ti]$p
-        tests[this_tests_ti]$padj <- stouffer_z[this_stouffer_ti]$padj
-        tests[this_tests_ti]$chr <- as.character(seqnames(tads_of_interest)[this_tad_ti])
-        tests[this_tests_ti]$start <- start(tads_of_interest[this_tad_ti]) - 1
-        tests[this_tests_ti]$end <- end(tads_of_interest[this_tad_ti])
+    for (ti in test_IDs) {
+        tests[test_ID == ti, z := stouffer_z[test_ID == ti]$z]
+        tests[test_ID == ti, p := stouffer_z[test_ID == ti]$p]
+        tests[test_ID == ti, padj := stouffer_z[test_ID == ti]$padj]
+        tests[test_ID == ti, chr := as.character(seqnames(tads_of_interest[tads_of_interest$test_ID == ti]))]
+        tests[test_ID == ti, start := start(tads_of_interest[tads_of_interest$test_ID == ti]) - 1]
+        tests[test_ID == ti, end := end(tads_of_interest[tads_of_interest$test_ID == ti])]
     }
 }
 
@@ -275,8 +278,10 @@ for (i in 1:length(all_comparisons)) {
 # Save data
 # ==============================================================================
 # convert lists back to comma-separated columns
-tests$breakpoint_indices <- unlist(lapply(tests$breakpoint_indices, paste, collapse = ","))
-tests$mutated_in <- unlist(lapply(tests$mutated_in, paste, collapse = ","))
+tests_backup <- copy(tests)
+tests$breakpoint_IDs <- unlist(lapply(tests$breakpoint_IDs, paste, collapse = ","))
+tests$mut_samples <- unlist(lapply(tests$mut_samples, paste, collapse = ","))
+tests$nonmut_samples <- unlist(lapply(tests$nonmut_samples, paste, collapse = ","))
 
 # enforce positions as integers to avoid writing to the file with scientific notation
 tests[, start := as.integer(start)]
@@ -284,14 +289,14 @@ tests[, end := as.integer(end)]
 
 # write the tables with columns in a particular order
 fwrite(
-    tests[, .SD, .SDcols = c(
-        "chr", "start", "end",
-        "test_index", "breakpoint_indices", "mutated_in",
-        "n_mut", "n_nonmut",
-        "z", "p", "padj"
-    )],
-    "sv-disruption-tests.acetylation.tsv",
+    tests[, .SD, .SDcols = c("test_ID", "z", "p", "padj")],
+    "Graphs/sv-disruption-tests.acetylation.tsv",
     sep = "\t",
     col.names = TRUE
 )
-fwrite(sample_corrs, "acetylation-correlation.tsv", sep = "\t", col.names = TRUE)
+fwrite(
+    sample_corrs,
+    "Statistics/acetylation-correlation.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
