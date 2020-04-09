@@ -1,3 +1,11 @@
 __default__:
     params: "--export=ALL -p all --mem 12G -c 1 -t 01:00:00"
 
+clodius_agg_1d:
+    params: "--export=ALL -p himem --mem 30G -c 1 -t 1-00:00:00"
+
+clodius_agg_2d_bed:
+    params: "--export=ALL -p himem --mem 30G -c 1 -t 1-00:00:00"
+
+clodius_agg_2d_bdg:
+    params: "--export=ALL -p himem --mem 30G -c 1 -t 1-00:00:00"

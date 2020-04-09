@@ -19,16 +19,23 @@ if (!interactive()) {
         help = "Prefix for output files (`{prefix}.aggregated-domains.tsv` and `{prefix}.aggregated-boundaries.bedGraph` will be created)",
         default = "output"
     )
+    PARSER$add_argument(
+        "-i", "--in-dir",
+        type = "character",
+        help = "Parent directory for TAD calls",
+        dest = "in_dir"
+    )
     ARGS <- PARSER$parse_args()
 } else {
     ARGS = list(
         id = "PCa58215",
-        prefix = "output"
+        prefix = "output",
+        in_dir = file.path("..", "2019-07-08_TADs", "TADs")
     )
 }
 
 # set of window sizes upon which TADs are called
-W = seq(3, 30)
+W = seq(3, 40)
 
 # number of bins to look up-/down-stream for merging together
 K = 1
@@ -36,8 +43,6 @@ K = 1
 # contact matrix resolution
 BIN_SIZE = 40000
 
-# diretory containing TAD calls
-TAD_DIR = file.path("..", "2019-07-08_TADs", "TADs")
 
 # ==============================================================================
 # Functions
@@ -61,7 +66,7 @@ all_boundaries = rbindlist(lapply(
     W,
     function(w) {
         dt = fread(
-            file.path(TAD_DIR, paste0("w_", w), paste0(ARGS$id, ".40000bp.domains.bed")),
+            file.path(ARGS$in_dir, paste0("w_", w), paste0(ARGS$id, ".40000bp.domains.bed")),
             header = FALSE,
             col.names = c("chr", "start", "end", "type")
         )
