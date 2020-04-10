@@ -46,6 +46,8 @@ rule all:
         #),
         path.join("Statistics", "tad-distances.tsv"),
         path.join(PLOT_DIR, "bp-score.png"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.png"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.delta.png"),
         path.join(PLOT_DIR, "tad-counts.png"),
         path.join(PLOT_DIR, "tad-counts-by-order.png"),
         path.join(PLOT_DIR, "tad-size-distribution.png"),
@@ -147,7 +149,7 @@ rule separate_by_window_size:
 
 rule bpscore:
     input:
-        script = "bpscore.py",
+        script = "calc-tad-similarity.py",
         data = expand(
             path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
             sample=SAMPLES,
@@ -158,10 +160,25 @@ rule bpscore:
     shell:
         "python {input.script}"
 
+rule window_bpscore:
+    input:
+        script = "stopping-window-size.py",
+        data = expand(
+            path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
+            sample=SAMPLES,
+            w=WINDOWS,
+        ),
+    output:
+        path.join("Statistics", "tad-similarity-deltas.tsv"),
+        path.join("Statistics", "tad-similarity-supremum.tsv"),
+    shell:
+        "python {input.script}"
+
 rule plots:
     input:
         script = "plot-TADs.R",
-        bpscore = path.join("Statistics", "tad-distances.tsv"),
+        sample_bpscore = path.join("Statistics", "tad-distances.tsv"),
+        window_bpscore = path.join("Statistics", "tad-similarity-deltas.tsv"),
         boundaries = expand(
             path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
             sample=SAMPLES,
@@ -172,6 +189,8 @@ rule plots:
         ),
     output:
         path.join(PLOT_DIR, "bp-score.png"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.png"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.delta.png"),
         path.join(PLOT_DIR, "tad-counts.png"),
         path.join(PLOT_DIR, "tad-counts-by-order.png"),
         path.join(PLOT_DIR, "tad-size-distribution.png"),

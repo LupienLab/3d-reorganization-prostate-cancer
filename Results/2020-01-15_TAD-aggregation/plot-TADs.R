@@ -4,6 +4,7 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
+MAX_WINDOW = 28
 # ==============================================================================
 # Data
 # ==============================================================================
@@ -42,9 +43,16 @@ tads <- rbindlist(lapply(
 ))
 tads[, width := as.numeric(end - start)]
 
+# only keep TADs called at w <= MAX_WINDOW
+tads <- tads[w <= MAX_WINDOW]
+tads[, lower_persistence := pmin(MAX_WINDOW, lower_persistence)]
+tads[, upper_persistence := pmin(MAX_WINDOW, upper_persistence)]
+boundaries[, Order := pmin(MAX_WINDOW, Order)]
 
 # load BPscore calculations
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
+window
+window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header = TRUE)
 
 # ==============================================================================
 # Analysis
@@ -100,13 +108,13 @@ ggsave(
 )
 
 gg = (
-    ggplot(data = tads[w <= 30])
+    ggplot(data = tads)
     #+ geom_density(aes(x = (end - start) / 1e6, colour = SampleID), alpha = 0.1)
     + geom_density(aes(x = width / 1e6, colour = SampleID), alpha = 0.1)
     #+ geom_smooth(aes(x = width / 1e6, y = N))
     + labs(x = "TAD Size (Mbp)", y = "Scaled density")
     + xlim(c(0, 5))
-    + facet_wrap(~ w, scales = "free_y", nrow = 4)
+    + facet_wrap(~ w, scales = "free_y", nrow = 5)
     + theme_minimal()
     + theme(
         legend.position = "bottom"
@@ -152,3 +160,32 @@ ggsave(
     units = "cm"
 )
 
+
+# plot the change in similarities over window sizes
+gg = (
+    ggplot(data = window_diffs)
+    + geom_path(aes(x = w, y = 1 - diff, group = SampleID, colour = SampleID))
+    + labs(x = "Window size", y = expression("1 - " * delta[w]))
+    + theme_minimal()
+)
+ggsave(
+    "Plots/bp-score.window-similarity.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
+
+# plot the change in similarities over window sizes
+gg = (
+    ggplot(data = window_diffs[w >= 5])
+    + geom_path(aes(x = w, y = abs_delta, group = SampleID, colour = SampleID))
+    + labs(x = "Window size", y = expression("|" * delta[w] - delta[w-1] * "|"))
+    + theme_minimal()
+)
+ggsave(
+    "Plots/bp-score.window-similarity.delta.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
