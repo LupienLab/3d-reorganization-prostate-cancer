@@ -16,7 +16,7 @@ SAMPLES = CONFIG['Sample'].tolist()
 
 CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
 RESOLUTIONS = [40000]
-WINDOWS = range(3, 31)
+WINDOWS = range(3, 41)
 
 wildcard_constraints:
     sample = 'PCa[0-9]+',
