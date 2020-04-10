@@ -5,15 +5,13 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
 # ==============================================================================
-# Functions
-# ==============================================================================
-
-# ==============================================================================
 # Data
 # ==============================================================================
 # load metadata
 metadata = fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
-SAMPLES = paste0("PCa", metadata[, get("Sample ID")])
+
+metadata[, SampleID := paste0("PCa", get("Sample ID"))]
+SAMPLES <- metadata[, SampleID]
 
 # load aggregated boundary calls from each sample
 boundaries = rbindlist(lapply(
@@ -30,11 +28,35 @@ boundaries = rbindlist(lapply(
     }
 ))
 
+# load TADs
+tads <- rbindlist(lapply(
+    SAMPLES,
+    function(s) {
+        dt <- fread(paste0("resolved-TADs/", s, ".40000bp.aggregated-domains.bedGraph"),
+            sep = "\t",
+            header = FALSE,
+            col.names = c("chr", "start", "end", "lower_persistence", "upper_persistence", "w")
+        )
+        dt[, SampleID := s]
+    }
+))
+tads[, width := as.numeric(end - start)]
+
+
+# load BPscore calculations
+bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
 boundary_counts = boundaries[, .N, by = "SampleID"]
 boundary_counts_order = boundaries[, .N, by = c("SampleID", "Order")]
+
+# calculate coefficient of variation across TAD sizes to see where samples vary
+tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
+tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
+tads_median_size <- tads[, median(width), by = c("SampleID", "w")]
+tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
 # ==============================================================================
 # Plots
@@ -63,7 +85,7 @@ gg = (
     ggplot(data = boundary_counts_order)
     + geom_col(aes(x = Order, y = N, fill = SampleID, group = SampleID), position = "dodge")
     + scale_fill_viridis_d()
-    + xlab(c(0, 28))
+    + xlim(c(1, 39))
     + labs(x = "Boundary Order", y = "Number of unique boundaries")
     + theme_minimal()
     + theme(
@@ -76,3 +98,57 @@ ggsave(
     width = 20,
     units = "cm"
 )
+
+gg = (
+    ggplot(data = tads[w <= 30])
+    #+ geom_density(aes(x = (end - start) / 1e6, colour = SampleID), alpha = 0.1)
+    + geom_density(aes(x = width / 1e6, colour = SampleID), alpha = 0.1)
+    #+ geom_smooth(aes(x = width / 1e6, y = N))
+    + labs(x = "TAD Size (Mbp)", y = "Scaled density")
+    + xlim(c(0, 5))
+    + facet_wrap(~ w, scales = "free_y", nrow = 4)
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom"
+    )
+)
+ggsave(
+    "Plots/tad-size-distribution.png",
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+
+gg = (
+    ggplot(data = tads_cov)
+    + geom_col(aes(x = w, y = V1))
+    + labs(x = "Window size", y = "Coefficient of Variation")
+    + theme_minimal()
+)
+ggsave(
+    "Plots/tad-size.coeff-var.png",
+    height = 20,
+    width = 20,
+    units = "cm"
+)
+
+# plot distances between TADs of different samples across window sizes
+gg = (
+    ggplot(data = bpscore)
+    + geom_point(aes(x = w, y = 1 - dist, colour = w), position = position_jitter(width = 0.2, height = 0))
+    #+ geom_violin(aes(x = w, y = dist, group = w, fill = w))
+    + geom_boxplot(aes(x = w, y = 1 - dist, group = w), alpha = 0.5, outlier.shape = NA, width = 0.5)
+    + ylim(c(0.68, 1))
+    + labs(x = "Window size", y = "TAD similarity (BPscore)")
+    + scale_colour_viridis_c()
+    + scale_fill_viridis_c()
+    + guides(colour = FALSE)
+    + theme_minimal()
+)
+ggsave(
+    "Plots/bp-score.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+

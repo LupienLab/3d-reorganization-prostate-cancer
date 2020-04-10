@@ -4,15 +4,19 @@ import os.path as path
 # ==============================================================================
 # Configuration
 # ==============================================================================
-CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External",
-              "LowC_Samples_Data_Available.tsv"),
+TUMOUR_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t"
+)
+BENIGN_CONFIG = pd.read_csv(
+    path.join("../../Data/Raw/191220_A00827_0104_AHMW25DMXX/config.tsv"),
     sep="\t"
 )
 
-SAMPLES = ["PCa" + str(i) for i in CONFIG["Sample ID"].tolist()]
+SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG["Sample ID"].tolist()] + BENIGN_CONFIG["Sample"].tolist()
 TAD_DIR = path.join("..", "2019-07-08_TADs", "TADs")
-WINDOWS = list(range(3, 31))
+PLOT_DIR = "Plots"
+WINDOWS = list(range(3, 41))
 
 # ==============================================================================
 # Meta Rules
@@ -27,19 +31,25 @@ rule all:
                 "aggregated-boundaries.tsv",
                 "aggregated-boundaries.bedGraph",
                 "aggregated-boundaries.extended-20000bp.bedGraph",
-            ]
+            ],
         ),
-        expand(
-            path.join("resolved-TADs", "separated-TADs",
-                      "{sample}.40000bp.w_{w}.domains.{ext}"),
-            sample=SAMPLES,
-            w=WINDOWS,
-            ext=["bed", "beddb", "bed2ddb"]
-        ),
-        expand(
-            path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
-            sample=SAMPLES
-        ),
+        #expand(
+        #    path.join("resolved-TADs", "separated-TADs",
+        #              "{sample}.40000bp.w_{w}.domains.{ext}"),
+        #    sample=SAMPLES,
+        #    w=WINDOWS,
+        #    ext=["bed", "beddb", "bed2ddb"],
+        #),
+        #expand(
+        #    path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
+        #    sample=SAMPLES,
+        #),
+        path.join("Statistics", "tad-distances.tsv"),
+        path.join(PLOT_DIR, "bp-score.png"),
+        path.join(PLOT_DIR, "tad-counts.png"),
+        path.join(PLOT_DIR, "tad-counts-by-order.png"),
+        path.join(PLOT_DIR, "tad-size-distribution.png"),
+        path.join(PLOT_DIR, "tad-size.coeff-var.png"),
 
 # ==============================================================================
 # Rules
@@ -134,3 +144,37 @@ rule separate_by_window_size:
         )
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $4, $5 > \"resolved-TADs/separated-TADs/{wildcards.sample}.40000bp.w_\"$6\".domains.bed\"}}' {input}"
+
+rule bpscore:
+    input:
+        script = "bpscore.py",
+        data = expand(
+            path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
+            sample=SAMPLES,
+            w=WINDOWS,
+        )
+    output:
+        path.join("Statistics", "tad-distances.tsv"),
+    shell:
+        "python {input.script}"
+
+rule plots:
+    input:
+        script = "plot-TADs.R",
+        bpscore = path.join("Statistics", "tad-distances.tsv"),
+        boundaries = expand(
+            path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
+            sample=SAMPLES,
+        ),
+        tads = expand(
+            path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
+            sample=SAMPLES,
+        ),
+    output:
+        path.join(PLOT_DIR, "bp-score.png"),
+        path.join(PLOT_DIR, "tad-counts.png"),
+        path.join(PLOT_DIR, "tad-counts-by-order.png"),
+        path.join(PLOT_DIR, "tad-size-distribution.png"),
+        path.join(PLOT_DIR, "tad-size.coeff-var.png"),
+    shell:
+        "python {input.script}"
