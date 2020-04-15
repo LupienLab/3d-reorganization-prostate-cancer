@@ -33,13 +33,14 @@ rule all:
                 "aggregated-boundaries.extended-20000bp.bedGraph",
             ],
         ),
-        #expand(
-        #    path.join("resolved-TADs", "separated-TADs",
-        #              "{sample}.40000bp.w_{w}.domains.{ext}"),
-        #    sample=SAMPLES,
-        #    w=WINDOWS,
-        #    ext=["bed", "beddb", "bed2ddb"],
-        #),
+        expand(
+            path.join("resolved-TADs", "separated-TADs",
+                      "{sample}.40000bp.w_{w}.domains.{ext}"),
+            sample=SAMPLES,
+            w=WINDOWS,
+            ext=["bed", "beddb"],
+            #ext=["bed", "beddb", "bed2ddb"],
+        ),
         #expand(
         #    path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
         #    sample=SAMPLES,
@@ -196,4 +197,4 @@ rule plots:
         path.join(PLOT_DIR, "tad-size-distribution.png"),
         path.join(PLOT_DIR, "tad-size.coeff-var.png"),
     shell:
-        "python {input.script}"
+        "Rscript {input.script}"
