@@ -85,14 +85,10 @@ exprs[, means := rowMeans(.SD), .SDcols = sample_cols]
 exprs[, std_dev := apply(.SD, 1, sd), .SDcols = sample_cols]
 
 # classify according to thresholds
-tested_genes[, Pass_Thresh := FALSE]
-tested_genes[
-    (
-        abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2]
-        & abs(log2fold) >= log_fold_thresh[2]
-    ),
-    Pass_Thresh := TRUE
-]
+tested_genes[, Fold_Thresh := (abs(log2fold) >= log_fold_thresh[2])]
+tested_genes[, Abs_Thresh := (abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2])]
+tested_genes[, Pass_Thresh := (Fold_Thresh && Abs_Thresh)]
+
 
 # order chromosomes
 CHRS <- paste0("chr", c(1:22, "X", "Y"))
@@ -122,6 +118,59 @@ tested_genes[, altering_test := ifelse(
     TRUE,
     FALSE
 )]
+
+# cut fold change into groups for each test_ID
+tested_genes[, level := cut(
+    log2fold,
+    breaks = c(-Inf, log_fold_thresh[1], 0, log_fold_thresh[2], Inf),
+    ordered_result = TRUE
+)]
+cut_levels <- levels(tested_genes$level)
+# include genes with small absolute changes in expression in middle group
+tested_genes_cut <- rbindlist(lapply(
+    cut_levels,
+    function(l) {
+        tested_genes[, level == l, by = "test_ID"][,
+            .(
+                level = factor(l, levels = rev(cut_levels), ordered = TRUE),
+                N = sum(V1)
+            ),
+            by = "test_ID"
+        ]
+    }
+))
+tested_genes_cut[, Frac := apply(
+    .SD,
+    1,
+    function(r) {
+        # using this apply method converts r to a vector, which requires all values have the same type
+        # this lowest common parent type is `character`, so the values from r must be converted back to
+        # numeric before being manipulated
+        num_genes <- tested_genes_cut[test_ID == as.numeric(r["test_ID"]), sum(N)]
+        return(as.numeric(r["N"]) / num_genes)
+    }
+)]
+# order for plotting according to what has the largest percentage of small changes
+test_exprs_change_groups <- rbindlist(lapply(
+    htest$test_ID,
+    function(tid) tested_genes_cut[test_ID == tid][
+        which.max(Frac),
+        .(
+            test_ID,
+            majority = factor(
+                level,
+                levels = cut_levels,
+                labels = c("Large descreases", "Small decreases", "Small increases", "Large increases"),
+                ordered = TRUE
+            )
+        )
+    ]
+))
+tested_genes_cut <- merge(
+    tested_genes_cut,
+    test_exprs_change_groups,
+    by = "test_ID"
+)
 
 # set of tests where at least 1 gene passes both thresholds
 tests_with_some_deg <- tested_genes[
@@ -173,10 +222,10 @@ ggsave(
 )
 
 # plot z-scores for each breakpoint
-ann_text <- tested_genes[z > 20 & is.finite(z)]
+ann_text <- tested_genes[z > 20 & is.finite(z) & Abs_Thresh == TRUE]
 
 gg_z <- (
-    ggplot(data = tested_genes[is.finite(z)])
+    ggplot(data = tested_genes[is.finite(z) & Abs_Thresh == TRUE])
     + geom_text(
         data = ann_text,
         aes(x = cpos, y = z + 20, label = name),
@@ -217,37 +266,33 @@ ggsave(
 )
 
 gg_fc <- (
-    ggplot(data = tested_genes)
-    + geom_boxplot(
-        aes(x = factor(test_ID), y = log2fold, colour = altering_test)
+    ggplot(data = tested_genes_cut)
+    + geom_col(
+        aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
-    + labs(x = "Test", y = expression(log[2] * " Expression fold change"))
-    + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
-    + guides(fill = guide_legend(title = "Related breakpoints"))
-    + scale_colour_manual(
-        limits = c(TRUE, FALSE),
-        values = c("#000000", "#cecece"),
-        name = "Breakpoints significantly alters expression"
+    + labs(x = "Structural variants", y = "Genes in TAD (%)")
+    + scale_fill_viridis_d(
+        name = expression(log[2] * "Expression Fold Change")
     )
-    + coord_flip()
+    + facet_grid(. ~ majority, scales = "free_x", space = "free")
     + theme_minimal()
     + theme(
-        strip.text.y = element_text(angle = 0, hjust = 0),
-        axis.text.y = element_blank(),
+        strip.text.x = element_text(angle = 90, hjust = 0),
+        axis.text.x = element_blank(),
         legend.position = "bottom"
     )
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change.png",
     gg_fc,
-    height = 30,
+    height = 12,
     width = 20,
     units = "cm"
 )
 ggsave(
     "Plots/sv-disruption/expression.fold-change.pdf",
     gg_fc,
-    height = 30,
+    height = 12,
     width = 20,
     units = "cm"
 )
