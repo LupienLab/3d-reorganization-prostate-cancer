@@ -139,6 +139,14 @@ fwrite(
     col.names = TRUE
 )
 
+# calculate the number of chromosomes involved in an SV
+sv_chrom_span <- breakpoints[, length(unique(chr)), by = c("SampleID", "component_ID")]
+sv_chrom_span <- merge(
+    sv_chrom_span,
+    breakpoint_components,
+    by = c("SampleID", "component_ID")
+)
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -403,7 +411,7 @@ gg_component_length = (
     + geom_bar(
         aes(x = N, group = SampleID, fill = SampleID),
         colour = "#000000",
-        position = "dodge"
+        position = position_dodge(preserve = "single")
     )
     + labs(x = "Breakpoints in SV", y = "Count")
     + guides(group = FALSE, fill = guide_legend(title = "Patients"))
@@ -458,15 +466,15 @@ gg_t2e_components = (
 ggsave(
     "Plots/breakpoint-stats/sv-events.total.T2E-comparison.png",
     gg_t2e_components,
-    height = 12,
-    width = 20,
+    height = 20,
+    width = 12,
     units = "cm"
 )
 ggsave(
     "Plots/breakpoint-stats/sv-events.total.T2E-comparison.pdf",
     gg_t2e_components,
-    height = 12,
-    width = 20,
+    height = 20,
+    width = 12,
     units = "cm"
 )
 
@@ -504,14 +512,39 @@ gg_t2e_components_complex = (
 ggsave(
     "Plots/breakpoint-stats/sv-events.complex.T2E-comparison.png",
     gg_t2e_components_complex,
-    height = 12,
-    width = 20,
+    height = 20,
+    width = 12,
     units = "cm"
 )
 ggsave(
     "Plots/breakpoint-stats/sv-events.complex.T2E-comparison.pdf",
     gg_t2e_components_complex,
+    height = 20,
+    width = 12,
+    units = "cm"
+)
+
+# number of chromosomes that events span
+gg_sv_chrom_span <- (
+    ggplot(data = sv_chrom_span[N > 2, .(V2 = .N), keyby = "V1"])
+    + geom_col(aes(x = V1, y = V2, fill = V1))
+    + labs(x = "Chromosomes in a complex SV", y = "Count")
+    + guides(fill = FALSE)
+    + scale_fill_viridis_c()
+    + theme_minimal()
+)
+ggsave(
+    "Plots/breakpoint-stats/sv-event-chromosomes.png",
+    gg_sv_chrom_span,
     height = 12,
     width = 20,
     units = "cm"
+)
+ggsave(
+    "Plots/breakpoint-stats/sv-event-chromosomes.png",
+    gg_sv_chrom_span,
+    height = 12,
+    width = 20,
+    units = "cm",
+    dpi = 400
 )

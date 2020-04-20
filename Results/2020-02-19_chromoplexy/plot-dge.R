@@ -222,19 +222,19 @@ ggsave(
 )
 
 # plot z-scores for each breakpoint
-ann_text <- tested_genes[z > 20 & is.finite(z) & Abs_Thresh == TRUE]
+ann_text <- tested_genes[(log2fold > 5 | log2fold < -11) & is.finite(z) & Abs_Thresh == TRUE]
 
 gg_z <- (
     ggplot(data = tested_genes[is.finite(z) & Abs_Thresh == TRUE])
     + geom_text(
         data = ann_text,
-        aes(x = cpos, y = z + 20, label = name),
+        aes(x = cpos, y = log2fold + sign(log2fold) * 1, label = name),
     )
     + geom_point(
-        aes(x = cpos, y = z, colour = colour),
+        aes(x = cpos, y = log2fold, colour = colour),
         size = 1
     )
-    + labs(x = "Breakpoint Position", y = "z-score")
+    + labs(x = "Breakpoint Position", y = expression(log[2] * " Expression Fold Change"))
     + scale_x_continuous(
         limits = c(0, chrom_sizes[chrom == "chrM", offset]),
         breaks = chrom_sizes[, label_offset],
@@ -270,15 +270,22 @@ gg_fc <- (
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
-    + labs(x = "Structural variants", y = "Genes in TAD (%)")
+    + labs(x = "Breakpoints", y = "Genes in TAD (%)")
     + scale_fill_viridis_d(
-        name = expression(log[2] * "Expression Fold Change")
+        name = "Expression",
+        labels = c(
+            "> 2 fold decrease",
+            "< 2 fold decrease",
+            "< 2 fold increase",
+            "> 2 fold increase"
+        )
     )
     + facet_grid(. ~ majority, scales = "free_x", space = "free")
     + theme_minimal()
     + theme(
-        strip.text.x = element_text(angle = 90, hjust = 0),
+        strip.text.x = element_blank(),
         axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank(),
         legend.position = "bottom"
     )
 )
