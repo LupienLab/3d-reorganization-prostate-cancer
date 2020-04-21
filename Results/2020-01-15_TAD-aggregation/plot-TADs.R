@@ -84,6 +84,12 @@ tads[, lower_persistence := pmin(MAX_PERSISTENCE, lower_persistence)]
 tads[, upper_persistence := pmin(MAX_PERSISTENCE, upper_persistence)]
 boundaries[, Persistence := pmin(MAX_PERSISTENCE, Order)]
 
+# add Patient IDs to tads and boundaries, not just SampleIDs
+tads <- merge(tads, metadata[, .SD, .SDcols = c("SampleID", "Patient ID")])
+colnames(tads)[which(colnames(tads) == "Patient ID")] <- "Patient_ID"
+boundaries <- merge(boundaries, metadata[, .SD, .SDcols = c("SampleID", "Patient ID")])
+colnames(boundaries)[which(colnames(boundaries) == "Patient ID")] <- "Patient_ID"
+
 # load BPscore calculations
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
 window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header = TRUE)
@@ -91,18 +97,20 @@ window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header
 # ==============================================================================
 # Analysis
 # ==============================================================================
-boundary_counts = boundaries[, .N, by = "SampleID"]
-boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Persistence")]
+boundary_counts = boundaries[, .N, by = c("SampleID", "Patient_ID")]
+boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Patient_ID", "Persistence")]
 
 # calculate coefficient of variation across TAD sizes to see where samples vary
-tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
+tads_mean_size <- tads[, mean(width), by = c("SampleID", "Patient_ID", "w")]
 tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
-tads_median_size <- tads[, median(width), by = c("SampleID", "w")]
+tads_median_size <- tads[, median(width), by = c("SampleID", "Patient_ID", "w")]
 tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
 # ==============================================================================
 # Plots
 # ==============================================================================
+# Boundaries
+# --------------------------------------
 # plot number of resolved boundaries
 gg_boundaries <- (
     ggplot(data = boundary_counts)
@@ -122,7 +130,7 @@ gg_boundaries <- (
         axis.text.x = element_text(angle = 90)
     )
 )
-savefig(gg_boundaries, file.path(PLOT_DIR, "tad-counts"))
+savefig(gg_boundaries, file.path(PLOT_DIR, "boundary-counts"))
 
 # plot number of resolved boundaries by order
 gg_bounds_persistence <- (
@@ -145,13 +153,75 @@ gg_bounds_persistence <- (
         axis.text.x = element_text(angle = 90)
     )
 )
-savefig(gg_bounds_persistence, file.path(PLOT_DIR, "tad-counts-by-persistence"))
+savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts-by-persistence"))
+
+# TADs
+# --------------------------------------
+# TAD counts per sample faceted by window size
+gg_tad_counts_window <- (
+    ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
+    + geom_col(aes(x = Patient_ID, y = N, fill = Patient_ID))
+    + labs(x = NULL, y = "Number of TADs")
+    + scale_fill_manual(
+        limits = metadata[, get("Patient ID")],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour]
+    )
+    + guides(fill = FALSE)
+    + facet_wrap(~ w, nrow = 6)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        legend.position = "bottom"
+    )
+)
+savefig(gg_tad_counts_window, file.path(PLOT_DIR, "tad-counts.by-window"), height = 20)
+
+# TAD counts per sample faceted by window size
+gg_tad_counts_sample <- (
+    ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
+    + geom_col(aes(x = w, y = N, fill = w))
+    + labs(x = "Window size", y = "Number of TADs")
+    + scale_fill_viridis_c()
+    + guides(fill = FALSE)
+    + facet_wrap(~ Patient_ID, nrow = 3)
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom"
+    )
+)
+savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), height = 20)
+
+# TAD counts per sample at each window size
+gg_tad_counts <- (
+    ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
+    + geom_path(aes(x = w, y = N, colour = Patient_ID, group = Patient_ID))
+    + geom_point(aes(x = w, y = N, colour = Patient_ID))
+    + labs(x = "Window size", y = "Number of TADs")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_manual(
+        limits = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
+    + theme_minimal()
+)
+savefig(gg_tad_counts, file.path(PLOT_DIR, "tad-counts"))
 
 # TAD size distribution
 gg_tad_size <- (
     ggplot(data = tads)
-    + geom_density(aes(x = width / 1e6, colour = SampleID), alpha = 0.1)
-    + labs(x = "TAD Size (Mbp)", y = "Scaled density")
+    + stat_density(
+        aes(x = width / 1e6, y = 0.1 * ..count.., colour = SampleID),
+        alpha = 0.8,
+        geom = "path",
+        position = position_identity()
+    )
+    + labs(x = "TAD Size (Mbp)", y = "Number of TADs")
     + scale_x_continuous(
         limits = c(0, 5)
     )
@@ -169,6 +239,33 @@ gg_tad_size <- (
 )
 savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size-distribution"), height = 20)
 
+# same as above but only focussing on a few window sizes
+gg_tad_size_reduced <- (
+    ggplot(data = tads[w %in% c(MIN_WINDOW, floor((MAX_WINDOW + MIN_WINDOW) / 2), MAX_WINDOW)])
+    + stat_density(
+        aes(x = width / 1e6, y = 0.1 * ..count.., colour = SampleID),
+        alpha = 0.8,
+        geom = "path",
+        position = position_identity()
+    )
+    + labs(x = "TAD Size (Mbp)", y = "Number of TADs")
+    + scale_x_continuous(
+        limits = c(0, 5)
+    )
+    + scale_colour_manual(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
+    + facet_wrap(~ w, ncol = 3, scales = "free_y", labeller = label_both)
+    + theme_minimal()
+    + theme()
+)
+savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size-distribution.reduced"))
+
+# Variance between samples
+# --------------------------------------
 # coefficient of variation for BPscore
 gg_cov <- (
     ggplot(data = tads_cov)
