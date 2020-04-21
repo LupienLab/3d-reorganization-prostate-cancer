@@ -13,7 +13,9 @@ BENIGN_CONFIG = pd.read_csv(
     sep="\t"
 )
 
-SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG["Sample ID"].tolist()] + BENIGN_CONFIG["Sample"].tolist()
+TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", "Sample ID"]]
+BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
+ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES
 TAD_DIR = path.join("..", "2019-07-08_TADs", "TADs")
 PLOT_DIR = "Plots"
 WINDOWS = list(range(3, 41))
@@ -25,7 +27,7 @@ rule all:
     input:
         expand(
             path.join("resolved-TADs", "{sample}.40000bp.{ext}"),
-            sample=SAMPLES,
+            sample=TUMOUR_SAMPLES,
             ext=[
                 "aggregated-domains.sorted.bedGraph",
                 "aggregated-boundaries.tsv",
@@ -36,7 +38,7 @@ rule all:
         expand(
             path.join("resolved-TADs", "separated-TADs",
                       "{sample}.40000bp.w_{w}.domains.{ext}"),
-            sample=SAMPLES,
+            sample=TUMOUR_SAMPLES,
             w=WINDOWS,
             ext=["bed", "beddb"],
             #ext=["bed", "beddb", "bed2ddb"],
@@ -70,7 +72,7 @@ rule agg_tads:
         path.join("resolved-TADs",
                   "{sample}.40000bp.aggregated-boundaries.tsv"),
     shell:
-        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp"
+        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp --in-dir {TAD_DIR}"
 
 rule sort_tads:
     input:
@@ -101,7 +103,6 @@ rule clodius_agg_2d_bed:
          "-a hg38 --chr1-col 1 --chr2-col 1 --from1-col 2 --from2-col 2 --to1-col 3 --to2-col 3"
      shell:
          "clodius aggregate bedpe {params} -o {output} {input}"
-
 
 rule clodius_agg_1d:
     input:
@@ -153,7 +154,7 @@ rule bpscore:
         script = "calc-tad-similarity.py",
         data = expand(
             path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
-            sample=SAMPLES,
+            sample=TUMOUR_SAMPLES,
             w=WINDOWS,
         )
     output:
@@ -166,7 +167,7 @@ rule window_bpscore:
         script = "stopping-window-size.py",
         data = expand(
             path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
-            sample=SAMPLES,
+            sample=TUMOUR_SAMPLES,
             w=WINDOWS,
         ),
     output:
@@ -182,11 +183,11 @@ rule plots:
         window_bpscore = path.join("Statistics", "tad-similarity-deltas.tsv"),
         boundaries = expand(
             path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
-            sample=SAMPLES,
+            sample=TUMOUR_SAMPLES,
         ),
         tads = expand(
             path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
-            sample=SAMPLES,
+            sample=TUMOUR_SAMPLES,
         ),
     output:
         path.join(PLOT_DIR, "bp-score.png"),

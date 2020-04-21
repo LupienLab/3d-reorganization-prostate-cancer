@@ -4,7 +4,10 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
-MAX_WINDOW = 28
+MAX_WINDOW <- 24
+MIN_WINDOW <- 3
+MAX_PERSISTENCE <- MAX_WINDOW - MIN_WINDOW + 1
+PLOT_DIR <- "Plots"
 
 # ==============================================================================
 # Functions
@@ -17,12 +20,32 @@ split_comma_col <- function(v, f=identity) {
     return(lapply(splitv, f))
 }
 
+#' Save figures in multiple formats
+#'
+#' @param gg ggplot object
+#' @param prefix Prefix for output file
+#' @param ext Output extensions
+#' @param dpi DPI resolution
+savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
+    for (e in ext) {
+        ggsave(
+            paste(prefix, e, sep = "."),
+            gg,
+            height = height,
+            width = width,
+            units = "cm",
+            dpi = dpi
+        )
+    }
+}
+
+
 # ==============================================================================
 # Data
 # ==============================================================================
 # load metadata
-metadata = fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
-
+metadata <- fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
+metadata <- metadata[Include == "Yes"]
 metadata[, SampleID := paste0("PCa", get("Sample ID"))]
 SAMPLES <- metadata[, SampleID]
 
@@ -57,9 +80,9 @@ tads[, width := as.numeric(end - start)]
 
 # only keep TADs called at w <= MAX_WINDOW
 tads <- tads[w <= MAX_WINDOW]
-tads[, lower_persistence := pmin(MAX_WINDOW, lower_persistence)]
-tads[, upper_persistence := pmin(MAX_WINDOW, upper_persistence)]
-boundaries[, Order := pmin(MAX_WINDOW, Order)]
+tads[, lower_persistence := pmin(MAX_PERSISTENCE, lower_persistence)]
+tads[, upper_persistence := pmin(MAX_PERSISTENCE, upper_persistence)]
+boundaries[, Persistence := pmin(MAX_PERSISTENCE, Order)]
 
 # load BPscore calculations
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
@@ -69,7 +92,7 @@ window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header
 # Analysis
 # ==============================================================================
 boundary_counts = boundaries[, .N, by = "SampleID"]
-boundary_counts_order = boundaries[, .N, by = c("SampleID", "Order")]
+boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Persistence")]
 
 # calculate coefficient of variation across TAD sizes to see where samples vary
 tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
@@ -81,10 +104,17 @@ tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 # Plots
 # ==============================================================================
 # plot number of resolved boundaries
-gg_boundaries = (
+gg_boundaries <- (
     ggplot(data = boundary_counts)
     + geom_col(aes(x = SampleID, y = N, fill = SampleID))
-    + scale_fill_viridis_d()
+    + scale_x_discrete(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")]
+    )
+    + scale_fill_manual(
+        limits = metadata[, SampleID],
+        values = metadata[, Colour]
+    )
     + labs(x = NULL, y = "Number of unique boundaries")
     + guides(fill = FALSE)
     + theme_minimal()
@@ -92,200 +122,124 @@ gg_boundaries = (
         axis.text.x = element_text(angle = 90)
     )
 )
-ggsave(
-    "Plots/tad-counts.png",
-    gg_boundaries,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/tad-counts.pdf",
-    gg_boundaries,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_boundaries, file.path(PLOT_DIR, "tad-counts"))
 
 # plot number of resolved boundaries by order
-gg_bounds_order = (
-    ggplot(data = boundary_counts_order)
-    + geom_col(aes(x = Order, y = N, fill = SampleID, group = SampleID), position = "dodge")
-    + scale_fill_viridis_d()
-    + xlim(c(1, MAX_WINDOW))
-    + labs(x = "Boundary Order", y = "Number of unique boundaries")
+gg_bounds_persistence <- (
+    ggplot(data = boundary_counts_persistence)
+    + geom_col(aes(x = Persistence, y = N, fill = SampleID, group = SampleID), position = "dodge")
+    + labs(x = "Boundary Persistence", y = "Number of unique boundaries")
+    + scale_x_discrete(
+        breaks = c(1, 6, 11, 16, MAX_PERSISTENCE),
+        limits = c(1, 6, 11, 16, MAX_PERSISTENCE),
+        labels = c(1, 6, 11, 16, MAX_PERSISTENCE)
+    )
+    + scale_fill_manual(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + theme_minimal()
     + theme(
         axis.text.x = element_text(angle = 90)
     )
 )
-ggsave(
-    "Plots/tad-counts-by-order.png",
-    gg_bounds_order,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/tad-counts-by-order.pdf",
-    gg_bounds_order,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_bounds_persistence, file.path(PLOT_DIR, "tad-counts-by-persistence"))
 
-
-# unique TAD boundaries by the number of unique samples they appear in
-gg_uniq_boundaries <- (
-    ggplot(data = boundary_counts_recurrence[, .N, by = "Recurrence"])
-    + geom_col(aes(x = Recurrence, y = N, fill = Recurrence))
-    + geom_text(
-        aes(
-            x = Recurrence,
-            y = N,
-            label = paste0(N, "\n", "(", 100 * round(N / sum(N), 3), "%)")
-        ),
-        size = 2,
-        vjust = -0.2
-    )
-    + labs(x = "Patients with the same boundary", y = "Frequency")
-    + scale_fill_viridis_c()
-    + scale_x_continuous(
-        breaks = seq(1, 13, 3),
-        labels = seq(1, 13, 3)
-    )
-    + scale_y_continuous(
-        limits = c(0, 7100)
-    )
-    + guides(fill = FALSE)
-    + theme_minimal()
-)
-ggsave(
-    "Plots/tad-boundary-by-recurrence.png",
-    gg_uniq_boundaries,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-
-
-gg_tad_size = (
+# TAD size distribution
+gg_tad_size <- (
     ggplot(data = tads)
-    #+ geom_density(aes(x = (end - start) / 1e6, colour = SampleID), alpha = 0.1)
     + geom_density(aes(x = width / 1e6, colour = SampleID), alpha = 0.1)
-    #+ geom_smooth(aes(x = width / 1e6, y = N))
     + labs(x = "TAD Size (Mbp)", y = "Scaled density")
-    + xlim(c(0, 5))
+    + scale_x_continuous(
+        limits = c(0, 5)
+    )
+    + scale_colour_manual(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + facet_wrap(~ w, scales = "free_y", nrow = 5)
     + theme_minimal()
     + theme(
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/tad-size-distribution.png",
-    gg_tad_size,
-    height = 20,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/tad-size-distribution.pdf",
-    gg_tad_size,
-    height = 20,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size-distribution"), height = 20)
 
-gg = (
+# coefficient of variation for BPscore
+gg_cov <- (
     ggplot(data = tads_cov)
-    + geom_col(aes(x = w, y = V1))
+    + geom_col(aes(x = w, y = V1, fill = w))
     + labs(x = "Window size", y = "Coefficient of Variation")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_fill_viridis_c()
+    + guides(fill = FALSE)
     + theme_minimal()
 )
-ggsave(
-    "Plots/tad-size.coeff-var.png",
-    height = 20,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_cov, file.path(PLOT_DIR, "tad-size.coeff-var"))
 
 # plot distances between TADs of different samples across window sizes
 gg_bpscore = (
-    ggplot(data = bpscore[w < MAX_WINDOW])
+    ggplot(data = bpscore[w <= MAX_WINDOW])
     + geom_point(aes(x = w, y = 1 - dist, colour = w), position = position_jitter(width = 0.2, height = 0))
-    #+ geom_violin(aes(x = w, y = dist, group = w, fill = w))
     + geom_boxplot(aes(x = w, y = 1 - dist, group = w), alpha = 0.5, outlier.shape = NA, width = 0.5)
-    + ylim(c(0.68, 1))
     + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
     + scale_colour_viridis_c()
     + scale_fill_viridis_c()
     + guides(colour = FALSE)
     + theme_minimal()
 )
-ggsave(
-    "Plots/bp-score.png",
-    gg_bpscore,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/bp-score.pdf",
-    gg_bpscore,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
-
+savefig(gg_bpscore, file.path(PLOT_DIR, "bp-score"))
 
 # plot the change in similarities over window sizes
 gg_sim_window = (
-    ggplot(data = window_diffs)
+    ggplot(data = window_diffs[w <= MAX_WINDOW])
     + geom_path(aes(x = w, y = 1 - diff, group = SampleID, colour = SampleID))
-    + labs(x = "Window size", y = expression("1 - " * delta[w]))
+    + labs(x = "Window size", y = expression("1 - " * delta["w, w-1"]))
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_manual(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + theme_minimal()
 )
-ggsave(
-    "Plots/bp-score.window-similarity.png",
-    gg_sim_window,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/bp-score.window-similarity.pdf",
-    gg_sim_window,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_sim_window, file.path(PLOT_DIR, "bp-score.window-similarity"))
 
 
 # plot the change in similarities over window sizes
 gg_sim_window_delta = (
-    ggplot(data = window_diffs[w >= 5])
+    ggplot(data = window_diffs[w >= 5 & w <= MAX_WINDOW])
     + geom_path(aes(x = w, y = abs_delta, group = SampleID, colour = SampleID))
-    + labs(x = "Window size", y = expression("|" * delta[w] - delta[w-1] * "|"))
+    + labs(x = "Window size", y = expression("|" * delta["w, w-1"] - delta["w-1, w-2"] * "|"))
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_manual(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + theme_minimal()
 )
-ggsave(
-    "Plots/bp-score.window-similarity.delta.png",
-    gg_sim_window_delta,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/bp-score.window-similarity.delta.pdf",
-    gg_sim_window_delta,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_sim_window_delta, file.path(PLOT_DIR, "bp-score.window-similarity.delta"))
