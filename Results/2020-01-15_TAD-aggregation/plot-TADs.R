@@ -94,6 +94,9 @@ colnames(boundaries)[which(colnames(boundaries) == "Patient ID")] <- "Patient_ID
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
 window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header = TRUE)
 
+# load CTCF distances
+ctcf_pairs = fread("CTCF/TAD-boundary.LNCaP-CTCF-peaks.distances.tsv", sep = "\t", header = TRUE)
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
@@ -105,6 +108,13 @@ tads_mean_size <- tads[, mean(width), by = c("SampleID", "Patient_ID", "w")]
 tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
 tads_median_size <- tads[, median(width), by = c("SampleID", "Patient_ID", "w")]
 tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
+
+# calculate CTCF peak proximity to TAD boundaries
+ctcf_pairs[, Distance_Bin := sign(Distance) * floor(abs(Distance) / 1e3)]
+ctcf_pairs_binned <- ctcf_pairs[,
+    .N,
+    by = c("SampleID", "Distance_Bin", "chr_bound", "start_bound", "end_bound")
+][, .(Mean_N = mean(N)), keyby = c("SampleID", "Distance_Bin")]
 
 # ==============================================================================
 # Plots
@@ -153,7 +163,49 @@ gg_bounds_persistence <- (
         axis.text.x = element_text(angle = 90)
     )
 )
-savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts-by-persistence"))
+savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts.by-persistence"))
+
+# CTCF binding site proximity to boundaries
+gg_bounds_ctcf <- (
+    ggplot(data = ctcf_pairs)
+    + stat_density(
+        aes(x = Distance / 1e3, y = ..count.., colour = SampleID),
+        bw = 1,
+        geom = "path",
+        position = position_identity()
+    )
+    + labs(x = "Distance from TAD boundary (kbp)", y = "LNCaP CTCF Peaks")
+    + scale_x_continuous(
+        limits = c(-150, 150),
+        breaks = seq(-150, 150, 50),
+        labels = seq(-150, 150, 50),
+    )
+    + scale_colour_manual(
+        limits = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
+    + theme_minimal()
+)
+# gg_bounds_ctcf <- (
+#     ggplot(data = ctcf_pairs_binned)
+#     + geom_path(aes(x =  Distance_Bin, y = Mean_N, colour = SampleID, group = SampleID))
+#     + labs(x = "Distance from TAD boundary (kbp)", y = "LNCaP CTCF Peaks / 5 kbp")
+#     + scale_x_continuous(
+#         limits = c(-150, 150),
+#         breaks = seq(-150, 150, 50),
+#         labels = seq(-150, 150, 50),
+#     )
+#     + scale_colour_manual(
+#         limits = metadata[, SampleID],
+#         labels = metadata[, get("Patient ID")],
+#         values = metadata[, Colour],
+#         name = "Patient"
+#     )
+#     + theme_minimal()
+# )
+savefig(gg_bounds_ctcf, file.path(PLOT_DIR, "boundary-counts.ctcf-proximity"))
 
 # TADs
 # --------------------------------------
@@ -237,7 +289,7 @@ gg_tad_size <- (
         legend.position = "bottom"
     )
 )
-savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size-distribution"), height = 20)
+savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size.distribution"), height = 20)
 
 # same as above but only focussing on a few window sizes
 gg_tad_size_reduced <- (
@@ -262,7 +314,7 @@ gg_tad_size_reduced <- (
     + theme_minimal()
     + theme()
 )
-savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size-distribution.reduced"))
+savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"))
 
 # Variance between samples
 # --------------------------------------
