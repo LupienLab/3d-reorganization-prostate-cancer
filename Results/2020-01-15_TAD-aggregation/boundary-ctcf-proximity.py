@@ -8,6 +8,7 @@ Calculate statistics related to how close LNCaP CTCF binding sites are to called
 import os.path as path
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 # ==============================================================================
 # Functions
@@ -72,11 +73,21 @@ pairs.drop("level_1", axis=1, inplace=True)
 # convert |-separated window size column into a proper list
 pairs["w"] = pairs.w.str.split("|")
 
+# create IDs for each boundary
+pairs["Boundary_ID"] = pairs["chr_bound"].astype(str) + ":" + pairs["start_bound"].astype(str)
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# calculate distance betwen CTCF peak and the TAD boundary
+# calculate distance between CTCF peak and the TAD boundary
 pairs["Distance"] = pairs.apply(distance, axis=1)
+
+# create 5 kbp bins around the boundary
+cuts = pd.interval_range(start=-200000 + 2500, end=200000 - 2500, freq=5000)
+pairs["Distance_Bin"] = pd.cut(pairs["Distance"], cuts)
+
+all_counts = pd.DataFrame({"Freq": pairs.groupby(["SampleID", "Distance_Bin"]).size() / pairs.groupby("SampleID").size()})
+all_counts.reset_index(drop=False, inplace=True)
 
 # ==============================================================================
 # Save data
@@ -84,8 +95,13 @@ pairs["Distance"] = pairs.apply(distance, axis=1)
 # convert window size column into a comma-separated string
 pairs["w"] = [",".join(pw) for pw in pairs["w"]]
 
+# add locations of the bin for easier plotting
+all_counts["Bin_Lower"] = [b.left for b in all_counts["Distance_Bin"]]
+all_counts["Bin_Mid"] = [int((b.left + b.right) / 2) for b in all_counts["Distance_Bin"]]
+all_counts["Bin_Upper"] = [b.right for b in all_counts["Distance_Bin"]]
+
 # save to TSV
-pairs.to_csv(
+all_counts.to_csv(
     path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
     sep="\t",
     header=True,

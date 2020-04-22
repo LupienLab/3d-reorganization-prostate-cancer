@@ -32,7 +32,6 @@ rule all:
                 "aggregated-domains.sorted.bedGraph",
                 "aggregated-boundaries.tsv",
                 "aggregated-boundaries.bedGraph",
-                "aggregated-boundaries.extended-150000bp.bed",
             ],
         ),
         expand(
@@ -48,7 +47,7 @@ rule all:
             path.join("CTCF", "{sample}.LNCaP-CTCF-peaks.bed"),
             sample=TUMOUR_SAMPLES,
         ),
-        path.join("TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
+        path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
         #expand(
         #    path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
         #    sample=SAMPLES,
@@ -59,6 +58,8 @@ rule all:
             plot=[
                 "boundary-counts",
                 "boundary-counts.by-persistence",
+                "boundary-counts.ctcf-proximity",
+                "boundary-counts.ctcf-proximity.fold",
                 "tad-counts",
                 "tad-counts.by-window",
                 "tad-counts.by-sample",
@@ -193,7 +194,7 @@ rule window_bpscore:
 rule boundary_lncap_ctcf_intersection:
     input:
         lncap_ctcf = path.join("../../Data/External/ENCODE_ChIP/LNCaP_CTCF_Conservative.canonical.sorted.bed"),
-        bounds = path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.extended-150000bp.bed"),
+        bounds = path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.extended-200000bp.bed"),
     output:
         path.join("CTCF", "{sample}.LNCaP-CTCF-peaks.bed")
     shell:
@@ -207,7 +208,7 @@ rule boundary_lncap_ctcf_proximity:
             sample=TUMOUR_SAMPLES,
         ),
     output:
-        path.join("TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
+        path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
     shell:
         "python {input.script}"
 
@@ -224,13 +225,15 @@ rule plots:
             path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
             sample=TUMOUR_SAMPLES,
         ),
-        ctcf = path.join("TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
+        ctcf = path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
     output:
         expand(
             path.join(PLOT_DIR, "{plot}.{ext}"),
             plot=[
                 "boundary-counts",
                 "boundary-counts.by-persistence",
+                "boundary-counts.ctcf-proximity",
+                "boundary-counts.ctcf-proximity.fold",
                 "tad-counts",
                 "tad-counts.by-window",
                 "tad-counts.by-sample",
