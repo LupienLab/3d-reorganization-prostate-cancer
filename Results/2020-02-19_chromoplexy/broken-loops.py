@@ -22,7 +22,7 @@ metadata = pd.read_csv(
     sep="\t",
     header=[0],
 )
-SAMPLES = ["PCa" + str(s) for s in metadata["Sample ID"]]
+SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
 
 # load SVs
 breakpoints = pickle.load(open("breakpoints.per-sample.p", "rb"))

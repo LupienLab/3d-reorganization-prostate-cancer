@@ -166,7 +166,7 @@ CONFIG = pd.read_csv(
     sep="\t",
     index_col=False,
 )
-SAMPLES = ["PCa" + str(i) for i in CONFIG["Sample ID"]]
+SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
 
 # load TADs for each patient
 tads = {

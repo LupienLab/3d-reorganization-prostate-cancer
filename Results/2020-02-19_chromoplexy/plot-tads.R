@@ -13,6 +13,7 @@ metadata <- fread(
     sep = "\t",
     header = TRUE
 )
+metadata <- metadata[Include == "Yes"]
 
 # load differential TAD results
 altered_tads <- fread("Graphs/sv-disruption-tests.TADs.tsv", sep = "\t", header = TRUE)
