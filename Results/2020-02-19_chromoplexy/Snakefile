@@ -74,7 +74,7 @@ rule all:
         ),
         path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
         path.join(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
-        path.join(GRAPH_DIR, "sv-disruption-tests.acetylation.tsv"),
+        # path.join(GRAPH_DIR, "sv-disruption-tests.acetylation.tsv"),
 
 # ==============================================================================
 # Rules
