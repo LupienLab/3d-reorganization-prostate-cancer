@@ -170,6 +170,9 @@ gg_bounds_ctcf <- (
         breaks = seq(-150, 150, 50),
         labels = seq(-150, 150, 50),
     )
+    + scale_y_continuous(
+        limits = c(0, 0.025)
+    )
     + scale_colour_manual(
         limits = metadata[, SampleID],
         labels = metadata[, get("Patient ID")],
@@ -202,7 +205,6 @@ gg_bounds_ctcf_fc <- (
     )
 )
 savefig(gg_bounds_ctcf_fc, file.path(PLOT_DIR, "boundary-counts.ctcf-proximity.fold"))
-
 
 
 # TADs
