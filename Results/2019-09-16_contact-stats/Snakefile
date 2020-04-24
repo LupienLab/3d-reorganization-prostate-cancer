@@ -6,7 +6,7 @@ import os.path as path
 # ==============================================================================
 CONFIG = pd.read_csv('../../Data/External/LowC_Samples_Data_Available.tsv', sep='\t', index_col=False)
 
-SAMPLE_IDS = CONFIG['Sample ID'].tolist()
+SAMPLE_IDS = CONFIG.loc[CONFIG.Include == "Yes", 'Sample ID'].tolist()
 SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID'].tolist()]
 
 REPORT_DIR = 'Reports'
@@ -32,7 +32,7 @@ rule all:
 # ==============================================================================
 rule contact_dists:
     input:
-        script = path.join(SCRIPT_DIR, 'contact-distributions.py'),
+        script = path.join(SCRIPT_DIR, 'calc-contact-distribution.py'),
         cool = path.join(CONTACT_DIR, '{sample}.mcool')
     output:
         table = path.join('distance-counts', '{sample}.tsv'),
