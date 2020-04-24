@@ -65,6 +65,16 @@ data(UCSC.HG38.Human.CytoBandIdeogram)
 breakpoints[, StartBin := floor(start / 10^6)]
 breakpoints[, EndBin := floor(end / 10^6)]
 
+# add T2E status
+breakpoints <- merge(
+    breakpoints,
+    metadata[, .SD, .SDcols = c("SampleID", "T2E Status")],
+    by = "SampleID"
+)
+
+# count breakpoints per sample
+breakpoints_counted <- breakpoints[, .N, keyby = c("SampleID", "T2E Status")]
+
 # convert breakpoints in genomic regions into bins
 breakpoints_binned = rbindlist(lapply(
     1:breakpoints[, .N],
@@ -121,6 +131,12 @@ breakpoint_components_counted$Complex_Events <- breakpoint_components[,
     ][, sum(V1), by = "SampleID"]$V1
 
 # perform Mann-Whitney U test to see if the T2E samples have more complex events than the non-T2E samples
+htest_breaks <- wilcox.test(
+    x = breakpoints_counted[get("T2E Status") == "No", N],
+    y = breakpoints_counted[get("T2E Status") == "Yes", N],
+    alternative = "less"
+)
+
 htest_events <- list(
     "total" = wilcox.test(
         x = breakpoint_components_counted[get("T2E Status") == "No", Events],
@@ -219,6 +235,9 @@ gg_breakpoints <- (
         breaks = metadata[, SampleID],
         labels = metadata[, get("Patient ID")]
     )
+    + scale_y_continuous(
+        limits = c(0, 100)
+    )
     + scale_fill_manual(
         breaks = metadata[, SampleID],
         labels = metadata[, get("Patient ID")],
@@ -254,7 +273,7 @@ gg_breakpoints_per_chrom = (
         legend.position = "bottom"
     )
 )
-savefig(gg_breakpoints, "Plots/breakpoint-stats/sv-counts.by-chrom.labelled")
+savefig(gg_breakpoints_per_chrom, "Plots/breakpoint-stats/sv-counts.by-chrom.labelled")
 
 # save as above without any text
 gg_breakpoints_per_chrom_unlabelled = (
@@ -266,7 +285,7 @@ gg_breakpoints_per_chrom_unlabelled = (
         strip.text.x = element_blank()
     )
 )
-savefig(gg_breakpoints, "Plots/breakpoint-stats/sv-counts.by-chrom")
+savefig(gg_breakpoints_per_chrom_unlabelled, "Plots/breakpoint-stats/sv-counts.by-chrom")
 
 # number and location of SVs across all patients
 gg_breakpoints_summed = (
@@ -366,7 +385,11 @@ savefig(gg_component_length, "Plots/breakpoint-stats/sv-events.size")
 # number of SV events detected in total
 gg_t2e_components = (
     ggplot(data = breakpoint_components_counted)
-    + geom_boxplot(aes(x = get("T2E Status"), y = Events, colour = get("T2E Status")), width = 0.5)
+    + geom_boxplot(
+        aes(x = get("T2E Status"), y = Events, colour = get("T2E Status")),
+        width = 0.5,
+        outlier.shape = NA
+    )
     + geom_point(
         aes(x = get("T2E Status"), y = Events, colour = get("T2E Status")),
         position = position_jitter(width = 0.1, height = 0)
@@ -400,6 +423,49 @@ gg_t2e_components = (
     + theme_minimal()
 )
 savefig(gg_t2e_components, "Plots/breakpoint-stats/sv-events.total.T2E-comparison", height = 20, width = 12)
+
+gg_t2e_components_bps = (
+    ggplot(data = breakpoints[, .N, by = c("SampleID", "T2E Status")])
+    + geom_boxplot(
+        aes(x = get("T2E Status"), y = N, colour = get("T2E Status")),
+        width = 0.5,
+        outlier.shape = NA
+    )
+    + geom_point(
+        aes(x = get("T2E Status"), y = N, colour = get("T2E Status")),
+        position = position_jitter(width = 0.1, height = 0)
+    )
+    + geom_path(
+        data = data.table(
+            x = rep(c("No", "Yes"), each = 2),
+            y = c(25, 98, 98, 96)
+        ),
+        aes(x = x, y = y, group = 1)
+    )
+    + annotate(
+        geom = "text",
+        label = paste("p =", scientific(htest_breaks$p.value, digits = 3)),
+        x = 1.5,
+        y = 98,
+        vjust = -1
+    )
+    + labs(x = NULL, y = "Unique Breakpoints")
+    + scale_x_discrete(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+")
+    )
+    + scale_y_continuous(
+        limits = c(0, 100)
+    )
+    + scale_colour_manual(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+"),
+        values = c("#2A363B", "#019875")
+    )
+    + guides(colour = FALSE)
+    + theme_minimal()
+)
+savefig(gg_t2e_components_bps, "Plots/breakpoint-stats/sv-breakpoints.T2E-comparison", height = 20, width = 12)
 
 # number of complex components
 gg_t2e_components_complex = (
