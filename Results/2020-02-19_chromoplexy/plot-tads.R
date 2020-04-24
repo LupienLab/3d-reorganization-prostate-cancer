@@ -3,6 +3,7 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
+source("plotting-helper.R")
 
 # ==============================================================================
 # Data
@@ -13,6 +14,7 @@ metadata <- fread(
     sep = "\t",
     header = TRUE
 )
+metadata <- metadata[Include == "Yes"]
 
 # load differential TAD results
 altered_tads <- fread("Graphs/sv-disruption-tests.TADs.tsv", sep = "\t", header = TRUE)
@@ -21,8 +23,18 @@ altered_tads <- fread("Graphs/sv-disruption-tests.TADs.tsv", sep = "\t", header 
 # Plots
 # ==============================================================================
 gg = (
-    ggplot(data = altered_tads)
-    + geom_bar(aes(x = altered_TAD, fill = altered_TAD), colour = "black")
+    ggplot()
+    + geom_bar(
+        data = altered_tads,
+        aes(x = altered_TAD, fill = altered_TAD),
+        colour = "black"
+    )
+    + geom_text(
+        data = altered_tads[, .N, by = "altered_TAD"],
+        aes(x = altered_TAD, y = N, label = paste0(N, " (", 100 * round(N / sum(N), 3), "%)")),
+        colour = "black",
+        vjust = -0.5
+    )
     + labs(x = "SV affects TAD boundaries", y = "Count")
     + guides(fill = FALSE)
     + scale_x_discrete(
@@ -34,17 +46,4 @@ gg = (
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
     )
 )
-ggsave(
-    "Plots/sv-disruption/tads.count.png",
-    height = 12,
-    width = 12,
-    units = "cm",
-    dpi = 400
-)
-ggsave(
-    "Plots/sv-disruption/tads.count.pdf",
-    height = 12,
-    width = 12,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg, "Plots/sv-disruption/tads.count", width = 12)

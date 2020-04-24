@@ -3,6 +3,7 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
+source("plotting-helper.R")
 
 GRAPH_DIR <- "Graphs"
 
@@ -87,7 +88,7 @@ exprs[, std_dev := apply(.SD, 1, sd), .SDcols = sample_cols]
 # classify according to thresholds
 tested_genes[, Fold_Thresh := (abs(log2fold) >= log_fold_thresh[2])]
 tested_genes[, Abs_Thresh := (abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2])]
-tested_genes[, Pass_Thresh := (Fold_Thresh && Abs_Thresh)]
+tested_genes[, Pass_Thresh := (Fold_Thresh & Abs_Thresh)]
 
 
 # order chromosomes
@@ -206,20 +207,16 @@ gg_pval_hist <- (
     + labs(x = "p-value", y = "Frequency")
     + theme_minimal()
 )
-ggsave(
-    "Plots/sv-disruption/expression.p-values.png",
-    gg_pval_hist,
-    height = 12,
-    width = 20,
-    units = "cm"
+savefig(gg_pval_hist, "Plots/sv-disruption/expression.p-values")
+
+gg_qq <- (
+    ggplot(data = htest[order(p)])
+    + geom_point(aes(x = -log10(ppoints(htest[, .N])), y = -log10(p)))
+    + geom_abline(slope = 1, intercept = 0, linetype = "dashed")
+    + labs(x = "Uniform distribution quantiles (log10)", y = "Observed quantiles (log10)")
+    + theme_minimal()
 )
-ggsave(
-    "Plots/sv-disruption/expression.p-values.pdf",
-    gg_pval_hist,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_qq, "Plots/sv-disruption/expression.qq")
 
 # plot z-scores for each breakpoint
 ann_text <- tested_genes[(log2fold > 5 | log2fold < -11) & is.finite(z) & Abs_Thresh == TRUE]
@@ -236,9 +233,9 @@ gg_z <- (
     )
     + labs(x = "Breakpoint Position", y = expression(log[2] * " Expression Fold Change"))
     + scale_x_continuous(
-        limits = c(0, chrom_sizes[chrom == "chrM", offset]),
-        breaks = chrom_sizes[, label_offset],
-        label = chrom_sizes[, chrom]
+        limits = c(0, chrom_sizes[chrom == "chrY", offset]),
+        breaks = chrom_sizes[chrom != "chrM", label_offset],
+        label = chrom_sizes[chrom != "chrM", chrom]
     )
     + guides(colour = FALSE)
     + theme_minimal()
@@ -250,20 +247,7 @@ gg_z <- (
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/sv-disruption/expression.z.png",
-    gg_z,
-    height = 10,
-    width = 40,
-    units = "cm"
-)
-ggsave(
-    "Plots/sv-disruption/expression.z.pdf",
-    gg_z,
-    height = 10,
-    width = 40,
-    units = "cm"
-)
+savefig(gg_z, "Plots/sv-disruption/expression.z", width = 40)
 
 gg_fc <- (
     ggplot(data = tested_genes_cut)
@@ -271,13 +255,19 @@ gg_fc <- (
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
     + labs(x = "Breakpoints", y = "Genes in TAD (%)")
-    + scale_fill_viridis_d(
+    + scale_fill_manual(
         name = "Expression",
         labels = c(
             "> 2 fold decrease",
             "< 2 fold decrease",
             "< 2 fold increase",
             "> 2 fold increase"
+        ),
+        values = c(
+            "#4CC4FF",
+            "#CCFFFF",
+            "#FFFFCC",
+            "#FFC44C"
         )
     )
     + facet_grid(. ~ majority, scales = "free_x", space = "free")
@@ -289,20 +279,7 @@ gg_fc <- (
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.png",
-    gg_fc,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.pdf",
-    gg_fc,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_fc, "Plots/sv-disruption/expression.fold-change")
 
 # same as above, but thresholding on absolute difference in mRNA abundance
 gg_fc_thresh <- (
@@ -331,20 +308,7 @@ gg_fc_thresh <- (
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.thresholded.png",
-    gg_fc_thresh,
-    height = 30,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.thresholded.pdf",
-    gg_fc_thresh,
-    height = 30,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded", height = 30)
 
 gg_fc_diff <- (
     ggplot(data = tested_genes)
@@ -391,45 +355,8 @@ gg_fc_diff <- (
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/sv-disruption/expression.fold-change-vs-difference.png",
-    gg_fc_diff,
-    height = 20,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/sv-disruption/expression.fold-change-vs-difference.pdf",
-    gg_fc_diff,
-    height = 20,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_fc_diff, "Plots/sv-disruption/expression.fold-change-vs-difference", height = 20)
 
-gg_genes <- (
-    ggplot(data = exprs)
-    + geom_density(aes(x = means))
-    + labs(x = "Mean expression (FPKM)", y = "Density")
-    + scale_x_log10()
-    + theme_minimal()
-    + theme(
-        legend.position = "bottom"
-    )
-)
-ggsave(
-    "Plots/all-genes.sd-vs-mean.png",
-    gg_genes,
-    height = 20,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/all-genes.sd-vs-mean.pdf",
-    gg_genes,
-    height = 20,
-    width = 20,
-    units = "cm"
-)
 
 # plot empirical CDFs of fold changes for each breakpoint
 fold_ecdf <- tested_genes[, ecdf(log2fold)]
@@ -503,24 +430,11 @@ gg_fc_cdf <- (
     + scale_y_continuous(,
         breaks = seq(0, 1, 0.2),
         labels = seq(0, 100, 20),
-        name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
+        name = "Genes in TADs (%)\n(Cumulative density)"
     )
     + theme_minimal()
 )
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.ecdf.png",
-    gg_fc_cdf,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.ecdf.pdf",
-    gg_fc_cdf,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_fc_cdf, "Plots/sv-disruption/expression.fold-change.ecdf")
 
 fold_ecdf <- tested_genes[
     abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2],
@@ -599,21 +513,8 @@ gg_fc_thresh_cdf <- (
     + scale_y_continuous(,
         breaks = seq(0, 1, 0.2),
         labels = seq(0, 100, 20),
-        name = "Percentage of genes in TADs with SVs\n(Cumulative density)"
+        name = "Genes in TADs (%)\n(Cumulative density)"
     )
     + theme_minimal()
 )
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.ecdf.thresholded.png",
-    gg_fc_thresh_cdf,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/sv-disruption/expression.fold-change.ecdf.thresholded.pdf",
-    gg_fc_thresh_cdf,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_fc_thresh_cdf, "Plots/sv-disruption/expression.fold-change.ecdf.thresholded")

@@ -145,7 +145,7 @@ CONFIG = pd.read_csv(
     sep="\t",
     index_col=False,
 )
-SAMPLES = ["PCa" + str(i) for i in CONFIG["Sample ID"]]
+SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
 
 # load breakpoints and concatenate tables
 print("Reading breakpoints")
@@ -261,8 +261,6 @@ for s in tqdm(SAMPLES):
                     for stm in bp_sets_to_merge:
                         if m in stm:
                             stm.add(m)
-
-#pp.pprint([[(i.data["sample"], i.data["row"]) for i in stm] for stm in bp_sets_to_merge])
 
 # 2. a) manually inspect breakpoints that are in proximity, to see which calls truly need to be merged
 # --------------------------------------

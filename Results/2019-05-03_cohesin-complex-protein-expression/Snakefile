@@ -6,17 +6,15 @@ import os.path as path
 # ==============================================================================
 rule all:
     input:
-        'loop-forming-factors_expression.png'
+        "loop-forming-factors_expression.png"
 
 rule plot_exprs:
     input:
-        script = 'plot_protein-exprs.R',
-        data = '../../Data/External/CPC-GENE/CPC-GENE_Fraser-2017-Nature_Clinical-Data.tsv',
-        metadata = '../../Data/External/LowC_Samples_Data_Available.tsv',
-        proteins = 'test-proteins.tsv'
+        script = "plot_protein-exprs.R",
+        data = path.join("..", "..", "Data", "External", "CPC-GENE", "CPC-GENE_Fraser-2017-Nature_Clinical-Data.tsv"),
+        metadata = path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+        proteins = "test-proteins.tsv"
     output:
-        'loop-forming-factors_expression.png'
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/HiC.yaml'
+        "loop-forming-factors_expression.png"
     shell:
-        'Rscript {input.script}'
+        "Rscript {input.script}"

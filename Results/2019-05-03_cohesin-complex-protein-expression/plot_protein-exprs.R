@@ -7,22 +7,43 @@ suppressMessages(library("ggplot2"))
 # ==============================================================================
 # Functions
 # ==============================================================================
+#' Save figures in multiple formats
+#'
+#' @param gg ggplot object
+#' @param prefix Prefix for output file
+#' @param ext Output extensions
+#' @param dpi DPI resolution
+savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
+    for (e in ext) {
+        ggsave(
+            paste(prefix, e, sep = "."),
+            gg,
+            height = height,
+            width = width,
+            units = "cm",
+            dpi = dpi
+        )
+    }
+}
 
 # ==============================================================================
 # Data
 # ==============================================================================
 # metadata of patient samples
-metadata = fread(
+metadata <- fread(
     "../../Data/External/LowC_Samples_Data_Available.tsv",
     sep = "\t",
     header = TRUE
 )
+# only keep included samples
+metadata <- metadata[Include == "Yes"]
+
 # change header for simpler acces
 colnames(metadata) = gsub("[ -]", "_", colnames(metadata))
 
 # protein information from Sinha, Huang et al
 protein_exprs = fread(
-    "../../Data/External/CPC-GENE/CPCG_Proteomics_MassSpec_Kislinger_PMID30889379.tsv",
+    "../../Data/External/CPC-GENE/CPC-GENE_Sinha-Huang-2018_Proteomics_MassSpec.tsv",
     sep = "\t",
     header = TRUE
 )
@@ -66,21 +87,24 @@ patient_exprs[, Upper := Median + q95_mad_all_proteins]
 # ==============================================================================
 # Plots
 # ==============================================================================
-gg = (
+gg <- (
     ggplot(data = patient_exprs, mapping = aes(x = Patient_ID))
     + geom_col(aes(y = Protein_Level, fill = Patient_ID))
-    + geom_rect(aes(xmin = -Inf, xmax = Inf, ymin = Lower, ymax = Upper), alpha = 0.1)
-    + geom_hline(aes(yintercept =  Median), linetype = "dashed")
-    + labs(x = "Patient ID", y = "log2(Protein Intensity)", title = "Protein expression levels of loop-forming factors")
+    # + geom_rect(aes(xmin = -Inf, xmax = Inf, ymin = Lower, ymax = Upper), alpha = 0.1)
+    # + geom_hline(aes(yintercept =  Median), linetype = "dashed")
+    + labs(x = NULL, y = expression(log[2] * "(Protein Intensity)"))
+    + scale_x_discrete(
+        limits = metadata[order(Patient_ID), Patient_ID],
+        labels = metadata[order(Patient_ID), Patient_ID]
+    )
+    + scale_fill_manual(
+        limits = metadata[, Patient_ID],
+        values = metadata[, Colour]
+    )
     + facet_wrap(~ Gene)
     + guides(fill = FALSE)
     + theme(
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
     )
 )
-ggsave(
-    "loop-forming-factors_expression.png",
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg, "loop-forming-factors_expression")

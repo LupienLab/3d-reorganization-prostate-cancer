@@ -5,14 +5,42 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
 # ==============================================================================
+# Functions
+# ==============================================================================
+#' Save figures in multiple formats
+#'
+#' @param gg ggplot object
+#' @param prefix Prefix for output file
+#' @param ext Output extensions
+#' @param dpi DPI resolution
+savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
+    for (e in ext) {
+        ggsave(
+            paste(prefix, e, sep = "."),
+            gg,
+            height = height,
+            width = width,
+            units = "cm",
+            dpi = dpi
+        )
+    }
+}
+
+# ==============================================================================
 # Data
 # ==============================================================================
-metadata = fread(
+# load metadata
+metadata <- fread(
     "../../Data/External/LowC_Samples_Data_Available.tsv",
     sep = "\t",
     header = TRUE,
 )
+# only keep included samples
+metadata <- metadata[Include == "Yes"]
+# SampleID column
 metadata[, SampleID := paste0("Pca", get("Sample ID"))]
+
+PLOT_DIR <- "Plots"
 
 # ==============================================================================
 # Analysis
@@ -57,7 +85,7 @@ peak_dists[, SampleID := as.factor(SampleID)]
 
 # Number of peaks
 # ------------------------------------------------------------------------------
-n_peaks = peaks[, .N, by = SampleID]
+n_peaks <- peaks[, .N, by = SampleID]
 invisible(lapply(
     1:n_peaks[, .N],
     function(i) {
@@ -66,28 +94,23 @@ invisible(lapply(
     }
 ))
 
-gg = (
+gg_num_peaks <- (
     ggplot(data = n_peaks)
     + geom_col(aes(x = SampleID, y = N / 1000, fill = SampleID))
-    + labs(x = NULL, y = expression("Number of Peaks (" * 10^3 * ")"), title = "H3K27ac peak counts")
+    + labs(x = NULL, y = expression("Number of Peaks (" * 10^3 * ")"))
     + scale_x_discrete(
         limits = metadata[order(get("Patient ID")), SampleID],
         labels = metadata[order(get("Patient ID")), get("Patient ID")]
     )
-    # + scale_fill_manual(
-    #     limits = c("Yes", "No"),
-    #     values = c("#1692C4", "#E6AB79")
-    # )
+    + scale_fill_manual(
+        limits = metadata[, SampleID],
+        values = metadata[, Colour]
+    )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
-ggsave(
-    "Stats/peak-counts.png",
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_num_peaks, file.path(PLOT_DIR, "peak-counts"))
 
 # Peak size distribution
 # ------------------------------------------------------------------------------
@@ -96,25 +119,24 @@ median_peak_sizes = peaks[, median(end - start), by = SampleID]
 sample_order = median_peak_sizes[order(V1), SampleID]
 peaks[, SampleID := factor(SampleID, levels = sample_order, ordered  = TRUE)]
 
-gg = (
+gg_peak_size <- (
     ggplot(data = peaks)
     + geom_violin(aes(x = SampleID, y = log10(end - start), fill = SampleID))
     + geom_boxplot(aes(x = SampleID, y = log10(end - start)), width = 0.2)
-    + labs(x = NULL, y = "log10(Peak Size)", title = "H3K27ac peak sizes")
+    + labs(x = NULL, y = expression(log[10] * "(Peak Size)"))
     + scale_x_discrete(
         limits = metadata[order(get("Patient ID")), SampleID],
         labels = metadata[order(get("Patient ID")), get("Patient ID")]
+    )
+    + scale_fill_manual(
+        limits = metadata[, SampleID],
+        values = metadata[, Colour]
     )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
-ggsave(
-    "Stats/peak-sizes.png",
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_peak_size, file.path(PLOT_DIR, "peak-sizes"))
 
 # Distance between
 # ------------------------------------------------------------------------------
@@ -124,31 +146,31 @@ mean_dist_sizes = peak_dists[, mean(dist), by = SampleID]
 sample_order = median_dist_sizes[order(V1), SampleID]
 peak_dists[, SampleID := factor(SampleID, levels = sample_order, ordered  = TRUE)]
 
-gg = (
+gg_peak_dist <- (
     ggplot(data = peak_dists)
     + geom_violin(aes(x = SampleID, y = log10(dist), fill = SampleID))
     + geom_boxplot(aes(x = SampleID, y = log10(dist)), width = 0.2)
-    + labs(x = NULL, y = "log10(Distance (bp))", title = "H3K27ac distance between peaks")
+    + labs(x = NULL, y = expression(log[10] * "(Distance (bp))"))
     + scale_x_discrete(
         limits = metadata[order(get("Patient ID")), SampleID],
         labels = metadata[order(get("Patient ID")), get("Patient ID")]
+    )
+    + scale_fill_manual(
+        limits = metadata[, SampleID],
+        values = metadata[, Colour]
     )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
-ggsave(
-    "Stats/peak-dists.png",
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_peak_dist, file.path(PLOT_DIR, "peak-dists"))
+
 
 dist_centres = rbind(median_dist_sizes, mean_dist_sizes)
 colnames(dist_centres) = c("SampleID", "Size")
 dist_centres[, Type := rep(c("Median", "Mean"), each = metadata[, .N])]
 
-gg = (
+gg_dist_centres <- (
     ggplot(data = dist_centres)
     + geom_col(aes(x = SampleID, y = Size, fill = SampleID))
     + labs(x = NULL, y = "Size (bp)", title = "H3K27ac centres of distance between peaks")
@@ -156,14 +178,13 @@ gg = (
         limits = metadata[order(get("Patient ID")), SampleID],
         labels = metadata[order(get("Patient ID")), get("Patient ID")]
     )
+    + scale_fill_manual(
+        limits = metadata[, SampleID],
+        values = metadata[, Colour]
+    )
     + facet_wrap(. ~ Type, scales = "free_y")
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(axis.text.x = element_text(angle = 90))
 )
-ggsave(
-    "Stats/peak-dists-centres.png",
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_peak_dist, file.path(PLOT_DIR, "peak-dists-centres"))

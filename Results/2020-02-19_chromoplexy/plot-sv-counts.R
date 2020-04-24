@@ -26,6 +26,7 @@ lowc_metadata = fread(
     sep = "\t",
     header = TRUE
 )
+lowc_metadata <- metadata[Include == "Yes"]
 # change column names for easier access
 colnames(lowc_metadata)[1:2] = c("PCaID", "SampleID")
 lowc_metadata[, PCaID := paste0("PCa", PCaID)]

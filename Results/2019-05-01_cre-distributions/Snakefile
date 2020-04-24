@@ -2,48 +2,47 @@ import pandas as pd
 import os.path as path
 
 CONFIG = pd.read_csv(
-    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
-    sep='\t'
+    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t"
 )
 
-PEAK_DIR = path.join('..', '..', 'Data', 'Processed', '2019-05-03_PCa-H3K27ac-peaks')
-SAMPLES = ['Pca' + str(i) for i in CONFIG['Sample ID']]
+PEAK_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
+SAMPLES = ["Pca" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
+PLOT_DIR = "Plots"
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
 rule all:
     input:
-        expand(path.join('Closest', '{sample}.closest-peaks.bed'), sample=SAMPLES),
-        path.join('Stats', 'peak-counts.png'),
-        path.join('Stats', 'peak-sizes.png'),
-        path.join('Stats', 'peak-dists.png'),
-        path.join('Stats', 'peak-dists-centres.png')
+        expand(path.join("Closest", "{sample}.closest-peaks.bed"), sample=SAMPLES),
+        expand(
+            path.join(PLOT_DIR, "{plot}.{ext}"),
+            plot=["peak-counts", "peak-sizes", "peak-dists", "peak-dists-centres"],
+            ext=["png", "pdf"]
+        ),
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule closest:
     input:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak")
     output:
-        path.join('Closest', '{sample}.closest-peaks.bed')
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/HiC.yaml'
+        path.join("Closest", "{sample}.closest-peaks.bed")
     shell:
-        'bedtools closest -d -io -a {input} -b {input} > {output}'
+        "bedtools closest -d -io -a {input} -b {input} > {output}"
 
 
 rule calc_stats:
     input:
-        'calc-peak-stats.R'
+        "calc-peak-stats.R"
     output:
-        path.join('Stats', 'peak-counts.png'),
-        path.join('Stats', 'peak-sizes.png'),
-        path.join('Stats', 'peak-dists.png'),
-        path.join('Stats', 'peak-dists-centres.png')
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/HiC.yaml'
+        expand(
+            path.join(PLOT_DIR, "{plot}.{ext}"),
+            plot=["peak-counts", "peak-sizes", "peak-dists", "peak-dists-centres"],
+            ext=["png", "pdf"]
+        ),
     shell:
-        'Rscript {input}'
+        "Rscript {input}"
 

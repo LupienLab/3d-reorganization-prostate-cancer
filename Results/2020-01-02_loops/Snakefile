@@ -5,19 +5,14 @@ import os.path as path
 # Configuration
 # ==============================================================================
 CONFIG = pd.read_csv(
-    path.join(
-        "..", "..", "Data", "External",
-        "LowC_Samples_Data_Available.tsv"
-    ),
+    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
     sep="\t",
     index_col=False
 )
 
-SAMPLE_IDS = CONFIG["Sample ID"].tolist()
-BAM_DIR = path.join("..", "..", "Data", "Processed",
-                    "2019-06-18_PCa-LowC-sequencing", "Aligned")
-PEAK_DIR = path.join("..", "..", "Data", "Processed",
-                     "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
+SAMPLE_IDS = CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist()
+BAM_DIR = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Aligned")
+PEAK_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
 TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
 LOOP_DIR = "Loops"
 PLOT_DIR = "Plots"

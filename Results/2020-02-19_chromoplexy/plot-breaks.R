@@ -5,6 +5,7 @@ suppressMessages(library("data.table"))
 suppressMessages(library("RCircos"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("scales"))
+source("plotting-helper.R")
 
 CHRS = paste0('chr', c(1:22, "X", "Y"))
 
@@ -44,6 +45,7 @@ hg38[, Bins := ceiling(Length / 10^6)]
 # ==============================================================================
 # load metadata
 metadata <- fread("../../Data/External/LowC_Samples_Data_Available.tsv", sep = "\t", header = TRUE)
+metadata <- metadata[Include == "Yes"]
 metadata[, SampleID := paste0("PCa", get("Sample ID"))]
 SAMPLES <- metadata$SampleID
 
@@ -62,6 +64,16 @@ data(UCSC.HG38.Human.CytoBandIdeogram)
 # convert breakpoints into Mbp bins and counts the rearrangements
 breakpoints[, StartBin := floor(start / 10^6)]
 breakpoints[, EndBin := floor(end / 10^6)]
+
+# add T2E status
+breakpoints <- merge(
+    breakpoints,
+    metadata[, .SD, .SDcols = c("SampleID", "T2E Status")],
+    by = "SampleID"
+)
+
+# count breakpoints per sample
+breakpoints_counted <- breakpoints[, .N, keyby = c("SampleID", "T2E Status")]
 
 # convert breakpoints in genomic regions into bins
 breakpoints_binned = rbindlist(lapply(
@@ -119,6 +131,12 @@ breakpoint_components_counted$Complex_Events <- breakpoint_components[,
     ][, sum(V1), by = "SampleID"]$V1
 
 # perform Mann-Whitney U test to see if the T2E samples have more complex events than the non-T2E samples
+htest_breaks <- wilcox.test(
+    x = breakpoints_counted[get("T2E Status") == "No", N],
+    y = breakpoints_counted[get("T2E Status") == "Yes", N],
+    alternative = "less"
+)
+
 htest_events <- list(
     "total" = wilcox.test(
         x = breakpoint_components_counted[get("T2E Status") == "No", Events],
@@ -209,32 +227,30 @@ for (s in SAMPLES) {
 # 2. SV counts and summary statistics per patient
 # --------------------------------------
 # number of SVs detected per patient
-gg_breakpoints = (
+gg_breakpoints <- (
     ggplot(data = breakpoints[, .N, by = SampleID])
     + geom_col(aes(x = SampleID, y = N, fill = SampleID))
     + labs(x = NULL, y = "Unique Breakpoints")
+    + scale_x_discrete(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")]
+    )
+    + scale_y_continuous(
+        limits = c(0, 100)
+    )
+    + scale_fill_manual(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(
         axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
     )
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-counts.png",
-    gg_breakpoints,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-counts.pdf",
-    gg_breakpoints,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_breakpoints, "Plots/breakpoint-stats/sv-counts")
 
 gg_breakpoints_per_chrom = (
     ggplot(data = breakpoints[, .N, by = c("SampleID", "chr")])
@@ -244,7 +260,12 @@ gg_breakpoints_per_chrom = (
         colour = "#000000"
     )
     + labs(x = NULL, y = "Breakpoints")
-    + guides(fill = guide_legend(title = "Patient"))
+    + scale_fill_manual(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + theme_minimal()
     + theme(
         panel.grid.major.x = element_blank(),
@@ -252,22 +273,7 @@ gg_breakpoints_per_chrom = (
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-counts-by-chrom.labelled.png",
-    gg_breakpoints_per_chrom,
-    height = 12,
-    width = 40,
-    units = "cm",
-    dpi = 400
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-counts-by-chrom.labelled.pdf",
-    gg_breakpoints_per_chrom,
-    height = 12,
-    width = 40,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_breakpoints_per_chrom, "Plots/breakpoint-stats/sv-counts.by-chrom.labelled")
 
 # save as above without any text
 gg_breakpoints_per_chrom_unlabelled = (
@@ -279,22 +285,7 @@ gg_breakpoints_per_chrom_unlabelled = (
         strip.text.x = element_blank()
     )
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-counts-by-chrom.png",
-    gg_breakpoints_per_chrom_unlabelled,
-    height = 12,
-    width = 40,
-    units = "cm",
-    dpi = 400
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-counts-by-chrom.pdf",
-    gg_breakpoints_per_chrom_unlabelled,
-    height = 12,
-    width = 40,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_breakpoints_per_chrom_unlabelled, "Plots/breakpoint-stats/sv-counts.by-chrom")
 
 # number and location of SVs across all patients
 gg_breakpoints_summed = (
@@ -307,6 +298,12 @@ gg_breakpoints_summed = (
     # add geom_blank to ensure each facet is the correct size
     + geom_blank(data = hg38, mapping = aes(x = Bins, y = 0))
     + labs(x = "Position", y = "Count")
+    + scale_fill_manual(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
     + facet_grid(. ~ chr, scales = "free_x", space = "free_x", switch = "x")
     + theme_classic()
     + theme(
@@ -316,22 +313,7 @@ gg_breakpoints_summed = (
         strip.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)
     )
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-loci.png",
-    gg_breakpoints_summed,
-    height = 12,
-    width = 40,
-    units = "cm",
-    dpi = 400
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-loci.pdf",
-    gg_breakpoints_summed,
-    height = 12,
-    width = 40,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_breakpoints_summed, "Plots/breakpoint-stats/sv-loci", width = 40)
 
 # megabase bins containing multiple breakpoints across samples
 gg_recurrence = (
@@ -345,22 +327,7 @@ gg_recurrence = (
     )
     + theme_minimal()
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-recurrence.png",
-    gg_recurrence,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-recurrence.pdf",
-    gg_recurrence,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_recurrence, "Plots/breakpoint-stats/sv-recurrence")
 
 gg_inter_intra = (
     ggplot(data = melt(
@@ -379,7 +346,11 @@ gg_inter_intra = (
         breaks = c("Interchromosomal", "Intrachromosomal"),
         labels = c("Inter-chromosomal", "Intra-chromosomal"),
         values = c("#3F3FFF", "#FF7F7F"),
-        name = NULL
+        name = ""
+    )
+    + scale_x_discrete(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")]
     )
     + labs(x = NULL, y = "Breakpoints")
     + theme_minimal()
@@ -388,20 +359,7 @@ gg_inter_intra = (
         legend.position = "bottom"
     )
 )
-ggsave(
-    "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.png",
-    gg_inter_intra,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.pdf",
-    gg_inter_intra,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_inter_intra, "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal")
 
 
 # 3. length and distribution of complex events
@@ -410,32 +368,28 @@ gg_component_length = (
     ggplot(data = breakpoint_components)
     + geom_bar(
         aes(x = N, group = SampleID, fill = SampleID),
-        colour = "#000000",
         position = position_dodge(preserve = "single")
+    )
+    + scale_fill_manual(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
     )
     + labs(x = "Breakpoints in SV", y = "Count")
     + guides(group = FALSE, fill = guide_legend(title = "Patients"))
     + theme_minimal()
 )
-ggsave(
-    "plots/breakpoint-stats/sv-event-size.png",
-    gg_component_length,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "plots/breakpoint-stats/sv-event-size.pdf",
-    gg_component_length,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
+savefig(gg_component_length, "Plots/breakpoint-stats/sv-events.size")
 
 # number of SV events detected in total
 gg_t2e_components = (
     ggplot(data = breakpoint_components_counted)
-    + geom_boxplot(aes(x = get("T2E Status"), y = Events, colour = get("T2E Status")), width = 0.5)
+    + geom_boxplot(
+        aes(x = get("T2E Status"), y = Events, colour = get("T2E Status")),
+        width = 0.5,
+        outlier.shape = NA
+    )
     + geom_point(
         aes(x = get("T2E Status"), y = Events, colour = get("T2E Status")),
         position = position_jitter(width = 0.1, height = 0)
@@ -455,28 +409,63 @@ gg_t2e_components = (
         vjust = -1
     )
     + labs(x = NULL, y = "Structural variants")
-    + guides(colour = FALSE)
     + scale_x_discrete(
         breaks = c("No", "Yes"),
-        labels = c("ERG-", "ERG+")
+        labels = c("T2E-", "T2E+")
     )
+    + scale_colour_manual(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+"),
+        values = c("#2A363B", "#019875")
+    )
+    + guides(colour = FALSE)
     + ylim(0, 40)
     + theme_minimal()
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-events.total.T2E-comparison.png",
-    gg_t2e_components,
-    height = 20,
-    width = 12,
-    units = "cm"
+savefig(gg_t2e_components, "Plots/breakpoint-stats/sv-events.total.T2E-comparison", height = 20, width = 12)
+
+gg_t2e_components_bps = (
+    ggplot(data = breakpoints[, .N, by = c("SampleID", "T2E Status")])
+    + geom_boxplot(
+        aes(x = get("T2E Status"), y = N, colour = get("T2E Status")),
+        width = 0.5,
+        outlier.shape = NA
+    )
+    + geom_point(
+        aes(x = get("T2E Status"), y = N, colour = get("T2E Status")),
+        position = position_jitter(width = 0.1, height = 0)
+    )
+    + geom_path(
+        data = data.table(
+            x = rep(c("No", "Yes"), each = 2),
+            y = c(25, 98, 98, 96)
+        ),
+        aes(x = x, y = y, group = 1)
+    )
+    + annotate(
+        geom = "text",
+        label = paste("p =", scientific(htest_breaks$p.value, digits = 3)),
+        x = 1.5,
+        y = 98,
+        vjust = -1
+    )
+    + labs(x = NULL, y = "Unique Breakpoints")
+    + scale_x_discrete(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+")
+    )
+    + scale_y_continuous(
+        limits = c(0, 100)
+    )
+    + scale_colour_manual(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+"),
+        values = c("#2A363B", "#019875")
+    )
+    + guides(colour = FALSE)
+    + theme_minimal()
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-events.total.T2E-comparison.pdf",
-    gg_t2e_components,
-    height = 20,
-    width = 12,
-    units = "cm"
-)
+savefig(gg_t2e_components_bps, "Plots/breakpoint-stats/sv-breakpoints.T2E-comparison", height = 20, width = 12)
 
 # number of complex components
 gg_t2e_components_complex = (
@@ -505,24 +494,16 @@ gg_t2e_components_complex = (
     + guides(colour = FALSE)
     + scale_x_discrete(
         breaks = c("No", "Yes"),
-        labels = c("ERG-", "ERG+")
+        labels = c("T2E-", "T2E+")
+    )
+    + scale_colour_manual(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+"),
+        values = c("#2A363B", "#019875")
     )
     + theme_minimal()
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-events.complex.T2E-comparison.png",
-    gg_t2e_components_complex,
-    height = 20,
-    width = 12,
-    units = "cm"
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-events.complex.T2E-comparison.pdf",
-    gg_t2e_components_complex,
-    height = 20,
-    width = 12,
-    units = "cm"
-)
+savefig(gg_t2e_components_complex, "Plots/breakpoint-stats/sv-events.complex.T2E-comparison", height = 20, width = 12)
 
 # number of chromosomes that events span
 gg_sv_chrom_span <- (
@@ -533,18 +514,4 @@ gg_sv_chrom_span <- (
     + scale_fill_viridis_c()
     + theme_minimal()
 )
-ggsave(
-    "Plots/breakpoint-stats/sv-event-chromosomes.png",
-    gg_sv_chrom_span,
-    height = 12,
-    width = 20,
-    units = "cm"
-)
-ggsave(
-    "Plots/breakpoint-stats/sv-event-chromosomes.png",
-    gg_sv_chrom_span,
-    height = 12,
-    width = 20,
-    units = "cm",
-    dpi = 400
-)
+savefig(gg_sv_chrom_span, "Plots/breakpoint-stats/sv-events.chromosomes")
