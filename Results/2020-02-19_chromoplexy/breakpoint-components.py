@@ -15,6 +15,7 @@ import pickle
 import pprint
 from genomic_interval import GenomicInterval, overlapping, find_tad
 from copy import deepcopy
+import natsort as ns
 
 # ==============================================================================
 # Constants
@@ -345,9 +346,14 @@ for s in SAMPLES:
             ignore_index=True,
             sort=False
         )
-
+# convert chromosome column to a categorical column to allow for natural sorting
+uncoupled_breakpoints["chr"] = pd.Categorical(
+    uncoupled_breakpoints["chr"],
+    ordered=True,
+    categories=ns.natsorted(uncoupled_breakpoints["chr"].unique())
+)
 # save in a table
-uncoupled_breakpoints.to_csv(
+uncoupled_breakpoints.sort_values(by=["SampleID", "chr", "start", "end"]).to_csv(
     path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
     sep="\t",
     index=False
@@ -387,7 +393,7 @@ for s in SAMPLES:
         )
 
 # save as table
-paired_breakpoints.to_csv(
+paired_breakpoints.sort_values(by=["SampleID", "chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y"]).to_csv(
     path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
     sep="\t",
     index=False
