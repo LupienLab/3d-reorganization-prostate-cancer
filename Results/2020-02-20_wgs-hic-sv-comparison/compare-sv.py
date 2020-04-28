@@ -15,7 +15,7 @@ import itertools
 # Constants
 # ==============================================================================
 # tolerance for interval overlap
-TOL = 100000
+TOL = 50000
 
 # ==============================================================================
 # Functions
@@ -50,6 +50,7 @@ wgs = pd.concat(
 )
 wgs.reset_index(inplace=True)
 wgs.drop(labels="i", axis=1, inplace=True)
+wgs["breakpoint_ID"] = wgs["SampleID"].astype(str) + "_" + wgs["SV_ID"].astype(str) + "_" + wgs.index.astype(str)
 
 # load Hi-C breakpoints
 hic = pd.read_csv(
@@ -81,11 +82,11 @@ for s in SAMPLES:
         similar_wgs_breaks = sample_wgs.loc[(sample_wgs.chr == r.chr) & (r.start <= sample_wgs.end + TOL) & (r.end >= sample_wgs.start - TOL),:]
         if similar_wgs_breaks.shape[0] > 0:
             hic.loc[r.Index, "Mutual"] = True
-            hic.loc[r.Index, "Mutual_Breakpoint_IDs"] = ",".join([str(i) for i in similar_wgs_breaks.SV_ID])
+            hic.loc[r.Index, "Mutual_Breakpoint_IDs"] = ",".join([str(i) for i in similar_wgs_breaks.breakpoint_ID])
 
 # summarize mutual detections across entire cohort
 detections = pd.DataFrame({
-    "Source": ["WGS", "HiC"],
+    "Source": ["WGS", "Hi-C"],
     "Detected_In_Source": [wgs.shape[0], hic.shape[0]],
     "Mutually_Detected": [wgs.loc[wgs.Mutual == True].shape[0], hic.loc[hic.Mutual == True].shape[0]],
 })
@@ -95,7 +96,7 @@ detections_by_sample = pd.DataFrame({
     "SampleID": list(itertools.chain.from_iterable(
         itertools.repeat(s, 2) for s in SAMPLES
     )),
-    "Source": ["WGS", "HiC"] * len(SAMPLES),
+    "Source": ["WGS", "Hi-C"] * len(SAMPLES),
     "Detected_In_Source": list(itertools.chain.from_iterable(
         [[
             wgs.loc[wgs.SampleID == s].shape[0],
@@ -116,3 +117,5 @@ detections_by_sample = pd.DataFrame({
 # ==============================================================================
 detections.to_csv("detections.all.tsv", sep="\t", index=False)
 detections_by_sample.to_csv("detections.per-sample.tsv", sep="\t", index=False)
+wgs.to_csv("detections.wgs.tsv", sep="\t", index=False)
+hic.to_csv("detections.hic.tsv", sep="\t", index=False)
