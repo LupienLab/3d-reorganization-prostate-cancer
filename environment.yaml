@@ -1,10 +1,10 @@
 name: Davos
 channels:
-  - jrhawley
   - conda-forge
   - bioconda
   - r
   - defaults
+  - jrhawley
 dependencies:
   - _libgcc_mutex=0.1
   - _openmp_mutex=4.5
@@ -24,14 +24,19 @@ dependencies:
   - bioconductor-biobase=2.46.0
   - bioconductor-biocgenerics=0.32.0
   - bioconductor-biocparallel=1.20.0
+  - bioconductor-biostrings=2.54.0
   - bioconductor-delayedarray=0.12.0
   - bioconductor-deseq2=1.26.0
   - bioconductor-genefilter=1.68.0
   - bioconductor-geneplotter=1.64.0
   - bioconductor-genomeinfodb=1.22.0
   - bioconductor-genomeinfodbdata=1.2.2
+  - bioconductor-genomicalignments=1.22.0
   - bioconductor-genomicranges=1.38.0
   - bioconductor-iranges=2.20.0
+  - bioconductor-rhtslib=1.18.0
+  - bioconductor-rsamtools=2.2.0
+  - bioconductor-rtracklayer=1.46.0
   - bioconductor-s4vectors=0.24.0
   - bioconductor-summarizedexperiment=1.16.0
   - bioconductor-xvector=0.26.0
@@ -43,9 +48,9 @@ dependencies:
   - bwa=0.7.17
   - bwidget=1.9.14
   - bzip2=1.0.8
-  - ca-certificates=2019.11.28
+  - ca-certificates=2020.4.5.1
   - cairo=1.16.0
-  - certifi=2019.11.28
+  - certifi=2020.4.5.1
   - cffi=1.14.0
   - chardet=3.0.4
   - click=7.1.1
@@ -168,6 +173,7 @@ dependencies:
   - msgpack-python=0.6.2
   - multiprocess=0.70.9
   - multiqc=1.6
+  - natsort=7.0.1
   - nbconvert=5.6.1
   - nbformat=5.0.4
   - ncurses=6.1
@@ -178,7 +184,7 @@ dependencies:
   - numpy=1.18.1
   - olefile=0.46
   - openjdk=11.0.1
-  - openssl=1.1.1f
+  - openssl=1.1.1g
   - packaging=20.1
   - pairix=0.3.7
   - pairtools=0.3.0
@@ -420,7 +426,7 @@ dependencies:
   - zlib=1.2.11
   - zstd=1.4.4
   - pip:
-    - clodius==0.14.2
+    - clodius==0.14.3
     - diskcache==4.1.0
     - flask==1.1.1
     - flask-cors==3.0.8
