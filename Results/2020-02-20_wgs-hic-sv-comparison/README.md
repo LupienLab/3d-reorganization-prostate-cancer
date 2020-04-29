@@ -24,4 +24,8 @@ However, only ~ 20% of breakpoints from either source were similarly identified 
 
 ![Similarity of Hi-C and WGS breakpoint calls](detections.all.png)
 
+This observation isn't an effect of individual patients, since the proportion of overlap between the two sources for each patient is small.
+
+![Similarity of Hi-C and WGS breakpoint calls per patient](detections.per-patient.png)
+
 This implies that these two methods are largely detecting different events.

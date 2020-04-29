@@ -21,6 +21,7 @@ rule all:
     input:
         expand("detections.{type}.tsv", type=["all", "per-sample", "hic", "wgs"]),
         expand("detections.all.{ext}", ext=PLOT_EXTS),
+        expand("detections.per-patient.{ext}", ext=PLOT_EXTS),
 
 # ==============================================================================
 # Rules
@@ -44,5 +45,6 @@ rule plot:
         data = expand("detections.{type}.tsv", type=["all", "per-sample", "hic", "wgs"]),
     output:
         expand("detections.all.{ext}", ext=PLOT_EXTS),
+        expand("detections.per-patient.{ext}", ext=PLOT_EXTS),
     shell:
         "Rscript {input.script}"

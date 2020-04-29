@@ -13,14 +13,22 @@ source("../2020-02-19_chromoplexy/plotting-helper.R")
 # Data
 # ==============================================================================
 detections <- fread("detections.all.tsv", sep = "\t", header = TRUE)
+detections_sample <- fread("detections.per-sample.tsv", sep = "\t", header = TRUE)
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
 detections[, Not_Mutually_Detected := Detected_In_Source - Mutually_Detected]
+detections_sample[, Not_Mutually_Detected := Detected_In_Source - Mutually_Detected]
 detections_melted <- melt(
     detections[, .SD, .SDcols = c(1, 3, 4)],
     id.vars = "Source",
+    variable.name = "Detected",
+    value.name = "N"
+)
+detections_sample_melted <- melt(
+    detections_sample[, .SD, .SDcols = c(1, 2, 4, 5)],
+    id.vars = c("SampleID", "Source"),
     variable.name = "Detected",
     value.name = "N"
 )
@@ -28,7 +36,7 @@ detections_melted <- melt(
 # ==============================================================================
 # Plots
 # ==============================================================================
-gg = (
+gg_all <- (
     ggplot(data = detections_melted)
     + geom_col(
         aes(x = Source, y = N, fill = Detected),
@@ -52,4 +60,28 @@ gg = (
         legend.position = "bottom"
     )
 )
-savefig(gg, "detections.all")
+savefig(gg_all, "detections.all")
+
+gg_sample <- (
+    ggplot(data = detections_sample_melted)
+    + geom_col(
+        aes(x = Source, y = N, fill = Detected),
+        position = position_stack(),
+        colour = "#000000"
+    )
+    + labs(x = "Detection In", y = "Breakpoints Detected")
+    + scale_fill_manual(
+        name = "Detected in Other",
+        limits = c("Not_Mutually_Detected", "Mutually_Detected"),
+        labels = c("No", "Yes"),
+        values = c("#bdbdbd", "#f8766d")
+    )
+    + guides(colour = FALSE)
+    + facet_wrap(~ SampleID, nrow = 1)
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 90)
+    )
+)
+savefig(gg_sample, "detections.per-patient", width = 30)
