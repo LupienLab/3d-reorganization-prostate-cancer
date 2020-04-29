@@ -102,9 +102,16 @@ fwrite(
 )
 
 # count the number of inter-/intra-chromosomal pairs
-inter_intra_counts <- breakpoint_pairs[, .N, by = "SampleID"]
+inter_intra_counts <- breakpoint_pairs[, .(Total = .N), by = "SampleID"]
 inter_intra_counts$Intrachromosomal <- breakpoint_pairs[, chr_x == chr_y, by = "SampleID"][, sum(V1), by = "SampleID"]$V1
 inter_intra_counts$Interchromosomal <- breakpoint_pairs[, chr_x != chr_y, by = "SampleID"][, sum(V1), by = "SampleID"]$V1
+inter_intra_counts$T2E_Status <- metadata[, get("T2E Status")] # these are in the same order, so I don't need to merge
+inter_intra_counts <- melt(
+    inter_intra_counts,
+    id.vars = c("SampleID", "T2E_Status"),
+    variable.name = "Class",
+    value.name = "Count"
+)
 
 fwrite(
     inter_intra_counts,
@@ -330,13 +337,7 @@ gg_recurrence = (
 savefig(gg_recurrence, "Plots/breakpoint-stats/sv-recurrence")
 
 gg_inter_intra = (
-    ggplot(data = melt(
-        inter_intra_counts,
-        id.vars = c("SampleID"),
-        measure.vars = c("Intrachromosomal", "Interchromosomal"),
-        variable.name = "Class",
-        value.name = "Count"
-    ))
+    ggplot(data = inter_intra_counts[Class != "Total"])
     + geom_col(
         aes(x = SampleID, y = Count, fill = Class),
         colour = "#000000",
@@ -360,6 +361,66 @@ gg_inter_intra = (
     )
 )
 savefig(gg_inter_intra, "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal")
+
+gg_inter_intra_t2e = (
+    ggplot(data = inter_intra_counts[Class != "Total", .(N = sum(Count)), by = c("T2E_Status", "Class")])
+    + geom_col(
+        aes(x = T2E_Status, y = N, fill = Class),
+        colour = "#000000",
+        position = "dodge"
+    )
+    + scale_x_discrete(
+        breaks = c("Yes", "No"),
+        labels = c("T2E+", "T2E-")
+    )
+    + scale_fill_manual(
+        breaks = c("Interchromosomal", "Intrachromosomal"),
+        labels = c("Inter-chromosomal", "Intra-chromosomal"),
+        values = c("#3F3FFF", "#FF7F7F"),
+        name = ""
+    )
+    + labs(x = NULL, y = "Total Breakpoint Pairs")
+    + coord_flip()
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+    )
+)
+savefig(gg_inter_intra_t2e, "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.T2E-total")
+
+gg_inter_intra_t2e_comp = (
+    ggplot(data = inter_intra_counts[Class != "Total"])
+    + geom_boxplot(
+        aes(x = T2E_Status, y = Count, colour = T2E_Status),
+        alpha = 0.2,
+        outlier.shape = NA
+    )
+    + geom_point(
+        aes(x = T2E_Status, y = Count, colour = T2E_Status),
+        position = position_jitter(height = 0, width = 0.2)
+    )
+    + scale_x_discrete(
+        breaks = c("Yes", "No"),
+        labels = c("T2E+", "T2E-")
+    )
+    + scale_fill_manual(
+        breaks = c("Interchromosomal", "Intrachromosomal"),
+        labels = c("Inter-chromosomal", "Intra-chromosomal"),
+        values = c("#3F3FFF", "#FF7F7F"),
+        name = ""
+    )
+    + labs(x = NULL, y = "Breakpoint Pairs")
+    + guides(colour = FALSE)
+    + coord_flip()
+    + facet_wrap(~ Class, ncol = 1)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+    )
+)
+savefig(gg_inter_intra_t2e_comp, "Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.T2E-comparison")
 
 
 # 3. length and distribution of complex events

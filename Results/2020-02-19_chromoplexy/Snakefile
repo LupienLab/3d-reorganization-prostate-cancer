@@ -123,7 +123,10 @@ rule plot_breaks:
                 "sv-recurrence",
                 "sv-events.size",
                 "sv-events.total.T2E-comparison",
-                "sv-events.complex.T2E-comparison"
+                "sv-events.complex.T2E-comparison",
+                "breakpoint-pairs.inter-intra-chromosomal",
+                "breakpoint-pairs.inter-intra-chromosomal.T2E-total",
+                "breakpoint-pairs.inter-intra-chromosomal.T2E-comparison",
             ],
             ext=PLOT_EXTS
         ),
