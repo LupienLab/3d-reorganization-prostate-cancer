@@ -3,6 +3,8 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
+suppressMessages(library("scales"))
+suppressMessages(library("MASS"))
 
 MAX_WINDOW <- 24
 MIN_WINDOW <- 3
@@ -108,6 +110,38 @@ tads_mean_size <- tads[, mean(width), by = c("SampleID", "Patient_ID", "w")]
 tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
 tads_median_size <- tads[, median(width), by = c("SampleID", "Patient_ID", "w")]
 tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
+
+# kernel density estimation of number of TADs of a given width
+kde <- rbindlist(lapply(
+    SAMPLES,
+    function(s) {
+        rbindlist(lapply(
+            seq(MIN_WINDOW, MAX_WINDOW, 1),
+            function(w) {
+                x <- tads[SampleID == s & w == w, width]
+                d <- density(x, n = 251, from = 0, to = 5e6, bw = 1e6)
+                return(data.table(
+                    SampleID = s,
+                    w = w,
+                    x = d$x,
+                    y = d$y
+                ))
+            }
+        ))
+    }
+))
+
+# mean and sd of KDE for a given window size
+kde_uncertain <- kde[, .(Mean = mean(y), SD = sd(y)), by = c("w", "x")]
+kde_uncertain[, Lower := pmax(0, Mean - 1.96 * SD)]
+kde_uncertain[, Upper := Mean + 1.96 * SD]
+
+k <- function(x, h) dnorm(x / h)
+f <- function(x, h, s, w) {
+    these_tads <- tads[w == w & SampleID == s]
+    n_tads <- dim(these_tads)[1]
+    return(1 / (h * n_tads) * sum(k(x - these_tads$width, h)))
+}
 
 ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak=Freq), keyby = "SampleID"]
 ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "SampleID"]$V1
@@ -247,8 +281,12 @@ savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), heigh
 # TAD counts per sample at each window size
 gg_tad_counts <- (
     ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
-    + geom_path(aes(x = w, y = N, colour = Patient_ID, group = Patient_ID))
-    + geom_point(aes(x = w, y = N, colour = Patient_ID))
+    # + geom_path(aes(x = w, y = N, colour = Patient_ID, group = Patient_ID))
+    + geom_point(
+        aes(x = w, y = N, colour = Patient_ID),
+        position = position_jitter(width = 0.2, height = 0)
+    )
+    + geom_boxplot(aes(x = w, y = N, group = w), outlier.shape = NA, alpha = 0.2)
     + labs(x = "Window size", y = "Number of TADs")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
@@ -266,16 +304,20 @@ savefig(gg_tad_counts, file.path(PLOT_DIR, "tad-counts"))
 
 # TAD size distribution
 gg_tad_size <- (
-    ggplot(data = tads)
+    ggplot()
     + stat_density(
-        aes(x = width / 1e6, y = 0.1 * ..count.., colour = SampleID),
+        data = tads,
+        mapping = aes(x = width, y = ..scaled.., colour = SampleID),
         alpha = 0.8,
+        bw = 1e5,
         geom = "path",
         position = position_identity()
     )
-    + labs(x = "TAD Size (Mbp)", y = "Number of TADs")
+    + labs(x = "TAD Size (Mbp)", y = "Scaled proportion of TADs")
     + scale_x_continuous(
-        limits = c(0, 5)
+        limits = c(0, 5e6),
+        breaks = seq(0, 5e6, by = 1e6),
+        labels = seq(0, 5)
     )
     + scale_colour_manual(
         limits = metadata[, SampleID],
@@ -293,16 +335,21 @@ savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size.distribution"), height = 20)
 
 # same as above but only focussing on a few window sizes
 gg_tad_size_reduced <- (
-    ggplot(data = tads[w %in% c(MIN_WINDOW, floor((MAX_WINDOW + MIN_WINDOW) / 2), MAX_WINDOW)])
+    ggplot(
+        data = tads[w %in% seq(MIN_WINDOW, MAX_WINDOW, length.out = 4)]
+    )
     + stat_density(
-        aes(x = width / 1e6, y = 0.1 * ..count.., colour = SampleID),
+        mapping = aes(x = width, y = ..scaled.., colour = SampleID),
         alpha = 0.8,
+        bw = 1e5,
         geom = "path",
         position = position_identity()
     )
-    + labs(x = "TAD Size (Mbp)", y = "Number of TADs")
+    + labs(x = "TAD Size (Mbp)", y = "Scaled proportion of TADs")
     + scale_x_continuous(
-        limits = c(0, 5)
+        limits = c(0, 5e6),
+        breaks = seq(0, 5e6, by = 1e6),
+        labels = seq(0, 5)
     )
     + scale_colour_manual(
         limits = metadata[, SampleID],
@@ -310,11 +357,14 @@ gg_tad_size_reduced <- (
         values = metadata[, Colour],
         name = "Patient"
     )
-    + facet_wrap(~ w, ncol = 3, scales = "free_y", labeller = label_both)
+    + facet_wrap(~ w, nrow = 1)
     + theme_minimal()
-    + theme()
+    + theme(
+        legend.position = "bottom",
+        panel.grid.minor = element_blank()
+    )
 )
-savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"))
+savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"), height = 8)
 
 # Variance between samples
 # --------------------------------------
@@ -338,7 +388,12 @@ savefig(gg_cov, file.path(PLOT_DIR, "tad-size.coeff-var"))
 gg_bpscore = (
     ggplot(data = bpscore[w <= MAX_WINDOW])
     + geom_point(aes(x = w, y = 1 - dist, colour = w), position = position_jitter(width = 0.2, height = 0))
-    + geom_boxplot(aes(x = w, y = 1 - dist, group = w), alpha = 0.5, outlier.shape = NA, width = 0.5)
+    + geom_boxplot(
+        aes(x = w, y = 1 - dist, group = w),
+        alpha = 0.5,
+        outlier.shape = NA,
+        width = 0.5
+    )
     + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
