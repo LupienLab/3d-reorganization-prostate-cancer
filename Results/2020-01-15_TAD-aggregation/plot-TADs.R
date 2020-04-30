@@ -111,37 +111,28 @@ tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
 tads_median_size <- tads[, median(width), by = c("SampleID", "Patient_ID", "w")]
 tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
-# kernel density estimation of number of TADs of a given width
-kde <- rbindlist(lapply(
+# ECDFs number of TADs of a given width
+tad_size_ecdf <- rbindlist(lapply(
     SAMPLES,
     function(s) {
         rbindlist(lapply(
             seq(MIN_WINDOW, MAX_WINDOW, 1),
-            function(w) {
-                x <- tads[SampleID == s & w == w, width]
-                d <- density(x, n = 251, from = 0, to = 5e6, bw = 1e6)
+            function(window) {
+                f <- ecdf(tads[SampleID == s & w == window, width])
                 return(data.table(
                     SampleID = s,
-                    w = w,
-                    x = d$x,
-                    y = d$y
+                    w = window,
+                    x = seq(0, 5e6, 4e4),
+                    y = f(seq(0, 5e6, 4e4))
                 ))
             }
         ))
     }
 ))
 
-# mean and sd of KDE for a given window size
-kde_uncertain <- kde[, .(Mean = mean(y), SD = sd(y)), by = c("w", "x")]
-kde_uncertain[, Lower := pmax(0, Mean - 1.96 * SD)]
-kde_uncertain[, Upper := Mean + 1.96 * SD]
-
-k <- function(x, h) dnorm(x / h)
-f <- function(x, h, s, w) {
-    these_tads <- tads[w == w & SampleID == s]
-    n_tads <- dim(these_tads)[1]
-    return(1 / (h * n_tads) * sum(k(x - these_tads$width, h)))
-}
+tad_size_ecdf_est <- tad_size_ecdf[, .(Mean = mean(y), SD = sd(y)), by = c("w", "x")]
+tad_size_ecdf_est[, Lower := Mean - SD]
+tad_size_ecdf_est[, Upper := Mean + SD]
 
 ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak=Freq), keyby = "SampleID"]
 ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "SampleID"]$V1
@@ -304,28 +295,18 @@ savefig(gg_tad_counts, file.path(PLOT_DIR, "tad-counts"))
 
 # TAD size distribution
 gg_tad_size <- (
-    ggplot()
-    + stat_density(
-        data = tads,
-        mapping = aes(x = width, y = ..scaled.., colour = SampleID),
-        alpha = 0.8,
-        bw = 1e5,
-        geom = "path",
-        position = position_identity()
-    )
-    + labs(x = "TAD Size (Mbp)", y = "Scaled proportion of TADs")
+    ggplot(data = tad_size_ecdf_est)
+    + geom_path(aes(x = x, y = 100 * Mean, colour = w, group = w))
+    + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
     + scale_x_continuous(
         limits = c(0, 5e6),
         breaks = seq(0, 5e6, by = 1e6),
         labels = seq(0, 5)
     )
-    + scale_colour_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
-        name = "Patient"
+    + scale_colour_viridis_c(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
+        name = "Window Size"
     )
-    + facet_wrap(~ w, scales = "free_y", nrow = 5)
     + theme_minimal()
     + theme(
         legend.position = "bottom"
@@ -334,39 +315,71 @@ gg_tad_size <- (
 savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size.distribution"), height = 20)
 
 # same as above but only focussing on a few window sizes
+w_subset <- seq(MIN_WINDOW, MAX_WINDOW, length.out = 4)
 gg_tad_size_reduced <- (
-    ggplot(
-        data = tads[w %in% seq(MIN_WINDOW, MAX_WINDOW, length.out = 4)]
+    ggplot(data = tad_size_ecdf[w %in% w_subset])
+    + geom_path(
+        aes(
+            x = x,
+            y = 100 * y,
+            colour = SampleID,
+            group = interaction(factor(w), SampleID),
+            linetype = factor(w)
+        )
     )
-    + stat_density(
-        mapping = aes(x = width, y = ..scaled.., colour = SampleID),
-        alpha = 0.8,
-        bw = 1e5,
-        geom = "path",
-        position = position_identity()
-    )
-    + labs(x = "TAD Size (Mbp)", y = "Scaled proportion of TADs")
+    + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
     + scale_x_continuous(
         limits = c(0, 5e6),
         breaks = seq(0, 5e6, by = 1e6),
         labels = seq(0, 5)
     )
     + scale_colour_manual(
-        limits = metadata[, SampleID],
+        breaks = metadata[, SampleID],
         labels = metadata[, get("Patient ID")],
         values = metadata[, Colour],
         name = "Patient"
     )
+    + guides(linetype = guide_legend(title = "Window Size"))
     + facet_wrap(~ w, nrow = 1)
     + theme_minimal()
     + theme(
-        legend.position = "bottom",
-        panel.grid.minor = element_blank()
+        # legend.position = "bottom"
     )
 )
-savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"), height = 8)
+savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced.faceted"), height = 12, width = 30)
 
-# Variance between samples
+gg_tad_size_reduced <- (
+    ggplot(data = tad_size_ecdf[w %in% w_subset])
+    + geom_path(
+        aes(
+            x = x,
+            y = 100 * y,
+            colour = SampleID,
+            group = interaction(factor(w), SampleID),
+            linetype = factor(w)
+        )
+    )
+    + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
+    + scale_x_continuous(
+        limits = c(0, 5e6),
+        breaks = seq(0, 5e6, by = 1e6),
+        labels = seq(0, 5)
+    )
+    + scale_colour_manual(
+        breaks = metadata[, SampleID],
+        labels = metadata[, get("Patient ID")],
+        values = metadata[, Colour],
+        name = "Patient"
+    )
+    + guides(linetype = guide_legend(title = "Window Size"))
+    + theme_minimal()
+    + theme(
+        # legend.position = "bottom"
+    )
+)
+savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"), height = 14)
+
+# Variance between samples 
 # --------------------------------------
 # coefficient of variation for BPscore
 gg_cov <- (
