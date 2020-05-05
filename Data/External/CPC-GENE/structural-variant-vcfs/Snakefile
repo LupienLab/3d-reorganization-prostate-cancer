@@ -15,7 +15,7 @@ rule all:
     input:
         expand("{sample}.tsv", sample=SAMPLES),
         expand("{sample}.bed", sample=SAMPLES),
-        expand("{sample}.hg38.bed", sample=SAMPLES),
+        expand("{sample}.hg38.sorted.bed", sample=SAMPLES),
 
 # ==============================================================================
 # Rules
@@ -46,4 +46,12 @@ rule liftover:
         "{sample}.hg38.bed"
     shell:
         "Rscript {input.script} {input.vcf} {output}"
-    
+
+rule sort:
+    input:
+        "{sample}.hg38.bed",
+    output:
+        "{sample}.hg38.sorted.bed"
+    shell:
+        "sort -k1,1 -V -k2,2n {input} > {output}"
+
