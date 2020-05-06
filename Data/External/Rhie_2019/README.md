@@ -1,0 +1,12 @@
+# Summary
+
+This folder contains the raw sequencing data from [Rhie _et al._, Nature Communications, 2019](https://doi.org/10.1038/s41467-019-12079-8).
+
+The processed data available on [GEO Datasets](https://www.ncbi.mln.nig.gov/geo/query/acc.cgi?acc=GSE118629) is unfortunately aligned to the hg19 genome, so this pre-processing has to be redone to match with our data.
+
+## Data
+
+In the paper's methods, it describes that each samples was sequenced paired-end 75 bp to produce ~ 500 M read pairs per replicate using and Illumina HiSeq 2000.
+The FASTQs coming from GEO do not show paired-end, but the sequences are 152 nts long.
+So before aligning, these reads have to be split in the middle (producing two 76 bp sequences) and put into separate FASTQs.
+
