@@ -1,0 +1,54 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+TISSUES = [
+    "ACC",
+    "BLCA",
+    "BRCA",
+    "CESC",
+    "CHOL",
+    "COAD",
+    "ESCA",
+    "GBM",
+    "HNSC",
+    "KIRC",
+    "KIRP",
+    "LGG",
+    "LIHC",
+    "LUAD",
+    "LUSC",
+    "MESO",
+    "PCPG",
+    "PRAD",
+    "SKCM",
+    "STAD",
+    "TGCT",
+    "THCA",
+    "UCEC",
+]
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand("{tissue}_peakCalls.txt", tissue=TISSUES)
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule download:
+    output:
+        temp("peaks.zip")
+    params:
+        url = "https://api.gdc.cancer.gov/data/71ccfc55-b428-4a04-bb5a-227f7f3bf91c",
+    shell:
+        "curl -o {output} {params.url}"
+
+rule extract:
+    input:
+        "peaks.zip"
+    output:
+        expand("{tissue}_peakCalls.txt", tissue=TISSUES)
+    shell:
+        "unzip {input}"
