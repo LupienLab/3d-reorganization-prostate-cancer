@@ -1,5 +1,6 @@
 name: Davos
 channels:
+  - daler
   - conda-forge
   - bioconda
   - r
@@ -108,6 +109,7 @@ dependencies:
   - igvtools=2.5.3
   - importlib-metadata=1.5.2
   - importlib_metadata=1.5.2
+  - interlap=0.2.6
   - ipykernel=5.2.0
   - ipython=7.13.0
   - ipython_genutils=0.2.0
@@ -176,6 +178,7 @@ dependencies:
   - natsort=7.0.1
   - nbconvert=5.6.1
   - nbformat=5.0.4
+  - ncbi-ngs-sdk=2.10.4
   - ncurses=6.1
   - networkx=2.4
   - notebook=6.0.3
@@ -197,6 +200,25 @@ dependencies:
   - pbgzip=2016.08.04
   - pcre=8.44
   - perl=5.26.2
+  - perl-app-cpanminus=1.7044
+  - perl-business-isbn=3.004
+  - perl-business-isbn-data=20140910.003
+  - perl-carp=1.38
+  - perl-constant=1.33
+  - perl-data-dumper=2.173
+  - perl-encode=2.88
+  - perl-exporter=5.72
+  - perl-extutils-makemaker=7.36
+  - perl-file-path=2.16
+  - perl-file-temp=0.2304
+  - perl-mime-base64=3.15
+  - perl-parent=0.236
+  - perl-uri=1.76
+  - perl-xml-libxml=2.0132
+  - perl-xml-namespacesupport=1.12
+  - perl-xml-sax=1.02
+  - perl-xml-sax-base=1.09
+  - perl-xsloader=0.24
   - pexpect=4.8.0
   - pickleshare=0.7.5
   - pillow=7.0.0
@@ -234,6 +256,7 @@ dependencies:
   - r-base=3.6.2
   - r-base64enc=0.1_3
   - r-bh=1.72.0_3
+  - r-biocmanager=1.30.10
   - r-bit=1.1_15.2
   - r-bit64=0.9_7
   - r-bitops=1.0_6
@@ -383,6 +406,8 @@ dependencies:
   - sortedcontainers=2.1.0
   - spectra=0.0.11
   - sqlite=3.30.1
+  - sra-tools=2.10.3
+  - sratoolkit=2.5.7
   - statsmodels=0.11.1
   - tabix=0.2.6
   - tbb=2020.1
