@@ -11,9 +11,10 @@ FASTQ_DIR = "FASTQs"
 ALIGN_DIR = "Aligned"
 CONTACT_DIR = "Contacts"
 
-SAMPLES = CONFIG["Sample"].tolist()
+HICUP_DIGEST_DIR = path.join("..", "..", "Raw", "HiCUP_digested")
+
+SAMPLES = CONFIG["Run_Accession"].tolist()
 READS = [1, 2]
-LANES = [1, 2, 3, 4]
 BWT2_IDX = "/mnt/work1/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome"
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
@@ -62,13 +63,17 @@ rule all:
 # -----------------------------------------------------------------------------------------------------------------------------
 rule split_fq:
     input:
-        script = "split-fastq.py",
-        fq = path.join(FASTQ_DIR, "{sample}.fastq.gz"),
+        path.join(FASTQ_DIR, "{sample}.fastq.gz"),
     output:
         path.join(FASTQ_DIR, "{sample}_R1.fastq.gz"),
         path.join(FASTQ_DIR, "{sample}_R2.fastq.gz"),
-    shell:
-        "python {input.script} -p {FASTQ_DIR}/{wildcards.sample} {input}"
+    run:
+        commands = [
+            "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 1, 76); break; case 3: print \"+\"; break; case 0: print substr($1, 1, 76)}} }}' | gzip -nc > {output[0]}",
+            "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 1, 76); break; case 3: print \"+\"; break; case 0: print substr($4, 77, 76)}} }}' | gzip -nc > {output[1]}",
+        ]
+        command_str = "; ".join(commands)
+        shell(command_str)
 
 # Summaries
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -78,8 +83,6 @@ rule fastqc:
     output:
         path.join(REPORT_DIR, "{file}_fastqc.html"),
         path.join(REPORT_DIR, "{file}_fastqc.zip")
-    wildcard_constraints:
-        file="\w*_R\d.fastq.gz"
     params:
         "-o {}".format(REPORT_DIR)
     shell:
@@ -104,7 +107,7 @@ rule hicup_map:
     input:
         r1 = path.join(FASTQ_DIR, "{sample}_R1.trunc.fastq.gz"),
         r2 = path.join(FASTQ_DIR, "{sample}_R2.trunc.fastq.gz"),
-        digest = path.join("..", "HiCUP_digested", "Digest_hg38_MboI_None.txt")
+        digest = path.join(HICUP_DIGEST_DIR, "Digest_hg38_MboI_None.txt")
     output:
         temp(path.join(ALIGN_DIR, "{sample}_R1_2.pair.bam"))
     params:
@@ -121,7 +124,7 @@ rule hicup_map:
 rule hicup_filter:
     input:
         bam = path.join(ALIGN_DIR, "{sample}_R1_2.pair.bam"),
-        digest = path.join("..", "HiCUP_digested", "Digest_hg38_MboI_None.txt")
+        digest = path.join(HICUP_DIGEST_DIR, "Digest_hg38_MboI_None.txt")
     output:
         temp(path.join(ALIGN_DIR, "{sample}_R1_2.filt.bam"))
     params:
@@ -227,9 +230,8 @@ rule hicup_summary:
         path.join(REPORT_DIR, "HiCUP_summary_report.tsv"),
         expand(
             path.join(
-                REPORT_DIR, "HiCUP_summary_report_{sample}_L00{lane}.txt"),
+                REPORT_DIR, "HiCUP_summary_report_{sample}.txt"),
             sample=SAMPLES,
-            lane=LANES
         )
     shell:
         "python {input.script} {input.data} -o {REPORT_DIR}"
@@ -241,7 +243,6 @@ rule multiqc:
         samples = expand(
             path.join(REPORT_DIR, "HiCUP_summary_report_{sample}.txt"),
             sample=SAMPLES,
-            lane=LANES
         )
     output:
         path.join(REPORT_DIR, "multiqc_report.html")

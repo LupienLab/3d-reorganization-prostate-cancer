@@ -1,5 +1,5 @@
 __default__:
-    params: "--export=ALL -p long"
+    params: "--export=ALL -p long --mem=12G"
 
 fastqc:
     params: "--export=ALL -p all --mem=16G"
