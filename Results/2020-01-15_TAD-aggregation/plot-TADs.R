@@ -317,14 +317,12 @@ savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size.distribution"), height = 20)
 # same as above but only focussing on a few window sizes
 w_subset <- seq(MIN_WINDOW, MAX_WINDOW, length.out = 4)
 gg_tad_size_reduced <- (
-    ggplot(data = tad_size_ecdf[w %in% w_subset])
+    ggplot(data = tad_size_ecdf_est[w %in% w_subset])
     + geom_path(
         aes(
             x = x,
-            y = 100 * y,
-            colour = SampleID,
-            group = interaction(factor(w), SampleID),
-            linetype = factor(w)
+            y = 100 * Mean,
+            colour = w
         )
     )
     + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
@@ -333,14 +331,11 @@ gg_tad_size_reduced <- (
         breaks = seq(0, 5e6, by = 1e6),
         labels = seq(0, 5)
     )
-    + scale_colour_manual(
-        breaks = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
-        name = "Patient"
+    + scale_colour_viridis_c(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
+        name = "Window Size"
     )
-    + guides(linetype = guide_legend(title = "Window Size"))
-    + facet_wrap(~ w, nrow = 1)
+    # + facet_wrap(~ w, nrow = 1)
     + theme_minimal()
     + theme(
         # legend.position = "bottom"
@@ -349,14 +344,13 @@ gg_tad_size_reduced <- (
 savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced.faceted"), height = 12, width = 30)
 
 gg_tad_size_reduced <- (
-    ggplot(data = tad_size_ecdf[w %in% w_subset])
+    ggplot(data = tad_size_ecdf_est[w %in% w_subset])
     + geom_path(
         aes(
             x = x,
-            y = 100 * y,
-            colour = SampleID,
-            group = interaction(factor(w), SampleID),
-            linetype = factor(w)
+            y = 100 * Mean,
+            colour = w,
+            group = w
         )
     )
     + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
@@ -365,13 +359,10 @@ gg_tad_size_reduced <- (
         breaks = seq(0, 5e6, by = 1e6),
         labels = seq(0, 5)
     )
-    + scale_colour_manual(
-        breaks = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
-        name = "Patient"
+    + scale_colour_viridis_c(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
+        name = "Window Size"
     )
-    + guides(linetype = guide_legend(title = "Window Size"))
     + theme_minimal()
     + theme(
         # legend.position = "bottom"
