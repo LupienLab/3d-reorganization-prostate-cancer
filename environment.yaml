@@ -1,6 +1,5 @@
 name: Davos
 channels:
-  - daler
   - conda-forge
   - bioconda
   - r
@@ -407,7 +406,6 @@ dependencies:
   - spectra=0.0.11
   - sqlite=3.30.1
   - sra-tools=2.10.3
-  - sratoolkit=2.5.7
   - statsmodels=0.11.1
   - tabix=0.2.6
   - tbb=2020.1
