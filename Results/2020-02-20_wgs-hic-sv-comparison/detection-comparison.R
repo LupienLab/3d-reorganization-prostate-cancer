@@ -73,13 +73,20 @@ wgs <- rbindlist(lapply(
 wgs[, breakpoint_ID := paste(SampleID, SV_ID, .I, sep = "_")]
 wgs_gr <- dt2gr(wgs)
 
-# load ATAC-seq TCGA peaks
-atac <- fread(
-    file.path("..", "..", "Data", "External", "TCGA", "PRAD_peakCalls.txt"),
-    header = TRUE,
-    sep = "\t"
-)
-atac_gr <- dt2gr(atac)
+# load ATAC-seq TCGA peaks for all tissue types
+atac <- rbindlist(lapply(
+    list.files(file.path("..", "..", "Data", "External", "TCGA"), pattern = "peakCalls.txt", full.names = TRUE),
+    function(f) {
+        dt <- fread(f, header = TRUE, sep = "\t")
+        dt[, Tissue := substr(basename(f), 1, regexpr("_", basename(f))[[1]] - 1)]
+    }
+))
+ATAC_TISSUES <- atac[, unique(Tissue)]
+atac_gr <- GRangesList(lapply(
+    ATAC_TISSUES,
+    function(t) dt2gr(atac[Tissue == t])
+))
+names(atac_gr) <- ATAC_TISSUES
 
 # ==============================================================================
 # Analysis
@@ -88,18 +95,33 @@ atac_gr <- dt2gr(atac)
 # 1. Compare Hi-C and WGS breakpoints by their chromatin accessibility
 # --------------------------------------
 # get median size of breakpoints
-MED_BREAK_SIZE <- median(width(hic_gr))
-MED_PEAK_SIZE <- median(width(atac_gr))
-EXT_SIZE <- MED_BREAK_SIZE
+EXT_SIZE <- median(width(hic_gr))
 
 wgs_gr_extended <- copy(wgs_gr)
 start(wgs_gr_extended) <- start(wgs_gr) - floor(EXT_SIZE / 2)
 end(wgs_gr_extended) <- end(wgs_gr) + floor(EXT_SIZE / 2)
 
 # find overlaps between breakpoints and ATAC peaks
-hic_accessible_idx <- unique(queryHits(findOverlaps(hic_gr, atac_gr)))
-wgs_accessible_idx <- unique(queryHits(findOverlaps(wgs_gr, atac_gr)))
-wgs_extended_accessible_idx <- unique(queryHits(findOverlaps(wgs_gr_extended, atac_gr)))
+
+# try it for all tissues to see if there is any difference due to the ATAC peak locations in different tissues
+hic_accessible_idx_all_tissues <- sapply(
+    ATAC_TISSUES,
+    function(t) {
+        length(unique(queryHits(findOverlaps(hic_gr, atac_gr[[t]]))))
+    },
+    USE.NAMES = TRUE
+)
+wgs_accessible_idx_all_tissues <- sapply(
+    ATAC_TISSUES,
+    function(t) {
+        length(unique(queryHits(findOverlaps(wgs_gr, atac_gr[[t]]))))
+    },
+    USE.NAMES = TRUE
+)
+
+hic_accessible_idx <- unique(queryHits(findOverlaps(hic_gr, atac_gr$PRAD)))
+wgs_accessible_idx <- unique(queryHits(findOverlaps(wgs_gr, atac_gr$PRAD)))
+wgs_extended_accessible_idx <- unique(queryHits(findOverlaps(wgs_gr_extended, atac_gr$PRAD)))
 
 hic[, Accessible := FALSE]
 hic[hic_accessible_idx, Accessible := TRUE]
