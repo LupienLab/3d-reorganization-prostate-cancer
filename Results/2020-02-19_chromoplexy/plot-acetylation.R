@@ -15,6 +15,7 @@ metadata <- fread(
     sep = "\t",
     header = TRUE
 )
+metadata <- metadata[Include == "Yes"]
 metadata[, SampleID := paste0("PCa", get("Sample ID"))]
 metadata[, ChIP_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_H3K27ac.sorted.dedup.bam")]
 metadata[, Ctrl_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_input.sorted.dedup.bam")]
