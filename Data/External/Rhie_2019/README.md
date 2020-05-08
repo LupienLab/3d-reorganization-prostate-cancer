@@ -9,4 +9,5 @@ The processed data available on [GEO Datasets](https://www.ncbi.mln.nig.gov/geo/
 In the paper's methods, it describes that each samples was sequenced paired-end 75 bp to produce ~ 500 M read pairs per replicate using and Illumina HiSeq 2000.
 The FASTQs coming from GEO do not show paired-end, but the sequences are 152 nts long.
 So before aligning, these reads have to be split in the middle (producing two 76 bp sequences) and put into separate FASTQs.
+These Hi-C samples were made with the MboI restriction enzyme, which is what we have used for our samples as well, so I don't need to create another artificially-digested genome with HiCUP.
 
