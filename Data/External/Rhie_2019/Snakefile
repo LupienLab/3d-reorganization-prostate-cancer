@@ -61,19 +61,21 @@ rule all:
 # =============================================================================================================================
 # Split SRR FASTQs into read mates
 # -----------------------------------------------------------------------------------------------------------------------------
-rule split_fq:
+rule split_fq_R1:
     input:
         path.join(FASTQ_DIR, "{sample}.fastq.gz"),
     output:
         path.join(FASTQ_DIR, "{sample}_R1.fastq.gz"),
+    shell:
+        "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 1, 76); break; case 3: print \"+\"; break; case 0: print substr($1, 1, 76)}} }}' | gzip -nc > {output}"
+
+rule split_fq_R2:
+    input:
+        path.join(FASTQ_DIR, "{sample}.fastq.gz"),
+    output:
         path.join(FASTQ_DIR, "{sample}_R2.fastq.gz"),
-    run:
-        commands = [
-            "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 1, 76); break; case 3: print \"+\"; break; case 0: print substr($1, 1, 76)}} }}' | gzip -nc > {output[0]}",
-            "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 1, 76); break; case 3: print \"+\"; break; case 0: print substr($4, 77, 76)}} }}' | gzip -nc > {output[1]}",
-        ]
-        command_str = "; ".join(commands)
-        shell(command_str)
+    shell:
+        "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 77, 76); break; case 3: print \"+\"; break; case 0: print substr($1, 77, 76)}} }}' | gzip -nc > {output}"
 
 # Summaries
 # -----------------------------------------------------------------------------------------------------------------------------
