@@ -40,14 +40,14 @@ wildcard_constraints:
 rule all:
     input:
         'rulegraph.png',
-	expand(
-	    path.join(ALIGN_DIR, '{sample}.agg.hicup.name-sorted.bam'),
-	    sample=SAMPLES
-	),
-	expand(
-	    path.join(ALIGN_DIR, '{sample}.agg.hicup.sorted.bam'),
-	    sample=SAMPLES
-	),
+    expand(
+        path.join(ALIGN_DIR, '{sample}.agg.hicup.name-sorted.bam'),
+        sample=SAMPLES
+    ),
+    expand(
+        path.join(ALIGN_DIR, '{sample}.agg.hicup.sorted.bam'),
+        sample=SAMPLES
+    ),
     expand(
         path.join(CONTACT_DIR, '{sample}.cool'),
         sample=SAMPLES
