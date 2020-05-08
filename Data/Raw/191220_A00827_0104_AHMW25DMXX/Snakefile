@@ -150,7 +150,7 @@ rule create_pairs:
         genome = "hg38.sizes.txt",
         bam = path.join(ALIGN_DIR, "{sample}.hicup.name-sorted.bam")
     output:
-        path.join(CONTACT_DIR, "{sample}.pairs.gz")
+        temp(path.join(CONTACT_DIR, "{sample}.pairs.gz"))
     shell:
         "pairtools parse -c {input.genome} --assembly hg38 -o {output} {input.bam}"
 
@@ -159,7 +159,7 @@ rule create_cooler:
         genome = "hg38.sizes.txt",
         pairs = path.join(CONTACT_DIR, "{sample}.pairs.gz")
     output:
-        path.join(CONTACT_DIR, "{sample}.cool")
+        temp(path.join(CONTACT_DIR, "{sample}.cool"))
     params:
         "--assembly hg38 -c1 2 -p1 3 -c2 4 -p2 5"
     shell:
