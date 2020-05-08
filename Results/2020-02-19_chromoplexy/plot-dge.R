@@ -128,50 +128,87 @@ tested_genes[, level := cut(
 )]
 cut_levels <- levels(tested_genes$level)
 # include genes with small absolute changes in expression in middle group
-tested_genes_cut <- rbindlist(lapply(
-    cut_levels,
-    function(l) {
-        tested_genes[, level == l, by = "test_ID"][,
-            .(
-                level = factor(l, levels = rev(cut_levels), ordered = TRUE),
-                N = sum(V1)
-            ),
-            by = "test_ID"
-        ]
-    }
-))
-tested_genes_cut[, Frac := apply(
+tested_genes_cut <- list(
+    "all" = rbindlist(lapply(
+        cut_levels,
+        function(l) {
+            tested_genes[, level == l, by = "test_ID"][,
+                .(
+                    level = factor(l, levels = rev(cut_levels), ordered = TRUE),
+                    N = sum(V1)
+                ),
+                by = "test_ID"
+            ]
+        }
+    )),
+    "thresholded" = rbindlist(lapply(
+        cut_levels,
+        function(l) {
+            tested_genes[Abs_Thresh == TRUE, level == l, by = "test_ID"][,
+                .(
+                    level = factor(l, levels = rev(cut_levels), ordered = TRUE),
+                    N = sum(V1)
+                ),
+                by = "test_ID"
+            ]
+        }
+    ))
+)
+tested_genes_cut$all[, Frac := apply(
     .SD,
     1,
     function(r) {
         # using this apply method converts r to a vector, which requires all values have the same type
         # this lowest common parent type is `character`, so the values from r must be converted back to
         # numeric before being manipulated
-        num_genes <- tested_genes_cut[test_ID == as.numeric(r["test_ID"]), sum(N)]
+        num_genes <- tested_genes_cut$all[test_ID == as.numeric(r["test_ID"]), sum(N)]
+        return(as.numeric(r["N"]) / num_genes)
+    }
+)]
+tested_genes_cut$thresholded[, Frac := apply(
+    .SD,
+    1,
+    function(r) {
+        num_genes <- tested_genes_cut$thresholded[test_ID == as.numeric(r["test_ID"]), sum(N)]
         return(as.numeric(r["N"]) / num_genes)
     }
 )]
 # order for plotting according to what has the largest percentage of small changes
-test_exprs_change_groups <- rbindlist(lapply(
-    htest$test_ID,
-    function(tid) tested_genes_cut[test_ID == tid][
-        which.max(Frac),
-        .(
-            test_ID,
-            majority = factor(
-                level,
-                levels = cut_levels,
-                labels = c("Large descreases", "Small decreases", "Small increases", "Large increases"),
-                ordered = TRUE
+test_exprs_change_groups <- list(
+    "all" = rbindlist(lapply(
+        htest$test_ID,
+        function(tid) tested_genes_cut$all[test_ID == tid][
+            which.max(Frac),
+            .(
+                test_ID,
+                majority = factor(
+                    level,
+                    levels = cut_levels,
+                    labels = c("Large descreases", "Small decreases", "Small increases", "Large increases"),
+                    ordered = TRUE
+                )
             )
-        )
-    ]
-))
-tested_genes_cut <- merge(
-    tested_genes_cut,
-    test_exprs_change_groups,
-    by = "test_ID"
+        ]
+    )),
+    "thresholded" = rbindlist(lapply(
+        htest$test_ID,
+        function(tid) tested_genes_cut$thresholded[test_ID == tid][
+            which.max(Frac),
+            .(
+                test_ID,
+                majority = factor(
+                    level,
+                    levels = cut_levels,
+                    labels = c("Large descreases", "Small decreases", "Small increases", "Large increases"),
+                    ordered = TRUE
+                )
+            )
+        ]
+    ))
 )
+
+tested_genes_cut$all <- merge(tested_genes_cut$all, test_exprs_change_groups$all, by = "test_ID")
+tested_genes_cut$thresholded <- merge(tested_genes_cut$thresholded, test_exprs_change_groups$thresholded, by = "test_ID")
 
 # set of tests where at least 1 gene passes both thresholds
 tests_with_some_deg <- tested_genes[
@@ -250,7 +287,7 @@ gg_z <- (
 savefig(gg_z, "Plots/sv-disruption/expression.z", width = 40)
 
 gg_fc <- (
-    ggplot(data = tested_genes_cut)
+    ggplot(data = tested_genes_cut$all)
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
@@ -283,32 +320,36 @@ savefig(gg_fc, "Plots/sv-disruption/expression.fold-change")
 
 # same as above, but thresholding on absolute difference in mRNA abundance
 gg_fc_thresh <- (
-    ggplot(data = tested_genes[
-        abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2],
-        .SD
-    ])
-    + geom_point(
-        aes(
-            x = factor(test_ID),
-            y = log2fold,
-            group = factor(log2fold),
-            colour = (test_ID %% 2 == 0)
-        ),
-        position = position_dodge(width = 1),
-        size = 1
+    ggplot(data = tested_genes_cut$thresholded)
+    + geom_col(
+        aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
-    + labs(x = "Test", y = expression(log[2] * " Expression fold change"))
-    + ylim(tested_genes[, min(log2fold)], tested_genes[, -min(log2fold)])
-    + guides(fill = FALSE)
-    + coord_flip()
+    + labs(x = "Breakpoints", y = "Genes in TAD (%)")
+    + scale_fill_manual(
+        name = "Expression",
+        labels = c(
+            "> 2 fold decrease",
+            "< 2 fold decrease",
+            "< 2 fold increase",
+            "> 2 fold increase"
+        ),
+        values = c(
+            "#4CC4FF",
+            "#CCFFFF",
+            "#FFFFCC",
+            "#FFC44C"
+        )
+    )
+    + facet_grid(. ~ majority, scales = "free_x", space = "free")
     + theme_minimal()
     + theme(
-        strip.text.y = element_text(angle = 0, hjust = 0),
-        axis.text.y = element_blank(),
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank(),
         legend.position = "bottom"
     )
 )
-savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded", height = 30)
+savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded")
 
 gg_fc_diff <- (
     ggplot(data = tested_genes)
