@@ -11,3 +11,9 @@ The FASTQs coming from GEO do not show paired-end, but the sequences are 152 nts
 So before aligning, these reads have to be split in the middle (producing two 76 bp sequences) and put into separate FASTQs.
 These Hi-C samples were made with the MboI restriction enzyme, which is what we have used for our samples as well, so I don't need to create another artificially-digested genome with HiCUP.
 
+## QC Checks
+
+Looking at the FastQC reports for all samples, it appears that all samples look good, except for the high duplication rates in R2 for SRR8446386 and SRR8446385 (C42B replicates 1 and 2).
+I'm unsure how to deal with these, given that the R1 mates for those samples have < 1% duplication rates.
+So I'll have to treat these samples carefully, going forward.
+
