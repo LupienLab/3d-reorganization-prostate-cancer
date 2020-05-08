@@ -172,6 +172,15 @@ sv_chrom_span <- merge(
     by = c("SampleID", "component_ID")
 )
 
+
+fisher.test(
+    rbind(
+        c(inter_intra_counts[Class == "Intrachromosomal" & T2E_Status == "No", sum(Count)], inter_intra_counts[Class == "Intrachromosomal" & T2E_Status == "Yes", sum(Count)]),
+        c(inter_intra_counts[Class == "Interchromosomal" & T2E_Status == "No", sum(Count)], inter_intra_counts[Class == "Interchromosomal" & T2E_Status == "Yes", sum(Count)])
+    ),
+    alternative = "two.sided"
+)
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -398,7 +407,7 @@ gg_inter_intra_t2e_comp = (
     )
     + geom_point(
         aes(x = T2E_Status, y = Count, colour = T2E_Status),
-        position = position_jitter(height = 0, width = 0.2)
+        position = position_jitter(height = 0, width = 0.4)
     )
     + scale_x_discrete(
         breaks = c("Yes", "No"),
