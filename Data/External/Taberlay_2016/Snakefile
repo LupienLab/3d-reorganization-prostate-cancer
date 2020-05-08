@@ -13,7 +13,6 @@ CONTACT_DIR = "Contacts"
 
 SAMPLES = CONFIG["Accession"].tolist()
 READS = [1, 2]
-LANES = [1, 2, 3, 4]
 BWT2_IDX = "/mnt/work1/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome"
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
@@ -35,34 +34,36 @@ wildcard_constraints:
 # ==============================================================================
 rule all:
     input:
-        expand(path.join(FASTQ_DIR, "{sample}.fastq.gz"), sample=SAMPLES),
-        expand(path.join(FASTQ_DIR, "{sample}_R{read}.fastq.gz"), sample=SAMPLES, read=[1, 2]),
+        expand(
+            path.join(REPORT_DIR, "{sample}_R{read}_fastqc.zip"),
+            sample=SAMPLES,
+            read=READS
+        ),
 
 
 # ==============================================================================
 # Rules
 # ==============================================================================
-rule download:
-    output:
-        path.join(FASTQ_DIR, "{sample}.fastq.gz")
-    params:
-        "--gzip"
-    shell:
-        "fastq-dump {wildcards.sample} {params} -O {FASTQ_DIR}"
-
-rule split_concat_fastq:
+# Split SRR FASTQs into read mates
+# -----------------------------------------------------------------------------------------------------------------------------
+rule split_fq_R1:
     input:
-        script = "split-sra.py",
-        data = path.join(FASTQ_DIR, "{sample}.fastq.gz")
+        path.join(FASTQ_DIR, "{sample}.fastq.gz"),
     output:
         path.join(FASTQ_DIR, "{sample}_R1.fastq.gz"),
-        path.join(FASTQ_DIR, "{sample}_R2.fastq.gz"),
-    params:
-        prefix = lambda wildcards: path.join(FASTQ_DIR, wildcards.sample),
-        l = lambda wildcards: CONFIG.loc[CONFIG["Accession"] == wildcards.sample, :].iat[0, 4]
     shell:
-        "python {input.script} {input.data} {params.l} -o {params.prefix}"
+        "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 1, 76); break; case 3: print \"+\"; break; case 0: print substr($1, 1, 76)}} }}' | gzip -nc > {output}"
 
+rule split_fq_R2:
+    input:
+        path.join(FASTQ_DIR, "{sample}.fastq.gz"),
+    output:
+        path.join(FASTQ_DIR, "{sample}_R2.fastq.gz"),
+    shell:
+        "zcat {input} | awk '{{switch (NR % 4){{case 1: print $1; break; case 2: print substr($1, 77, 76); break; case 3: print \"+\"; break; case 0: print substr($1, 77, 76)}} }}' | gzip -nc > {output}"
+
+# Summaries
+# -----------------------------------------------------------------------------------------------------------------------------
 rule fastqc:
     input:
         path.join(FASTQ_DIR, "{sample}_R{read}.fastq.gz"),
@@ -71,3 +72,4 @@ rule fastqc:
         path.join(REPORT_DIR, "{sample}_R{read}_fastqc.zip"),
     shell:
         "fastqc {input} -o {REPORT_DIR}"
+

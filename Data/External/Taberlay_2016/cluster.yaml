@@ -1,3 +1,33 @@
-download:
-    params: "--export=ALL -p build -t 02:00:00"
+__default__:
+    params: "--export=ALL -p long --mem=12G"
+
+fastqc:
+    params: "--export=ALL -p all --mem=16G"
+
+hicup_truncate:
+    params: "--export=ALL -p long -c 8 --mem=20G"
+
+hicup_map:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 5-00:00:00"
+
+hicup_filter:
+    params: "--export=ALL -p long -c 8 --mem=20G"
+
+hicup_dedup:
+    params: "--export=ALL -p himem --mem=30G -c 8"
+
+sort_bam:
+    params: '--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00'
+
+sort_bam_name:
+    params: '--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00'
+
+create_pairs:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+create_cooler:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00"
+
+adjust_res:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00"
 
