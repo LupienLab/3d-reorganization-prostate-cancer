@@ -9,9 +9,6 @@ CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
 FASTQ_DIR = 'FASTQs'
 REPORT_DIR = 'Reports'
 ALIGN_DIR = 'Aligned'
-CONTACT_DIR = 'Contacts'
-TAD_DIR = 'TADs'
-PLOT_DIR = 'Plots'
 
 SAMPLES = CONFIG['Sample'].tolist()
 READS = [1, 2]
@@ -32,7 +29,6 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
-        'rulegraph.png',
         expand(
             path.join(REPORT_DIR, '{sample}_R{read}_fastqc.html'),
             sample=SAMPLES,
@@ -83,8 +79,10 @@ rule hicup_truncate:
     output:
         path.join(FASTQ_DIR, '{sample}_R1.trunc.fastq.gz'),
         path.join(FASTQ_DIR, '{sample}_R2.trunc.fastq.gz'),
+    params:
+        '--re1 ^GATC,MboI --threads 8 --zip --outdir {}'.format(FASTQ_DIR)
     shell:
-        'hicup_truncater --re1 ^GATC,MboI --outdir {FASTQ_DIR} --threads 2 {input.r1} {input.r2}'
+        'hicup_truncater {params} {input.r1} {input.r2}'
 
 rule hicup_map:
     input:
@@ -112,8 +110,8 @@ rule hicup_filter:
         path.join(ALIGN_DIR, '{sample}_R1_2.filt.bam')
     params:
         ' '.join([
-            '--threads 8',
             '--zip',
+            '--threads 8',
             '--outdir {}'.format(ALIGN_DIR)
         ])
     shell:
@@ -127,8 +125,8 @@ rule hicup_dedup:
     params:
         ' '.join([
             '--zip',
-            '--outdir {}'.format(ALIGN_DIR),
             '--threads 8'
+            '--outdir {}'.format(ALIGN_DIR),
         ])
     shell:
         'hicup_deduplicator {params} {input}'
@@ -150,7 +148,7 @@ rule sort_bam_name:
     output:
         '{file}.name-sorted.bam',
     shell:
-        'sambamba sort -n -p -o {output} {input}'
+        'sambamba sort -t 8 --tmpdir . -n -p -o {output} {input}'
 
 rule sort_bam:
     input:
@@ -159,7 +157,7 @@ rule sort_bam:
         bam = '{file}.sorted.bam',
         idx = '{file}.sorted.bam.bai'
     shell:
-        'sambamba sort -p {input}'
+        'sambamba sort -t 8 --tmpdir . -p {input}'
 
 rule hicup_summary:
     input:

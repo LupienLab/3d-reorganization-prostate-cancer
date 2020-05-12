@@ -10,9 +10,6 @@ CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
 FASTQ_DIR = 'FASTQs'
 REPORT_DIR = 'Reports'
 ALIGN_DIR = 'Aligned'
-CONTACT_DIR = 'Contacts'
-TAD_DIR = 'TADs'
-PLOT_DIR = 'Plots'
 PREV_BATCH_DIR = path.join('..', '190509_A00827_0007_AHKYH3DSXX_Lupien_James')
 
 SAMPLES = CONFIG['Sample'].tolist()
@@ -34,7 +31,6 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
-        'rulegraph.png',
         # FastQC on original FASTQs
         expand(
             path.join(REPORT_DIR, '{sample}_L00{lane}_R{read}_fastqc.html'),
@@ -83,8 +79,8 @@ rule fastqc:
 rule merge_fastq_lanes:
     input:
         expand(
-            path.join(FASTQ_DIR, '{{sample}}_L00{lane}_R{{read}}.fastq.gz'), lane=LANES),
-        path.join(PREV_BATCH_DIR, FASTQ_DIR, '{sample}_R{read}.fastq.gz')
+            path.join(FASTQ_DIR, '{{sample}}_L00{lane}_R{{read}}.fastq.gz'), lane=LANES
+        ),
     output:
         path.join(FASTQ_DIR, '{sample}_R{read}.fastq.gz')
     shell:
@@ -94,11 +90,11 @@ rule merge_fastq_lanes:
 # -----------------------------------------------------------------------------
 rule hicup_truncate:
     input:
-        r1 = path.join(FASTQ_DIR, '{sample}_L00{lane}_R1.fastq.gz'),
-        r2 = path.join(FASTQ_DIR, '{sample}_L00{lane}_R2.fastq.gz'),
+        r1 = path.join(FASTQ_DIR, '{sample}_R1.fastq.gz'),
+        r2 = path.join(FASTQ_DIR, '{sample}_R2.fastq.gz'),
     output:
-        path.join(FASTQ_DIR, '{sample}_L00{lane}_R1.trunc.fastq.gz'),
-        path.join(FASTQ_DIR, '{sample}_L00{lane}_R2.trunc.fastq.gz'),
+        path.join(FASTQ_DIR, '{sample}_R1.trunc.fastq.gz'),
+        path.join(FASTQ_DIR, '{sample}_R2.trunc.fastq.gz'),
     params:
         '--re1 ^GATC,MboI --threads 8 --zip --outdir {}'.format(FASTQ_DIR)
     shell:
@@ -106,11 +102,11 @@ rule hicup_truncate:
 
 rule hicup_map:
     input:
-        r1 = path.join(FASTQ_DIR, '{sample}_L00{lane}_R1.trunc.fastq.gz'),
-        r2 = path.join(FASTQ_DIR, '{sample}_L00{lane}_R2.trunc.fastq.gz'),
+        r1 = path.join(FASTQ_DIR, '{sample}_R1.trunc.fastq.gz'),
+        r2 = path.join(FASTQ_DIR, '{sample}_R2.trunc.fastq.gz'),
         digest = path.join('..', 'HiCUP_digested', 'Digest_hg38_MboI_None.txt')
     output:
-        path.join(ALIGN_DIR, '{sample}_L00{lane}_R1_2.pair.bam')
+        path.join(ALIGN_DIR, '{sample}_R1_2.pair.bam')
     params:
         ' '.join([
             '--zip',
@@ -124,14 +120,14 @@ rule hicup_map:
 
 rule hicup_filter:
     input:
-        bam = path.join(ALIGN_DIR, '{sample}_L00{lane}_R1_2.pair.bam'),
+        bam = path.join(ALIGN_DIR, '{sample}_R1_2.pair.bam'),
         digest = path.join('..', 'HiCUP_digested', 'Digest_hg38_MboI_None.txt')
     output:
-        path.join(ALIGN_DIR, '{sample}_L00{lane}_R1_2.filt.bam')
+        path.join(ALIGN_DIR, '{sample}_R1_2.filt.bam')
     params:
         ' '.join([
-            '--threads 8',
             '--zip',
+            '--threads 8',
             '--outdir {}'.format(ALIGN_DIR)
         ])
     shell:
@@ -139,14 +135,14 @@ rule hicup_filter:
 
 rule hicup_dedup:
     input:
-        path.join(ALIGN_DIR, '{sample}_L00{lane}_R1_2.filt.bam')
+        path.join(ALIGN_DIR, '{sample}_R1_2.filt.bam')
     output:
-        path.join(ALIGN_DIR, '{sample}_L00{lane}_R1_2.dedup.bam')
+        path.join(ALIGN_DIR, '{sample}_R1_2.dedup.bam')
     params:
         ' '.join([
             '--zip',
-            '--outdir {}'.format(ALIGN_DIR),
             '--threads 8'
+            '--outdir {}'.format(ALIGN_DIR),
         ])
     shell:
         'hicup_deduplicator {params} {input}'
