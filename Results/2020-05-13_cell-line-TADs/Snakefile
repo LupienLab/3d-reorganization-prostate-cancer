@@ -1,0 +1,79 @@
+import pandas as pd
+import os.path as path
+
+# =============================================================================
+# Configuration
+# =============================================================================
+DATA_DIR = path.join("..", "..", "Data", "External", "Rhie_2019")
+CONFIG = pd.read_csv(path.join(DATA_DIR, "config.tsv"), index_col=False, sep="\t")
+CONFIG = CONFIG.loc[~CONFIG.GEO_Accession.str.startswith("#"), :]
+
+CONTACT_DIR = path.join(DATA_DIR, "Contacts")
+TMP_DIR = "TMP"
+TAD_DIR = "TADs"
+
+SAMPLES = CONFIG["Run_Accession"].tolist()
+
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+RESOLUTIONS = [40000]
+WINDOWS = range(3, 41)
+
+wildcard_constraints:
+    sample = "SRR[0-9]+",
+    lane = "[1-4]",
+    read = "[1-2]",
+    res = "[0-9]+"
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+    input:
+        expand(
+            path.join(TAD_DIR, "w_{w}", "{sample}.{res}bp.domains.bed"),
+            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
+        ),
+
+
+# =============================================================================
+# Rules
+# =============================================================================
+rule dump_mat:
+    input:
+        path.join(CONTACT_DIR, "{sample}.mcool")
+    output:
+        path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx")
+    params:
+        "-H -b --one-based-ids --annotate chrom,start,end"
+    shell:
+        "cooler dump {params} -r {wildcards.chrom} -o {output} {input}::/resolutions/{wildcards.res}"
+
+rule call_tads:
+    input:
+        script = "calc-tads.R",
+        topdom = "topdom.R",
+        data = path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx")
+    output:
+        path.join(TAD_DIR, "w_{window}", "{sample}.{res}bp.{chrom}.bins-signal.tsv"),
+        path.join(TAD_DIR, "w_{window}", "{sample}.{res}bp.{chrom}.domains.tsv"),
+        path.join(TAD_DIR, "w_{window}", "{sample}.{res}bp.{chrom}.domains.bed")
+    params:
+        lambda wildcards: path.join(
+            TAD_DIR,
+            "w_{}".format(wildcards.window),
+            ".".join([wildcards.sample, wildcards.res + "bp", wildcards.chrom])
+        )
+    shell:
+        "Rscript {input.script} {input.data} -p {params} -w {wildcards.window}"
+
+rule combine_tad_beds:
+    input:
+        expand(
+            path.join(TAD_DIR, "w_{{w}}", "{{sample}}.{{res}}bp.{chrom}.domains.bed"),
+            chrom=CHRS
+        )
+    output:
+        path.join(TAD_DIR, "w_{w}", "{sample}.{res}bp.domains.bed")
+    shell:
+        "cat {input} > {output}"
+

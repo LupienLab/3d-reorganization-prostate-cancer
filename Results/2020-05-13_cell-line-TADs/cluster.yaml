@@ -1,0 +1,12 @@
+__default__:
+    params: "--export=ALL -p all"
+
+dump_mat:
+    params: "--export=ALL -p himem --mem=30G -t 01:00:00 --job-name=dump_mat"
+
+call_tads:
+    params: "--export=ALL -p himem --mem=30G -t 01:00:00 --job-name=call_tads"
+
+plot_tads:
+    params: "--export=ALL -p all --mem=12G --job-name=plot_tads"
+
