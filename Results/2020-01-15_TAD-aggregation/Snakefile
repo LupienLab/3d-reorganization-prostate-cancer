@@ -1,22 +1,35 @@
-import pandas as pd
-import os.path as path
-
 # ==============================================================================
 # Configuration
 # ==============================================================================
+import pandas as pd
+import os.path as path
+
 TUMOUR_CONFIG = pd.read_csv(
     path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
     sep="\t"
 )
+TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
+
 BENIGN_CONFIG = pd.read_csv(
-    path.join("../../Data/Raw/191220_A00827_0104_AHMW25DMXX/config.tsv"),
+    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
+    sep="\t"
+)
+BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
+
+CELL_LINE_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
     sep="\t"
 )
 
-TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", "Sample ID"]]
+TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG["Sample ID"]]
 BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
-ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES
-TAD_DIR = path.join("..", "2019-07-08_TADs", "TADs")
+CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
+ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
+TAD_DIR = {
+    "tumour": path.join("..", "2019-07-08_TADs", "TADs"),
+    "benign": path.join("..", "2020-02-21_benign-TADs", "TADs"),
+    "line": path.join("..", "2020-05-13_cell-line-TADs", "TADs"),
+}
 PLOT_DIR = "Plots"
 WINDOWS = list(range(3, 41))
 
@@ -27,7 +40,7 @@ rule all:
     input:
         expand(
             path.join("resolved-TADs", "{sample}.40000bp.{ext}"),
-            sample=TUMOUR_SAMPLES,
+            sample=ALL_SAMPLES,
             ext=[
                 "aggregated-domains.sorted.bedGraph",
                 "aggregated-boundaries.tsv",
@@ -35,17 +48,15 @@ rule all:
             ],
         ),
         expand(
-            path.join("resolved-TADs", "separated-TADs",
-                      "{sample}.40000bp.w_{w}.domains.{ext}"),
-            sample=TUMOUR_SAMPLES,
+            path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.{ext}"),
+            sample=ALL_SAMPLES,
             w=WINDOWS,
-            ext=["bed"],
-            # ext=["bed", "beddb"],
+            ext=["bed", "beddb"],
             #ext=["bed", "beddb", "bed2ddb"],
         ),
         expand(
             path.join("CTCF", "{sample}.LNCaP-CTCF-peaks.bed"),
-            sample=TUMOUR_SAMPLES,
+            sample=ALL_SAMPLES,
         ),
         path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
         #expand(
@@ -76,28 +87,62 @@ rule all:
 # ==============================================================================
 # Rules
 # ==============================================================================
-rule agg_tads:
+rule agg_tads_tumour:
     input:
         script = "aggregate-TADs.R",
         tads = expand(
-            path.join(TAD_DIR, "w_{w}", "{{sample}}.40000bp.domains.bed"),
+            path.join(TAD_DIR["tumour"], "w_{w}", "{{sample}}.40000bp.domains.bed"),
             w=WINDOWS
         )
     output:
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-domains.bedGraph"),
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-boundaries.tsv"),
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
+    wildcard_constraints:
+        sample="PCa\d+"
+    params:
+        indir=TAD_DIR["tumour"]
     shell:
-        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp --in-dir {TAD_DIR}"
+        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp --in-dir {params.indir}"
+
+rule agg_tads_benign:
+    input:
+        script = "aggregate-TADs.R",
+        tads = expand(
+            path.join(TAD_DIR["benign"], "w_{w}", "{{sample}}.40000bp.domains.bed"),
+            w=WINDOWS
+        )
+    output:
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
+    wildcard_constraints:
+        sample="Benign-Prostate-\d+"
+    params:
+        indir=TAD_DIR["benign"]
+    shell:
+        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp --in-dir {params.indir}"
+
+rule agg_tads_line:
+    input:
+        script = "aggregate-TADs.R",
+        tads = expand(
+            path.join(TAD_DIR["line"], "w_{w}", "{{sample}}.40000bp.domains.bed"),
+            w=WINDOWS
+        )
+    output:
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
+    wildcard_constraints:
+        sample="SRR\d+"
+    params:
+        indir=TAD_DIR["line"]
+    shell:
+        "Rscript {input.script} {wildcards.sample} -p resolved-TADs/{wildcards.sample}.40000bp --in-dir {params.indir}"
 
 rule sort_tads:
     input:
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-domains.bedGraph")
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph")
     output:
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
     shell:
         "sort -k1,1 -V -k2,2n -k3,3n -k6,6n {input} > {output}"
 
@@ -133,11 +178,9 @@ rule clodius_agg_1d:
 
 rule sort_boundaries:
     input:
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-boundaries.tsv")
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv")
     output:
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-boundaries.bedGraph")
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph")
     shell:
         "awk '{{FS=OFS=\"\t\"}}{{if (NR > 1) print $1, $2, $2 + 1, $4, $3}}' {input} | sort -k1,1 -V -k2,2n > {output}"
 
@@ -153,12 +196,10 @@ rule extend_boundaries:
 
 rule separate_by_window_size:
     input:
-        path.join("resolved-TADs",
-                  "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
+        path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.sorted.bedGraph")
     output:
         expand(
-            path.join("resolved-TADs", "separated-TADs",
-                      "{{sample}}.40000bp.w_{w}.domains.bed"),
+            path.join("resolved-TADs", "separated-TADs", "{{sample}}.40000bp.w_{w}.domains.bed"),
             w=WINDOWS
         )
     shell:
@@ -169,7 +210,7 @@ rule bpscore:
         script = "calc-tad-similarity.py",
         data = expand(
             path.join("resolved-TADs", "separated-TADs", "{sample}.40000bp.w_{w}.domains.bed"),
-            sample=TUMOUR_SAMPLES,
+            sample=ALL_SAMPLES,
             w=WINDOWS,
         )
     output:
@@ -205,7 +246,7 @@ rule boundary_lncap_ctcf_proximity:
         script = "boundary-ctcf-proximity.py",
         pairs = expand(
             path.join("CTCF", "{sample}.LNCaP-CTCF-peaks.bed"),
-            sample=TUMOUR_SAMPLES,
+            sample=ALL_SAMPLES,
         ),
     output:
         path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),

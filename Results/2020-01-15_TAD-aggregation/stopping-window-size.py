@@ -25,12 +25,27 @@ N_DIFFS = 2
 # =============================================================================================================================
 # Data
 # =============================================================================================================================
-CONFIG = pd.read_csv(
+TUMOUR_CONFIG = pd.read_csv(
     path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
-    sep="\t",
-    index_col=False,
+    sep="\t"
 )
-SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
+TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
+
+BENIGN_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
+    sep="\t"
+)
+BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
+
+CELL_LINE_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
+    sep="\t"
+)
+
+TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", "Sample ID"]]
+BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
+CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
+ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
 
 # load TADs for each patient
 tads = {
@@ -42,7 +57,7 @@ tads = {
         )
         for w in WINDOWS
     }
-    for s in SAMPLES
+    for s in ALL_SAMPLES
 }
 
 # load chromosomes sizes
@@ -63,18 +78,18 @@ genome_size = chrom_sizes.Length.sum()
 # =============================================================================================================================
 # data to store results over window sizes
 window_diffs = pd.DataFrame({
-    "SampleID": SAMPLES * (len(WINDOWS) - 1),
-    "w": sorted(WINDOWS[1:] * len(SAMPLES)),
-    "diff": [0] * len(SAMPLES) * (len(WINDOWS) - 1),
-    "abs_delta": [0] * len(SAMPLES) * (len(WINDOWS) - 1),
+    "SampleID": ALL_SAMPLES * (len(WINDOWS) - 1),
+    "w": sorted(WINDOWS[1:] * len(ALL_SAMPLES)),
+    "diff": [0] * len(ALL_SAMPLES) * (len(WINDOWS) - 1),
+    "abs_delta": [0] * len(ALL_SAMPLES) * (len(WINDOWS) - 1),
 })
 
 sup_windows = pd.DataFrame({
-    "SampleID": SAMPLES,
-    "w" : [0] * len(SAMPLES)
+    "SampleID": ALL_SAMPLES,
+    "w" : [0] * len(ALL_SAMPLES)
 })
 
-for s in tqdm(SAMPLES):
+for s in tqdm(ALL_SAMPLES):
     b_prev = 1
     consistent_counter = 0
     sup_w = 0
@@ -114,3 +129,4 @@ sup_windows.to_csv(
     sep="\t",
     index=False
 )
+
