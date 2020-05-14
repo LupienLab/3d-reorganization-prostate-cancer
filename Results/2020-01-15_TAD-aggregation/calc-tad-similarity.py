@@ -18,17 +18,33 @@ from bpscore import bpscore
 # ==============================================================================
 TAD_DIR = path.join("resolved-TADs", "separated-TADs")
 WINDOWS = list(range(3, 41))
-CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+# exclude chrY from comparisons, to account for female-derived cell lines
+CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
 # ==============================================================================
 # Data
 # ==============================================================================
-CONFIG = pd.read_csv(
+TUMOUR_CONFIG = pd.read_csv(
     path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
-    sep="\t",
-    index_col=False,
+    sep="\t"
 )
-SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
+TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
+
+BENIGN_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
+    sep="\t"
+)
+BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
+
+CELL_LINE_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
+    sep="\t"
+)
+
+TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", "Sample ID"]]
+BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
+CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
+ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
 
 # load TADs for each patient
 tads = {
@@ -40,7 +56,7 @@ tads = {
         )
         for w in WINDOWS
     }
-    for s in SAMPLES
+    for s in ALL_SAMPLES
 }
 
 # load chromosomes sizes
@@ -59,8 +75,8 @@ genome_size = chrom_sizes.Length.sum()
 dists_df = pd.DataFrame(columns=["w", "s1", "s2", "dist"])
 
 for w in tqdm(WINDOWS, desc="Window sizes", position=0):
-    for i, si in tqdm(enumerate(SAMPLES), total=len(SAMPLES), desc="Sample i", position=1, leave=False):
-        for j, sj in tqdm(enumerate(SAMPLES), total=len(SAMPLES), desc="Sample j", position=2, leave=False):
+    for i, si in tqdm(enumerate(ALL_SAMPLES), total=len(ALL_SAMPLES), desc="Sample i", position=1, leave=False):
+        for j, sj in tqdm(enumerate(ALL_SAMPLES), total=len(ALL_SAMPLES), desc="Sample j", position=2, leave=False):
             if j <= i:
                 continue
             # bpscore between these two samples

@@ -36,14 +36,27 @@ def distance(p: pd.Series) -> pd.Series:
 # ==============================================================================
 # Data
 # ==============================================================================
-# load metadata
-metadata = pd.read_csv(
+TUMOUR_CONFIG = pd.read_csv(
     path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
-    sep="\t",
-    header=[0]
+    sep="\t"
 )
-metadata = metadata.loc[metadata.Include == "Yes",:]
-SAMPLES = ["PCa" + str(i) for i in metadata["Sample ID"]]
+TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
+
+BENIGN_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
+    sep="\t"
+)
+BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
+
+CELL_LINE_CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
+    sep="\t"
+)
+
+TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG["Sample ID"]]
+BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
+CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
+ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
 
 # load boundary-CTCF peak pairings for each sample
 pairs = pd.concat(
@@ -59,11 +72,10 @@ pairs = pd.concat(
             ],
             usecols=[
                 "chr_bound", "start_bound", "end_bound", "persistence", "w", "chr_peak", "start_peak", "end_peak",
-
             ],
-        ) for s in SAMPLES
+        ) for s in ALL_SAMPLES
     ],
-    keys=SAMPLES,
+    keys=ALL_SAMPLES,
     names=["SampleID"],
 )
 # convert SampleID index into a column
@@ -107,3 +119,4 @@ all_counts.to_csv(
     header=True,
     index=False
 )
+
