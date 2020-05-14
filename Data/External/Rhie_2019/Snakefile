@@ -201,6 +201,14 @@ rule adjust_res:
     shell:
         "cooler zoomify {params} -o {output} {input}"
 
+rule download_4dn:
+    output:
+        path.join(CONTACT_DIR, "{sample}.mcool"),
+    wildcard_constraints:
+        sample="4DN[A-Z0-9]+"
+    shell:
+        "cut -f 1 metadata_2020-05-13-16h-59m.tsv | grep -v ^# | xargs -n 1 curl -O -L"
+
 # Miscellaneous
 # -----------------------------------------------------------------------------------------------------------------------------
 rule sort_bam_name:
