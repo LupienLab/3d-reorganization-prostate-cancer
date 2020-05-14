@@ -46,10 +46,42 @@ savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, d
 # Data
 # ==============================================================================
 # load metadata
-metadata <- fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
-metadata <- metadata[Include == "Yes"]
-metadata[, SampleID := paste0("PCa", get("Sample ID"))]
-SAMPLES <- metadata[, SampleID]
+tumour_config <- fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
+tumour_config <- tumour_config[Include == "Yes"]
+tumour_config[, SampleID := paste0("PCa", get("Sample ID"))]
+
+benign_config <- fread(file.path("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"))
+benign_config <- benign_config[Include == "Yes"]
+
+cell_line_config <- fread(file.path("..", "..", "Data", "External", "Rhie_2019", "config.tsv"))
+
+SAMPLES <- c(tumour_config[, SampleID], benign_config[, Sample], cell_line_config[, Run_Accession])
+
+# metadata for plotting
+metadata <- data.table(
+    SampleID = SAMPLES,
+    Type = c(
+        rep("Primary", tumour_config[, .N]),
+        rep("Benign", benign_config[, .N]),
+        rep("Cell Line", cell_line_config[, .N])
+    ),
+    Label = c(
+        tumour_config[, get("Patient ID")],
+        benign_config[, gsub("Benign-Prostate-", "BP", Sample)],
+        cell_line_config[, paste(Cell_Line, "Rep", Replicate)]
+    ),
+    Sample_Colour = c(
+        tumour_config[, Colour],
+        rep("#000000", benign_config[, .N]),
+        rep("#000000", cell_line_config[, .N])
+    ),
+    Type_Colour = c(
+        rep("#1F77B4", tumour_config[, .N]),
+        rep("#FF7F0D", benign_config[, .N]),
+        rep("#2CA02B", cell_line_config[, .N])
+    )
+)
+
 
 # load aggregated boundary calls from each sample
 boundaries = rbindlist(lapply(
@@ -80,8 +112,8 @@ tads <- rbindlist(lapply(
 ))
 tads[, width := as.numeric(end - start)]
 
-# only keep TADs called at w <= MAX_WINDOW
-tads <- tads[w <= MAX_WINDOW]
+# only keep TADs called at w <= MAX_WINDOW and no chrY
+tads <- tads[w <= MAX_WINDOW & chr != "chrY"]
 tads[, lower_persistence := pmin(MAX_PERSISTENCE, lower_persistence)]
 tads[, upper_persistence := pmin(MAX_PERSISTENCE, upper_persistence)]
 boundaries[, Persistence := pmin(MAX_PERSISTENCE, Order)]
@@ -146,14 +178,14 @@ ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "Sam
 gg_boundaries <- (
     ggplot(data = boundary_counts)
     + geom_col(aes(x = SampleID, y = N, fill = SampleID))
-    + scale_x_discrete(
-        limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")]
-    )
-    + scale_fill_manual(
-        limits = metadata[, SampleID],
-        values = metadata[, Colour]
-    )
+#    + scale_x_discrete(
+#        limits = metadata[, SampleID],
+#        labels = metadata[, Label]
+#    )
+#    + scale_fill_manual(
+#        limits = metadata[, SampleID],
+#        values = metadata[, Colour]
+#    )
     + labs(x = NULL, y = "Number of unique boundaries")
     + guides(fill = FALSE)
     + theme_minimal()
