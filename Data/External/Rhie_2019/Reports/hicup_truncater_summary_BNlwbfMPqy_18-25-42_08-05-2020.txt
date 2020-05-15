@@ -1,0 +1,3 @@
+File	Total_Reads_Processed	Truncated	%Truncated	Not_truncated	%Not_truncated	Average_length_truncated_sequence
+SRR7702334_R1.fastq.gz	622253376	191660456	30.80	430592920	69.20	43.24
+SRR7702334_R2.fastq.gz	622253376	188485947	30.29	433767429	69.71	42.99

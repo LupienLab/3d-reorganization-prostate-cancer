@@ -1,0 +1,3 @@
+File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
+SRR8446384_R1.trunc.fastq.gz	441776838	7392372	1.7	351234814	79.5	65643930	14.9	17505722	4.0	283851254	64.3
+SRR8446384_R2.trunc.fastq.gz	441776838	7208704	1.6	333684745	75.5	75379467	17.1	25503922	5.8	283851254	64.3

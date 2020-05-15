@@ -1,0 +1,2 @@
+File	Read_pairs_processed	Unique_di-tags	Cis_<10kbp_of_uniques	Cis_>10kbp_of_uniques	Trans_of_uniques
+SRR8446386_R1_2.filt.bam	184638066	170132247	22370304	101290870	46471073
