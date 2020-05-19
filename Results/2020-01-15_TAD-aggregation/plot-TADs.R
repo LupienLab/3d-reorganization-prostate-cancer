@@ -60,10 +60,16 @@ SAMPLES <- c(tumour_config[, SampleID], benign_config[, Sample], cell_line_confi
 # metadata for plotting
 metadata <- data.table(
     SampleID = SAMPLES,
-    Type = c(
-        rep("Primary", tumour_config[, .N]),
-        rep("Benign", benign_config[, .N]),
+    Source = c(
+        rep("Primary", tumour_config[, .N] + benign_config[, .N]),
         rep("Cell Line", cell_line_config[, .N])
+    ),
+    Type = c(
+        rep("Malignant", tumour_config[, .N]),
+        rep("Benign", benign_config[, .N]),
+        rep("Malignant", 2),
+        rep("Benign", 2),
+        rep("Malignant", 3)
     ),
     Label = c(
         tumour_config[, get("Patient ID")],
@@ -77,8 +83,8 @@ metadata <- data.table(
     ),
     Type_Colour = c(
         rep("#1F77B4", tumour_config[, .N]),
-        rep("#FF7F0D", benign_config[, .N]),
-        rep("#2CA02B", cell_line_config[, .N])
+        rep("#AEC7E8", benign_config[, .N]),
+        rep(c("#FF7F0D", "#FFBB78", "#FF7F0D"), c(2, 2, 3))
     )
 )
 
@@ -119,10 +125,8 @@ tads[, upper_persistence := pmin(MAX_PERSISTENCE, upper_persistence)]
 boundaries[, Persistence := pmin(MAX_PERSISTENCE, Order)]
 
 # add Patient IDs to tads and boundaries, not just SampleIDs
-tads <- merge(tads, metadata[, .SD, .SDcols = c("SampleID", "Patient ID")])
-colnames(tads)[which(colnames(tads) == "Patient ID")] <- "Patient_ID"
-boundaries <- merge(boundaries, metadata[, .SD, .SDcols = c("SampleID", "Patient ID")])
-colnames(boundaries)[which(colnames(boundaries) == "Patient ID")] <- "Patient_ID"
+tads <- merge(tads, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour")])
+boundaries <- merge(boundaries, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour")])
 
 # load BPscore calculations
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
@@ -134,13 +138,13 @@ ctcf_pairs = fread("CTCF/TAD-boundary.LNCaP-CTCF-peaks.distances.tsv", sep = "\t
 # ==============================================================================
 # Analysis
 # ==============================================================================
-boundary_counts = boundaries[, .N, by = c("SampleID", "Patient_ID")]
-boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Patient_ID", "Persistence")]
+boundary_counts = boundaries[, .N, by = c("SampleID", "Label")]
+boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Label", "Persistence")]
 
 # calculate coefficient of variation across TAD sizes to see where samples vary
-tads_mean_size <- tads[, mean(width), by = c("SampleID", "Patient_ID", "w")]
+tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
 tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
-tads_median_size <- tads[, median(width), by = c("SampleID", "Patient_ID", "w")]
+tads_median_size <- tads[, median(width), by = c("SampleID", "w")]
 tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
 # ECDFs number of TADs of a given width
@@ -178,14 +182,14 @@ ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "Sam
 gg_boundaries <- (
     ggplot(data = boundary_counts)
     + geom_col(aes(x = SampleID, y = N, fill = SampleID))
-#    + scale_x_discrete(
-#        limits = metadata[, SampleID],
-#        labels = metadata[, Label]
-#    )
-#    + scale_fill_manual(
-#        limits = metadata[, SampleID],
-#        values = metadata[, Colour]
-#    )
+   + scale_x_discrete(
+       limits = metadata[, SampleID],
+       labels = metadata[, Label]
+   )
+   + scale_fill_manual(
+       limits = metadata[, SampleID],
+       values = metadata[, Type_Colour]
+   )
     + labs(x = NULL, y = "Number of unique boundaries")
     + guides(fill = FALSE)
     + theme_minimal()
@@ -207,8 +211,8 @@ gg_bounds_persistence <- (
     )
     + scale_fill_manual(
         limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
+        labels = metadata[, Label],
+        values = metadata[, Type_Colour],
         name = "Patient"
     )
     + theme_minimal()
@@ -228,12 +232,12 @@ gg_bounds_ctcf <- (
         labels = seq(-150, 150, 50),
     )
     + scale_y_continuous(
-        limits = c(0, 0.025)
+        limits = c(0, 0.03)
     )
     + scale_colour_manual(
         limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
+        labels = metadata[, Label],
+        values = metadata[, Sample_Colour],
         name = "Patient"
     )
     + coord_cartesian(xlim = c(-150, 150))
@@ -247,12 +251,12 @@ gg_bounds_ctcf_fc <- (
     + labs(x = NULL, y = "Fold change (peak vs background)")
     + scale_x_discrete(
         breaks = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")]
+        labels = metadata[, Label]
     )
     + scale_fill_manual(
         limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
+        labels = metadata[, Label],
+        values = metadata[, Sample_Colour],
         name = "Patient"
     )
     + guides(fill = FALSE)
@@ -268,13 +272,13 @@ savefig(gg_bounds_ctcf_fc, file.path(PLOT_DIR, "boundary-counts.ctcf-proximity.f
 # --------------------------------------
 # TAD counts per sample faceted by window size
 gg_tad_counts_window <- (
-    ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
-    + geom_col(aes(x = Patient_ID, y = N, fill = Patient_ID))
+    ggplot(data = tads[, .N, by = c("SampleID", "w", "Sample_Colour")])
+    + geom_col(aes(x = SampleID, y = N, fill = Sample_Colour))
     + labs(x = NULL, y = "Number of TADs")
     + scale_fill_manual(
-        limits = metadata[, get("Patient ID")],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour]
+        limits = metadata[, Sample_Colour],
+        labels = metadata[, paste(Source, Type)],
+        values = metadata[, Sample_Colour]
     )
     + guides(fill = FALSE)
     + facet_wrap(~ w, nrow = 6)
@@ -288,12 +292,16 @@ savefig(gg_tad_counts_window, file.path(PLOT_DIR, "tad-counts.by-window"), heigh
 
 # TAD counts per sample faceted by window size
 gg_tad_counts_sample <- (
-    ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
+    ggplot(data = tads[, .N, by = c("SampleID", "w")])
     + geom_col(aes(x = w, y = N, fill = w))
     + labs(x = "Window size", y = "Number of TADs")
     + scale_fill_viridis_c()
     + guides(fill = FALSE)
-    + facet_wrap(~ Patient_ID, nrow = 3)
+    + facet_wrap(
+        ~ SampleID,
+        nrow = 3
+        # labeller = as_labeller(metadata[, Label])
+    )
     + theme_minimal()
     + theme(
         legend.position = "bottom"
@@ -303,10 +311,10 @@ savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), heigh
 
 # TAD counts per sample at each window size
 gg_tad_counts <- (
-    ggplot(data = tads[, .N, by = c("Patient_ID", "w")])
+    ggplot(data = tads[, .N, by = c("SampleID", "w", "Type_Colour")])
     # + geom_path(aes(x = w, y = N, colour = Patient_ID, group = Patient_ID))
     + geom_point(
-        aes(x = w, y = N, colour = Patient_ID),
+        aes(x = w, y = N, colour = Type_Colour),
         position = position_jitter(width = 0.2, height = 0)
     )
     + geom_boxplot(aes(x = w, y = N, group = w), outlier.shape = NA, alpha = 0.2)
@@ -317,9 +325,10 @@ gg_tad_counts <- (
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
     + scale_colour_manual(
-        limits = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
-        name = "Patient"
+        limits = metadata[, Type_Colour],
+        labels = metadata[, paste(Source, Type)],
+        values = metadata[, Type_Colour],
+        name = "Source"
     )
     + theme_minimal()
 )
@@ -422,7 +431,7 @@ savefig(gg_cov, file.path(PLOT_DIR, "tad-size.coeff-var"))
 
 # plot distances between TADs of different samples across window sizes
 gg_bpscore = (
-    ggplot(data = bpscore[w <= MAX_WINDOW])
+    ggplot(data = bpscore[s1!= s2 & w <= MAX_WINDOW])
     + geom_point(aes(x = w, y = 1 - dist, colour = w), position = position_jitter(width = 0.2, height = 0))
     + geom_boxplot(
         aes(x = w, y = 1 - dist, group = w),
@@ -455,9 +464,9 @@ gg_sim_window = (
     )
     + scale_colour_manual(
         limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
-        name = "Patient"
+        labels = metadata[, Label],
+        values = metadata[, Sample_Colour],
+        name = "Sample"
     )
     + theme_minimal()
 )
@@ -476,8 +485,8 @@ gg_sim_window_delta = (
     )
     + scale_colour_manual(
         limits = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
+        labels = metadata[, Label],
+        values = metadata[, Sample_Colour],
         name = "Patient"
     )
     + theme_minimal()
