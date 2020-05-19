@@ -1,30 +1,35 @@
-import pandas as pd
-import os.path as path
-
 # =============================================================================
 # Configuration
 # =============================================================================
-CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
-CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith('#'), :]
+import pandas as pd
+import os.path as path
 
-FASTQ_DIR = 'FASTQs'
-REPORT_DIR = 'Reports'
-ALIGN_DIR = 'Aligned'
-PREV_BATCH_DIR = path.join('..', '190509_A00827_0007_AHKYH3DSXX_Lupien_James')
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
 
-SAMPLES = CONFIG['Sample'].tolist()
+FASTQ_DIR = "FASTQs"
+REPORT_DIR = "Reports"
+ALIGN_DIR = "Aligned"
+CONTACT_DIR = "Contacts"
+
+SAMPLES = CONFIG["Sample"].tolist()
 READS = [1, 2]
 LANES = [1, 2, 3, 4]
 
-BWT2_IDX = '/cluster/tools/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome'
+BWT2_IDX = "/cluster/tools/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome"
 
-CHRS = ['chr' + str(i) for i in list(range(1, 23)) + ['X', 'Y']]
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+RESOLUTIONS = [
+    2000, 3000, 4000, 5000,
+    10000, 20000, 30000, 40000, 50000,
+    100000, 200000, 300000, 400000, 500000,
+    1000000, 2000000, 3000000, 4000000, 5000000
+]
 
 wildcard_constraints:
-    sample = 'PCa[0-9]+',
-    lane = '[1-4]',
-    read = '[1-2]',
-    res = '[0-9]+'
+    sample = "PCa[0-9]+",
+    lane = "[1-4]",
+    read = "[1-2]",
+    res = "[0-9]+"
 
 # =============================================================================
 # Meta Rules
@@ -33,31 +38,35 @@ rule all:
     input:
         # FastQC on original FASTQs
         expand(
-            path.join(REPORT_DIR, '{sample}_L00{lane}_R{read}_fastqc.html'),
+            path.join(REPORT_DIR, "{sample}_L00{lane}_R{read}_fastqc.html"),
             sample=SAMPLES,
             lane=LANES,
             read=READS
         ),
         expand(
-            path.join(ALIGN_DIR, '{sample}_L00{lane}.hicup.sorted.bam'),
+            path.join(ALIGN_DIR, "{sample}_L00{lane}.hicup.sorted.bam"),
             sample=SAMPLES,
             lane=LANES,
             read=READS
         ),
         expand(
-            path.join(ALIGN_DIR, '{sample}_L00{lane}.hicup.name-sorted.bam'),
+            path.join(ALIGN_DIR, "{sample}_L00{lane}.hicup.name-sorted.bam"),
             sample=SAMPLES,
             lane=LANES,
             read=READS
         ),
-        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
-        path.join(REPORT_DIR, 'multiqc_report.html')
+        expand(
+            path.join(CONTACT_DIR, "{sample}.mcool"),
+            sample=SAMPLES
+        ),
+        path.join(REPORT_DIR, "HiCUP_summary_report.tsv"),
+        path.join(REPORT_DIR, "multiqc_report.html")
 
 rule rulegraph:
     output:
-        'rulegraph.png',
+        "rulegraph.png",
     shell:
-        'snakemake --rulegraph | dot -Tpng > {output}'
+        "snakemake --rulegraph | dot -Tpng > {output}"
 
 # =============================================================================
 # Rules
@@ -66,146 +75,187 @@ rule rulegraph:
 # -----------------------------------------------------------------------------
 rule fastqc:
     input:
-        path.join(FASTQ_DIR, '{file}.fastq.gz')
+        path.join(FASTQ_DIR, "{file}.fastq.gz")
     output:
-        path.join(REPORT_DIR, '{file}_fastqc.html'),
-        path.join(REPORT_DIR, '{file}_fastqc.zip')
+        path.join(REPORT_DIR, "{file}_fastqc.html"),
+        path.join(REPORT_DIR, "{file}_fastqc.zip")
     params:
-        '-o {}'.format(REPORT_DIR)
+        "-o {}".format(REPORT_DIR)
     shell:
-        'fastqc {params} {input}'
+        "fastqc {params} {input}"
 
 # merge lanes
 rule merge_fastq_lanes:
     input:
         expand(
-            path.join(FASTQ_DIR, '{{sample}}_L00{lane}_R{{read}}.fastq.gz'), lane=LANES
+            path.join(FASTQ_DIR, "{{sample}}_L00{lane}_R{{read}}.fastq.gz"), lane=LANES
         ),
     output:
-        path.join(FASTQ_DIR, '{sample}_R{read}.fastq.gz')
+        path.join(FASTQ_DIR, "{sample}_R{read}.fastq.gz")
     shell:
-        'zcat {input} | gzip -nc > {output}'
+        "zcat {input} | gzip -nc > {output}"
 
 # HiCUP
 # -----------------------------------------------------------------------------
 rule hicup_truncate:
     input:
-        r1 = path.join(FASTQ_DIR, '{sample}_R1.fastq.gz'),
-        r2 = path.join(FASTQ_DIR, '{sample}_R2.fastq.gz'),
+        r1 = path.join(FASTQ_DIR, "{sample}_R1.fastq.gz"),
+        r2 = path.join(FASTQ_DIR, "{sample}_R2.fastq.gz"),
     output:
-        path.join(FASTQ_DIR, '{sample}_R1.trunc.fastq.gz'),
-        path.join(FASTQ_DIR, '{sample}_R2.trunc.fastq.gz'),
+        path.join(FASTQ_DIR, "{sample}_R1.trunc.fastq.gz"),
+        path.join(FASTQ_DIR, "{sample}_R2.trunc.fastq.gz"),
     params:
-        '--re1 ^GATC,MboI --threads 8 --zip --outdir {}'.format(FASTQ_DIR)
+        "--re1 ^GATC,MboI --threads 8 --zip --outdir {}".format(FASTQ_DIR)
     shell:
-        'hicup_truncater {params} {input.r1} {input.r2}'
+        "hicup_truncater {params} {input.r1} {input.r2}"
 
 rule hicup_map:
     input:
-        r1 = path.join(FASTQ_DIR, '{sample}_R1.trunc.fastq.gz'),
-        r2 = path.join(FASTQ_DIR, '{sample}_R2.trunc.fastq.gz'),
-        digest = path.join('..', 'HiCUP_digested', 'Digest_hg38_MboI_None.txt')
+        r1 = path.join(FASTQ_DIR, "{sample}_R1.trunc.fastq.gz"),
+        r2 = path.join(FASTQ_DIR, "{sample}_R2.trunc.fastq.gz"),
+        digest = path.join("..", "HiCUP_digested", "Digest_hg38_MboI_None.txt")
     output:
-        path.join(ALIGN_DIR, '{sample}_R1_2.pair.bam')
+        path.join(ALIGN_DIR, "{sample}_R1_2.pair.bam")
     params:
-        ' '.join([
-            '--zip',
-            '--threads 8',
-            '--bowtie2 bowtie2',
-            '--outdir={}/'.format(ALIGN_DIR),
-            '--index {}'.format(BWT2_IDX)
+        " ".join([
+            "--zip",
+            "--threads 8",
+            "--bowtie2 bowtie2",
+            "--outdir={}/".format(ALIGN_DIR),
+            "--index {}".format(BWT2_IDX)
         ])
     shell:
-        'hicup_mapper {params} {input.r1} {input.r2}'
+        "hicup_mapper {params} {input.r1} {input.r2}"
 
 rule hicup_filter:
     input:
-        bam = path.join(ALIGN_DIR, '{sample}_R1_2.pair.bam'),
-        digest = path.join('..', 'HiCUP_digested', 'Digest_hg38_MboI_None.txt')
+        bam = path.join(ALIGN_DIR, "{sample}_R1_2.pair.bam"),
+        digest = path.join("..", "HiCUP_digested", "Digest_hg38_MboI_None.txt")
     output:
-        path.join(ALIGN_DIR, '{sample}_R1_2.filt.bam')
+        path.join(ALIGN_DIR, "{sample}_R1_2.filt.bam")
     params:
-        ' '.join([
-            '--zip',
-            '--threads 8',
-            '--outdir {}'.format(ALIGN_DIR)
+        " ".join([
+            "--zip",
+            "--threads 8",
+            "--outdir {}".format(ALIGN_DIR)
         ])
     shell:
-        'hicup_filter {params} --digest {input.digest} {input.bam}'
+        "hicup_filter {params} --digest {input.digest} {input.bam}"
 
 rule hicup_dedup:
     input:
-        path.join(ALIGN_DIR, '{sample}_R1_2.filt.bam')
+        path.join(ALIGN_DIR, "{sample}_R1_2.filt.bam")
     output:
-        path.join(ALIGN_DIR, '{sample}_R1_2.dedup.bam')
+        path.join(ALIGN_DIR, "{sample}_R1_2.dedup.bam")
     params:
-        ' '.join([
-            '--zip',
-            '--threads 8'
-            '--outdir {}'.format(ALIGN_DIR),
+        " ".join([
+            "--zip",
+            "--threads 8"
+            "--outdir {}".format(ALIGN_DIR),
         ])
     shell:
-        'hicup_deduplicator {params} {input}'
+        "hicup_deduplicator {params} {input}"
 
 rule repair_header:
     input:
-        path.join(ALIGN_DIR, '{sample}_L00{lane}_R1_2.dedup.bam')
+        path.join(ALIGN_DIR, "{sample}_L00{lane}_R1_2.dedup.bam")
     output:
-        path.join(ALIGN_DIR, '{sample}_L00{lane}.hicup.bam')
+        path.join(ALIGN_DIR, "{sample}_L00{lane}.hicup.bam")
     shell:
-        # HiCUP deduplicator doesn't properly add a line to the header of the BAM, so I'm fixing it here
-        'samtools view -H {input} | sed "s/HiCUP Deduplicator/ID\:HiCUP Deduplicator/" | samtools reheader -P - {input} > {output}'
+        # HiCUP deduplicator doesn"t properly add a line to the header of the BAM, so I"m fixing it here
+        "samtools view -H {input} | sed "s/HiCUP Deduplicator/ID\:HiCUP Deduplicator/" | samtools reheader -P - {input} > {output}"
+
+
+# Cooler
+# -----------------------------------------------------------------------------
+rule create_pairs:
+    input:
+        genome = "hg38.sizes.txt",
+        bam = path.join(ALIGN_DIR, "{sample}.hicup.name-sorted.bam"),
+    output:
+        temp(path.join(CONTACT_DIR, "{sample}.pairs.gz")),
+    shell:
+        "pairtools parse -c {input.genome} --assembly hg38 -o {output} {input.bam}"
+
+rule create_cooler:
+    input:
+        genome = "hg38.sizes.txt",
+        pairs = path.join(CONTACT_DIR, "{sample}.pairs.gz")
+    output:
+        temp(path.join(CONTACT_DIR, "{sample}.cool")),
+    params:
+        "--assembly hg38 -c1 2 -p1 3 -c2 4 -p2 5"
+    shell:
+        "cooler cload pairs {params} {input.genome}:1000 {input.pairs} {output}"
+
+rule balance:
+    input:
+        path.join(CONTACT_DIR, "{sample}.cool")
+    output:
+        path.join(REPORT_DIR, "{sample}.balanced_report.txt")
+    shell:
+        "cooler balance {input} >> {output} 2>&1"
+
+rule adjust_res:
+    input:
+        path.join(CONTACT_DIR, "{sample}.cool")
+    output:
+        path.join(CONTACT_DIR, "{sample}.mcool")
+    params:
+        "--balance -p 8 -r {}".format(",".join([str(r) for r in RESOLUTIONS]))
+    shell:
+        "cooler zoomify {params} -o {output} {input}"
 
 
 # Miscellaneous
 # -----------------------------------------------------------------------------
 rule sort_bam_name:
     input:
-        '{file}.bam'
+        "{file}.bam"
     output:
-        '{file}.name-sorted.bam',
+        "{file}.name-sorted.bam",
     shell:
-        'sambamba sort -t 8 --tmpdir . -n -p -o {output} {input}'
+        "sambamba sort -t 8 --tmpdir . -n -p -o {output} {input}"
 
 rule sort_bam:
     input:
-        '{file}.bam'
+        "{file}.bam"
     output:
-        bam = '{file}.sorted.bam',
-        idx = '{file}.sorted.bam.bai'
+        bam = "{file}.sorted.bam",
+        idx = "{file}.sorted.bam.bai"
     shell:
-        'sambamba sort -t 8 --tmpdir . -p {input}'
+        "sambamba sort -t 8 --tmpdir . -p {input}"
 
 rule hicup_summary:
     input:
-        script = 'agg-hicup-reports.py',
-        data = 'config.tsv',
-        trunc = path.join(REPORT_DIR, 'hicup_truncater_summary.tsv'),
-        mapper = path.join(REPORT_DIR, 'hicup_mapper_summary.tsv'),
-        filt = path.join(REPORT_DIR, 'hicup_filter_summary.tsv'),
-        dedup = path.join(REPORT_DIR, 'hicup_deduplicator_summary.tsv')
+        script = "agg-hicup-reports.py",
+        data = "config.tsv",
+        trunc = path.join(REPORT_DIR, "hicup_truncater_summary.tsv"),
+        mapper = path.join(REPORT_DIR, "hicup_mapper_summary.tsv"),
+        filt = path.join(REPORT_DIR, "hicup_filter_summary.tsv"),
+        dedup = path.join(REPORT_DIR, "hicup_deduplicator_summary.tsv")
     output:
-        path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        path.join(REPORT_DIR, "HiCUP_summary_report.tsv"),
         expand(
             path.join(
-                REPORT_DIR, 'HiCUP_summary_report_{sample}_L00{lane}.txt'),
+                REPORT_DIR, "HiCUP_summary_report_{sample}_L00{lane}.txt"),
             sample=SAMPLES,
             lane=LANES
         )
     shell:
-        'python {input.script} {input.data} -o {REPORT_DIR}'
+        "python {input.script} {input.data} -o {REPORT_DIR}"
 
 rule multiqc:
     input:
-        cfg = path.join(REPORT_DIR, 'multiqc_config.yaml'),
-        hicup = path.join(REPORT_DIR, 'HiCUP_summary_report.tsv'),
+        cfg = path.join(REPORT_DIR, "multiqc_config.yaml"),
+        hicup = path.join(REPORT_DIR, "HiCUP_summary_report.tsv"),
         samples = expand(
             path.join(
-                REPORT_DIR, 'HiCUP_summary_report_{sample}_L00{lane}.txt'),
+                REPORT_DIR, "HiCUP_summary_report_{sample}_L00{lane}.txt"),
             sample=SAMPLES,
             lane=LANES
         )
     output:
-        path.join(REPORT_DIR, 'multiqc_report.html')
+        path.join(REPORT_DIR, "multiqc_report.html")
     shell:
-        'multiqc -f -c {input.cfg} -o {REPORT_DIR} {REPORT_DIR}'
+        "multiqc -f -c {input.cfg} -o {REPORT_DIR} {REPORT_DIR}"
