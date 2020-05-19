@@ -3,6 +3,7 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
+suppressMessages(library("gridExtra"))
 source("plotting-helper.R")
 
 GRAPH_DIR <- "Graphs"
@@ -12,6 +13,9 @@ GRAPH_DIR <- "Graphs"
 # ==============================================================================
 # load hypothesis testing results
 htest <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.expression.tsv"), sep = "\t", header = TRUE)
+
+# load hypothesis testing results
+htest_tad <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"), sep = "\t", header = TRUE)
 
 # load z-scores for tested genes
 tested_genes <- fread(
@@ -28,7 +32,7 @@ exprs <- fread(
         "Data",
         "External",
         "CPC-GENE",
-        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv"
+        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv"
     ),
     sep = "\t",
     header = TRUE
@@ -286,7 +290,7 @@ gg_z <- (
 )
 savefig(gg_z, "Plots/sv-disruption/expression.z", width = 40)
 
-gg_fc <- (
+gg_fc_bars <- ggplotGrob(
     ggplot(data = tested_genes_cut$all)
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
@@ -316,10 +320,67 @@ gg_fc <- (
         legend.position = "bottom"
     )
 )
+gg_fc_ngenes <- ggplotGrob(
+    ggplot(data = tested_genes_cut$all[, .(N = sum(N)), keyby = c("test_ID", "majority")])
+    + geom_path(aes(x = factor(test_ID), y = N, group = majority))
+    + labs(x = NULL, y = "# Genes")
+    + facet_grid(. ~ majority, scales = "free_x", space = "free")
+    + theme_minimal()
+    + theme(
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank()
+    )
+)
+gg_fc_affecting_tad <- ggplotGrob(
+    ggplot(
+        data = merge(
+            x = tested_genes_cut$all,
+            y = htest_tad[, .(test_ID, altered_TAD)],
+            by = "test_ID"
+        )
+    )
+    + geom_col(aes(x = factor(test_ID), y = 1, fill = altered_TAD))
+    + labs(x = NULL)
+    + scale_y_continuous(
+        limits = c(0, 1),
+        labels = NULL,
+        name = "Alters\nTADs"
+    )
+    + scale_fill_manual(
+        limits = c(TRUE, FALSE),
+        labels = c("Yes", "No"),
+        values = c("#000000", "#BDBDBD"),
+        name = "SV affects TAD boundaries"
+    )
+    + guides(fill = FALSE)
+    + facet_grid(. ~ majority, scales = "free_x", space = "free")
+    + theme_minimal()
+    + theme(
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank()
+    )
+)
+maxWidth <- grid::unit.pmax(
+    gg_fc_bars$widths[2:5],
+    gg_fc_ngenes$widths[2:5],
+    gg_fc_affecting_tad$widths[2:5]
+)
+gg_fc_bars$widths[2:5] <- as.list(maxWidth)
+gg_fc_ngenes$widths[2:5] <- as.list(maxWidth)
+gg_fc_affecting_tad$widths[2:5] <- as.list(maxWidth)
+gg_fc <- grid.arrange(
+    gg_fc_ngenes,
+    gg_fc_affecting_tad,
+    gg_fc_bars,
+    nrow = 3,
+    heights = c(0.2, 0.1, 0.7)
+)
 savefig(gg_fc, "Plots/sv-disruption/expression.fold-change")
 
 # same as above, but thresholding on absolute difference in mRNA abundance
-gg_fc_thresh <- (
+gg_fc_thresh_bars <- ggplotGrob(
     ggplot(data = tested_genes_cut$thresholded)
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
@@ -349,6 +410,64 @@ gg_fc_thresh <- (
         legend.position = "bottom"
     )
 )
+gg_fc_thresh_ngenes <- ggplotGrob(
+    ggplot(data = tested_genes_cut$thresholded[, .(N = sum(N)), keyby = c("test_ID", "majority")])
+    + geom_path(aes(x = factor(test_ID), y = N, group = majority))
+    + labs(x = NULL, y = "# Genes")
+    + facet_grid(. ~ majority, scales = "free_x", space = "free")
+    + theme_minimal()
+    + theme(
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank()
+    )
+)
+gg_fc_thresh_affecting_tad <- ggplotGrob(
+    ggplot(
+        data = merge(
+            x = tested_genes_cut$thresholded,
+            y = htest_tad[, .(test_ID, altered_TAD)],
+            by = "test_ID"
+        )
+    )
+    + geom_col(aes(x = factor(test_ID), y = 1, fill = altered_TAD))
+    + labs(x = NULL)
+    + scale_y_continuous(
+        limits = c(0, 1),
+        labels = NULL,
+        name = "Alters\nTADs"
+    )
+    + scale_fill_manual(
+        limits = c(TRUE, FALSE),
+        labels = c("Yes", "No"),
+        values = c("#000000", "#BDBDBD"),
+        name = "SV affects TAD boundaries"
+    )
+    + guides(fill = FALSE)
+    + facet_grid(. ~ majority, scales = "free_x", space = "free")
+    + theme_minimal()
+    + theme(
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank()
+    )
+)
+maxWidth_thresh <- grid::unit.pmax(
+    gg_fc_thresh_bars$widths[2:5],
+    gg_fc_thresh_ngenes$widths[2:5],
+    gg_fc_thresh_affecting_tad$widths[2:5]
+)
+gg_fc_thresh_bars$widths[2:5] <- as.list(maxWidth_thresh)
+gg_fc_thresh_ngenes$widths[2:5] <- as.list(maxWidth_thresh)
+gg_fc_thresh_affecting_tad$widths[2:5] <- as.list(maxWidth_thresh)
+gg_fc_thresh <- grid.arrange(
+    gg_fc_thresh_ngenes,
+    gg_fc_thresh_affecting_tad,
+    gg_fc_thresh_bars,
+    nrow = 3,
+    heights = c(0.2, 0.1, 0.7)
+)
+
 savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded")
 
 gg_fc_diff <- (
