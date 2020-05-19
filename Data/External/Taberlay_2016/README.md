@@ -8,3 +8,8 @@ As listed in the methods for each paper, the RWPE1 samples were digested using t
 The PrEC samples were digested using and sequenced with BglII paired-ends at 101 bp.
 The FASTQs downloaded from GEO don't come in pairs, so they need to be split before pre-processing.
 
+## Data QC
+
+The PrEC samples appear to have low read coverage, which raises issues with the ICE normalization convergence.
+`SRR2566798` normalization converged at >= 300 kbp, and the other two PrEC samples converged at >= 200 kbp resolutions.
+This indicates that these samples have too few reads to work with at lower resolutions.
