@@ -5,6 +5,7 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("scales"))
 suppressMessages(library("MASS"))
+suppressMessages(library("pheatmap"))
 
 MAX_WINDOW <- 24
 MIN_WINDOW <- 3
@@ -492,3 +493,21 @@ gg_sim_window_delta = (
     + theme_minimal()
 )
 savefig(gg_sim_window_delta, file.path(PLOT_DIR, "bp-score.window-similarity.delta"))
+
+# cluster samples by BPscore distances
+# recast data to wide form for plotting with pheatmap
+mat <- as.matrix(
+    dcast(bpscore, s1 ~ s2, value.var = "dist", fun.aggregate = unique, fill = 0),
+    rownames = "s1"
+)
+
+for (ext in c("png", "pdf")) {
+    pheatmap(
+        mat = 1 - mat,
+        filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
+        clustering_distance_rows = as.dist(mat),
+        clustering_distance_cols = as.dist(mat),
+        labels_row = metadata[order(SampleID), Label],
+        labels_col = metadata[order(SampleID), Label]
+    )
+}
