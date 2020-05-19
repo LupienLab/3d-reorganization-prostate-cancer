@@ -1,0 +1,15 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	SRR7702334_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR7702334_R1_fastqc.zip
+FastQC	all_sections	SRR7702334_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR7702334_R2_fastqc.zip
+FastQC	all_sections	SRR7702335_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR7702335_R1_fastqc.zip
+FastQC	all_sections	SRR7702335_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR7702335_R2_fastqc.zip
+FastQC	all_sections	SRR8446383_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446383_R1_fastqc.zip
+FastQC	all_sections	SRR8446383_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446383_R2_fastqc.zip
+FastQC	all_sections	SRR8446384_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446384_R1_fastqc.zip
+FastQC	all_sections	SRR8446384_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446384_R2_fastqc.zip
+FastQC	all_sections	SRR8446385_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446385_R1_fastqc.zip
+FastQC	all_sections	SRR8446385_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446385_R2_fastqc.zip
+FastQC	all_sections	SRR8446386_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446386_R1_fastqc.zip
+FastQC	all_sections	SRR8446386_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446386_R2_fastqc.zip
+FastQC	all_sections	SRR8446387_R1	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446387_R1_fastqc.zip
+FastQC	all_sections	SRR8446387_R2	/c/Users/james/Documents/Davos/Data/External/Rhie_2019/Reports/SRR8446387_R2_fastqc.zip

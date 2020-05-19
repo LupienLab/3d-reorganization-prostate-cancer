@@ -1,0 +1,15 @@
+Sample	Filename	File type	Encoding	Total Sequences	Sequences flagged as poor quality	Sequence length	%GC	total_deduplicated_percentage	avg_sequence_length	basic_statistics	per_base_sequence_quality	per_sequence_quality_scores	per_base_sequence_content	per_sequence_gc_content	per_base_n_content	sequence_length_distribution	sequence_duplication_levels	overrepresented_sequences	adapter_content
+SRR7702334_R1	SRR7702334_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	622253376.0	0.0	76.0	42.0	79.47377211396234	76.0	pass	pass	pass	warn	warn	pass	pass	pass	warn	pass
+SRR7702334_R2	SRR7702334_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	622253376.0	0.0	76.0	43.0	82.08579292265422	76.0	pass	pass	pass	warn	warn	pass	pass	pass	warn	pass
+SRR7702335_R1	SRR7702335_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	538564230.0	0.0	76.0	42.0	82.74394548383512	76.0	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass
+SRR7702335_R2	SRR7702335_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	538564230.0	0.0	76.0	43.0	84.50221165403623	76.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass
+SRR8446383_R1	SRR8446383_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	498920758.0	0.0	76.0	44.0	74.09375164756807	76.0	pass	pass	pass	warn	pass	pass	pass	pass	fail	pass
+SRR8446383_R2	SRR8446383_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	498920758.0	0.0	76.0	45.0	77.61003900356687	76.0	pass	pass	pass	fail	pass	pass	pass	pass	warn	pass
+SRR8446384_R1	SRR8446384_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	441776838.0	0.0	76.0	42.0	78.18639245140363	76.0	pass	pass	pass	fail	pass	pass	pass	pass	warn	pass
+SRR8446384_R2	SRR8446384_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	441776838.0	0.0	76.0	43.0	80.62956507621956	76.0	pass	pass	pass	fail	warn	pass	pass	pass	fail	pass
+SRR8446385_R1	SRR8446385_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	304303349.0	0.0	76.0	43.0	99.18595115067662	76.0	pass	pass	pass	warn	pass	pass	pass	pass	pass	pass
+SRR8446385_R2	SRR8446385_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	304303349.0	0.0	6-76	43.0	36.527634094401414	74.79576159380356	pass	pass	pass	warn	pass	pass	warn	fail	pass	pass
+SRR8446386_R1	SRR8446386_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	303008126.0	0.0	76.0	41.0	99.54287506476753	76.0	pass	pass	pass	warn	warn	pass	pass	pass	pass	pass
+SRR8446386_R2	SRR8446386_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	303008126.0	0.0	6-76	41.0	48.91592555712513	74.99338287053067	pass	pass	pass	warn	warn	pass	warn	fail	pass	pass
+SRR8446387_R1	SRR8446387_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	487577302.0	0.0	76.0	42.0	77.87673980943694	76.0	pass	pass	pass	warn	fail	pass	pass	pass	fail	pass
+SRR8446387_R2	SRR8446387_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	487577302.0	0.0	76.0	42.0	84.77025219226859	76.0	pass	pass	pass	fail	warn	pass	pass	pass	warn	pass
