@@ -148,7 +148,7 @@ rule repair_header:
         path.join(ALIGN_DIR, "{sample}.hicup.bam")
     shell:
         # HiCUP deduplicator doesn"t properly add a line to the header of the BAM, so I"m fixing it here
-        "samtools view -H {input} | sed "s/HiCUP Deduplicator/ID\:HiCUP Deduplicator/" | samtools reheader -P - {input} > {output}"
+        "samtools view -H {input} | sed 's/HiCUP Deduplicator/ID\:HiCUP Deduplicator/' | samtools reheader -P - {input} > {output}"
 
 # Cooler
 # -----------------------------------------------------------------------------

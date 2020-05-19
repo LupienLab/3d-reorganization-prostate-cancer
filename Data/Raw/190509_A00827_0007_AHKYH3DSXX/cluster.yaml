@@ -4,9 +4,17 @@ __default__:
 fastqc:
     params: "-V -d . -q all"
 
-call_tads:
-    params: "-V -d . -q long -l vmem=30gb"
+sort_bam:
+    params: '--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00'
 
-plot_t2e:
-    params: "-V -d . -q long -l vmem=30gb"
+sort_bam_name:
+    params: '--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00'
 
+create_pairs:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+create_cooler:
+    params: "--export=ALL -p himem --mem=30G -c 8"
+
+adjust_res:
+    params: "--export=ALL -p himem --mem=30G -c 8"
