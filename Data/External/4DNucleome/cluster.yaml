@@ -1,0 +1,9 @@
+__default__:
+    params: "--export=ALL -p long --mem=12G"
+
+download_4dn:
+    params: "--export=ALL -p download --mem=6G"
+
+adjust_res:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00"
+
