@@ -385,7 +385,7 @@ gg_fc_thresh_bars <- ggplotGrob(
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
-    + labs(x = "Breakpoints", y = "Genes in TAD (%)")
+    + labs(x = "Breakpoints", y = "Expressed Genes in TAD (%)")
     + scale_fill_manual(
         name = "Expression",
         labels = c(
