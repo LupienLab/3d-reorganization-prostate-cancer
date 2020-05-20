@@ -94,12 +94,23 @@ breakpoints_binned = rbindlist(lapply(
 breakpoints_summed = breakpoints_binned[, sum(Count), by = c("SampleID", "chr", "Bin")]
 colnames(breakpoints_summed) = c("SampleID", "chr", "Bin", "Count")
 
+
 fwrite(
     breakpoints_summed[order(SampleID, chr, Bin)],
     "Statistics/breakpoints.binned.tsv",
     sep = "\t",
     col.names = TRUE
 )
+
+breakpoints_by_chrom = breakpoints[, .N, keyby = c("SampleID", "chr")]
+breakpoints_by_chrom[, N_per_mb := apply(.SD, 1, function(r) {as.numeric(r["N"]) / hg38[Chrom == r["chr"], (Length / 10^6)]})]
+fwrite(
+    breakpoints_by_chrom[order(SampleID, chr)],
+    "Statistics/breakpoints.by-chrom.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
 
 # count the number of inter-/intra-chromosomal pairs
 inter_intra_counts <- breakpoint_pairs[, .(Total = .N), by = "SampleID"]
@@ -269,13 +280,13 @@ gg_breakpoints <- (
 savefig(gg_breakpoints, "Plots/breakpoint-stats/sv-counts")
 
 gg_breakpoints_per_chrom = (
-    ggplot(data = breakpoints[, .N, by = c("SampleID", "chr")])
+    ggplot(data = breakpoints_by_chrom)
     + geom_col(
-        aes(x = chr, y = N, fill = SampleID),
+        aes(x = chr, y = N_per_mb, fill = SampleID),
         position = "stack",
         colour = "#000000"
     )
-    + labs(x = NULL, y = "Breakpoints")
+    + labs(x = NULL, y = "Breakpoints / Mb")
     + scale_fill_manual(
         breaks = metadata[, SampleID],
         labels = metadata[, get("Patient ID")],
