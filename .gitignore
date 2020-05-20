@@ -116,3 +116,5 @@ Logs/
 *.ba[im]
 *.zip
 .vscode
+*.mcool
+*.cool
