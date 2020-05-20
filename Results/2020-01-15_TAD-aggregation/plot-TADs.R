@@ -47,48 +47,8 @@ savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, d
 # Data
 # ==============================================================================
 # load metadata
-tumour_config <- fread(file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"))
-tumour_config <- tumour_config[Include == "Yes"]
-tumour_config[, SampleID := paste0("PCa", get("Sample ID"))]
-
-benign_config <- fread(file.path("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"))
-benign_config <- benign_config[Include == "Yes"]
-
-cell_line_config <- fread(file.path("..", "..", "Data", "External", "Rhie_2019", "config.tsv"))
-
-SAMPLES <- c(tumour_config[, SampleID], benign_config[, Sample], cell_line_config[, Run_Accession])
-
-# metadata for plotting
-metadata <- data.table(
-    SampleID = SAMPLES,
-    Source = c(
-        rep("Primary", tumour_config[, .N] + benign_config[, .N]),
-        rep("Cell Line", cell_line_config[, .N])
-    ),
-    Type = c(
-        rep("Malignant", tumour_config[, .N]),
-        rep("Benign", benign_config[, .N]),
-        rep("Malignant", 2),
-        rep("Benign", 2),
-        rep("Malignant", 3)
-    ),
-    Label = c(
-        tumour_config[, get("Patient ID")],
-        benign_config[, gsub("Benign-Prostate-", "BP", Sample)],
-        cell_line_config[, paste(Cell_Line, "Rep", Replicate)]
-    ),
-    Sample_Colour = c(
-        tumour_config[, Colour],
-        rep("#000000", benign_config[, .N]),
-        rep("#000000", cell_line_config[, .N])
-    ),
-    Type_Colour = c(
-        rep("#1F77B4", tumour_config[, .N]),
-        rep("#AEC7E8", benign_config[, .N]),
-        rep(c("#FF7F0D", "#FFBB78", "#FF7F0D"), c(2, 2, 3))
-    )
-)
-
+metadata <- fread("config.tsv", sep = "\t", header = TRUE)
+SAMPLES <- metadata[, Sample]
 
 # load aggregated boundary calls from each sample
 boundaries = rbindlist(lapply(

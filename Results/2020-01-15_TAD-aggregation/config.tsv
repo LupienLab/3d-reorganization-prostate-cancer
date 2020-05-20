@@ -1,0 +1,24 @@
+SampleID	Source	Type	Label	Sample_Colour	Type_Colour	Contact_File
+PCa13266	Primary	Malignant	CPCG0268	#7F3C8D	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa13266.mcool
+PCa13848	Primary	Malignant	CPCG0366	#11A579	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa13848.mcool
+PCa14121	Primary	Malignant	CPCG0255	#3969AC	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa14121.mcool
+PCa19121	Primary	Malignant	CPCG0258	#F2B701	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa19121.mcool
+PCa3023	Primary	Malignant	CPCG0324	#E73F74	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa3023.mcool
+PCa33173	Primary	Malignant	CPCG0246	#80BA5A	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa33173.mcool
+PCa40507	Primary	Malignant	CPCG0342	#E68310	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa40507.mcool
+PCa51852	Primary	Malignant	CPCG0336	#008695	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa51852.mcool
+PCa53687	Primary	Malignant	CPCG0339	#CF1C90	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa53687.mcool
+PCa56413	Primary	Malignant	CPCG0331	#F97B72	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa56413.mcool
+PCa57294	Primary	Malignant	CPCG0365	#4B4B8F	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa57294.mcool
+PCa58215	Primary	Malignant	CPCG0345	#A5AA99	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa58215.mcool
+Benign-Prostate-1648133	Primary	Benign	BP1648133	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1648133.mcool
+Benign-Prostate-1595983	Primary	Benign	BP1595983	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1595983.mcool
+Benign-Prostate-1664855	Primary	Benign	BP1664855	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1664855.mcool
+Benign-Prostate-3320942	Primary	Benign	BP3320942	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-3320942.mcool
+SRR7702334	Cell Line	Malignant	22Rv1 Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702334.mcool
+SRR7702335	Cell Line	Malignant	22Rv1 Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702335.mcool
+SRR8446383	Cell Line	Benign	RWPE1 Rep 1	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446383.mcool
+SRR8446384	Cell Line	Benign	RWPE1 Rep 2	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446384.mcool
+SRR8446385	Cell Line	Malignant	C42B Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446385.mcool
+SRR8446386	Cell Line	Malignant	C42B Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446386.mcool
+SRR8446387	Cell Line	Malignant	C42B Rep 3	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446387.mcool
