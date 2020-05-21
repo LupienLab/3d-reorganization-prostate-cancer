@@ -48,7 +48,9 @@ savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, d
 # ==============================================================================
 # load metadata
 metadata <- fread("config.tsv", sep = "\t", header = TRUE)
-SAMPLES <- metadata[, Sample]
+SAMPLES <- metadata[, SampleID]
+TUMOUR_SAMPLES <- metadata[Source == "Primary" & Type == "Malignant", SampleID]
+LINE_SAMPLES <- metadata[Source == "Cell Line", SampleID]
 
 # load aggregated boundary calls from each sample
 boundaries = rbindlist(lapply(
@@ -95,6 +97,7 @@ window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header
 
 # load CTCF distances
 ctcf_pairs = fread("CTCF/TAD-boundary.LNCaP-CTCF-peaks.distances.tsv", sep = "\t", header = TRUE)
+ctcf_pairs <- merge(ctcf_pairs, metadata[, .(SampleID, Source)])
 
 # ==============================================================================
 # Analysis
@@ -110,7 +113,7 @@ tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
 # ECDFs number of TADs of a given width
 tad_size_ecdf <- rbindlist(lapply(
-    SAMPLES,
+    TUMOUR_SAMPLES,
     function(s) {
         rbindlist(lapply(
             seq(MIN_WINDOW, MAX_WINDOW, 1),
@@ -131,8 +134,27 @@ tad_size_ecdf_est <- tad_size_ecdf[, .(Mean = mean(y), SD = sd(y)), by = c("w", 
 tad_size_ecdf_est[, Lower := Mean - SD]
 tad_size_ecdf_est[, Upper := Mean + SD]
 
-ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak=Freq), keyby = "SampleID"]
+ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak=Freq), keyby = c("SampleID", "Source")]
 ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "SampleID"]$V1
+
+# colour bpscore rows by primary-primary, line-line, or primary-line comparisons
+bpscore <- merge(
+    bpscore,
+    metadata[, .(SampleID, Source, Type_Colour)],
+    by.x = "s1",
+    by.y = "SampleID"
+)
+bpscore <- merge(
+    bpscore,
+    metadata[, .(SampleID, Source, Type_Colour)],
+    by.x = "s2",
+    by.y = "SampleID",
+    suffixes = c("_1", "_2")
+)
+# if s1 and s2 come from the same source material, return Type_Colour, otherwise return green colour
+bpscore[Source_1 == Source_2 & Source_1 == "Primary", Colour := "#1F77B4"]
+bpscore[Source_1 == Source_2 & Source_1 == "Cell Line", Colour := "#FF7F0D"]
+bpscore[Source_1 != Source_2, Colour := "#3FE686"]
 
 # ==============================================================================
 # Plots
@@ -185,8 +207,8 @@ savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts.by-persisten
 
 # CTCF binding site proximity to boundaries
 gg_bounds_ctcf <- (
-    ggplot(data = ctcf_pairs)
-    + geom_path(aes(x = Bin_Mid / 1e3, y = Freq, colour = SampleID, group = SampleID))
+    ggplot(data = ctcf_pairs[SampleID %in% c(TUMOUR_SAMPLES, LINE_SAMPLES)])
+    + geom_path(aes(x = Bin_Mid / 1e3, y = Freq, colour = Source, group = SampleID))
     + labs(x = "Distance from TAD boundary (kbp)", y = "Average # LNCaP CTCF Peaks / 5 kbp")
     + scale_x_continuous(
         breaks = seq(-150, 150, 50),
@@ -196,10 +218,10 @@ gg_bounds_ctcf <- (
         limits = c(0, 0.03)
     )
     + scale_colour_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, Label],
-        values = metadata[, Sample_Colour],
-        name = "Patient"
+        limits = metadata[SampleID %in% c(TUMOUR_SAMPLES, LINE_SAMPLES), unique(Source)],
+        labels = metadata[SampleID %in% c(TUMOUR_SAMPLES, LINE_SAMPLES), unique(Source)],
+        values = c("#1F77B4", "#FF7F0D"),
+        name = "Source"
     )
     + coord_cartesian(xlim = c(-150, 150))
     + theme_minimal()
@@ -272,10 +294,9 @@ savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), heigh
 
 # TAD counts per sample at each window size
 gg_tad_counts <- (
-    ggplot(data = tads[, .N, by = c("SampleID", "w", "Type_Colour")])
-    # + geom_path(aes(x = w, y = N, colour = Patient_ID, group = Patient_ID))
+    ggplot(data = tads[SampleID %in% TUMOUR_SAMPLES, .N, by = c("SampleID", "w", "Sample_Colour")])
     + geom_point(
-        aes(x = w, y = N, colour = Type_Colour),
+        aes(x = w, y = N, colour = SampleID),
         position = position_jitter(width = 0.2, height = 0)
     )
     + geom_boxplot(aes(x = w, y = N, group = w), outlier.shape = NA, alpha = 0.2)
@@ -286,9 +307,9 @@ gg_tad_counts <- (
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
     + scale_colour_manual(
-        limits = metadata[, Type_Colour],
-        labels = metadata[, paste(Source, Type)],
-        values = metadata[, Type_Colour],
+        limits = metadata[SampleID %in% TUMOUR_SAMPLES, SampleID],
+        labels = metadata[SampleID %in% TUMOUR_SAMPLES, Label],
+        values = metadata[SampleID %in% TUMOUR_SAMPLES, Sample_Colour],
         name = "Source"
     )
     + theme_minimal()
@@ -296,9 +317,14 @@ gg_tad_counts <- (
 savefig(gg_tad_counts, file.path(PLOT_DIR, "tad-counts"))
 
 # TAD size distribution
+ribbon_alpha <- 0.4
 gg_tad_size <- (
     ggplot(data = tad_size_ecdf_est)
     + geom_path(aes(x = x, y = 100 * Mean, colour = w, group = w))
+    + geom_ribbon(
+        aes(x = x, ymin = 100 * (Mean - SD), ymax = 100 * (Mean + SD), fill = w, group = w),
+        alpha = ribbon_alpha
+    )
     + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
     + scale_x_continuous(
         limits = c(0, 5e6),
@@ -306,6 +332,10 @@ gg_tad_size <- (
         labels = seq(0, 5)
     )
     + scale_colour_viridis_c(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
+        name = "Window Size"
+    )
+    + scale_fill_viridis_c(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
         name = "Window Size"
     )
@@ -320,12 +350,10 @@ savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size.distribution"), height = 20)
 w_subset <- seq(MIN_WINDOW, MAX_WINDOW, length.out = 4)
 gg_tad_size_reduced <- (
     ggplot(data = tad_size_ecdf_est[w %in% w_subset])
-    + geom_path(
-        aes(
-            x = x,
-            y = 100 * Mean,
-            colour = w
-        )
+    + geom_path(aes(x = x, y = 100 * Mean, colour = w, group = w))
+    + geom_ribbon(
+        aes(x = x, ymin = 100 * (Mean - SD), ymax = 100 * (Mean + SD), fill = w, group = w),
+        alpha = ribbon_alpha
     )
     + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
     + scale_x_continuous(
@@ -337,37 +365,13 @@ gg_tad_size_reduced <- (
         breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
         name = "Window Size"
     )
-    # + facet_wrap(~ w, nrow = 1)
-    + theme_minimal()
-    + theme(
-        # legend.position = "bottom"
-    )
-)
-savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced.faceted"), height = 12, width = 30)
-
-gg_tad_size_reduced <- (
-    ggplot(data = tad_size_ecdf_est[w %in% w_subset])
-    + geom_path(
-        aes(
-            x = x,
-            y = 100 * Mean,
-            colour = w,
-            group = w
-        )
-    )
-    + labs(x = "TAD Size (Mbp)", y = "% of TADs (Cumulative Density)")
-    + scale_x_continuous(
-        limits = c(0, 5e6),
-        breaks = seq(0, 5e6, by = 1e6),
-        labels = seq(0, 5)
-    )
-    + scale_colour_viridis_c(
+    + scale_fill_viridis_c(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 4),
         name = "Window Size"
     )
     + theme_minimal()
     + theme(
-        # legend.position = "bottom"
+        legend.position = "bottom"
     )
 )
 savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"), height = 14)
@@ -392,8 +396,11 @@ savefig(gg_cov, file.path(PLOT_DIR, "tad-size.coeff-var"))
 
 # plot distances between TADs of different samples across window sizes
 gg_bpscore = (
-    ggplot(data = bpscore[s1!= s2 & w <= MAX_WINDOW])
-    + geom_point(aes(x = w, y = 1 - dist, colour = w), position = position_jitter(width = 0.2, height = 0))
+    ggplot(data = bpscore[s1 != s2 & w <= MAX_WINDOW])
+    + geom_point(
+        aes(x = w, y = 1 - dist, colour = Colour),
+        position = position_jitter(width = 0.2, height = 0)
+    )
     + geom_boxplot(
         aes(x = w, y = 1 - dist, group = w),
         alpha = 0.5,
@@ -406,8 +413,10 @@ gg_bpscore = (
         limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
-    + scale_colour_viridis_c()
-    + scale_fill_viridis_c()
+    + scale_colour_manual(
+        limits = bpscore[, unique(Colour)],
+        values = bpscore[, unique(Colour)]
+    )
     + guides(colour = FALSE)
     + theme_minimal()
 )
