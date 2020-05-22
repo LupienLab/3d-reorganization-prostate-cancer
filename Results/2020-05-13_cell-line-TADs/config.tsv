@@ -6,13 +6,9 @@ SRR8446384	in situ Hi-C in RWPE1 rep2	RWPE1	2	MboI	Rhie et al., (2019)
 SRR8446385	in situ Hi-C in C42B rep1	C42B	1	MboI	Rhie et al., (2019)
 SRR8446386	in situ Hi-C in C42B rep2	C42B	2	MboI	Rhie et al., (2019)
 SRR8446387	in situ Hi-C in C42B rep3	C42B	3	MboI	Rhie et al., (2019)
-4DNFI5RMAGF9	immortalized cell line	GM12878	1	MboI	Rao SS et al. (2014)
-4DNFI6HDY7WZ	stem cell derived cell line	H1-hESC (Tier 1)	1	DpnII	Krietenstein N et al. (2020)
-4DNFITH978XV	stem cell derived cell line	H1-hESC	1	NcoI	Correspondence: job.dekker@umassmed.edu
-4DNFIBKJ25D4	immortalized cell line	GM12878	1	NcoI	Rao SS et al. (2014)
-4DNFI43WFPJ5	primary cell	192627	1	MboI	Rao SS et al. (2014)
-4DNFI7QWAH57	immortalized cell line	GM12878	1	HindIII	Rao SS et al. (2014)
-4DNFIRMZ7QTE	primary cell	HUVEC cell	1	MboI	Rao SS et al. (2014)
-4DNFIT64Q7A3	immortalized cell line	HAP-1	1	MboI	Haarhuis JHI et al. (2017)
-4DNFIIV4M7TF	immortalized cell line	GM12878	1	MboI	Rao SS et al. (2014)
-
+4DNFI6HDY7WZ	H1-hESC Rep 1	H1-ESC	1	DpnII	Krietenstein N, Abraham S, et al., Molecular cell 2020
+4DNFITH978XV	H1-hESC Rep 2	H1-ESC	2	NcoI	
+4DNFIT64Q7A3	HAP-1 Rep 1	HAP-1	1	MboI	Haarhuis JHI, van der Weide RH, et al., Cell 2017
+4DNFINSKEZND	HAP-1 Rep 2	HAP-1	2	MboI	Sanborn AL, Rao SS, et al., PNAS 2015
+4DNFIIV4M7TF	GM12878 Rep 1	GM12878	1	MboI	Rao SS, Huntley MH, et al., Cell 2014
+4DNFIXVAKX9Q	GM12878 Rep 2	GM12878	2	DpnII	Rao SS, Huntley MH, et al., Cell 2014
