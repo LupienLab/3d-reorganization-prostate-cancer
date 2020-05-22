@@ -22,3 +22,12 @@ SRR8446384	Cell Line	Benign	RWPE1 Rep 2	#000000	#FFBB78	../../Data/External/Rhie
 SRR8446385	Cell Line	Malignant	C42B Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446385.mcool
 SRR8446386	Cell Line	Malignant	C42B Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446386.mcool
 SRR8446387	Cell Line	Malignant	C42B Rep 3	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446387.mcool
+4DNFI5RMAGF9	Cell Line	Other	GM12878 Rep 1	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFI5RMAGF9.mcool
+4DNFI6HDY7WZ	Cell Line	Other	H1-hESC Rep 1	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFI6HDY7WZ.mcool
+4DNFITH978XV	Cell Line	Other	H1-hESC Rep 2	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFITH978XV.mcool
+4DNFIBKJ25D4	Cell Line	Other	GM12878 Rep 2	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIBKJ25D4.mcool
+4DNFI43WFPJ5	Primary	Other	192627	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFI43WFPJ5.mcool
+4DNFI7QWAH57	Cell Line	Other	GM12878 Rep 3	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFI7QWAH57.mcool
+4DNFIRMZ7QTE	Primary	Other	HUVEC	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIRMZ7QTE.mcool
+4DNFIT64Q7A3	Cell Line	Other	HAP-1	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIT64Q7A3.mcool
+4DNFIIV4M7TF	Cell Line	Other	GM12878 Rep 4	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIIV4M7TF.mcool
