@@ -16,15 +16,15 @@ BENIGN_CONFIG = pd.read_csv(
 )
 BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
 
-CELL_LINE_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
+LINE_CONFIG = pd.read_csv(
+    path.join("..", "2020-05-13_cell-line-TADs", "config.tsv"),
     sep="\t"
 )
 
 TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG["Sample ID"]]
 BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
-CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
-ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
+LINE_SAMPLES = LINE_CONFIG["SampleID"].tolist()
+ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + LINE_SAMPLES
 TAD_DIR = {
     "tumour": path.join("..", "2019-07-08_TADs", "TADs"),
     "benign": path.join("..", "2020-02-21_benign-TADs", "TADs"),
@@ -132,7 +132,7 @@ rule agg_tads_line:
         path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bedGraph"),
         path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.tsv"),
     wildcard_constraints:
-        sample="SRR\d+"
+        sample="(SRR\d+|4DN[A-Za-z0-9]+)"
     params:
         indir=TAD_DIR["line"]
     shell:
@@ -188,7 +188,7 @@ rule extend_boundaries:
     input:
         path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.bedGraph"),
     output:
-        path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.extended-{dist}bp.bed")
+        temp(path.join("resolved-TADs", "{sample}.40000bp.aggregated-boundaries.extended-{dist}bp.bed"))
     wildcard_constraints:
         dist = "\d+"
     shell:
