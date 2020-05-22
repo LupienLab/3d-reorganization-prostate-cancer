@@ -54,10 +54,10 @@ LINE_SAMPLES <- metadata[Source == "Cell Line", SampleID]
 
 # load aggregated boundary calls from each sample
 boundaries = rbindlist(lapply(
-    SAMPLES,
+    TUMOUR_SAMPLES,
     function(s) {
         dt = fread(
-            file.path("resolved-TADS", paste0(s, ".40000bp.aggregated-boundaries.tsv")),
+            file.path("resolved-TADs", paste0(s, ".40000bp.aggregated-boundaries.tsv")),
             sep = "\t",
             header = TRUE
         )
