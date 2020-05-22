@@ -46,8 +46,10 @@ savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, d
 # ==============================================================================
 # Data
 # ==============================================================================
+cat("Loading Data\n")
 # load metadata
 metadata <- fread("config.tsv", sep = "\t", header = TRUE)
+metadata <- metadata[Include == "Yes"]
 SAMPLES <- metadata[, SampleID]
 TUMOUR_SAMPLES <- metadata[Source == "Primary" & Type == "Malignant", SampleID]
 LINE_SAMPLES <- metadata[Source == "Cell Line", SampleID]
@@ -102,9 +104,11 @@ ctcf_pairs <- merge(ctcf_pairs, metadata[, .(SampleID, Source)])
 # ==============================================================================
 # Analysis
 # ==============================================================================
+cat("Counting boundaries\n")
 boundary_counts = boundaries[, .N, by = c("SampleID", "Label")]
 boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Label", "Persistence")]
 
+cat("Counting TADs\n")
 # calculate coefficient of variation across TAD sizes to see where samples vary
 tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
 tads_cov <- tads_mean_size[, sd(V1) / mean(V1), by = "w"]
@@ -138,18 +142,23 @@ ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak=Freq), keyby = c("SampleID", "Source"
 ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "SampleID"]$V1
 
 # colour bpscore rows by primary-primary, line-line, or primary-line comparisons
+cat("Counting similarity\n")
 bpscore <- merge(
     bpscore,
-    metadata[, .(SampleID, Source, Type_Colour)],
-    by.x = "s1",
-    by.y = "SampleID"
+    metadata[, .(SampleID, Source, Label, Type_Colour)],
+    by.x = "s2",
+    by.y = "SampleID",
+    all.x = FALSE,
+    all.y = TRUE
 )
 bpscore <- merge(
     bpscore,
-    metadata[, .(SampleID, Source, Type_Colour)],
-    by.x = "s2",
+    metadata[, .(SampleID, Source, Label, Type_Colour)],
+    by.x = "s1",
     by.y = "SampleID",
-    suffixes = c("_1", "_2")
+    suffixes = c("_2", "_1"),
+    all.x = FALSE,
+    all.y = TRUE,
 )
 # if s1 and s2 come from the same source material, return Type_Colour, otherwise return green colour
 bpscore[Source_1 == Source_2 & Source_1 == "Primary", Colour := "#1F77B4"]
@@ -466,17 +475,25 @@ savefig(gg_sim_window_delta, file.path(PLOT_DIR, "bp-score.window-similarity.del
 # cluster samples by BPscore distances
 # recast data to wide form for plotting with pheatmap
 mat <- as.matrix(
-    dcast(bpscore, s1 ~ s2, value.var = "dist", fun.aggregate = unique, fill = 0),
+    dcast(bpscore[w == MAX_WINDOW], s1 ~ s2, value.var = "dist", fill = 0),
     rownames = "s1"
 )
+annot_col <- as.data.frame(metadata[, .SD, .SDcols = c("Type", "Tissue", "Source")])
+rownames(annot_col) <- metadata[, SampleID]
 
 for (ext in c("png", "pdf")) {
     pheatmap(
         mat = 1 - mat,
         filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
+        clustering_rows = TRUE,
+        clustering_cols = TRUE,
         clustering_distance_rows = as.dist(mat),
         clustering_distance_cols = as.dist(mat),
+        clustering_method = "ward.D2",
         labels_row = metadata[order(SampleID), Label],
-        labels_col = metadata[order(SampleID), Label]
+        labels_col = metadata[order(SampleID), Label],
+        legend = TRUE,
+        show_rownames = FALSE,
+        annotation_col = annot_col
     )
 }
