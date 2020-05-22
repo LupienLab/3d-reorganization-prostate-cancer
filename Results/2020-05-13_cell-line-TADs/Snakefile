@@ -1,25 +1,22 @@
-import pandas as pd
-import os.path as path
-
 # =============================================================================
 # Configuration
 # =============================================================================
-DATA_DIR = path.join("..", "..", "Data", "External", "Rhie_2019")
-CONFIG = pd.read_csv(path.join(DATA_DIR, "config.tsv"), index_col=False, sep="\t")
-CONFIG = CONFIG.loc[~CONFIG.GEO_Accession.str.startswith("#"), :]
+import pandas as pd
+import os.path as path
 
-CONTACT_DIR = path.join(DATA_DIR, "Contacts")
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+
 TMP_DIR = "TMP"
 TAD_DIR = "TADs"
 
-SAMPLES = CONFIG["Run_Accession"].tolist()
+SAMPLES = CONFIG["SampleID"].tolist()
 
-CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 RESOLUTIONS = [40000]
 WINDOWS = range(3, 41)
 
 wildcard_constraints:
-    sample = "SRR[0-9]+",
+    sample = "(SRR[0-9]+|4DN[A-Za-z0-9]+)",
     lane = "[1-4]",
     read = "[1-2]",
     res = "[0-9]+"
@@ -38,15 +35,26 @@ rule all:
 # =============================================================================
 # Rules
 # =============================================================================
-rule dump_mat:
+rule dump_mat_rhie:
     input:
-        path.join(CONTACT_DIR, "{sample}.mcool")
+        path.join("..", "..", "Data", "External", "Rhie_2019", "Contacts", "{sample}.mcool")
     output:
-        path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx")
+        temp(path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx"))
     params:
         "-H -b --one-based-ids --annotate chrom,start,end"
     shell:
         "cooler dump {params} -r {wildcards.chrom} -o {output} {input}::/resolutions/{wildcards.res}"
+
+rule dump_mat_4dn:
+    input:
+        path.join("..", "..", "Data", "External", "4DNucleome", "Contacts", "{sample}.tmp.mcool"),
+    output:
+        temp(path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx"))
+    params:
+        "-H -b --one-based-ids --annotate chrom,start,end"
+    shell:
+        "cooler dump {params} -r {wildcards.chrom} -o {output} {input}::/resolutions/{wildcards.res}"
+
 
 rule call_tads:
     input:

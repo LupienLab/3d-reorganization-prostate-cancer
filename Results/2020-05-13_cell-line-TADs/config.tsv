@@ -1,0 +1,18 @@
+SampleID	Description	Cell_Line	Replicate	Restriction_Enzyme	Publication
+SRR7702334	in situ Hi-C in 22Rv1 rep1	22Rv1	1	MboI	Rhie et al., (2019)
+SRR7702335	in situ Hi-C in 22Rv1 rep2	22Rv1	2	MboI	Rhie et al., (2019)
+SRR8446383	in situ Hi-C in RWPE1 rep1	RWPE1	1	MboI	Rhie et al., (2019)
+SRR8446384	in situ Hi-C in RWPE1 rep2	RWPE1	2	MboI	Rhie et al., (2019)
+SRR8446385	in situ Hi-C in C42B rep1	C42B	1	MboI	Rhie et al., (2019)
+SRR8446386	in situ Hi-C in C42B rep2	C42B	2	MboI	Rhie et al., (2019)
+SRR8446387	in situ Hi-C in C42B rep3	C42B	3	MboI	Rhie et al., (2019)
+4DNFI5RMAGF9	immortalized cell line	GM12878	1	MboI	Rao SS et al. (2014)
+4DNFI6HDY7WZ	stem cell derived cell line	H1-hESC (Tier 1)	1	DpnII	Krietenstein N et al. (2020)
+4DNFITH978XV	stem cell derived cell line	H1-hESC	1	NcoI	Correspondence: job.dekker@umassmed.edu
+4DNFIBKJ25D4	immortalized cell line	GM12878	1	NcoI	Rao SS et al. (2014)
+4DNFI43WFPJ5	primary cell	192627	1	MboI	Rao SS et al. (2014)
+4DNFI7QWAH57	immortalized cell line	GM12878	1	HindIII	Rao SS et al. (2014)
+4DNFIRMZ7QTE	primary cell	HUVEC cell	1	MboI	Rao SS et al. (2014)
+4DNFIT64Q7A3	immortalized cell line	HAP-1	1	MboI	Haarhuis JHI et al. (2017)
+4DNFIIV4M7TF	immortalized cell line	GM12878	1	MboI	Rao SS et al. (2014)
+
