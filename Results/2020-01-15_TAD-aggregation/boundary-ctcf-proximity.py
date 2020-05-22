@@ -9,6 +9,7 @@ import os.path as path
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import sys
 
 # ==============================================================================
 # Functions
@@ -36,27 +37,8 @@ def distance(p: pd.Series) -> pd.Series:
 # ==============================================================================
 # Data
 # ==============================================================================
-TUMOUR_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
-    sep="\t"
-)
-TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
-
-BENIGN_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
-    sep="\t"
-)
-BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
-
-CELL_LINE_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
-    sep="\t"
-)
-
-TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG["Sample ID"]]
-BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
-CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
-ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
+metadata = pd.read_csv("config.tsv", sep="\t")
+ALL_SAMPLES = metadata["SampleID"].tolist()
 
 # load boundary-CTCF peak pairings for each sample
 pairs = pd.concat(
