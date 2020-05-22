@@ -17,34 +17,15 @@ from bpscore import bpscore
 # Constants
 # ==============================================================================
 TAD_DIR = path.join("resolved-TADs", "separated-TADs")
-WINDOWS = list(range(3, 41))
+WINDOWS = list(range(3, 25))
 # exclude chrY from comparisons, to account for female-derived cell lines
 CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
 # ==============================================================================
 # Data
 # ==============================================================================
-TUMOUR_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
-    sep="\t"
-)
-TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
-
-BENIGN_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
-    sep="\t"
-)
-BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
-
-CELL_LINE_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
-    sep="\t"
-)
-
-TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", "Sample ID"]]
-BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
-CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
-ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
+metadata = pd.read_csv("config.tsv", sep="\t")
+ALL_SAMPLES = metadata["SampleID"].tolist()
 
 # load TADs for each patient
 tads = {
