@@ -39,6 +39,10 @@ gg = (
     + guides(fill = FALSE)
     + scale_x_discrete(
         breaks = c(FALSE, TRUE),
+        labels = c("No", "Yes")
+    )
+    + scale_fill_manual(
+        breaks = c(FALSE, TRUE),
         labels = c("No", "Yes"),
         values = c("#BDBDBD", "#000000")
     )
