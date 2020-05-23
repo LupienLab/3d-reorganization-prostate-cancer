@@ -148,16 +148,18 @@ tested_genes_cut <- list(
     "thresholded" = rbindlist(lapply(
         cut_levels,
         function(l) {
-            tested_genes[Abs_Thresh == TRUE, level == l, by = "test_ID"][,
+            tested_genes[, level == l, by = c("test_ID", "Abs_Thresh")][,
                 .(
                     level = factor(l, levels = rev(cut_levels), ordered = TRUE),
                     N = sum(V1)
                 ),
-                by = "test_ID"
+                by = c("test_ID", "Abs_Thresh")
             ]
         }
     ))
 )
+tested_genes_cut$thresholded[Abs_Thresh == FALSE, N := 0]
+tested_genes_cut$thresholded <- tested_genes_cut$thresholded[, .(N = sum(N)), by = c("test_ID", "level")]
 tested_genes_cut$all[, Frac := apply(
     .SD,
     1,
@@ -210,9 +212,22 @@ test_exprs_change_groups <- list(
         ]
     ))
 )
+# some TADs contain now genes with non-negligible read counts, and are removed from the above calculation
+# too keep them displayed, add their sections back in
+lowly_expressed_test_IDs <- setdiff(test_exprs_change_groups$all[, test_ID], test_exprs_change_groups$thresholded[, test_ID])
+test_exprs_change_groups$thresholded <- rbindlist(list(
+    test_exprs_change_groups$thresholded,
+    data.table(
+        test_ID = lowly_expressed_test_IDs,
+        majority = "Lowly expressed"
+    )
+))
 
+# merge this majority data back to the test_ID information
 tested_genes_cut$all <- merge(tested_genes_cut$all, test_exprs_change_groups$all, by = "test_ID")
 tested_genes_cut$thresholded <- merge(tested_genes_cut$thresholded, test_exprs_change_groups$thresholded, by = "test_ID")
+# for lowly-expressed genes, set Frac to 0 to avoid plotting errors
+tested_genes_cut$thresholded[is.na(Frac), Frac := 0]
 
 # set of tests where at least 1 gene passes both thresholds
 tests_with_some_deg <- tested_genes[
@@ -438,9 +453,9 @@ gg_fc_thresh_affecting_tad <- ggplotGrob(
         name = "Alters\nTADs"
     )
     + scale_fill_manual(
-        limits = c(TRUE, FALSE),
-        labels = c("Yes", "No"),
-        values = c("#000000", "#BDBDBD"),
+        limits = c(FALSE, TRUE),
+        labels = c("No", "Yes"),
+        values = c("#BDBDBD", "#000000"),
         name = "SV affects TAD boundaries"
     )
     + guides(fill = FALSE)
@@ -467,7 +482,6 @@ gg_fc_thresh <- grid.arrange(
     nrow = 3,
     heights = c(0.2, 0.1, 0.7)
 )
-
 savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded")
 
 gg_fc_diff <- (
