@@ -190,7 +190,7 @@ test_exprs_change_groups <- list(
                 majority = factor(
                     level,
                     levels = cut_levels,
-                    labels = c("Large descreases", "Small decreases", "Small increases", "Large increases"),
+                    labels = c("Large decreases", "Small decreases", "Small increases", "Large increases"),
                     ordered = TRUE
                 )
             )
@@ -403,12 +403,12 @@ gg_fc_thresh_bars <- ggplotGrob(
     + labs(x = "Breakpoints", y = "Expressed Genes in TAD (%)")
     + scale_fill_manual(
         name = "Expression",
-        labels = c(
+        labels = rev(c(
             "> 2 fold decrease",
             "< 2 fold decrease",
             "< 2 fold increase",
             "> 2 fold increase"
-        ),
+        )),
         values = c(
             "#4CC4FF",
             "#CCFFFF",
