@@ -30,7 +30,7 @@ exprs <- fread(
         "Data",
         "External",
         "CPC-GENE",
-        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv"
+        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv"
     ),
     sep = "\t",
     header = TRUE
@@ -98,6 +98,17 @@ tested_genes[, Pass_Thresh := (Fold_Thresh & Abs_Thresh)]
 
 # get genes associated with the translocation
 insertion_site_genes <- tested_genes[test_ID == 44]
+# transform into z-scores
+insertion_site_genes_z <- insertion_site_genes[,
+    .(chr, start, end, name, strand, EnsemblID_short, apply(.SD, 2, function(s) (s - nonmut_mean) / nonmut_sd)),
+    .SDcols = colnames(insertion_site_genes)[grepl("PCa", colnames(insertion_site_genes))]
+]
+long_insertion_site_genes_z <- melt(
+    insertion_site_genes_z,
+    id.vars = c("chr", "start", "end", "name", "strand", "EnsemblID_short"),
+    variable.name = "SampleID",
+    value.name = "z"
+)
 
 # get genes in the translocated segment
 ERG_END <- exprs[Symbol == "ERG", end]
@@ -118,32 +129,39 @@ all_relevant_genes <- rbindlist(list(insertion_site_genes, translocated_genes), 
 # ==============================================================================
 # plots associated with the T2E translocation from PCa13848
 gg_insertion_site <- (
-    ggplot(data = insertion_site_genes)
-    + geom_point(aes(
-        x = factor(start, ordered = TRUE, levels = sort(start)),
-        y = log2fold,
-        colour = Abs_Thresh
-    ))
-    + scale_x_discrete(
-        breaks = insertion_site_genes[, start],
-        labels = insertion_site_genes[, name]
+    ggplot()
+    + geom_point(
+        data = long_insertion_site_genes_z[SampleID != "PCa13848"],
+        aes(x = name, y = z),
+        position = position_jitter(width = 0.2),
+        colour = "#DBDBDB"
+    )
+    + geom_boxplot(
+        data = long_insertion_site_genes_z[SampleID != "PCa13848"],
+        aes(x = name, y = z),
+        outlier.shape = NA,
+        alpha = 0.7
+    )
+    + geom_point(
+        data = long_insertion_site_genes_z[SampleID == "PCa13848"],
+        aes(x = name, y = z),
+        colour = "#FF6347",
+        size = 4,
+        shape = "diamond"
     )
     + scale_y_continuous(
-        limits = c(-10, 4),
-        breaks = c(-10, -7, -4, -1, 0, 1, 4)
-    )
-    + scale_colour_manual(
-        breaks = c(TRUE, FALSE),
-        values = c("#bdbdbd", "#000000")
+        limits = c(-2, 5.5),
+        breaks = seq(-2, 5)
     )
     + labs(x = "Gene", y = expression(log[2] * " Expression Fold Change"))
+    + coord_flip()
     + theme_minimal()
     + theme(
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
         panel.grid.minor = element_blank()
     )
 )
-savefig(gg_insertion_site, "Plots/sv-disruption/translocation.insertion-site")
+savefig(gg_insertion_site, "Plots/sv-disruption/translocation.insertion-site", height = 12, width = 10)
 
 gg_translocated_segment <- (
     ggplot(data = translocated_genes)
