@@ -405,9 +405,10 @@ savefig(gg_cov, file.path(PLOT_DIR, "tad-size.coeff-var"))
 
 # plot distances between TADs of different samples across window sizes
 gg_bpscore = (
-    ggplot(data = bpscore[s1 != s2 & w <= MAX_WINDOW])
+    ggplot(data = bpscore[s1 != s2 & w <= MAX_WINDOW & !grepl("(4DN|SRR|BP)", s1) & !grepl("(4DN|SRR|BP)", s2)])
     + geom_point(
-        aes(x = w, y = 1 - dist, colour = Colour),
+        # aes(x = w, y = 1 - dist, colour = Colour),
+        aes(x = w, y = 1 - dist, colour = w),
         position = position_jitter(width = 0.2, height = 0)
     )
     + geom_boxplot(
@@ -422,10 +423,11 @@ gg_bpscore = (
         limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
-    + scale_colour_manual(
-        limits = bpscore[, unique(Colour)],
-        values = bpscore[, unique(Colour)]
-    )
+    # + scale_colour_manual(
+    #     limits = bpscore[, unique(Colour)],
+    #     values = bpscore[, unique(Colour)]
+    # )
+    + scale_colour_viridis_c()
     + guides(colour = FALSE)
     + theme_minimal()
 )
