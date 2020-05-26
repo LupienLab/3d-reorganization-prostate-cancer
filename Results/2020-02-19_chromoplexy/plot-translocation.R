@@ -131,20 +131,28 @@ all_relevant_genes <- rbindlist(list(insertion_site_genes, translocated_genes), 
 gg_insertion_site <- (
     ggplot()
     + geom_point(
-        data = long_insertion_site_genes_z[SampleID != "PCa13848"],
-        aes(x = name, y = z),
+        data = long_insertion_site_genes_z[SampleID != "PCa13848" & !is.na(z)],
+        aes(
+            # order columns according to z of mutated sample
+            x = factor(
+                name,
+                ordered = TRUE,
+                levels = long_insertion_site_genes_z[SampleID == "PCa13848"][order(z), unique(name)]
+            ),
+            y = z
+        ),
         position = position_jitter(width = 0.2),
         colour = "#DBDBDB"
     )
     + geom_boxplot(
-        data = long_insertion_site_genes_z[SampleID != "PCa13848"],
+        data = long_insertion_site_genes_z[SampleID != "PCa13848" & !is.na(z)],
         aes(x = name, y = z),
         outlier.shape = NA,
         alpha = 0.7
     )
     + geom_point(
-        data = long_insertion_site_genes_z[SampleID == "PCa13848"],
-        aes(x = name, y = z),
+        data = long_insertion_site_genes_z[SampleID == "PCa13848" & !is.na(z)],
+        aes(x = name, y = z, colour = abs(z) >= 1),
         colour = "#FF6347",
         size = 4,
         shape = "diamond"
