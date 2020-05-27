@@ -229,29 +229,24 @@ tested_genes_cut$thresholded <- merge(tested_genes_cut$thresholded, test_exprs_c
 # for lowly-expressed genes, set Frac to 0 to avoid plotting errors
 tested_genes_cut$thresholded[is.na(Frac), Frac := 0]
 
+# add information about whether the SV altered a TAD or not
+tested_genes_cut$all <- merge(
+    x = tested_genes_cut$all,
+    y = htest_tad[, .(test_ID, altered_TAD)],
+    by = "test_ID"
+)
+tested_genes_cut$thresholded <- merge(
+    x = tested_genes_cut$thresholded,
+    y = htest_tad[, .(test_ID, altered_TAD)],
+    by = "test_ID"
+)
+
 # set of tests where at least 1 gene passes both thresholds
 tests_with_some_deg <- tested_genes[
-    Pass_Thresh == TRUE,
+    Abs_Thresh == TRUE,
     .N,
-    by = test_ID
-]$test_ID
-
-# calculate percentage of genes in these TADs
-tests_altered_genes <- data.table(
-    test_ID = tests_with_some_deg,
-    n_altered_genes = tested_genes[
-        Pass_Thresh == TRUE,
-        .N,
-        by = test_ID
-    ]$N,
-    n_genes = tested_genes[
-        test_ID %in% tests_with_some_deg,
-        .N,
-        by = test_ID
-    ]$N
-)
-tests_altered_genes[, pct_genes := n_altered_genes / n_genes]
-print(tests_altered_genes[, summary(pct_genes)])
+    by = c("test_ID", "Fold_Thresh")
+]
 
 # ==============================================================================
 # Plots
@@ -305,24 +300,29 @@ gg_z <- (
 )
 savefig(gg_z, "Plots/sv-disruption/expression.z", width = 40)
 
+panel_height_ratios <- c(9, 1, 1)
 gg_fc_bars <- ggplotGrob(
     ggplot(data = tested_genes_cut$all)
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
-    + labs(x = "Breakpoints", y = "Genes in TAD (%)")
+    + labs(y = "Genes in TAD (%)")
+    + scale_x_discrete(
+        name = "Breakpoints",
+        position = "top"
+    )
     + scale_fill_manual(
         name = "Expression",
-        labels = c(
+        labels = rev(c(
             "> 2 fold decrease",
             "< 2 fold decrease",
             "< 2 fold increase",
             "> 2 fold increase"
-        ),
+        )),
         values = c(
             "#4CC4FF",
-            "#CCFFFF",
-            "#FFFFCC",
+            "#E1F5FF",
+            "#FFE6B5",
             "#FFC44C"
         )
     )
@@ -332,13 +332,18 @@ gg_fc_bars <- ggplotGrob(
         strip.text.x = element_blank(),
         axis.text.x = element_blank(),
         panel.grid.major.x = element_blank(),
-        legend.position = "bottom"
+        legend.position = "top"
     )
 )
 gg_fc_ngenes <- ggplotGrob(
     ggplot(data = tested_genes_cut$all[, .(N = sum(N)), keyby = c("test_ID", "majority")])
     + geom_path(aes(x = factor(test_ID), y = N, group = majority))
-    + labs(x = NULL, y = "# Genes")
+    + labs(x = NULL)
+    + scale_y_continuous(
+        name = "Genes",
+        limits = c(0, 120),
+        breaks = c(0, 60, 120)
+    )
     + facet_grid(. ~ majority, scales = "free_x", space = "free")
     + theme_minimal()
     + theme(
@@ -348,13 +353,7 @@ gg_fc_ngenes <- ggplotGrob(
     )
 )
 gg_fc_affecting_tad <- ggplotGrob(
-    ggplot(
-        data = merge(
-            x = tested_genes_cut$all,
-            y = htest_tad[, .(test_ID, altered_TAD)],
-            by = "test_ID"
-        )
-    )
+    ggplot(data = tested_genes_cut$all)
     + geom_col(aes(x = factor(test_ID), y = 1, fill = altered_TAD))
     + labs(x = NULL)
     + scale_y_continuous(
@@ -386,11 +385,11 @@ gg_fc_bars$widths[2:5] <- as.list(maxWidth)
 gg_fc_ngenes$widths[2:5] <- as.list(maxWidth)
 gg_fc_affecting_tad$widths[2:5] <- as.list(maxWidth)
 gg_fc <- grid.arrange(
-    gg_fc_ngenes,
-    gg_fc_affecting_tad,
     gg_fc_bars,
+    gg_fc_affecting_tad,
+    gg_fc_ngenes,
     nrow = 3,
-    heights = c(0.2, 0.1, 0.7)
+    heights = panel_height_ratios / sum(panel_height_ratios)
 )
 savefig(gg_fc, "Plots/sv-disruption/expression.fold-change")
 
@@ -400,7 +399,11 @@ gg_fc_thresh_bars <- ggplotGrob(
     + geom_col(
         aes(x = factor(test_ID), y = 100 * Frac, fill = level)
     )
-    + labs(x = "Breakpoints", y = "Expressed Genes in TAD (%)")
+    + labs(y = "Expressed Genes in TAD (%)")
+    + scale_x_discrete(
+        name = "Breakpoints",
+        position = "top"
+    )
     + scale_fill_manual(
         name = "Expression",
         labels = rev(c(
@@ -411,8 +414,8 @@ gg_fc_thresh_bars <- ggplotGrob(
         )),
         values = c(
             "#4CC4FF",
-            "#CCFFFF",
-            "#FFFFCC",
+            "#E1F5FF",
+            "#FFE6B5",
             "#FFC44C"
         )
     )
@@ -422,7 +425,7 @@ gg_fc_thresh_bars <- ggplotGrob(
         strip.text.x = element_blank(),
         axis.text.x = element_blank(),
         panel.grid.major.x = element_blank(),
-        legend.position = "bottom"
+        legend.position = "top"
     )
 )
 gg_fc_thresh_ngenes <- ggplotGrob(
@@ -439,11 +442,7 @@ gg_fc_thresh_ngenes <- ggplotGrob(
 )
 gg_fc_thresh_affecting_tad <- ggplotGrob(
     ggplot(
-        data = merge(
-            x = tested_genes_cut$thresholded,
-            y = htest_tad[, .(test_ID, altered_TAD)],
-            by = "test_ID"
-        )
+        data = tested_genes_cut$thresholded)
     )
     + geom_col(aes(x = factor(test_ID), y = 1, fill = altered_TAD))
     + labs(x = NULL)
@@ -476,11 +475,11 @@ gg_fc_thresh_bars$widths[2:5] <- as.list(maxWidth_thresh)
 gg_fc_thresh_ngenes$widths[2:5] <- as.list(maxWidth_thresh)
 gg_fc_thresh_affecting_tad$widths[2:5] <- as.list(maxWidth_thresh)
 gg_fc_thresh <- grid.arrange(
-    gg_fc_thresh_ngenes,
-    gg_fc_thresh_affecting_tad,
     gg_fc_thresh_bars,
+    gg_fc_thresh_affecting_tad,
+    gg_fc_thresh_ngenes,
     nrow = 3,
-    heights = c(0.2, 0.1, 0.7)
+    heights = panel_height_ratios / sum(panel_height_ratios)
 )
 savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded")
 
