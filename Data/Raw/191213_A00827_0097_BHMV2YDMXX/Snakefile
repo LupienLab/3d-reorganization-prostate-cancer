@@ -1,24 +1,30 @@
-import pandas as pd
-import os.path as path
-
 # =============================================================================
 # Configuration
 # =============================================================================
+import pandas as pd
+import os.path as path
+
 CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
-CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith("#"), :]
 
 REPORT_DIR = "Reports"
 FASTQ_DIR = "FASTQs"
 ALIGN_DIR = "Aligned"
 CONTACT_DIR = "Contacts"
 
-HICUP_DIGEST_DIR = path.join("..", "HiCUP_digested")
-
 SAMPLES = CONFIG["Sample"].tolist()
 READS = [1, 2]
 LANES = [1, 2]
+
+HICUP_DIGEST_DIR = path.join("..", "HiCUP_digested")
 BWT2_IDX = "/cluster/tools/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome"
+
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+RESOLUTIONS = [
+    2000, 3000, 4000, 5000,
+    10000, 20000, 30000, 40000, 50000,
+    100000, 200000, 300000, 400000, 500000,
+    1000000, 2000000, 3000000, 4000000, 5000000
+]
 
 wildcard_constraints:
     sample = "[A-Za-z0-9-]+",
@@ -103,6 +109,7 @@ rule hicup_map:
     input:
         r1 = path.join(FASTQ_DIR, "{sample}_R1.trunc.fastq.gz"),
         r2 = path.join(FASTQ_DIR, "{sample}_R2.trunc.fastq.gz"),
+        digest = path.join(HICUP_DIGEST_DIR, "Digest_hg38_MboI_None.txt")
     output:
         path.join(ALIGN_DIR, "{sample}_R1_2.pair.bam")
     params:
@@ -152,6 +159,48 @@ rule repair_header:
         temp(path.join(ALIGN_DIR, "{sample}.hicup.bam")),
     shell:
         "samtools view -H {input} | sed 's/HiCUP Deduplicator/ID\:HiCUP Deduplicator/' | samtools reheader -P - {input} > {output}"
+
+# Cooler
+# -----------------------------------------------------------------------------
+rule create_pairs:
+    input:
+        genome = "hg38.sizes.txt",
+        bam = path.join(ALIGN_DIR, "{sample}.hicup.name-sorted.bam"),
+    output:
+        temp(path.join(CONTACT_DIR, "{sample}.pairs.gz")),
+    shell:
+        "pairtools parse -c {input.genome} --assembly hg38 -o {output} {input.bam}"
+
+rule create_cooler:
+    input:
+        genome = "hg38.sizes.txt",
+        pairs = path.join(CONTACT_DIR, "{sample}.pairs.gz")
+    output:
+        temp(path.join(CONTACT_DIR, "{sample}.cool")),
+    params:
+        "--assembly hg38 -c1 2 -p1 3 -c2 4 -p2 5"
+    shell:
+        "cooler cload pairs {params} {input.genome}:1000 {input.pairs} {output}"
+
+rule balance:
+    input:
+        path.join(CONTACT_DIR, "{sample}.cool")
+    output:
+        path.join(REPORT_DIR, "{sample}.balanced_report.txt")
+    shell:
+        "cooler balance {input} >> {output} 2>&1"
+
+rule adjust_res:
+    input:
+        path.join(CONTACT_DIR, "{sample}.cool")
+    output:
+        path.join(CONTACT_DIR, "{sample}.mcool")
+    params:
+        "--balance -p 8 -r {}".format(",".join([str(r) for r in RESOLUTIONS]))
+    shell:
+        "cooler zoomify {params} -o {output} {input}"
+
+
 
 # Miscellaneous
 # -----------------------------------------------------------------------------

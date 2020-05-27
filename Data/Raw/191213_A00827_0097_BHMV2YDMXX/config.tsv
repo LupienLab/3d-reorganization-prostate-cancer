@@ -1,7 +1,7 @@
 Sample	Sample_Index_Number	Lanes	Mates	Include
 Benign-Prostate-1595983	1	2,1	R2,R1	Yes
 Benign-Prostate-1648133	2	2,1	R2,R1	Yes
-PCa13848	6	2,1	R2,R1	No
-Benign-Prostate-3330581	5	2,1	R2,R1	Yes
 Benign-Prostate-1664855	3	2,1	R2,R1	Yes
 Benign-Prostate-3320942	4	2,1	R2,R1	Yes
+Benign-Prostate-3330581	5	2,1	R2,R1	Yes
+PCa13848	6	2,1	R2,R1	No
