@@ -1,0 +1,24 @@
+__default__:
+    params: "--export=ALL -p long --mem=12G"
+
+fastqc:
+    params: "--export=ALL -p all --mem=16G"
+
+hicup_truncate:
+    params: "--export=ALL -p long --mem=20G -c 8"
+
+hicup_map:
+    params: "--export=ALL -p veryhimem --mem=100G -c 8 -t 5-00:00:00"
+
+hicup_filter:
+    params: "--export=ALL -p long --mem=20G -c 8"
+
+hicup_dedup:
+    params: "--export=ALL -p himem --mem=30G -c 8"
+
+sort_bam:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00"
+
+sort_bam_name:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00"
+

@@ -1,0 +1,2 @@
+File	Read_pairs_processed	Unique_di-tags	Cis_<10kbp_of_uniques	Cis_>10kbp_of_uniques	Trans_of_uniques
+Benign-Prostate-1648133_R1_2.filt.bam	256877053	213317031	8606393	111836420	92874218
