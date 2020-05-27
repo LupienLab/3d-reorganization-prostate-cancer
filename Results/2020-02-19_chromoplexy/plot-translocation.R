@@ -98,16 +98,19 @@ tested_genes[, Pass_Thresh := (Fold_Thresh & Abs_Thresh)]
 
 # get genes associated with the translocation
 insertion_site_genes <- tested_genes[test_ID == 44]
-# transform into z-scores
+# transform into log2fold change for each sample, compared to mean
 insertion_site_genes_z <- insertion_site_genes[,
-    .(chr, start, end, name, strand, EnsemblID_short, apply(.SD, 2, function(s) (s - nonmut_mean) / nonmut_sd)),
+    .(
+        chr, start, end, name, strand, EnsemblID_short, Fold_Thresh,
+        apply(.SD, 2, function(s) log2((s + offset) / (nonmut_mean + offset)))
+    ),
     .SDcols = colnames(insertion_site_genes)[grepl("PCa", colnames(insertion_site_genes))]
 ]
 long_insertion_site_genes_z <- melt(
     insertion_site_genes_z,
-    id.vars = c("chr", "start", "end", "name", "strand", "EnsemblID_short"),
+    id.vars = c("chr", "start", "end", "name", "strand", "EnsemblID_short", "Fold_Thresh"),
     variable.name = "SampleID",
-    value.name = "z"
+    value.name = "log2fold"
 )
 
 # get genes in the translocated segment
@@ -131,37 +134,42 @@ all_relevant_genes <- rbindlist(list(insertion_site_genes, translocated_genes), 
 gg_insertion_site <- (
     ggplot()
     + geom_point(
-        data = long_insertion_site_genes_z[SampleID != "PCa13848" & !is.na(z)],
+        data = long_insertion_site_genes_z[SampleID != "PCa13848"],
         aes(
             # order columns according to z of mutated sample
             x = factor(
                 name,
                 ordered = TRUE,
-                levels = long_insertion_site_genes_z[SampleID == "PCa13848"][order(z), unique(name)]
+                levels = long_insertion_site_genes_z[SampleID == "PCa13848"][order(log2fold), unique(name)]
             ),
-            y = z
+            y = log2fold
         ),
         position = position_jitter(width = 0.2),
         colour = "#DBDBDB"
     )
     + geom_boxplot(
-        data = long_insertion_site_genes_z[SampleID != "PCa13848" & !is.na(z)],
-        aes(x = name, y = z),
+        data = long_insertion_site_genes_z[SampleID != "PCa13848"],
+        aes(x = name, y = log2fold),
         outlier.shape = NA,
         alpha = 0.7
     )
     + geom_point(
-        data = long_insertion_site_genes_z[SampleID == "PCa13848" & !is.na(z)],
-        aes(x = name, y = z, colour = abs(z) >= 1),
-        colour = "#FF6347",
+        data = long_insertion_site_genes_z[SampleID == "PCa13848"],
+        aes(x = name, y = log2fold, colour = Fold_Thresh),
         size = 4,
         shape = "diamond"
     )
     + scale_y_continuous(
-        limits = c(-2, 5.5),
-        breaks = seq(-2, 5)
+        limits = c(-9, 3.5),
+        breaks = seq(-9, 4, by = 2),
+        name = expression(log[2] * " Expression Fold Change")
     )
-    + labs(x = "Gene", y = expression(log[2] * " Expression Fold Change"))
+    + scale_colour_manual(
+        breaks = c(FALSE, TRUE),
+        values = c("#BDBDBD", "#FF6347")
+    )
+    + labs(x = "Gene")
+    + guides(colour = FALSE)
     + coord_flip()
     + theme_minimal()
     + theme(
