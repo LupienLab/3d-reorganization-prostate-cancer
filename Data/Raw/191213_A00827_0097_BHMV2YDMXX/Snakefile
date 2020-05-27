@@ -5,6 +5,7 @@ import pandas as pd
 import os.path as path
 
 CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
 
 REPORT_DIR = "Reports"
 FASTQ_DIR = "FASTQs"
@@ -48,6 +49,10 @@ rule all:
         ),
         expand(
             path.join(ALIGN_DIR, "{sample}.hicup.name-sorted.bam"),
+            sample=SAMPLES,
+        ),
+        expand(
+            path.join(CONTACT_DIR, "{sample}.mcool"),
             sample=SAMPLES,
         ),
 
