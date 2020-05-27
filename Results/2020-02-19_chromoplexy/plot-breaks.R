@@ -102,6 +102,13 @@ fwrite(
 
 breakpoints_by_chrom = breakpoints[, .N, keyby = c("SampleID", "chr")]
 breakpoints_by_chrom[, N_per_mb := apply(.SD, 1, function(r) {as.numeric(r["N"]) / hg38[Chrom == r["chr"], (Length / 10^6)]})]
+
+# merge T2E information
+breakpoints_by_chrom <- merge(
+    x = breakpoints_by_chrom,
+    y = metadata[, .(SampleID, T2E_Status = get("T2E Status"))],
+    by = "SampleID"
+)
 fwrite(
     breakpoints_by_chrom[order(SampleID, chr)],
     "Statistics/breakpoints.by-chrom.tsv",
@@ -280,7 +287,7 @@ savefig(gg_breakpoints, "Plots/breakpoint-stats/sv-counts")
 gg_breakpoints_per_chrom = (
     ggplot(data = breakpoints_by_chrom)
     + geom_col(
-        aes(x = chr, y = N_per_mb, fill = SampleID),
+        aes(x = chr, y = N_per_mb, fill = T2E_Status),
         position = "stack",
         colour = "#000000"
     )
@@ -291,10 +298,10 @@ gg_breakpoints_per_chrom = (
         drop = FALSE
     )
     + scale_fill_manual(
-        breaks = metadata[, SampleID],
-        labels = metadata[, get("Patient ID")],
-        values = metadata[, Colour],
-        name = "Patient"
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+"),
+        values = c("#418B3D", "#3215C1"),
+        name = "T2E Status"
     )
     + theme_minimal()
     + theme(
