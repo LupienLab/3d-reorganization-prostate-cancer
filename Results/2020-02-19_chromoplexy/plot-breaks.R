@@ -93,8 +93,6 @@ breakpoints_binned = rbindlist(lapply(
 # count all breakpoints in each bin
 breakpoints_summed = breakpoints_binned[, sum(Count), by = c("SampleID", "chr", "Bin")]
 colnames(breakpoints_summed) = c("SampleID", "chr", "Bin", "Count")
-
-
 fwrite(
     breakpoints_summed[order(SampleID, chr, Bin)],
     "Statistics/breakpoints.binned.tsv",
@@ -287,6 +285,11 @@ gg_breakpoints_per_chrom = (
         colour = "#000000"
     )
     + labs(x = NULL, y = "Breakpoints / Mb")
+    + scale_x_discrete(
+        breaks = CHRS,
+        labels = CHRS,
+        drop = FALSE
+    )
     + scale_fill_manual(
         breaks = metadata[, SampleID],
         labels = metadata[, get("Patient ID")],
@@ -296,7 +299,7 @@ gg_breakpoints_per_chrom = (
     + theme_minimal()
     + theme(
         panel.grid.major.x = element_blank(),
-        axis.text.x = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
         legend.position = "bottom"
     )
 )
