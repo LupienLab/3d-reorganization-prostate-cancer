@@ -507,7 +507,7 @@ gg_t2e_components = (
     + scale_colour_manual(
         breaks = c("No", "Yes"),
         labels = c("T2E-", "T2E+"),
-        values = c("#2A363B", "#019875")
+        values = c("#418B3D", "#3215C1")
     )
     + guides(colour = FALSE)
     + ylim(0, 40)
