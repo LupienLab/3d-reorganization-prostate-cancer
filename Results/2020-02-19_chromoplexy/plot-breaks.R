@@ -434,10 +434,10 @@ gg_inter_intra_t2e_comp = (
         breaks = c("Yes", "No"),
         labels = c("T2E+", "T2E-")
     )
-    + scale_fill_manual(
-        breaks = c("Interchromosomal", "Intrachromosomal"),
-        labels = c("Inter-chromosomal", "Intra-chromosomal"),
-        values = c("#3F3FFF", "#FF7F7F"),
+    + scale_colour_manual(
+        breaks = c("No", "Yes"),
+        labels = c("T2E-", "T2E+"),
+        values = c("#418B3D", "#3215C1"),
         name = ""
     )
     + labs(x = NULL, y = "Breakpoint Pairs")
