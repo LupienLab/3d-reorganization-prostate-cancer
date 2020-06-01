@@ -13,7 +13,7 @@ chr4	69400000	69900000	chr4	78500000	79000000	.	160.765	+	-	100kb	UNKNOWN	Multip
 chr8	56120000	56210000	chr8	138610000	138720000	.	191.54	+	-	10kb	UNKNOWN	One half of the event detected in row 14
 chr8	56220000	56260000	chr8	138140000	138590000	.	234.704	-	-	10kb	UNKNOWN	One half of the event detected in row 13
 chr15	46800000	47200000	chr15	70800000	71000000	.	58.0215	-	+	100kb	UNKNOWN	One half of the event detected in row 16; due to its shape, this almost certainly involves and event on another chromosome
-chr15	47000000	48100000	chr15	71500000	71700000	.	123.888	+	-	100kb	UNKNOWN	One half of the event detected in row 16; due to its shape, this almost certainly involves and event on another chromosome
+chr15	47000000	48100000	chr15	71500000	71700000	.	123.888	+	-	100kb	UNKNOWN	One half of the event detected in row 15; due to its shape, this almost certainly involves and event on another chromosome
 chr19	15760000	15920000	chr7	140630000	140780000	.	327.621	-	+	10kb	BND	Possible chromosome arm swap between 7q and 19p; one half of the event detected in row 18
 chr19	15920000	16040000	chr7	140790000	141040000	.	336.678	-	-	10kb	BND	Possible chromosome arm swap between 7q and 19p; one half of the event detected in row 18
 chrY	13500000	15300000	chrY	15900000	17400000	.	162.35	+	-	100kb	ARTEFACT	Sparsity

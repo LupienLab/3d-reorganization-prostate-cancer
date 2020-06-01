@@ -22,7 +22,7 @@ genes[, score := NULL]
 exprs <- fread(
     file.path(
         "..", "..", "Data", "External", "CPC-GENE",
-        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv"
+        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv"
     ),
     sep = "\t",
     header = TRUE

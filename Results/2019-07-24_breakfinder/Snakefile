@@ -34,8 +34,9 @@ rule all:
             sample=SAMPLES
         ),
         expand(
-            path.join(BREAK_DIR, "Default", "{sample}.breaks.bed2ddb"),
-            sample=SAMPLES
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.{ext}"),
+            sample=SAMPLES,
+            ext=["beddb", "bed2ddb"],
         ),
         path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.tsv"),
         "translocation-disrupted-genes.tsv",
@@ -168,4 +169,15 @@ rule clodius_2d:
     shell:
         # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
         "clodius aggregate bedpe {params} -o {output} <(awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $4, $5, $6; print $4, $5, $6, $1, $2, $3}}' {input})"
+
+rule clodius_1d:
+    input:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.sorted.bed"),
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.beddb"),
+    params:
+        "-a hg38 --no-header"
+    shell:
+        # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedfile {params} -o {output} {input}"
 
