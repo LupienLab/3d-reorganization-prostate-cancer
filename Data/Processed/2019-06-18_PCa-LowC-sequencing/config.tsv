@@ -1,14 +1,19 @@
-Sample
-PCa13266
-PCa13848
-PCa14121
-PCa19121
-PCa3023
-PCa33173
-PCa40507
-PCa51852
-PCa53687
-PCa56413
-PCa57054
-PCa57294
-PCa58215
+Sample	Label	T2E	Include	Colour	Tissue_Status	Tissue_Source
+PCa13266	CPCG0268	No	Yes	#7F3C8D	Malignant	Primary
+PCa13848	CPCG0366	Yes	Yes	#11A579	Malignant	Primary
+PCa14121	CPCG0255	No	Yes	#3969AC	Malignant	Primary
+PCa19121	CPCG0258	Yes	Yes	#F2B701	Malignant	Primary
+PCa3023	CPCG0324	Yes	Yes	#E73F74	Malignant	Primary
+PCa33173	CPCG0246	No	Yes	#80BA5A	Malignant	Primary
+PCa40507	CPCG0342	Yes	Yes	#E68310	Malignant	Primary
+PCa51852	CPCG0336	Yes	Yes	#008695	Malignant	Primary
+PCa53687	CPCG0339	No	Yes	#CF1C90	Malignant	Primary
+PCa56413	CPCG0331	Yes	Yes	#F97B72	Malignant	Primary
+PCa57054	CPCG0346	Yes	No	#000000	Malignant	Primary
+PCa57294	CPCG0365	No	Yes	#4B4B8F	Malignant	Primary
+PCa58215	CPCG0345	No	Yes	#A5AA99	Malignant	Primary
+Benign-Prostate-1648133	BP1648133	No	Yes	#000000	Benign	Primary
+Benign-Prostate-1595983	BP1595983	No	Yes	#000000	Benign	Primary
+Benign-Prostate-3330581	BP3330581	No	Yes	#000000	Benign	Primary
+Benign-Prostate-1664855	BP1664855	No	Yes	#000000	Benign	Primary
+Benign-Prostate-3320942	BP3320942	No	Yes	#000000	Benign	Primary

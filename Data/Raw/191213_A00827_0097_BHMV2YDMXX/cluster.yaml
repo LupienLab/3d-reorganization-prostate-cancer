@@ -22,3 +22,12 @@ sort_bam:
 sort_bam_name:
     params: "--export=ALL -p himem --mem=30G -c 8 -t 2-00:00:00"
 
+create_pairs:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+create_cooler:
+    params: "--export=ALL -p himem --mem=30G -c 8"
+
+adjust_res:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 1-00:00:00"
+

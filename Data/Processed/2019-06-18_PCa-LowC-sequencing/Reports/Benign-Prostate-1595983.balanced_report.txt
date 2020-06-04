@@ -1,0 +1,27 @@
+INFO:cooler.cli.balance:Balancing "Contacts/Benign-Prostate-1595983.cool"
+INFO:cooler.balance:variance is 13652.5800755765
+INFO:cooler.balance:variance is 2094.8878055208647
+INFO:cooler.balance:variance is 448.884607897634
+INFO:cooler.balance:variance is 299.4749964143693
+INFO:cooler.balance:variance is 97.20068481459366
+INFO:cooler.balance:variance is 53.31533647574096
+INFO:cooler.balance:variance is 20.694050879402063
+INFO:cooler.balance:variance is 10.273539972038218
+INFO:cooler.balance:variance is 4.34109513408327
+INFO:cooler.balance:variance is 2.0554112948482093
+INFO:cooler.balance:variance is 0.9036182226642931
+INFO:cooler.balance:variance is 0.41854091793577747
+INFO:cooler.balance:variance is 0.18739700494610123
+INFO:cooler.balance:variance is 0.08592926954316282
+INFO:cooler.balance:variance is 0.03879795251339527
+INFO:cooler.balance:variance is 0.017709124438572477
+INFO:cooler.balance:variance is 0.008026633022484193
+INFO:cooler.balance:variance is 0.003656120594419847
+INFO:cooler.balance:variance is 0.0016600502467990904
+INFO:cooler.balance:variance is 0.0007554432512211246
+INFO:cooler.balance:variance is 0.00034328373517063064
+INFO:cooler.balance:variance is 0.00015615330961314398
+INFO:cooler.balance:variance is 7.098454572968115e-05
+INFO:cooler.balance:variance is 3.228346023045264e-05
+INFO:cooler.balance:variance is 1.4678005972903872e-05
+INFO:cooler.balance:variance is 6.674934310934667e-06
