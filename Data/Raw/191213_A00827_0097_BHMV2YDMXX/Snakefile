@@ -20,12 +20,6 @@ HICUP_DIGEST_DIR = path.join("..", "HiCUP_digested")
 BWT2_IDX = "/cluster/tools/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome"
 
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
-RESOLUTIONS = [
-    2000, 3000, 4000, 5000,
-    10000, 20000, 30000, 40000, 50000,
-    100000, 200000, 300000, 400000, 500000,
-    1000000, 2000000, 3000000, 4000000, 5000000
-]
 
 wildcard_constraints:
     sample = "[A-Za-z0-9-]+",
@@ -52,7 +46,11 @@ rule all:
             sample=SAMPLES,
         ),
         expand(
-            path.join(CONTACT_DIR, "{sample}.mcool"),
+            path.join(CONTACT_DIR, "{sample}.cool"),
+            sample=SAMPLES,
+        ),
+        expand(
+            path.join(REPORT_DIR, "{sample}.balanced_report.txt"),
             sample=SAMPLES,
         ),
 
@@ -194,17 +192,6 @@ rule balance:
         path.join(REPORT_DIR, "{sample}.balanced_report.txt")
     shell:
         "cooler balance {input} >> {output} 2>&1"
-
-rule adjust_res:
-    input:
-        path.join(CONTACT_DIR, "{sample}.cool")
-    output:
-        path.join(CONTACT_DIR, "{sample}.mcool")
-    params:
-        "--balance -p 8 -r {}".format(",".join([str(r) for r in RESOLUTIONS]))
-    shell:
-        "cooler zoomify {params} -o {output} {input}"
-
 
 
 # Miscellaneous

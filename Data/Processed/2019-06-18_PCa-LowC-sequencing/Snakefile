@@ -62,25 +62,25 @@ rule rulegraph:
 # ------------------------------------------------------------------------------
 rule merge_coolers_tumour:
     input:
-        path.join(RAW_DATA_DIR, BATCHES["Malignant"][0], "Contacts", "{sample}.mcool"),
-        path.join(RAW_DATA_DIR, BATCHES["Malignant"][1], "Contacts", "{sample}.mcool"),
+        path.join(RAW_DATA_DIR, BATCHES["Malignant"][0], "Contacts", "{sample}.cool"),
+        path.join(RAW_DATA_DIR, BATCHES["Malignant"][1], "Contacts", "{sample}.cool"),
     output:
-        path.join(CONTACT_DIR, "{sample}.cool"),
+        temp(path.join(CONTACT_DIR, "{sample}.cool")),
     wildcard_constraints:
         sample="PCa\d+"
     shell:
-        "cooler merge {output} {input[0]}::/resolutions/1000 {input[1]}::/resolutions/1000"
+        "cooler merge {output} {input[0]} {input[1]}"
 
 rule merge_coolers_benign:
     input:
         path.join(RAW_DATA_DIR, BATCHES["Benign"][0], "Contacts", "{sample}.mcool"),
         path.join(RAW_DATA_DIR, BATCHES["Benign"][1], "Contacts", "{sample}.mcool"),
     output:
-        path.join(CONTACT_DIR, "{sample}.cool"),
+        temp(path.join(CONTACT_DIR, "{sample}.cool")),
     wildcard_constraints:
         sample="Benign-Prostate-\d+"
     shell:
-        "cooler merge {output} {input[0]}::/resolutions/1000 {input[1]}::/resolutions/1000"
+        "cooler merge {output} {input[0]} {input[1]}"
 
 rule balance:
     input:

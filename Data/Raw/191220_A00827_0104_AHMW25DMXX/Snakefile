@@ -10,6 +10,7 @@ CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith("#"), :]
 REPORT_DIR = "Reports"
 FASTQ_DIR = "FASTQs"
 ALIGN_DIR = "Aligned"
+CONTACT_DIR = "Contacts"
 
 SAMPLES = CONFIG["Sample"].tolist()
 READS = [1, 2]
@@ -36,6 +37,14 @@ rule all:
             path.join(ALIGN_DIR, "{sample}.hicup.{sort}.bam"),
             sample=SAMPLES,
             sort=["name-sorted", "sorted"],
+        ),
+        expand(
+            path.join(CONTACT_DIR, "{sample}.cool"),
+            sample=SAMPLES,
+        ),
+        expand(
+            path.join(REPORT_DIR, "{sample}.balanced_report.txt"),
+            sample=SAMPLES,
         ),
 
 
@@ -124,6 +133,37 @@ rule repair_header:
     shell:
         # HiCUP deduplicator doesn"t properly add a line to the header of the BAM, so I"m fixing it here
         "samtools view -H {input} | sed 's/HiCUP Deduplicator/ID\:HiCUP Deduplicator/' | samtools reheader -P - {input} > {output}"
+
+# Cooler
+# -----------------------------------------------------------------------------
+rule create_pairs:
+    input:
+        genome = "hg38.sizes.txt",
+        bam = path.join(ALIGN_DIR, "{sample}.hicup.name-sorted.bam"),
+    output:
+        temp(path.join(CONTACT_DIR, "{sample}.pairs.gz")),
+    shell:
+        "pairtools parse -c {input.genome} --assembly hg38 -o {output} {input.bam}"
+
+rule create_cooler:
+    input:
+        genome = "hg38.sizes.txt",
+        pairs = path.join(CONTACT_DIR, "{sample}.pairs.gz")
+    output:
+        temp(path.join(CONTACT_DIR, "{sample}.cool")),
+    params:
+        "--assembly hg38 -c1 2 -p1 3 -c2 4 -p2 5"
+    shell:
+        "cooler cload pairs {params} {input.genome}:1000 {input.pairs} {output}"
+
+rule balance:
+    input:
+        path.join(CONTACT_DIR, "{sample}.cool")
+    output:
+        path.join(REPORT_DIR, "{sample}.balanced_report.txt")
+    shell:
+        "cooler balance {input} >> {output} 2>&1"
+
 
 # Miscellaneous
 # -----------------------------------------------------------------------------
