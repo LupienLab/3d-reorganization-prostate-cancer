@@ -1,0 +1,90 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os
+import os.path as path
+import itertools
+
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONTACT_DIR = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Contacts")
+SAMPLES = CONFIG.loc[CONFIG.Include == "Yes", "SampleID"].tolist()
+
+REPORT_DIR = "Reports"
+TMP_DIR = "TMP"
+
+SV_TADS = pd.read_csv(
+    path.join("../2020-02-19_chromoplexy/Graphs/sv-disruption-tests.TADs.tsv"),
+    sep="\t",
+    index_col=False,
+)
+SV_REGIONS = SV_TADS.apply(lambda r: "_".join([r["chr"], str(r["start"]), str(r["end"])]), axis=1).tolist()[0:1]
+SAMPLE_COMBOS = [i + "-" + j for (i, j) in itertools.combinations(SAMPLES, 2)]
+print(len(SAMPLE_COMBOS))
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join(TMP_DIR, "{sample}.{pos}.wide.mtx"),
+            sample=SAMPLES,
+            pos=SV_REGIONS
+        ),
+        expand(
+            path.join("Comparison", "{pos}", "{i}-{j}", "{i}->{j}.all.{type}.txt"),
+            pos=SV_REGIONS,
+            i=SAMPLES,
+            j=SAMPLES,
+            type=["split", "merge"],
+        )
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule dump_mat:
+    input:
+        path.join(CONTACT_DIR, "{sample}.mcool")
+    output:
+        temp(path.join(TMP_DIR, "{sample}.{chrom}_{start}_{end}.mtx"))
+    wildcard_constraints:
+        chrom = "chr(\d{1,2}|X|Y)",
+        start = "\d+",
+        end = "\d+",
+    params:
+        "-H"
+    shell:
+        "cooler dump {params} -r {wildcards.chrom}:{wildcards.start}-{wildcards.end} {input}::/resolutions/10000 > {output}"
+
+rule densify:
+    input:
+        script = "sparse-to-wide.R",
+        mat = path.join(TMP_DIR, "{sample}.{chrom}_{start}_{end}.mtx"),
+    output:
+        path.join(TMP_DIR, "{sample}.{chrom}_{start}_{end}.wide.mtx"),
+    wildcard_constraints:
+        chrom = "chr(\d{1,2}|X|Y)",
+        start = "\d+",
+        end = "\d+",
+    shell:
+        "Rscript {input.script} {input.mat} {output}"
+
+rule compare:
+    input:
+        i = path.join(TMP_DIR, "{i}.{chrom}_{start}_{end}.wide.mtx"),
+        j = path.join(TMP_DIR, "{i}.{chrom}_{start}_{end}.wide.mtx"),
+    output:
+        path.join("Comparison", "{chrom}_{start}_{end}", "{i}-{j}", "{i}->{j}.all.split.txt"),
+        path.join("Comparison", "{chrom}_{start}_{end}", "{i}-{j}", "{i}->{j}.all.merge.txt"),
+        path.join("Comparison", "{chrom}_{start}_{end}", "{j}-{i}", "{i}->{j}.all.split.txt"),
+        path.join("Comparison", "{chrom}_{start}_{end}", "{j}-{i}", "{i}->{j}.all.merge.txt"),
+    wildcard_constraints:
+        chrom = "chr(\d{1,2}|X|Y)",
+        start = "\d+",
+        end = "\d+",
+    params:
+        cwd = path.abspath(os.getcwd())
+    shell:
+        "docker run -v {params.cwd}:/data/ -t guangywang/tadsplimer:v1.0.2 python3 /bin/TADsplimer.py split_TADs -c /data/{input.i},/data/{input.j} --contact_maps_aliases {wildcards.i},{wildcards.j} -o /data/Comparison/{wildcards.chrom}_{wildcards.start}_{wildcards.end}/{wildcards.i}-{wildcards.j}"
