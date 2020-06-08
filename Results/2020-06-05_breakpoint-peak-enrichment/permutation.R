@@ -58,7 +58,7 @@ hg38_mask <- filterChromosomes(hg38$mask, organism="hg", chr.type = "canonical")
 hg38_mask <- mergeRegions(hg38_mask, blacklist_gr)
 
 # permutation test for number of overlaps
-peaks_perm_test <- lapply(
+perm_test <- lapply(
     SAMPLES,
     function(s) {
         overlapPermTest(
