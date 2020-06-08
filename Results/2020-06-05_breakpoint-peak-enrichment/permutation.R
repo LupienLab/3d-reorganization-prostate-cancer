@@ -37,6 +37,8 @@ peaks <- rbindlist(lapply(
 ))
 peaks_gr <- toGRanges(peaks, genome = "hg38")
 
+# load TCGA prostate cancer ATAC peaks
+
 # load ENCODE blacklist
 blacklist <- fread(
     "../../Data/External/ENCODE_ChIP/ENCODE-blacklist.bed",
@@ -56,7 +58,7 @@ hg38_mask <- filterChromosomes(hg38$mask, organism="hg", chr.type = "canonical")
 hg38_mask <- mergeRegions(hg38_mask, blacklist_gr)
 
 # permutation test for number of overlaps
-perm_test <- lapply(
+peaks_perm_test <- lapply(
     SAMPLES,
     function(s) {
         overlapPermTest(
@@ -73,6 +75,7 @@ names(perm_test) <- SAMPLES
 
 perm_test_data <- data.table(SampleID = SAMPLES)
 perm_test_data[, p := apply(.SD, 1, function(r) perm_test[[r["SampleID"]]]$numOverlaps$pval)]
+perm_test_data[, FDR := p.adjust(p, method = "fdr")]
 
 # local positioning adjustment to assess sensitivity to exact placement
 lz <- lapply(
@@ -150,12 +153,13 @@ gg <- (
     ggplot(data = bp_peaks_counts)
     + geom_col(
         aes(
-            x = factor(breakpoint_ID, ordered = TRUE, levels = bp_peaks_counts[order(Label, N), breakpoint_ID]),
+            # x = factor(breakpoint_ID, ordered = TRUE, levels = bp_peaks_counts[order(Label, N), breakpoint_ID]),
+            x = Label,
             y = N,
-            group = Label,
+            group = factor(breakpoint_ID, ordered = TRUE, levels = bp_peaks_counts[order(Label, N), breakpoint_ID]),
             fill = Label
         ),
-        position = "dodge"
+        position = position_dodge(preserve = "total"),
     )
     + labs(x = "Breakpoints", y = "H3K27ac Peaks Overlapping Each Breakpoint")
     + scale_fill_manual(
@@ -164,10 +168,10 @@ gg <- (
         values = metadata[, Sample_Colour],
         name = "Patient"
     )
+    + guides(fill = FALSE)
     + theme_minimal()
     + theme(
         legend.position = "bottom",
-        axis.text.x = element_blank(),
         panel.grid.major.x = element_blank()
     )
 )
@@ -176,7 +180,7 @@ savefig(gg, "Plots/bp_peaks_counts", width = 30)
 # p-value histogram for permutation tests
 gg_p <- (
     ggplot(data = perm_test_data)
-    + geom_col(aes(x = SampleID, y = -log10(p), fill = SampleID))
+    + geom_col(aes(x = SampleID, y = -log10(FDR), fill = SampleID))
     + geom_hline(aes(yintercept = -log10(0.05)), linetype = "dashed")
     + scale_x_discrete(
         breaks = metadata[, SampleID],
@@ -187,7 +191,7 @@ gg_p <- (
         minor_breaks = -log10(c(seq(1, 10) * 1e-1, seq(1, 9) * 1e-2, seq(1, 9) * 1e-3)),
         breaks = -log10(c(1, 0.1, 0.05, 0.01, 0.001)),
         labels = c(1, 0.1, 0.05, 0.01, 0.001),
-        name = "p-value"
+        name = "FDR-adjust p-value"
     )
     + scale_fill_manual(
         breaks = metadata[, SampleID],
