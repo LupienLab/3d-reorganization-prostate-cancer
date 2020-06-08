@@ -3,21 +3,9 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
-suppressMessages(library("argparse"))
 suppressMessages(library("regioneR"))
 suppressMessages(library("BSgenome.Hsapiens.UCSC.hg38.masked"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
-
-if (!interactive()) {
-    PARSER <- argparse::ArgumentParser(
-        description = "Perform permutation test to see if H3K27ac peaks are enriched around SV breakpoints"
-    )
-    ARGS <- PARSER$parse_args()
-}
-
-# ==============================================================================
-# Functions
-# ==============================================================================
 
 
 # ==============================================================================
@@ -188,9 +176,30 @@ savefig(gg, "Plots/bp_peaks_counts", width = 30)
 # p-value histogram for permutation tests
 gg_p <- (
     ggplot(data = perm_test_data)
-    + geom_col(aes(x = SampleID, y = -log10(p)))
-    + labs(x = "Patient", y = expression(-log[10] * "(p)"))
+    + geom_col(aes(x = SampleID, y = -log10(p), fill = SampleID))
+    + geom_hline(aes(yintercept = -log10(0.05)), linetype = "dashed")
+    + scale_x_discrete(
+        breaks = metadata[, SampleID],
+        labels = metadata[, Label],
+        name = NULL
+    )
+    + scale_y_continuous(
+        minor_breaks = -log10(c(seq(1, 10) * 1e-1, seq(1, 9) * 1e-2, seq(1, 9) * 1e-3)),
+        breaks = -log10(c(1, 0.1, 0.05, 0.01, 0.001)),
+        labels = c(1, 0.1, 0.05, 0.01, 0.001),
+        name = "p-value"
+    )
+    + scale_fill_manual(
+        breaks = metadata[, SampleID],
+        labels = metadata[, Label],
+        values = metadata[, Sample_Colour]
+    )
+    + guides(fill = FALSE)
     + theme_minimal()
+    + theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 90, vjust = 1, hjust = 0.5)
+    )
 )
 savefig(gg_p, "Plots/permutation.p-values")
 
@@ -204,3 +213,13 @@ fwrite(
     sep = "\t",
     col.names = TRUE
 )
+
+fwrite(
+    perm_test_data,
+    "Overlaps/sv-breakpoints.permutations.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
+saveRDS(perm_test, "Overlaps/permutation-tests.rds")
+saveRDS(lz, "Overlaps/local-dependency.rds")
