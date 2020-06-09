@@ -5,8 +5,7 @@ import os.path as path
 # Configuration
 # ==============================================================================
 CONFIG = pd.read_csv(
-    path.join('..', '..', 'Data', 'External',
-              'LowC_Samples_Data_Available.tsv'),
+    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
     sep='\t',
     index_col=False
 )
@@ -141,10 +140,8 @@ rule bf2bed:
 
 rule t2e_translocation_genes:
     input:
-        gencode = path.join("..", "..", "Data", "External",
-                            "GENCODE", "gencode.v33.genes.sorted.bed"),
-        genome = path.join("..", "..", "Data", "Processed",
-                           "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
+        gencode = path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.genes.sorted.bed"),
+        genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
         "translocation-disrupted-genes.tsv"
     shell:
