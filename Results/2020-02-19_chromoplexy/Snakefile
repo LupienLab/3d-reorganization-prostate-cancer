@@ -14,6 +14,7 @@ SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample I
 ACETYL_DIR = "Acetylation"
 GRAPH_DIR = "Graphs"
 PLOT_DIR = "Plots"
+TRACK_DIR = "Tracks"
 BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
 CHIP_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
@@ -34,6 +35,11 @@ rule all:
         expand(
             path.join(GRAPH_DIR, "breakpoints.{sample}.xml"),
             sample=SAMPLES
+        ),
+        expand(
+            path.join(TRACK_DIR, "{sample}.breaks.{track}"),
+            sample=SAMPLES,
+            track=["beddb", "bed2ddb"],
         ),
         "TAD-induced-regions.bed",
         path.join("Statistics", "breakpoints.binned.tsv"),
@@ -103,6 +109,29 @@ rule graphs:
         ),
     shell:
         "python {input.script}"
+
+rule clodius_1d:
+    input:
+        path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+    output:
+        path.join(TRACK_DIR, "{sample}.breaks.beddb"),
+    params:
+        "-a hg38 --no-header"
+    shell:
+        # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedfile {params} -o {output} <(awk '{{FS=OFS=\"\\t\"}}{{if ($4 == \"{wildcards.sample}\") print}}' {input})"
+
+
+rule clodius_2d:
+    input:
+        path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+    output:
+        path.join(TRACK_DIR, "{sample}.breaks.bed2ddb"),
+    params:
+        "-a hg38 --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6 --no-header"
+    shell:
+        # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedpe {params} -o {output} <(awk '{{FS=OFS=\"\\t\"}}{{if ($11 == \"{wildcards.sample}\") {{print $1, $2, $3, $4, $5, $6; print $4, $5, $6, $1, $2, $3}} }}' {input})"
 
 rule plot_breaks:
     input:
