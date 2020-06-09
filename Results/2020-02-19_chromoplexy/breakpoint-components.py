@@ -5,7 +5,7 @@ breakpoint-bridging
 Take Breakfinder results and link breakpoints together by their positions
 """
 
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Dict
 import os.path as path
 import numpy as np
 import pandas as pd
@@ -111,31 +111,49 @@ def merge_nodes(G: nx.Graph, nodes: List[GenomicInterval]) -> nx.Graph:
     return G
 
 
-def compatible_sv_pair(a: str, b: str) -> bool:
+def compatible_sv_pair(a: GenomicInterval, b: GenomicInterval, a_type: str, b_type: str) -> bool:
     """
     Determine whether a pair of structural variant types are compatible
+
+    Parameters
+    ==========
+    a, b: GenomicInterval
+        Breakpoints to compare as possibly equivalent
     """
-    always_compatible = ["BND", "UNKNOWN"]
-    if a in always_compatible:
-        return True
-    elif b in always_compatible:
-        return True
-    else:
-        return a == b
+    position = False
+    if overlapping(a, b, TOL // 2) or equivalent_tad(a, b, tads[a.data["sample"]], tads[b.data["sample"]]):
+        position = True
+    # breakpoints are compatible if they are in the same position and have the same SV event type wrt the original pair
+    return (a_type == b_type) and position
 
 
-def compatible_sv_types(type_a: Set[str], type_b: Set[str]) -> Tuple[bool, Set[str]]:
+def compatible_svs(a: GenomicInterval, b: GenomicInterval, a_nbrs: nx.classes.coreviews.AtlasView, b_nbrs: nx.classes.coreviews.AtlasView) -> Tuple[bool, Set[str]]:
     """
-    List all compatible structural variant types between two sets
+    List all compatible structural variant types between two breakpoints
+
+    Parameters
+    ==========
+    a, b: GenomicInterval
+        Breakpoints to compare
+    a_nbrs, b_nbrs: Dict[GenomicInterval, nx.classes.coreviews.AtlasView]
+        Subgraph of neighbours for a and b, respectively
     """
-    # find whether all pairs of SV types are compatible, return if they are not
-    for a in type_a:
-        for b in type_b:
-            if not compatible_sv_pair(a, b):
-                return (False, set([]))
-    # if no incompatible pair has been found, return True
+    type_a = set([e["annotation"] for e in a_nbrs.values()])
+    type_b = set([e["annotation"] for e in b_nbrs.values()])
+    # check that at least one neighbour of a is compatible with a neighbour of b
+    compatible_nbr = False
+    for an in a_nbrs.keys():
+        if compatible_nbr:
+            break
+        for bn in b_nbrs.keys():
+            if compatible_sv_pair(an, bn, a_nbrs[an]["annotation"], b_nbrs[bn]["annotation"]):
+                compatible_nbr = True
+                break
+    # if no compatible pair has been found, return False
+    if not compatible_nbr:
+        return (False, set([]))
     return (True, type_a.union(type_b))
-    
+
 
 # ==============================================================================
 # Data
@@ -414,8 +432,6 @@ test_IDs_to_merge = []
 test_IDs_to_never_merge = []
 test_ID_SV_types = {}
 for i, n in tqdm(enumerate(G_all), total=len(G_all)):
-    # find all SV types that this breakpoint is involved in
-    n_sv_types = set([e["annotation"] for e in G_all[n].values()])
     # determine whether this breakpoint has already been assigned to a testing group
     n_previously_assigned_test = "test_ID" in n.data
     if not n_previously_assigned_test:
@@ -429,13 +445,11 @@ for i, n in tqdm(enumerate(G_all), total=len(G_all)):
         # connect these nodes if the identified loci are within the equivalent TADs from their respective samples
         # (I know this isn't the most efficient way to do this, but given the number of breakpoints and samples
         # it's not that much of a concern)
-        if overlapping(m, n, TOL // 2) or equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
-            # find all SV types that this breakpoint is involved in
-            m_sv_types = set([e["annotation"] for e in G_all[m].values()])
+        if equivalent_tad(n, m, tads[n.data["sample"]], tads[m.data["sample"]]):
             # determine whether this breakpoint has already been assigned to a testing group
             m_previously_assigned_test = "test_ID" in m.data
             # determine how to group these breakpoints for hypothesis testing
-            is_compatible, compatible_types = compatible_sv_types(n_sv_types, m_sv_types)
+            is_compatible, compatible_types = compatible_svs(n, m, G_all[n], G_all[m])
             if is_compatible:
                 # if there is a compatible SV types between them
                 # (e.g. they both have DEL in the same TAD)
@@ -482,7 +496,7 @@ for ttm in test_IDs_to_merge:
 for ttnm in test_IDs_to_never_merge:
     ttnm_graph.add_edge(ttnm[0], ttnm[1])
 
-# reduce each test_ID to the smallest in that component
+# reduce each test_ID to the smallest value in that component
 for cc in nx.connected_components(ttm_graph):
     min_test_ID = min(n for n in cc)
     for n in cc:
