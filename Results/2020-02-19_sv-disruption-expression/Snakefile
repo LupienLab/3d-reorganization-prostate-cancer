@@ -38,6 +38,9 @@ rule all:
         ),
         "sv-disruption-tests.expression.tsv",
         "sv-disruption-tests.expression.gene-level.tsv",
+        "sv-disruption.expression.gene-level.stratified.all.tsv",
+        "sv-disruption.expression.gene-level.stratified.thresholded.tsv",
+
 
 # ==============================================================================
 # Rules
@@ -81,5 +84,7 @@ rule plot_expression:
             ],
             ext=PLOT_EXTS,
         ),
+        "sv-disruption.expression.gene-level.stratified.all.tsv",
+        "sv-disruption.expression.gene-level.stratified.thresholded.tsv",
     shell:
         "Rscript {input.script}"

@@ -740,3 +740,20 @@ gg_fc_thresh_cdf <- (
     + theme_minimal()
 )
 savefig(gg_fc_thresh_cdf, file.path(PLOT_DIR, "expression.fold-change.ecdf.thresholded"))
+
+# ==============================================================================
+# Save data
+# ==============================================================================
+fwrite(
+    tested_genes_cut$all,
+    "sv-disruption.expression.gene-level.stratified.all.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
+fwrite(
+    tested_genes_cut$thresholded,
+    "sv-disruption.expression.gene-level.stratified.thresholded.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
