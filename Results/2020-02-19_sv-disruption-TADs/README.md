@@ -29,7 +29,7 @@ If the clustering equals the mutated samples from the non-mutated samples (i.e. 
 
 ### Breakpoints rarely alter the local chromatin topology
 
-Using the method described above for detecting changes to local topology as a result of and SV breakpoint, we find that a small minority of SVs alter the local topology (11 / 260, 4.2%).
+Using the method described above for detecting changes to local topology as a result of and SV breakpoint, we find that a small minority of SVs alter the local topology (18 / 260, 6.9%).
 
 ![Bar graph of breakpoint test groups](Plots/tads.count.png)
 
@@ -44,7 +44,6 @@ SVs that do alter the local topology include:
 * multiple chained events on chr3 of `PCa56413`
 * a duplication on chr10 of `PCa56413`
 
-Only one breakpoint of a detected SV appeared to alter the local topology.
 There was no event detected where both breakpoints in a pair altered the local topology.
 If SVs are altering gene expression, it is likely not through establishing or altering TAD boundaries, but by interfering with _cis_-regulatory interactions through other means.
 

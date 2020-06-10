@@ -23,9 +23,10 @@ PLOT_EXTS = ["png", "pdf"]
 # ==============================================================================
 rule all:
     input:
-        path.join("sv-disruption-tests.TADs.tsv"),
+        "sv-disruption-tests.TADs.tsv",
+        "sv-disruption-tests.TADs.counts.tsv",
         expand(
-            path.join(PLOT_DIR, "sv-disruption", "tads.count.{ext}"),
+            path.join(PLOT_DIR, "tads.count.{ext}"),
             ext=PLOT_EXTS
         ),
 
@@ -52,9 +53,10 @@ rule plot_tads:
         script = "plot-tads.R",
         data = "sv-disruption-tests.TADs.tsv",
     output:
+        "sv-disruption-tests.TADs.counts.tsv",
         expand(
-            path.join(PLOT_DIR, "sv-disruption", "tads.count.{ext}"),
+            path.join(PLOT_DIR, "tads.count.{ext}"),
             ext=PLOT_EXTS
-        )
+        ),
     shell:
         "Rscript {input.script}"
