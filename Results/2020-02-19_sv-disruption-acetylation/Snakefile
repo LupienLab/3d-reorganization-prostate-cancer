@@ -1,0 +1,71 @@
+# ==============================================================================
+# Environment
+# ==============================================================================
+import os.path as path
+import pandas as pd
+
+CONFIG = pd.read_csv(
+    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t",
+    header=0
+)
+SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
+
+ACETYL_DIR = "Acetylation"
+GRAPH_DIR = path.join("..", "2020-02-19_chromoplexy", "Graphs")
+PLOT_DIR = "Plots"
+TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
+CHIP_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
+
+PLOT_EXTS = ["png", "pdf"]
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        "TAD-induced-regions.bed",
+        "sv-disruption-tests.acetylation.tsv",
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule induced_boundaries:
+    input:
+        script = "create-induced-regions.py",
+        bounds = expand(
+            path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.tsv"),
+            sample=SAMPLES
+        ),
+    output:
+        "TAD-induced-regions.bed",
+    shell:
+        "python {input.script}"
+
+rule count_chip:
+    input:
+        chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
+        bed = "TAD-induced-regions.bed",
+    output:
+        path.join(ACETYL_DIR, "PCa{sampleid}_{type}.induced-region-counts.bed")
+    wildcard_constraints:
+        sampleid = "\d+",
+        type = "(H3K27ac|input)",
+    shell:
+        "bedtools coverage -abam {input.chip} -b {input.bed} | sort -k1,1 -V -k2,2n > {output}"
+
+rule altered_acetyl:
+    input:
+        script = "altered-acetylation.R",
+        breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+        tads = path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"),
+        tests = path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+        counts = expand(
+            path.join(ACETYL_DIR, "{sample}_{type}.induced-region-counts.bed"),
+            sample=SAMPLES,
+            type=["H3K27ac", "input"]
+        )
+    output:
+        "sv-disruption-tests.acetylation.tsv",
+    shell:
+        "Rscript {input.script}"

@@ -18,11 +18,8 @@ from sklearn.cluster import AgglomerativeClustering
 # ==============================================================================
 # Constants
 # ==============================================================================
-BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
-TAD_DIR = path.join(
-    "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
-)
-GRAPH_DIR = "Graphs"
+TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs")
+GRAPH_DIR = path.join("..", "2020-02-19_chromoplexy", "Graphs")
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 WINDOWS = list(range(3, 31))
 
@@ -249,4 +246,4 @@ print(
 # ==============================================================================
 # Save
 # ==============================================================================
-altering_bps.to_csv(path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"), sep="\t", index=False)
+altering_bps.to_csv("sv-disruption-tests.TADs.tsv", sep="\t", index=False)

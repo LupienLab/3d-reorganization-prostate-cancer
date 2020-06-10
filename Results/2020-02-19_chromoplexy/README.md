@@ -20,48 +20,6 @@ Breakpoints are subsequently connected with an edge if they are within 100 kbp o
 This tolerance distance was chosen due to the granularity of the breakpoint calls, since each breakpoint pair is identified at a contact matrix resolution of 10 kbp or 100 kbp (most breakpoints called at 1 Mbp resolution appear to be a false positive due to effects of compartmentalization).
 This produces a graph of SV breakpoints for each patient, where every connected component of the graph (i.e. sets of inter-connected breakpoints) is a complex event.
 
-### Detecting SV breakpoints that alter local chromatin topology
-
-We consider each breakpoint end from each SV detected.
-For each breakpoint at locus $[s, e)$ in a given patient, we look for other patients that have a breakpoint end within 500 kbp (i.e. overlapping $[s - \delta, e + \delta), \delta = 500 000$) to identify similarly mutated patients.
-A local BPscore \Cref{Zaborowski2019} is calculated for the identified TADs within this $[s - \delta, e + \delta)$ window for each pair of samples.
-Using these calculations, we use two approaches for determining whether there is an alteration of the local topology; one binary classification method, and one permutation test method.
-
-#### Binary classification of local topology
-
-Patients are assigned into one of two groups using hierarchical clustering with the matrix of pairwise BPscore values as a distance matrix.
-If the clustering equals the mutated samples from the non-mutated samples (i.e. the clustering matches the mutation status in this locus), then the local topology is counted as altered as a result of the SV.
-
-#### Permutation test for differences in local topology
-
-
-
-### Hypothesis testing for differences in RNA abundance
-
-Conventional methods for differential gene expression, such as DESeq2 \Cref{Love2014}, EdgeR \Cref{Robinson2010}, and Sleuth \Cref{Yi2018} require replicates for each condition being tested.
-For our case of comparing a sample with an SV to samples without, recurrent events are rare, thus leading to 1-vs-many comparisons, which is insufficient for these previous methods.
-
-To address this shortcoming, we developed a different null hypothesis testing framework by aggregating genes in TADs containing the SV breakpoints (implemented in [`altered-expression.py`](altered-expression.py)).
-
-1. For each breakpoint, identify the overlapping TAD(s).
-2. Identify other samples with an SV breakpoint nearby the current breakpoint.
-3. Identify all genes lying within these affected TADs, according to the GENCODE v33 reference \Cref{GENCODE}.
-4. Perform a z-transformation on the abundance values (in FPKM) for these genes, given by
-
-    $$
-    z_i = \frac{\bar{x}_{i,mut} - \bar{x}_{i,non-mut}}  {\sigma_{i,non-mut}}
-    $$
-    Under the null hypothesis, that these linked breakpoints do not affect the expression of the nearby genes within the same TADs, the random variable for the expression of gene is distributed   like the non-mutant samples, namely
-    $$
-    \mathbb{E}[X_{i,mut}] = \mu_{i,non-mut}
-    $$
-    $$
-    \text{Var}[X_{i,mut}] = \sigma^2_{i,non-mut}
-    $$
-    Thus, each gene's z-score should come from a distribution with mean 0 and standard deviation 1.
-
-5. For each set of related genes, perform a two-sided t-test on these z-scores.
-
 ## Results
 
 ### Complex SVs are common in prostate cancer and more frequent in _T2E_-fusion patients
@@ -89,55 +47,7 @@ Complex events are components with > 2 connected breakpoints.
 This occurs in 12/13 patients (only `PCa13266` does not have a complex event).
 Like with the number of breakpoints detected, the T2E samples tend to have larger numbers of breakpoints involved in complex events.
 
-### Breakpoints rarely alter the local chromatin topology
-
-Using the method described above for detecting changes to local topology as a result of and SV breakpoint, we find that a small minority of SVs alter the local topology (11/462 breakpoint ends, 2.38%).
-
-SVs that do alter the local topology include:
-
-* a translocation of the deleted _TMPRSS2_-_ERG_ locus being inserted into chr14 in `PCa13848`
-* multiple complex events on chr4 of `PCa3023`
-* a translocation of a deleted segment on chr12 and inserted into chr17 in `PCa3023` near _NCOR1_, _TTC19_, and _SNORD163_
-* one end of a tandem duplication on chr3 in `PCa53687` by _GAP43_
-* a complex, indeterminate event on chr15 in `PCa53687`
-* an apparent chromosome arm swap between chr7 and chr19 in `PCa53687`
-* multiple chained events on chr3 of `PCa56413`
-* a duplication on chr10 of `PCa56413`
-
-Only one breakpoint of a detected SV appeared to alter the local topology.
-There was no event detected where both breakpoints in a pair altered the local topology.
-If SVs are altering gene expression, it is likely not through establishing or altering TAD boundaries, but by interfering with _cis_-regulatory interactions through other means.
-
-### Structural variant breakpoints alter the expression of genes within surrounding TADs
-
-Using the method described above, we identified 41 breakpoints that significantly altered gene expression of genes within the same TAD(s) ($FDR < 0.05$).
-
-![Distribution of expression fold changes for each complex event](Plots/sv-disruption.fold-change.png)
-
-While most genes did not have a large change to their expression, we observed that approximately one third (31.3%) of all genes had fold changes greater than 2 (i.e. $\log_2(\text{fold change}) \ge 1$)
-
-![Breakpoints leads to altered expression in 1/3 of nearby genes](Plots/sv-disruption.fold.ecdf.png)
-
-We find the following distribution of genes' expression z-scores:
-
-![Genes expression z-scores as a result of an SV breakpoint](Plots/sv-disruption.z.png)
-
-As expected, we identifu _ERG_'s over-expression resulting from the T2E fusion.
-_GAPDHP35_ is the gene with the largest z-score ($z \approx 330$, $\log_2(\text{fold change}) \approx 9.485$), although its expression in the mutated and non-mutated samples is low (expression < 2 FPKM for all samples).
-Thus, it appears that this methodology is prone to false positives from lowly-expressing genes.
-
-To reduce these false positives (producing large fold-changes and z-scores, despite not having large absolute changes in expression), we consider the absolute change in RNA abundance, $|\bar{x}_{mut} - \bar{x}_{non-mut}|$.
-We see that the majority of genes with large fold changes have small absolute differences in read abundances between the mutated and non-mutated samples (2758/3155 genes with $|\log_2(\text{fold change})| \ge 1$ have $|\bar{x}_{mut} - \bar{x}_{non-mut}|$ < 1 FPKM, 87.4%).
-
-![Fold change vs absolute RNA abundance difference between mutated and non-mutated samples](Plots/sv-disruption.fold-change-vs-difference.png)
-
-We see that the percentage of breakpoints affecting expression is still non-zero when only considering these genes with non-negligible differences in read counts (absolute change to be $\ge 1$ FPKM), but drops to about one fifth (20.8%).
-
-![Breakpoints leads to altered expression in 1/5 of nearby genes with a non-negligible absolute change in expression](Plots/sv-disruption.fold.ecdf.thresholded.png)
-
 ## Conclusions
 
-SV breakpoints do not appear to disrupt local TAD boundary formation, often.
-While this and previous work shows examples where these SVs do in fact rearrange TADs, this does not appear to be the norm.
-However, these breakpoints still manage to affect the expression of the genes within these TADs.
-Thus, we hypothesize that these SVs do not alter gene expression by reorganizing TADs, but through affecting _cis_-regulatory interactions themselves.
+Merging redundant breakpoint calls demonstrates the amount of complex structural variants in these samples.
+Moreover, it highlights the difference in mutational load between T2E+ and T2E- prostate cancer patients.
