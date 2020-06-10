@@ -80,6 +80,7 @@ rule graphs:
         path.join(GRAPH_DIR, "breakpoints.all-samples.p"),
         path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
         path.join(GRAPH_DIR, "breakpoints.all-samples.xml"),
+        path.join("Statistics", "breakpoint-components.tsv"),
         expand(
             path.join(GRAPH_DIR, "breakpoints.{sample}.xml"),
             sample=SAMPLES
@@ -118,7 +119,6 @@ rule plot_breaks:
     output:
         path.join("Statistics", "breakpoints.binned.tsv"),
         path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
-        path.join("Statistics", "breakpoint-components.tsv"),
         expand(
             path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
             plot=[

@@ -173,13 +173,6 @@ htest_events <- list(
     )
 )
 
-fwrite(
-    breakpoint_components_counted,
-    "Statistics/breakpoint-components.tsv",
-    sep = "\t",
-    col.names = TRUE
-)
-
 # calculate the number of chromosomes involved in an SV
 sv_chrom_span <- breakpoints[, length(unique(chr)), by = c("SampleID", "component_ID")]
 sv_chrom_span <- merge(

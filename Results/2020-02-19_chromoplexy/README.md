@@ -22,29 +22,18 @@ This produces a graph of SV breakpoints for each patient, where every connected 
 
 ## Results
 
+### Structural variant events are more common in T2E+ patients than T2E- patients
+
+![Event comparison](Plots/breakpoint-stats/sv-events.total.T2E-comparison.png)
+
+![Inter-/intra-chromosomal events](Plots/breakpoint-stats/breakpoint-pairs.inter-intra-chromosomal.T2E-comparison.png)
+
 ### Complex SVs are common in prostate cancer and more frequent in _T2E_-fusion patients
 
 Each connected component of the breakpoint graphs is a set of related breakpoints as a part of a complex event.
-Below is a table with the number of connected components for each sample.
+A table with the number of connected components for each sample can be found in [`Statistics/breakpoint-components.tsv`](Statistics/breakpoint-components.tsv).
 
-| Sample     | # Components | Largest number of connected breakpoints | T2E Status |
-| ---------- | ------------ | --------------------------------------- | ---------- |
-| `PCa13266` | 3            | 2                                       | No         |
-| `PCa13848` | 17           | 6                                       | Yes        |
-| `PCa14121` | 4            | 4                                       | No         |
-| `PCa19121` | 7            | 4                                       | Yes        |
-| `PCa3023`  | 15           | 12                                      | Yes        |
-| `PCa33173` | 1            | 4                                       | No         |
-| `PCa40507` | 16           | 10                                      | Yes        |
-| `PCa51852` | 6            | 4                                       | Yes        |
-| `PCa53687` | 7            | 12                                      | No         |
-| `PCa56413` | 33           | 16                                      | Yes        |
-| `PCa57054` | 15           | 12                                      | Yes        |
-| `PCa57294` | 3            | 6                                       | No         |
-| `PCa58215` | 4            | 6                                       | No         |
-
-Complex events are components with > 2 connected breakpoints.
-This occurs in 12/13 patients (only `PCa13266` does not have a complex event).
+Complex events are components with > 2 connected breakpoints, and complex events are found in 8/12 patients.
 Like with the number of breakpoints detected, the T2E samples tend to have larger numbers of breakpoints involved in complex events.
 
 ## Conclusions

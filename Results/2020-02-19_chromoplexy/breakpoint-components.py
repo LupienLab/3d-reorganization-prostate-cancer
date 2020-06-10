@@ -579,6 +579,26 @@ coupled_tests.to_csv(
     index=False
 )
 
+# count number of breakpoint components
+component_counts = pd.DataFrame({
+    "SampleID": SAMPLES,
+    "Events": [None] * len(SAMPLES),
+    "Complex_Events": [None] * len(SAMPLES),
+    "Smallest_Component_Size": [None] * len(SAMPLES),
+    "Smallest_Component_ID": [None] * len(SAMPLES),
+    "Largest_Component_Size": [None] * len(SAMPLES),
+    "Largest_Component_ID": [None] * len(SAMPLES),
+})
+
+for s in SAMPLES:
+    component_counts.at[component_counts.SampleID == s, "Events"] = len([cc for cc in nx.connected_components(G_sample[s])])
+    component_counts.at[component_counts.SampleID == s, "Complex_Events"] = len([cc for cc in nx.connected_components(G_sample[s]) if len(cc) > 2])
+    component_counts.at[component_counts.SampleID == s, "Smallest_Component_Size"] = np.min([len(cc) for cc in nx.connected_components(G_sample[s])])
+    component_counts.at[component_counts.SampleID == s, "Largest_Component_Size"] = np.max([len(cc) for cc in nx.connected_components(G_sample[s])])
+    component_counts.at[component_counts.SampleID == s, "Smallest_Component_ID"] = np.argmin([len(cc) for cc in nx.connected_components(G_sample[s])])
+    component_counts.at[component_counts.SampleID == s, "Largest_Component_ID"] = np.argmax([len(cc) for cc in nx.connected_components(G_sample[s])])
+
+
 # ==============================================================================
 # Save data
 # ==============================================================================
@@ -588,3 +608,9 @@ nx.write_graphml(G_all, "Graphs/breakpoints.all-samples.xml")
 for s in SAMPLES:
     nx.write_graphml(G_sample[s], "Graphs/breakpoints." + s + ".xml")
 print("Done")
+
+component_counts.to_csv(
+    path.join("Statistics", "breakpoint-components.tsv"),
+    sep="\t",
+    index=False
+)
