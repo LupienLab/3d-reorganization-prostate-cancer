@@ -25,11 +25,10 @@ from genomic_interval import (
 # ==============================================================================
 # Constants
 # ==============================================================================
-BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join(
     "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
 )
-GRAPH_DIR = "Graphs"
+GRAPH_DIR = path.join("..", "2020-02-19_chromoplexy", "Graphs")
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
 
 # window size to check TADs for
@@ -136,7 +135,7 @@ exprs = pd.read_csv(
         "Data",
         "External",
         "CPC-GENE",
-        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-Low-C-only.tsv",
+        "CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv",
     ),
     sep="\t",
     header=0,
@@ -207,12 +206,6 @@ tested_genes = pd.DataFrame(
 
 # and identify all the TADs that are involved (usually just 1 or 2)
 for test in tqdm(tests.itertuples(), total=tests.shape[0]):
-    if not test.testing:
-        tests.loc[test.Index, "n_genes"] = np.nan
-        tests.loc[test.Index, "t"] = np.nan
-        tests.loc[test.Index, "p"] = np.nan
-        continue
-
     # only keep unique sample IDs, don't double count them
     # find the parent TAD(s) of this breakpoint
     nodes = [n for n in G if n.data["test_ID"] == test.Index]
@@ -267,13 +260,13 @@ tests.nonmut_samples = [",".join(l) for l in tests.nonmut_samples]
 
 # save hypothesis test results
 tests.loc[:, ["n_genes", "t", "p", "FDR"]].to_csv(
-    path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
+    "sv-disruption-tests.expression.tsv",
     sep="\t",
     index=True,
 )
 
 tested_genes.to_csv(
-    path.join(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
+    "sv-disruption-tests.expression.gene-level.tsv",
     sep="\t",
     index=False
 )

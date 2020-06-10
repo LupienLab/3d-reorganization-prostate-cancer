@@ -8,7 +8,6 @@ We used the resolved breakpoints from [`../2020-02-19_chromoplexy/Graphs/`](../2
 We also use aggregated TAD calls from [`../2020-01-15_TAD-aggregation/resolved-TADs/`](../2020-01-15_TAD-aggregation/resolved-TADs/).
 We use the pre-processed gene expression data from [`../../Data/External/CPC-GENE/CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv`](../../Data/External/CPC-GENE/CPC-GENE_Chen-2019_RNAseq_rsem_gene_FPKM.13-LowC-only.tsv).
 
-
 ## Methods
 
 ### Hypothesis testing for differences in RNA abundance
@@ -36,6 +35,8 @@ To address this shortcoming, we developed a different null hypothesis testing fr
     Thus, each gene's z-score should come from a distribution with mean 0 and standard deviation 1.
 
 5. For each set of related genes, perform a two-sided t-test on these z-scores.
+
+## Results
 
 ### Structural variant breakpoints alter the expression of genes within surrounding TADs
 

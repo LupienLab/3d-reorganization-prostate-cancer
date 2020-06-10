@@ -4,22 +4,22 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("gridExtra"))
-source("plotting-helper.R")
+source("../2020-02-19_chromoplexy/plotting-helper.R")
 
-GRAPH_DIR <- "Graphs"
+PLOT_DIR <- "Plots"
 
 # ==============================================================================
 # Data
 # ==============================================================================
 # load hypothesis testing results
-htest <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.expression.tsv"), sep = "\t", header = TRUE)
+htest <- fread("sv-disruption-tests.expression.tsv", sep = "\t", header = TRUE)
 
 # load hypothesis testing results
-htest_tad <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"), sep = "\t", header = TRUE)
+htest_tad <- fread(file.path("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"), sep = "\t", header = TRUE)
 
 # load z-scores for tested genes
 tested_genes <- fread(
-    file.path(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
+    "sv-disruption-tests.expression.gene-level.tsv",
     sep = "\t",
     header = TRUE
 )
@@ -41,10 +41,7 @@ exprs[, EnsemblID_short := gsub("\\.\\d+", "", EnsemblID)]
 
 # load GENCODE reference annotation (all genes, not just protein-coding)
 gencode <- fread(
-    file.path(
-        "..", "..", "Data", "External",
-        "GENCODE", "gencode.v33.all-genes.bed"
-    ),
+    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "EnsemblID", "name"),
@@ -251,6 +248,8 @@ tests_with_some_deg <- tested_genes[
 # ==============================================================================
 # Plots
 # ==============================================================================
+# hypothesis testing QC
+# --------------------------------------
 # p-value histogram across all connected components (i.e. chromoplexic events)
 gg_pval_hist <- (
     ggplot(data = htest)
@@ -258,8 +257,9 @@ gg_pval_hist <- (
     + labs(x = "p-value", y = "Frequency")
     + theme_minimal()
 )
-savefig(gg_pval_hist, "Plots/sv-disruption/expression.p-values")
+savefig(gg_pval_hist, file.path(PLOT_DIR, "expression.p-values"))
 
+# qq plot of breakpoint-level detections
 gg_qq <- (
     ggplot(data = htest[order(p)])
     + geom_point(aes(x = -log10(ppoints(htest[, .N])), y = -log10(p)))
@@ -267,11 +267,12 @@ gg_qq <- (
     + labs(x = "Uniform distribution quantiles (log10)", y = "Observed quantiles (log10)")
     + theme_minimal()
 )
-savefig(gg_qq, "Plots/sv-disruption/expression.qq")
+savefig(gg_qq, file.path(PLOT_DIR, "expression.qq"))
 
-# plot z-scores for each breakpoint
+# resulting statistics
+# --------------------------------------
+# z-scores for each breakpoint
 ann_text <- tested_genes[(log2fold > 5 | log2fold < -11) & is.finite(z) & Abs_Thresh == TRUE]
-
 gg_z <- (
     ggplot(data = tested_genes[is.finite(z) & Abs_Thresh == TRUE])
     + geom_text(
@@ -298,8 +299,9 @@ gg_z <- (
         legend.position = "bottom"
     )
 )
-savefig(gg_z, "Plots/sv-disruption/expression.z", width = 40)
+savefig(gg_z, file.path(PLOT_DIR, "expression.z"), width = 40)
 
+# integrated expression changes, altered TADs, and number of genes
 panel_height_ratios <- c(9, 1, 1)
 gg_fc_bars <- ggplotGrob(
     ggplot(data = tested_genes_cut$all)
@@ -391,7 +393,7 @@ gg_fc <- grid.arrange(
     nrow = 3,
     heights = panel_height_ratios / sum(panel_height_ratios)
 )
-savefig(gg_fc, "Plots/sv-disruption/expression.fold-change")
+savefig(gg_fc, file.path(PLOT_DIR, "expression.fold-change"))
 
 # same as above, but thresholding on absolute difference in mRNA abundance
 gg_fc_thresh_bars <- ggplotGrob(
@@ -481,8 +483,9 @@ gg_fc_thresh <- grid.arrange(
     nrow = 3,
     heights = panel_height_ratios / sum(panel_height_ratios)
 )
-savefig(gg_fc_thresh, "Plots/sv-disruption/expression.fold-change.thresholded")
+savefig(gg_fc_thresh, file.path(PLOT_DIR, "expression.fold-change.thresholded"))
 
+# fold-change vs absolute difference in expression
 gg_fc_diff <- (
     ggplot(data = tested_genes)
     + geom_point(aes(
@@ -528,9 +531,10 @@ gg_fc_diff <- (
         legend.position = "bottom"
     )
 )
-savefig(gg_fc_diff, "Plots/sv-disruption/expression.fold-change-vs-difference", height = 20)
+savefig(gg_fc_diff, file.path(PLOT_DIR, "expression.fold-change-vs-difference"), height = 20)
 
-
+# empirical CDFs
+# --------------------------------------
 # plot empirical CDFs of fold changes for each breakpoint
 fold_ecdf <- tested_genes[, ecdf(log2fold)]
 ecdf_data <- data.table(
@@ -607,7 +611,7 @@ gg_fc_cdf <- (
     )
     + theme_minimal()
 )
-savefig(gg_fc_cdf, "Plots/sv-disruption/expression.fold-change.ecdf")
+savefig(gg_fc_cdf, file.path(PLOT_DIR, "expression.fold-change.ecdf"))
 
 fold_ecdf <- tested_genes[
     abs(mut_mean - nonmut_mean) >= abs_abundance_thresh[2],
@@ -690,4 +694,4 @@ gg_fc_thresh_cdf <- (
     )
     + theme_minimal()
 )
-savefig(gg_fc_thresh_cdf, "Plots/sv-disruption/expression.fold-change.ecdf.thresholded")
+savefig(gg_fc_thresh_cdf, file.path(PLOT_DIR, "expression.fold-change.ecdf.thresholded"))
