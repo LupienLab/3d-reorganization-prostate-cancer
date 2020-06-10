@@ -60,7 +60,7 @@ Looking at the distribution of gene-wise z values, we can see a similar distribu
 ![qq plot of gene-level z scores](Plots/expression.qq.gene-level.png)
 
 And this over-inflation is not solely due to lowly-expressing genes with large fold-changes.
-If we threshold on a minimum absolute difference between mutated and non-mutated samples (> 1e-3 FPKM), we see the following distributions.
+If we threshold on a minimum absolute difference between mutated and non-mutated samples (> 1 FPKM), we see the following distributions.
 
 ![p-values of thresholded genes](Plots/expression.p-values.gene-level.thresholded.png)
 
@@ -75,36 +75,30 @@ But this may be the exception to the rule.
 
 ### Structural variant breakpoints alter the expression of genes within surrounding TADs
 
-Using the method described above, we identified 41 breakpoints that significantly altered gene expression of genes within the same TAD(s) ($FDR < 0.05$).
+![Distribution of expression fold changes for each complex event](Plots/expression.fold-change.png)
 
-![Distribution of expression fold changes for each complex event](Plots/sv-disruption.fold-change.png)
+While most genes did not have a large change to their expression, we observed that approximately one third (32.1%) of all genes had fold changes greater than 2 (i.e. $\log_2(\text{fold change}) \ge 1$)
 
-While most genes did not have a large change to their expression, we observed that approximately one third (31.3%) of all genes had fold changes greater than 2 (i.e. $\log_2(\text{fold change}) \ge 1$)
+![Breakpoints leads to altered expression in 1/3 of nearby genes](Plots/expression.fold-change.ecdf.png)
 
-![Breakpoints leads to altered expression in 1/3 of nearby genes](Plots/sv-disruption.fold.ecdf.png)
-
-We find the following distribution of genes' expression z-scores:
-
-![Genes expression z-scores as a result of an SV breakpoint](Plots/sv-disruption.z.png)
-
-As expected, we identifu _ERG_'s over-expression resulting from the T2E fusion.
+As expected, we identified _ERG_'s over-expression resulting from the T2E fusion.
 _GAPDHP35_ is the gene with the largest z-score ($z \approx 330$, $\log_2(\text{fold change}) \approx 9.485$), although its expression in the mutated and non-mutated samples is low (expression < 2 FPKM for all samples).
 Thus, it appears that this methodology is prone to false positives from lowly-expressing genes.
 
 To reduce these false positives (producing large fold-changes and z-scores, despite not having large absolute changes in expression), we consider the absolute change in RNA abundance, $|\bar{x}_{mut} - \bar{x}_{non-mut}|$.
-We see that the majority of genes with large fold changes have small absolute differences in read abundances between the mutated and non-mutated samples (2758/3155 genes with $|\log_2(\text{fold change})| \ge 1$ have $|\bar{x}_{mut} - \bar{x}_{non-mut}|$ < 1 FPKM, 87.4%).
+We see that the majority of genes with large fold changes have small absolute differences in read abundances between the mutated and non-mutated samples (1830/2096 genes with $|\log_2(\text{fold change})| \ge 1$ have $|\bar{x}_{mut} - \bar{x}_{non-mut}|$ < 1 FPKM, 87.3%).
 
-![Fold change vs absolute RNA abundance difference between mutated and non-mutated samples](Plots/sv-disruption.fold-change-vs-difference.png)
+We see that the percentage of breakpoints affecting expression is still non-zero when only considering these genes with non-negligible differences in read counts (absolute change to be $\ge 1$ FPKM), but drops to about one fifth (21.6%).
 
-We see that the percentage of breakpoints affecting expression is still non-zero when only considering these genes with non-negligible differences in read counts (absolute change to be $\ge 1$ FPKM), but drops to about one fifth (20.8%).
+![Breakpoints leads to altered expression in 1/5 of nearby genes with a non-negligible absolute change in expression](Plots/expression.fold-change.ecdf.thresholded.png)
 
-![Breakpoints leads to altered expression in 1/5 of nearby genes with a non-negligible absolute change in expression](Plots/sv-disruption.fold.ecdf.thresholded.png)
+Excluding the lowly-expressing, genes, our correspondence between expression changes, number of genes, and TAD alteration becomes
+
+![Distribution of expression fold changes for each complex event](Plots/expression.fold-change.thresholded.png)
 
 ## Conclusions
 
 These statistical tests show that this testing framework is prone to false detections, and should be treated cautiously.
-
-SV breakpoints do not appear to disrupt local TAD boundary formation, often.
-While this and previous work shows examples where these SVs do in fact rearrange TADs, this does not appear to be the norm.
-However, these breakpoints still manage to affect the expression of the genes within these TADs.
+While SV breakpoints do not appear to disrupt local TAD boundary formation, often, this does not appear to be the norm.
+These breakpoints, however, still manage to affect the expression of the genes within these TADs.
 Thus, we hypothesize that these SVs do not alter gene expression by reorganizing TADs, but through affecting _cis_-regulatory interactions themselves.

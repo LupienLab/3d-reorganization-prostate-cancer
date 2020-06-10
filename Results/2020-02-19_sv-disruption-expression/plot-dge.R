@@ -489,7 +489,7 @@ gg_fc_thresh_ngenes <- ggplotGrob(
 )
 gg_fc_thresh_affecting_tad <- ggplotGrob(
     ggplot(
-        data = tested_genes_cut$thresholded)
+        data = tested_genes_cut$thresholded
     )
     + geom_col(aes(x = factor(test_ID), y = 1, fill = altered_TAD))
     + labs(x = NULL)
