@@ -532,14 +532,14 @@ pickle.dump(G_all, open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "wb")
 # create table of test IDs and metadata
 coupled_tests = pd.DataFrame(
     columns=[
-        "test_ID",
-        "breakpoint_IDs",
-        "mut_samples",
-        "nonmut_samples",
-        "n_mut",
-        "n_nonmut",
-        "SV_type",
-        "testing",
+        "test_ID",          # group of nearby breakpoints
+        "breakpoint_IDs",   # the breakpoints in the group
+        "mut_samples",      # which samples are mutated in this group
+        "nonmut_samples",   # which samples are not mutated, and can be compared against
+        "n_mut",            # number of mutated samples
+        "n_nonmut",         # number of non-mutated samples
+        "SV_type",          # type of events in this group
+        "Unambiguous",      # whether the effect of each breakpoint in this group is unambiguous (e.g. no subclonal breakpoint in the same sample)
     ]
 )
 for t_id in test_ID_status:
@@ -566,7 +566,7 @@ for t_id in test_ID_status:
             "n_mut": len(mut_samples),
             "n_nonmut": len(nonmut_samples),
             "SV_type": ",".join(sorted(test_ID_SV_types[t_id])),
-            "testing": test_ID_status[t_id]
+            "Unambiguous": test_ID_status[t_id]
         },
         ignore_index=True,
         sort=False

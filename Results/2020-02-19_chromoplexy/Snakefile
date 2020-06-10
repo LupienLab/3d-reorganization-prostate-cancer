@@ -41,7 +41,6 @@ rule all:
             sample=SAMPLES,
             track=["beddb", "bed2ddb"],
         ),
-        "TAD-induced-regions.bed",
         path.join("Statistics", "breakpoints.binned.tsv"),
         path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
         path.join("Statistics", "breakpoint-components.tsv"),
@@ -59,28 +58,6 @@ rule all:
             ],
             ext=PLOT_EXTS
         ),
-        path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"),
-        expand(
-            path.join(PLOT_DIR, "sv-disruption", "tads.count.{ext}"),
-            ext=PLOT_EXTS
-        ),
-        expand(
-            path.join(PLOT_DIR, "sv-disruption", "expression.{plot}.{ext}"),
-            plot=[
-                "p-values",
-                "qq",
-                "z",
-                "fold-change",
-                "fold-change.thresholded",
-                "fold-change-vs-difference",
-                "fold-change.ecdf",
-                "fold-change.ecdf.thresholded",
-            ],
-            ext=PLOT_EXTS,
-        ),
-        path.join(GRAPH_DIR, "sv-disruption-tests.expression.tsv"),
-        path.join(GRAPH_DIR, "sv-disruption-tests.expression.gene-level.tsv"),
-        # path.join(GRAPH_DIR, "sv-disruption-tests.acetylation.tsv"),
 
 # ==============================================================================
 # Rules
