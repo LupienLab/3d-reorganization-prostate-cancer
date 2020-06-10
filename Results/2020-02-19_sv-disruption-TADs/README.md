@@ -29,7 +29,9 @@ If the clustering equals the mutated samples from the non-mutated samples (i.e. 
 
 ### Breakpoints rarely alter the local chromatin topology
 
-Using the method described above for detecting changes to local topology as a result of and SV breakpoint, we find that a small minority of SVs alter the local topology (X / Y, P%).
+Using the method described above for detecting changes to local topology as a result of and SV breakpoint, we find that a small minority of SVs alter the local topology (11 / 260, 4.2%).
+
+![Bar graph of breakpoint test groups](Plots/tads.count.png)
 
 SVs that do alter the local topology include:
 
