@@ -746,14 +746,14 @@ savefig(gg_fc_thresh_cdf, file.path(PLOT_DIR, "expression.fold-change.ecdf.thres
 # ==============================================================================
 fwrite(
     tested_genes_cut$all,
-    "sv-disruption.expression.gene-level.stratified.all.tsv",
+    "sv-disruption-tests.expression.stratified.all.tsv",
     sep = "\t",
     col.names = TRUE
 )
 
 fwrite(
     tested_genes_cut$thresholded,
-    "sv-disruption.expression.gene-level.stratified.thresholded.tsv",
+    "sv-disruption-tests.expression.stratified.thresholded.tsv",
     sep = "\t",
     col.names = TRUE
 )
