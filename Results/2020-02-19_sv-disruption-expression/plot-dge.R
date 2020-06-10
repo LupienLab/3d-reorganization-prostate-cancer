@@ -238,13 +238,6 @@ tested_genes_cut$thresholded <- merge(
     by = "test_ID"
 )
 
-# set of tests where at least 1 gene passes both thresholds
-tests_with_some_deg <- tested_genes[
-    Abs_Thresh == TRUE,
-    .N,
-    by = c("test_ID", "Fold_Thresh")
-]
-
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -268,6 +261,58 @@ gg_qq <- (
     + theme_minimal()
 )
 savefig(gg_qq, file.path(PLOT_DIR, "expression.qq"))
+
+# p-value histogram at the gene level
+gg_pval_hist_genes <- (
+    ggplot(data = tested_genes)
+    + geom_histogram(aes(x = pnorm(z)))
+    + labs(x = "p-value", y = "Frequency")
+    + theme_minimal()
+)
+savefig(gg_pval_hist_genes, file.path(PLOT_DIR, "expression.p-values.gene-level"))
+
+# p-value histogram at the gene level, thresholded on a minimum absolute change in expression
+gg_pval_hist_genes_abs <- (
+    ggplot(data = tested_genes[Abs_Thresh == TRUE])
+    + geom_histogram(aes(x = pnorm(z)))
+    + labs(x = "p-value", y = "Frequency")
+    + theme_minimal()
+)
+savefig(gg_pval_hist_genes_abs, file.path(PLOT_DIR, "expression.p-values.gene-level.thresholded"))
+
+# qq plot of gene-level detections
+gg_qq_genes <- (
+    ggplot(data = tested_genes[order(z)])
+    + geom_point(aes(x = qnorm(ppoints(tested_genes[, .N])), y = z))
+    + geom_abline(slope = 1, intercept = 0, linetype = "dashed")
+    + scale_x_continuous(
+        limits = c(-4, 4),
+        name = "Normal distribution qualtiles"
+    )
+    + scale_y_continuous(
+        limits = c(-5, 5),
+        name = "Observed quantiles"
+    )
+    + theme_minimal()
+)
+savefig(gg_qq_genes, file.path(PLOT_DIR, "expression.qq.gene-level"))
+
+gg_qq_genes_abs <- (
+    ggplot(data = tested_genes[Abs_Thresh == TRUE][order(z)])
+    + geom_point(aes(x = qnorm(ppoints(tested_genes[Abs_Thresh == TRUE, .N])), y = z))
+    + geom_abline(slope = 1, intercept = 0, linetype = "dashed")
+    + scale_x_continuous(
+        limits = c(-4, 4),
+        name = "Normal distribution qualtiles"
+    )
+    + scale_y_continuous(
+        limits = c(-5, 5),
+        name = "Observed quantiles"
+    )
+    + theme_minimal()
+)
+savefig(gg_qq_genes_abs, file.path(PLOT_DIR, "expression.qq.gene-level.thresholded"))
+
 
 # resulting statistics
 # --------------------------------------

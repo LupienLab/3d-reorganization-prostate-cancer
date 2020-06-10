@@ -38,6 +38,41 @@ To address this shortcoming, we developed a different null hypothesis testing fr
 
 ## Results
 
+### Possible pitfalls of hypothesis testing framework due to lack of recurrent SVs
+
+We are aware that using n = 1 in a single test group can be a dangerous statistical game to play, with the lack of variance estimation for the mutated group.
+However, due to the lack of recurrent structural variants, the only case where having adequate sample sizes is in the case of the T2E fusion, where we have 6 samples in each test group.
+The remaining test cases involve a single mutated sample compared against 8 or more samples that are not mutated.
+For these cases, we take an approach similar in style to that of DESeq when one contrasting category has only 1 sample by using the estimators of the non-mutated samples as estimates for the mutated sample, as well (see [Working partially without replicates](https://bioconductor.org/packages/release/bioc/vignettes/DESeq/inst/doc/DESeq.pdf) from the DESeq v1 package).
+
+Looking at the histogram of p-values, we find an anti-conservative distribution.
+
+![p-value histogram](Plots/expression.p-values.png)
+
+However, looking at the qq-plot shows that these p-values are likely over-inflated, since they even do not behave well at larger p-values.
+
+![qq plot](Plots/expression.qq.png)
+
+While there may be true detections here, the consistent over-inflation of p-values here implies that many of these measures of altered expression at the breakpoint level are likely to be false positives.
+
+Looking at the distribution of gene-wise z values, we can see a similar distribution.
+
+![qq plot of gene-level z scores](Plots/expression.qq.gene-level.png)
+
+And this over-inflation is not solely due to lowly-expressing genes with large fold-changes.
+If we threshold on a minimum absolute difference between mutated and non-mutated samples (> 1e-3 FPKM), we see the following distributions.
+
+![p-values of thresholded genes](Plots/expression.p-values.gene-level.thresholded.png)
+
+![qq plot of thresholded genes](Plots/expression.qq.gene-level.thresholded.png)
+
+There are some cases for optimism, however.
+We see that _ERG_ is found to be significantly over-expressed, which has been previously observed.
+
+![z-scores of genes](Plots/expression.z.png)
+
+But this may be the exception to the rule.
+
 ### Structural variant breakpoints alter the expression of genes within surrounding TADs
 
 Using the method described above, we identified 41 breakpoints that significantly altered gene expression of genes within the same TAD(s) ($FDR < 0.05$).
@@ -66,6 +101,8 @@ We see that the percentage of breakpoints affecting expression is still non-zero
 ![Breakpoints leads to altered expression in 1/5 of nearby genes with a non-negligible absolute change in expression](Plots/sv-disruption.fold.ecdf.thresholded.png)
 
 ## Conclusions
+
+These statistical tests show that this testing framework is prone to false detections, and should be treated cautiously.
 
 SV breakpoints do not appear to disrupt local TAD boundary formation, often.
 While this and previous work shows examples where these SVs do in fact rearrange TADs, this does not appear to be the norm.
