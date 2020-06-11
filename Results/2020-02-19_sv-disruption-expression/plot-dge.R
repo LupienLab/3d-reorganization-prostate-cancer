@@ -202,7 +202,7 @@ test_exprs_change_groups <- list(
                 majority = factor(
                     level,
                     levels = cut_levels,
-                    labels = c("Large descreases", "Small decreases", "Small increases", "Large increases"),
+                    labels = c("Large decreases", "Small decreases", "Small increases", "Large increases"),
                     ordered = TRUE
                 )
             )
