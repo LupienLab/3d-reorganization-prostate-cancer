@@ -1,5 +1,6 @@
 name: Davos
 channels:
+  - daler
   - conda-forge
   - bioconda
   - r
@@ -25,6 +26,7 @@ dependencies:
   - bioconductor-biocgenerics=0.32.0
   - bioconductor-biocparallel=1.20.0
   - bioconductor-biostrings=2.54.0
+  - bioconductor-bsgenome=1.54.0
   - bioconductor-delayedarray=0.12.0
   - bioconductor-deseq2=1.26.0
   - bioconductor-genefilter=1.68.0
@@ -34,6 +36,7 @@ dependencies:
   - bioconductor-genomicalignments=1.22.0
   - bioconductor-genomicranges=1.38.0
   - bioconductor-iranges=2.20.0
+  - bioconductor-regioner=1.18.0
   - bioconductor-rhtslib=1.18.0
   - bioconductor-rsamtools=2.2.0
   - bioconductor-rtracklayer=1.46.0
@@ -42,15 +45,16 @@ dependencies:
   - bioconductor-xvector=0.26.0
   - bioconductor-zlibbioc=1.32.0
   - biopython=1.76
+  - black=19.10b0
   - bleach=3.1.4
   - bokeh=2.0.0
   - bowtie2=2.3.5.1
   - bwa=0.7.17
   - bwidget=1.9.14
   - bzip2=1.0.8
-  - ca-certificates=2020.4.5.1
+  - ca-certificates=2020.4.5.2
   - cairo=1.16.0
-  - certifi=2020.4.5.1
+  - certifi=2020.4.5.2
   - cffi=1.14.0
   - chardet=3.0.4
   - click=7.1.1
@@ -65,6 +69,7 @@ dependencies:
   - cytoolz=0.10.1
   - dask=2.10.1
   - dask-core=2.10.1
+  - dataclasses=0.7
   - datrie=0.8.2
   - dbus=1.13.6
   - decorator=4.4.2
@@ -174,6 +179,8 @@ dependencies:
   - msgpack-python=0.6.2
   - multiprocess=0.70.9
   - multiqc=1.6
+  - mypy=0.780
+  - mypy_extensions=0.4.3
   - natsort=7.0.1
   - nbconvert=5.6.1
   - nbformat=5.0.4
@@ -195,6 +202,7 @@ dependencies:
   - pango=1.42.4
   - parso=0.6.2
   - partd=1.1.0
+  - pathspec=0.8.0
   - patsy=0.5.1
   - pbgzip=2016.08.04
   - pcre=8.44
@@ -271,6 +279,7 @@ dependencies:
   - r-commonmark=1.7
   - r-covr=3.5.0
   - r-crayon=1.3.4
+  - r-cream=1.1.1
   - r-crosstalk=1.1.0.1
   - r-curl=4.3
   - r-data.table=1.12.8
@@ -387,6 +396,7 @@ dependencies:
   - r-zeallot=0.1.0
   - ratelimiter=1.2.0
   - readline=8.0
+  - regex=2020.6.8
   - requests=2.23.0
   - sambamba=0.7.1
   - samtools=1.9
@@ -406,6 +416,7 @@ dependencies:
   - spectra=0.0.11
   - sqlite=3.30.1
   - sra-tools=2.10.3
+  - sratoolkit=2.5.7
   - statsmodels=0.11.1
   - tabix=0.2.6
   - tbb=2020.1
@@ -413,11 +424,13 @@ dependencies:
   - testpath=0.4.4
   - tk=8.6.10
   - tktable=2.10
+  - toml=0.10.1
   - toolz=0.10.0
   - toposort=1.5
   - tornado=6.0.4
   - tqdm=4.42.1
   - traitlets=4.3.3
+  - typed-ast=1.4.1
   - typing_extensions=3.7.4.1
   - urllib3=1.25.7
   - wcwidth=0.1.9
