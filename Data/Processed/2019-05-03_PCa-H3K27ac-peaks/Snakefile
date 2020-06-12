@@ -30,23 +30,17 @@ rule all:
             sample=UNIQ_SAMPLES,
             ext=["narrowPeak", "bdg"],
         ),
-        expand(
-            path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bw"),
-            sample=UNIQ_SAMPLES,
-        ),
         path.join(PEAK_DIR, "catalogue-peaks.bed"),
         path.join(PEAK_DIR, "correlation.tsv"),
         expand(
-            path.join(PEAK_DIR, "{sample}_FE.sorted.bdg"),
-            sample=UNIQ_SAMPLES
+            path.join(PEAK_DIR, "{sample}_FE.sorted.filtered.{ext}"),
+            sample=UNIQ_SAMPLES,
+            ext=["bdg", "bw"],
         ),
         expand(
-            path.join(PEAK_DIR, "{sample}_FE.sorted.beddb"),
-            sample=UNIQ_SAMPLES
-        ),
-        expand(
-            path.join(CORE_DIR, "{sample}.cores.bed"),
+            path.join(CORE_DIR, "{sample}.cores.{ext}"),
             sample=UNIQ_CAP_SAMPLES,
+            ext=["bed", "beddb"],
         ),
 
 # ==============================================================================
@@ -77,16 +71,17 @@ rule call_peaks:
 rule filter_blacklist_noncanonical:
     input:
         blacklist = "ENCODE-blacklist.bed",
-        peaks = path.join(PEAK_DIR, "{sample}_{type}.{ext}")
+        peaks = path.join(PEAK_DIR, "{sample}_{type}.sorted.{ext}")
     output:
-        path.join(PEAK_DIR, "{sample}_{type}.filtered.{ext}")
+        path.join(PEAK_DIR, "{sample}_{type}.sorted.filtered.{ext}")
     wildcard_constraints:
         sample = "Pca\d+",
-        type = "[^.]+",
-        ext = "[^.]+",
+        ext = "(bed|bdg)+",
+    params:
+        "-v -sorted"
     shell:
-        # remove blacklist regions and only keep canonical chromosomes
-        "bedtools intersect -v -a {input.peaks} -b {input.blacklist} | awk '/{CHR_REGEX}/ {{print}}' | LC_COLLATE=C sort -k1,1 -k2,2n > {output}"
+        # remove blacklist regions and only keep canonical chromosomes (sorting with LC_COLLATE=C to work with bigWigs)
+        "bedtools intersect {params} -a {input.peaks} -b <(LC_COLLATE=C sort -k1,1 -k2,2n {input.blacklist}) | awk '/{CHR_REGEX}/ {{print}}' > {output}"
 
 rule narrowPeak2bedGraph:
     input:
@@ -108,10 +103,10 @@ rule catalogue_peaks:
 
 rule bdg_to_bigwig:
     input:
-        bed = path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bdg"),
-        genome = path.join("..", "2019-06-18_PCa-LowC-sequencing/hg38.sizes.txt"),
+        bed = path.join(PEAK_DIR, "{sample}_{type}.bdg"),
+        genome = path.join("..", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
-        path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bw")
+        path.join(PEAK_DIR, "{sample}_{type}.bw")
     shell:
         "bedGraphToBigWig {input.bed} {input.genome} {output}"
 
@@ -155,13 +150,13 @@ rule sort:
     wildcard_constraints:
         ext = "b(ed|dg)"
     shell:
-        "sort -k1,1 -V -k2,2n {input} > {output}"
+        "LC_COLLATE=C sort -k1,1 -k2,2n {input} > {output}"
 
 rule clodius_agg_1d_bdg:
     input:
-        path.join(PEAK_DIR, "{sample}_FE.sorted.bdg"),
+        path.join(PEAK_DIR, "{sample}_FE.sorted.filtered.bdg"),
     output:
-        path.join(PEAK_DIR, "{sample}_FE.sorted.beddb"),
+        path.join(PEAK_DIR, "{sample}_FE.sorted.filtered.beddb"),
     params:
         "-a hg38"
     shell:
@@ -185,3 +180,4 @@ rule cream:
         path.join(CORE_DIR, "PCa{sampleid}.cores.bed"),
     shell:
         "Rscript {input.script} {input.peaks} {output}"
+
