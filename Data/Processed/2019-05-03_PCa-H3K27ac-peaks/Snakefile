@@ -1,21 +1,23 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
 import pandas as pd
 import os.path as path
 import numpy as np
 
-# ==============================================================================
-# Configuration
-# ==============================================================================
-CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
 
-BAM_DIR = 'BAMs'
-PEAK_DIR = 'Peaks'
-REPORT_DIR = 'Reports'
+BAM_DIR = "BAMs"
+PEAK_DIR = "Peaks"
+CORE_DIR = "COREs"
+REPORT_DIR = "Reports"
 
-SAMPLES = ['Pca' + str(i) for i in CONFIG['Sample ID'].tolist()]
-CHIPS = CONFIG['ChIP Type'].tolist()
+SAMPLES = ["Pca" + str(i) for i in CONFIG["Sample ID"].tolist()]
+CHIPS = CONFIG["ChIP Type"].tolist()
 UNIQ_SAMPLES = np.unique(SAMPLES)
+UNIQ_CAP_SAMPLES = np.unique(["PCa" + str(i) for i in CONFIG["Sample ID"]])
 
-GENOMES = ['hg38']
+GENOMES = ["hg38"]
 CHR_REGEX = "^chr[0-9]{0,3}[XYM]?\\t"
 
 # ==============================================================================
@@ -24,24 +26,13 @@ CHR_REGEX = "^chr[0-9]{0,3}[XYM]?\\t"
 rule all:
     input:
         expand(
-            path.join(BAM_DIR, '{sample}_{chip}.sorted.dedup.bam'),
-            zip,
-            sample=SAMPLES,
-            chip=CHIPS
-        ),
-        expand(
-            path.join(PEAK_DIR, '{sample}_peaks.narrowPeak'),
-            sample=UNIQ_SAMPLES
-        ),
-        expand(
-            path.join(PEAK_DIR, '{sample}_peaks.filtered.{ext}'),
+            path.join(PEAK_DIR, "{sample}_peaks.filtered.{ext}"),
             sample=UNIQ_SAMPLES,
             ext=["narrowPeak", "bdg"],
         ),
         expand(
-            path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.{ext}'),
+            path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bw"),
             sample=UNIQ_SAMPLES,
-            ext=["bdg", "bw"],
         ),
         path.join(PEAK_DIR, "catalogue-peaks.bed"),
         path.join(PEAK_DIR, "correlation.tsv"),
@@ -52,39 +43,43 @@ rule all:
         expand(
             path.join(PEAK_DIR, "{sample}_FE.sorted.beddb"),
             sample=UNIQ_SAMPLES
-        )
+        ),
+        expand(
+            path.join(CORE_DIR, "{sample}.cores.bed"),
+            sample=UNIQ_CAP_SAMPLES,
+        ),
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule call_peaks:
     input:
-        chip = path.join(BAM_DIR, '{sample}_H3K27ac.sorted.dedup.bam'),
-        input = path.join(BAM_DIR, '{sample}_input.sorted.dedup.bam'),
+        chip = path.join(BAM_DIR, "{sample}_H3K27ac.sorted.dedup.bam"),
+        input = path.join(BAM_DIR, "{sample}_input.sorted.dedup.bam"),
     output:
-        path.join(PEAK_DIR, '{sample}_peaks.xls'),
-        path.join(PEAK_DIR, '{sample}_peaks.narrowPeak'),
-        path.join(PEAK_DIR, '{sample}_summits.bed')
+        path.join(PEAK_DIR, "{sample}_peaks.xls"),
+        path.join(PEAK_DIR, "{sample}_peaks.narrowPeak"),
+        path.join(PEAK_DIR, "{sample}_summits.bed"),
+        path.join(PEAK_DIR, "{sample}_treat_pileup.bdg"),
+        path.join(PEAK_DIR, "{sample}_control_lambda.bdg"),
     params:
         lambda wildcards:
-            ' '.join([
-                '-g hs',
-                '-f BAM',
-                '-q 0.005',
-                '-B',
-                '-n {}'.format(path.join(PEAK_DIR, wildcards.sample))
+            " ".join([
+                "-g hs",
+                "-f BAM",
+                "-q 0.005",
+                "-B",
+                "-n {}".format(path.join(PEAK_DIR, wildcards.sample))
             ])
-    conda:
-        'macs.yaml'
     shell:
-        'macs2 callpeak {params} -t {input.chip} -c {input.input}'
+        "macs2 callpeak {params} -t {input.chip} -c {input.input}"
 
 rule filter_blacklist_noncanonical:
     input:
-        blacklist = 'ENCODE-blacklist.bed',
-        peaks = path.join(PEAK_DIR, '{sample}_{type}.{ext}')
+        blacklist = "ENCODE-blacklist.bed",
+        peaks = path.join(PEAK_DIR, "{sample}_{type}.{ext}")
     output:
-        path.join(PEAK_DIR, '{sample}_{type}.filtered.{ext}')
+        path.join(PEAK_DIR, "{sample}_{type}.filtered.{ext}")
     wildcard_constraints:
         sample = "Pca\d+",
         type = "[^.]+",
@@ -95,9 +90,9 @@ rule filter_blacklist_noncanonical:
 
 rule narrowPeak2bedGraph:
     input:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.narrowPeak')
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak")
     output:
-        path.join(PEAK_DIR, '{sample}_peaks.filtered.bdg')
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.bdg")
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $5}}' {input} > {output}"
 
@@ -113,10 +108,10 @@ rule catalogue_peaks:
 
 rule bdg_to_bigwig:
     input:
-        bed = path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bdg'),
+        bed = path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bdg"),
         genome = path.join("..", "2019-06-18_PCa-LowC-sequencing/hg38.sizes.txt"),
     output:
-        path.join(PEAK_DIR, '{sample}_treat_pileup.filtered.bw')
+        path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bw")
     shell:
         "bedGraphToBigWig {input.bed} {input.genome} {output}"
 
@@ -162,12 +157,31 @@ rule sort:
     shell:
         "sort -k1,1 -V -k2,2n {input} > {output}"
 
-rule clodius_agg_1d:
+rule clodius_agg_1d_bdg:
     input:
-        path.join(PEAK_DIR, '{sample}_FE.sorted.bdg'),
+        path.join(PEAK_DIR, "{sample}_FE.sorted.bdg"),
     output:
-        path.join(PEAK_DIR, '{sample}_FE.sorted.beddb'),
+        path.join(PEAK_DIR, "{sample}_FE.sorted.beddb"),
     params:
         "-a hg38"
     shell:
         "clodius aggregate bedfile {params} -o {output} {input}"
+
+rule clodius_agg_1d_core:
+    input:
+        path.join(CORE_DIR, "{sample}.cores.bed"),
+    output:
+        path.join(CORE_DIR, "{sample}.cores.beddb"),
+    params:
+        "-a hg38"
+    shell:
+        "clodius aggregate bedfile {params} -o {output} {input}"
+
+rule cream:
+    input:
+        script = "calc-cores.R",
+        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.narrowPeak"),
+    output:
+        path.join(CORE_DIR, "PCa{sampleid}.cores.bed"),
+    shell:
+        "Rscript {input.script} {input.peaks} {output}"
