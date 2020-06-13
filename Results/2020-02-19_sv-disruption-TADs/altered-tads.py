@@ -21,7 +21,7 @@ from sklearn.cluster import AgglomerativeClustering
 TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs")
 GRAPH_DIR = path.join("..", "2020-02-19_chromoplexy", "Graphs")
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
-WINDOWS = list(range(3, 24))
+WINDOWS = list(range(3, 25))
 
 # region around breakpoints to look for TAD boundaries
 BREAK_FLANK_SIZE = 1e5
