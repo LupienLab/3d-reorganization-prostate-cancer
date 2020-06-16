@@ -25,6 +25,11 @@ PLOT_EXTS = ["png", "pdf"]
 rule all:
     input:
         "TAD-induced-regions.bed",
+        expand(
+            path.join(ACETYL_DIR, "PCa{sampleid}_{type}.induced-region-counts.bed"),
+            sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
+            type=["input", "H3K27ac"],
+        ),
         "sv-disruption-tests.acetylation.tsv",
 
 # ==============================================================================
@@ -57,9 +62,9 @@ rule count_chip:
 rule altered_acetyl:
     input:
         script = "altered-acetylation.R",
-        breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
-        tads = path.join(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"),
-        tests = path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+        breaks = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-breakpoints.tsv"),
+        tests = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-disruption-tests.tsv"),
+        tads = path.join("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
         counts = expand(
             path.join(ACETYL_DIR, "{sample}_{type}.induced-region-counts.bed"),
             sample=SAMPLES,
@@ -69,3 +74,4 @@ rule altered_acetyl:
         "sv-disruption-tests.acetylation.tsv",
     shell:
         "Rscript {input.script}"
+
