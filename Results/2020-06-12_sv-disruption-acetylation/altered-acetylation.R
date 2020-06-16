@@ -175,6 +175,25 @@ for (i in 1:length(all_comparisons)) {
     }
 }
 
+# calculate size factors to be used in each comparison (will be saved later)
+size_factors <- data.table(
+    "test_ID" = rep(tests$test_ID, each = length(SAMPLES)),
+    "SampleID" = rep(SAMPLES, length(tests$test_ID)),
+    "Size_Factor" = 0
+)
+for (i in 1:length(all_comparisons)) {
+    mut_samples <- all_comparisons[[i]]$mut
+    nonmut_samples <- all_comparisons[[i]]$nonmut
+    testing_samples <- c(mut_samples, nonmut_samples)
+    test_IDs <- all_comparisons[[i]]$test_IDs
+    scale_factors <- library_sizes[testing_samples] / min(library_sizes[testing_samples])
+    for (s in names(scale_factors)) {
+        size_factors[(test_ID %in% test_IDs) & (SampleID == s), Size_Factor := scale_factors[s]]
+    }
+}
+# set Size_Factor to be 0 for any sample not included in a test
+size_factors[Size_Factor == 0, Size_Factor := NA]
+
 # perform differential analysis for each test
 for (i in 1:length(all_comparisons)) {
     cat(i, "of", length(all_comparisons), "\n")
@@ -313,9 +332,9 @@ fwrite(
 )
 
 # save size-factors used for each comparison
-size_factors <- data.table(
-    "test_ID" = rep(tests$test_ID, len(SAMPLES)),
-    "SampleID" = rep(SAMPLES, len(tests$test_ID)),
-    "Size_Factor" = NA
+fwrite(
+    size_factors,
+    "sv-disruption-tests.acetylation.size-factors.tsv",
+    sep = "\t",
+    col.names = TRUE
 )
-for (i in 1:length(all_comparisons)) {
