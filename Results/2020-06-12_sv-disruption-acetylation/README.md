@@ -75,3 +75,10 @@ $$
 The resulting p-value for TAD $i$, is provided by a two-sided z-test: $p_i' = 2 \cdot \phi(-|z_i'|)$
 
 #### baseMean, log2FoldChange, and lfcSE
+
+
+
+#### Multiple testing corrections
+
+We are only testing for differential acetylation in the TADs containing structural variants, this is not a genome-wide comparison.
+Thus, we only correct for the number of tests performed per normalization group.
