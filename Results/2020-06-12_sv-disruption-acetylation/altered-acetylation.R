@@ -91,13 +91,13 @@ count_matrix <- NULL
 library_sizes <- sapply(SAMPLES, function(s) 0)
 for (s in SAMPLES) {
     dt_chip <- fread(
-        file.path("Acetylation", paste0(s, "_H3K27ac.induced-region-counts.bed")),
+        file.path("Acetylation", "Induced", paste0(s, "_H3K27ac.induced-region-counts.bed")),
         sep = "\t",
         header = FALSE,
         col.names = c("chr", "start", "end", "count", "supported", "width", "frac_supported")
     )
     dt_input <- fread(
-        file.path("Acetylation", paste0(s, "_input.induced-region-counts.bed")),
+        file.path("Acetylation", "Induced", paste0(s, "_input.induced-region-counts.bed")),
         sep = "\t",
         header = FALSE,
         col.names = c("chr", "start", "end", "count", "supported", "width", "frac_supported")
