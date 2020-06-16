@@ -11,9 +11,9 @@ We demonstrate that this process occurs in prostate cancer. but through a possib
 We hypothesize that the altered expression is a result of altered regulatory interactions.
 To view this, we can look at the H3K27ac in the breakpoints.
 
-![SLC4A4 translocation](Plots/SLC4A4.png)
+![SLC4A4 translocation](Plots/SLC4A4.svg)
 
-![ZNF516 translocation](Plots/ZNF516.png)
+![ZNF516 translocation](Plots/ZNF516.svg)
 
 Here, we find 2 instances where it appears that the breakpoint is associated with a novel super-enhancer, characterized by the increased H3K27ac compared to non-mutated samples.
 
