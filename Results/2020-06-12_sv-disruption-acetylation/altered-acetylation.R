@@ -50,11 +50,19 @@ metadata[, ChIP_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peak
 metadata[, Ctrl_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_input.sorted.dedup.bam")]
 
 # load TADs encompassing each breakpoint
-tads <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.TADs.tsv"), sep = "\t", header = TRUE)
+tads <- fread(
+    file.path("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
+    sep = "\t",
+    header = TRUE
+)
 tads_gr <- dt2gr(tads)
 
 # load tests metadata
-tests <- fread(file.path(GRAPH_DIR, "sv-disruption-tests.tsv"), sep = "\t", header = TRUE)
+tests <- fread(
+    file.path("..", "2020-02-19_chromoplexy", "Graphs", "sv-disruption-tests.tsv"),
+    sep = "\t",
+    header = TRUE
+)
 # convert comma-separated values into lists
 tests$breakpoint_IDs <- split_comma_col(tests$breakpoint_IDs, as.numeric)
 tests$mut_samples <- split_comma_col(tests$mut_samples)
@@ -140,6 +148,7 @@ for (i in 1:(length(SAMPLES) - 1)) {
 # create design matrices for each set of mut-vs-nonmut (this depends on the test group)
 # find all the unique combinations of foreground and background samples (mut vs nonmut)
 # this will make creating the design matrices easier
+
 test_combos <- lapply(
     1:tests[, .N],
     function(i) {
@@ -291,13 +300,13 @@ tests[, end := as.integer(end)]
 # write the tables with columns in a particular order
 fwrite(
     tests[, .SD, .SDcols = c("test_ID", "z", "p", "padj")],
-    "Graphs/sv-disruption-tests.acetylation.tsv",
+    "sv-disruption-tests.acetylation.tsv",
     sep = "\t",
     col.names = TRUE
 )
 fwrite(
     sample_corrs,
-    "Statistics/acetylation-correlation.tsv",
+    "acetylation-correlation.tsv",
     sep = "\t",
     col.names = TRUE
 )
