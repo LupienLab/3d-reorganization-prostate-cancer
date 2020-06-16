@@ -191,6 +191,7 @@ for (i in 1:length(all_comparisons)) {
         ),
         Size = library_sizes[testing_samples]
     )
+    # using Yes/No as the testing factor ensures that "No" is used as the "control" category, since "No" is alphabetically earlier
     meta[, Mutated := factor(Mutated, levels = c("No", "Yes"))]
     # create DESeqDataSet object
     dds <- DESeqDataSetFromMatrix(
@@ -310,3 +311,11 @@ fwrite(
     sep = "\t",
     col.names = TRUE
 )
+
+# save size-factors used for each comparison
+size_factors <- data.table(
+    "test_ID" = rep(tests$test_ID, len(SAMPLES)),
+    "SampleID" = rep(SAMPLES, len(tests$test_ID)),
+    "Size_Factor" = NA
+)
+for (i in 1:length(all_comparisons)) {
