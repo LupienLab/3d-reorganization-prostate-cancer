@@ -30,6 +30,11 @@ rule all:
             sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
             type=["input", "H3K27ac"],
         ),
+        expand(
+            path.join(ACETYL_DIR, "Breakpoints", "PCa{sampleid}_{type}.breakpoint-counts.bed"),
+            sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
+            type=["input", "H3K27ac"],
+        ),
         "sv-disruption-tests.acetylation.tsv",
 
 # ==============================================================================
@@ -47,7 +52,20 @@ rule induced_boundaries:
     shell:
         "python {input.script}"
 
-rule count_chip:
+rule count_chip_breaks:
+    input:
+        chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
+        bed = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-breakpoints.tsv"),
+    output:
+        path.join(ACETYL_DIR, "Breakpoints", "PCa{sampleid}_{type}.breakpoint-counts.bed")
+    wildcard_constraints:
+        sampleid = "\d+",
+        type = "(H3K27ac|input)",
+    shell:
+        # skip header in input.bed
+        "bedtools coverage -abam {input.chip} -b <(awk '{{if (NR > 1) print }}' {input.bed}) | sort -k1,1 -V -k2,2n > {output}"
+
+rule count_chip_TADs:
     input:
         chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
         bed = "TAD-induced-regions.bed",
