@@ -752,8 +752,22 @@ fwrite(
 )
 
 fwrite(
+    tested_genes_cut$all[, unique(majority), keyby = "test_ID"],
+    "sv-disruption-tests.expression.stratified.all.majority.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
+fwrite(
     tested_genes_cut$thresholded,
     "sv-disruption-tests.expression.stratified.thresholded.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
+fwrite(
+    tested_genes_cut$thresholded,
+    "sv-disruption-tests.expression.stratified.thresholded.majority.tsv",
     sep = "\t",
     col.names = TRUE
 )
