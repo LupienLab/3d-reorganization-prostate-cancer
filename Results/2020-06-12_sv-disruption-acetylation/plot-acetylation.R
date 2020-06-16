@@ -56,9 +56,6 @@ for (s in SAMPLES) {
     library_sizes[s] <- min(dt_chip[, sum(count)], dt_input[, sum(count)])
 }
  
-# load acetylation correlations
-sample_corrs <- as.matrix(fread("acetylation-correlation.tsv", sep = "\t", header = TRUE))
-rownames(sample_corrs) <- SAMPLES
 
 # load TAD acetylation hypothesis test values
 acetyl <- fread(
