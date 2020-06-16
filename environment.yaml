@@ -37,6 +37,8 @@ dependencies:
   - bioconductor-genomicranges=1.38.0
   - bioconductor-iranges=2.20.0
   - bioconductor-regioner=1.18.0
+  - bioconductor-rhdf5=2.30.0
+  - bioconductor-rhdf5lib=1.8.0
   - bioconductor-rhtslib=1.18.0
   - bioconductor-rsamtools=2.2.0
   - bioconductor-rtracklayer=1.46.0
@@ -48,6 +50,7 @@ dependencies:
   - black=19.10b0
   - bleach=3.1.4
   - bokeh=2.0.0
+  - boost-cpp=1.70.0
   - bowtie2=2.3.5.1
   - bwa=0.7.17
   - bwidget=1.9.14
@@ -74,6 +77,7 @@ dependencies:
   - dbus=1.13.6
   - decorator=4.4.2
   - defusedxml=0.6.0
+  - delly=0.8.3
   - dill=0.3.1.1
   - distributed=2.10.0
   - docutils=0.16
@@ -135,6 +139,7 @@ dependencies:
   - jupyter_nbextensions_configurator=0.4.1
   - jupyterlab=1.2.6
   - jupyterlab_server=1.0.7
+  - kallisto=0.46.2
   - kiwisolver=1.1.0
   - krb5=1.16.4
   - lcms2=2.9
@@ -256,6 +261,7 @@ dependencies:
   - qtconsole=4.7.2
   - qtpy=1.9.0
   - r-acepack=1.4.1
+  - r-aggregation=1.0.1
   - r-argparse=2.0.1
   - r-askpass=1.1
   - r-assertthat=0.2.1
@@ -287,11 +293,13 @@ dependencies:
   - r-desc=1.2.0
   - r-devtools=2.2.1
   - r-digest=0.6.25
+  - r-dplyr=0.8.5
   - r-dt=0.13
   - r-ellipsis=0.3.0
   - r-evaluate=0.14
   - r-fansi=0.4.1
   - r-farver=2.0.3
+  - r-fastmap=1.0.1
   - r-findpython=1.0.5
   - r-foreign=0.8_76
   - r-formatr=1.7
@@ -311,6 +319,7 @@ dependencies:
   - r-htmltable=1.13.3
   - r-htmltools=0.4.0
   - r-htmlwidgets=1.5.1
+  - r-httpuv=1.5.4
   - r-httr=1.4.1
   - r-ini=0.3.1
   - r-irlba=2.3.3
@@ -372,13 +381,18 @@ dependencies:
   - r-rversions=2.0.1
   - r-scales=1.1.0
   - r-sessioninfo=1.1.1
+  - r-shiny=1.4.0.2
+  - r-sleuth=0.30.0
   - r-snow=0.4_3
+  - r-sourcetools=0.1.7
   - r-stringi=1.4.6
   - r-stringr=1.4.0
   - r-survival=3.1_11
   - r-sys=3.3
   - r-testthat=2.3.2
   - r-tibble=2.1.3
+  - r-tidyr=1.1.0
+  - r-tidyselect=1.1.0
   - r-upsetr=1.4.0
   - r-usethis=1.5.1
   - r-utf8=1.1.4
