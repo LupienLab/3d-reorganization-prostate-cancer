@@ -349,7 +349,7 @@ for s in SAMPLES:
 pickle.dump(G_sample, open(path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"), "wb"))
 
 # create compiled list of all breakpoints for easier parsing and saving in a table
-uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "SampleID", "breakpoint_ID", "component_ID"])
+uncoupled_breakpoints = pd.DataFrame(columns=["chr", "start", "end", "SampleID", "breakpoint_ID", "component_ID", "test_ID"])
 for s in SAMPLES:
     for n in G_sample[s]:
         uncoupled_breakpoints = uncoupled_breakpoints.append(
@@ -360,21 +360,17 @@ for s in SAMPLES:
                 "SampleID": n.data["sample"],
                 "breakpoint_ID": n.data["breakpoint_ID"],
                 "component_ID": n.data["component_ID"],
+                "test_ID": -1,
             },
             ignore_index=True,
             sort=False
         )
+
 # convert chromosome column to a categorical column to allow for natural sorting
 uncoupled_breakpoints["chr"] = pd.Categorical(
     uncoupled_breakpoints["chr"],
     ordered=True,
     categories=ns.natsorted(uncoupled_breakpoints["chr"].unique())
-)
-# save in a table
-uncoupled_breakpoints.sort_values(by=["SampleID", "chr", "start", "end"]).to_csv(
-    path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
-    sep="\t",
-    index=False
 )
 
 # produce global list of merged breakpoints
@@ -384,7 +380,8 @@ paired_breakpoints = pd.DataFrame(
         "chr_y", "start_y", "end_y",
         "breakpoint_ID_x", "breakpoint_ID_y",
         "component_ID_x", "component_ID_y",
-        "SampleID", "sv_type"
+        "test_ID_x", "test_ID_y",
+        "SampleID", "sv_type",
     ]
 )
 for s in SAMPLES:
@@ -403,6 +400,8 @@ for s in SAMPLES:
                 "breakpoint_ID_y": nodes[1].data["breakpoint_ID"],
                 "component_ID_x": nodes[0].data["component_ID"],
                 "component_ID_y": nodes[1].data["component_ID"],
+                "test_ID_x": -1,
+                "test_ID_y": -1,
                 "SampleID": s,
                 "sv_type": data["annotation"]
             },
@@ -410,12 +409,6 @@ for s in SAMPLES:
             sort=False
         )
 
-# save as table
-paired_breakpoints.sort_values(by=["SampleID", "chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y"]).to_csv(
-    path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
-    sep="\t",
-    index=False
-)
 
 # 3. Connecting points in graph containing all samples based on their TADs and locations
 # --------------------------------------
@@ -571,8 +564,23 @@ for t_id in test_ID_status:
         ignore_index=True,
         sort=False
     )
+    uncoupled_breakpoints.loc[uncoupled_breakpoints.breakpoint_ID.isin(b_ids), "test_ID"] = int(t_id)
+    paired_breakpoints.loc[paired_breakpoints.breakpoint_ID_x.isin(b_ids), "test_ID_x"] = t_id
+    paired_breakpoints.loc[paired_breakpoints.breakpoint_ID_y.isin(b_ids), "test_ID_y"] = t_id
 
-# save coupled tests
+# save coupled tests and breakpoints
+uncoupled_breakpoints.sort_values(by=["SampleID", "chr", "start", "end"]).to_csv(
+    path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+    sep="\t",
+    index=False
+)
+
+paired_breakpoints.sort_values(by=["SampleID", "chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y"]).to_csv(
+    path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+    sep="\t",
+    index=False
+)
+
 coupled_tests.to_csv(
     path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
     sep="\t",
