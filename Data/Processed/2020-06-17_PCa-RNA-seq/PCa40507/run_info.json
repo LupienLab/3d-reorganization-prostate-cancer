@@ -1,0 +1,13 @@
+{
+	"n_targets": 188753,
+	"n_bootstraps": 100,
+	"n_processed": 278426989,
+	"n_pseudoaligned": 93233836,
+	"n_unique": 26690111,
+	"p_pseudoaligned": 33.5,
+	"p_unique": 9.6,
+	"kallisto_version": "0.46.1",
+	"index_version": 10,
+	"start_time": "Wed Jun 17 12:33:26 2020",
+	"call": "kallisto quant -t 8 -i homo_sapiens/transcriptome.idx --pseudobam --rf-stranded --bias -o 2020-06-17_out/CPCG0342 -b 100 ./2020-06-16_trimmed_data/CPCG_0342_F1_1_val_1.fq ./2020-06-16_trimmed_data/CPCG_0342_F1_2_val_2.fq"
+}
