@@ -5,7 +5,8 @@ rule all:
     input:
         "gencode.v33.genes.sorted.bed",
         "gencode.v33.tss.sorted.bed",
-        "gencode.v33.all-genes.bed"
+        "gencode.v33.all-genes.bed",
+        "gencode.v33.all-transcripts.bed",
 
 # ==============================================================================
 # Rules
@@ -18,13 +19,23 @@ rule download_annotation:
 
 rule all_genes:
     input:
-        "gencode.v33.annotation.gtf"
+        script = "gene.awk",
+        annot = "gencode.v33.annotation.gtf",
     output:
         "gencode.v33.all-genes.bed"
     shell:
-        # use either tab or "; " as field separators
-        # only keep genes
-        "awk '{{FS=\"(\\t|; )\"; OFS=\"\\t\"}}{{if (NR > 5 && $3 == \"gene\"){{gsub(/gene_id \"/, \"\", $9); gsub(/\"/, \"\", $9); gsub(/gene_name \"/, \"\", $11); gsub(/\"/, \"\", $11); print $1, $4, $5, $7, $9, $11}} }}' {input} > {output}"
+        # use either tab or "; " as field separators, only keep genes
+        "awk -f {input.script} {input.annot} > {output}"
+
+rule all_transcripts:
+    input:
+        script = "transcript.awk",
+        annot = "gencode.v33.annotation.gtf",
+    output:
+        "gencode.v33.all-transcripts.bed"
+    shell:
+        # use either tab or "; " as field separators, only keep transcripts
+        "awk -f {input.script} {input.annot} > {output}"
 
 rule filter:
     input:
