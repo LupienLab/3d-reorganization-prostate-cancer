@@ -1,0 +1,33 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+PLOT_DIR = "Plots"
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        "results.genes.tsv",
+        "results.transcripts.tsv",
+        "t2e-comparison.genes.tsv",
+        "t2e-comparison.transcripts.tsv",
+        "sleuth-object.rds",
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule t2e_comp:
+    input:
+        script = "t2e-dge.R",
+    output:
+        "results.genes.tsv",
+        "results.transcripts.tsv",
+        "t2e-comparison.genes.tsv",
+        "t2e-comparison.transcripts.tsv",
+        "sleuth-object.rds",
+    shell:
+        "Rscript {input.script}"

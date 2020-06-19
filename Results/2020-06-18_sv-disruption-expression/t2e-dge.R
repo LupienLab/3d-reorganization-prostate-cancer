@@ -99,7 +99,7 @@ so_genes <- merge(
 fwrite(so_genes, "results.genes.tsv", sep = "\t", col.names = TRUE)
 fwrite(so_transcripts, "results.transcripts.tsv", sep = "\t", col.names = TRUE)
 
-sleuth_live(so, options = list(port = 42427, launch.browser = FALSE))
+# sleuth_live(so, options = list(port = 42427, launch.browser = FALSE))
 
 # compare expression changes in TADs around either breakpoint for the T2E fusion
 # endpoints for T2E are in test_ID 45 (TMPRSS2) and 46 (ERG)
