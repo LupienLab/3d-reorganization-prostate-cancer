@@ -3,7 +3,8 @@ BEGIN{
     OFS="\t";
 }
 {
-    if (NR > 5 && $3 == "gene") {
+    # only select transcripts
+    if (NR > 5 && $3 == "transcript") {
         # clean the gene_id
         gsub(/gene_id "/, "", $9);
         gsub(/"/, "", $9);
