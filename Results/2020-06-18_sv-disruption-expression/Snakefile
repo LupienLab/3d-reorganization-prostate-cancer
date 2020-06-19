@@ -31,3 +31,13 @@ rule t2e_comp:
         "sleuth-object.rds",
     shell:
         "Rscript {input.script}"
+
+rule plot_erg:
+    input:
+        script = "plot-t2e.R",
+        sleuth = "sleuth-object.rds",
+        data = "t2e-comparison.transcripts.tsv"
+    output:
+        "outfile"
+    shell:
+        "python {input.script} {input.data} -o {output}"
