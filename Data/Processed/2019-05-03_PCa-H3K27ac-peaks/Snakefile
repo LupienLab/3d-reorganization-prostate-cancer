@@ -91,6 +91,14 @@ rule narrowPeak2bedGraph:
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $5}}' {input} > {output}"
 
+rule merge_peaks:
+    input:
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.sorted.narrowPeak")
+    output:
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.sorted.merged.narrowPeak")
+    shell:
+        "bedtools merge -i {input} > {output}"
+
 rule catalogue_peaks:
     input:
         expand(path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak"), sample=UNIQ_SAMPLES)
@@ -148,7 +156,7 @@ rule sort:
     output:
         "{file}.sorted.{ext}",
     wildcard_constraints:
-        ext = "b(ed|dg)"
+        ext = "(bed|bdg|narrowPeak)"
     shell:
         "LC_COLLATE=C sort -k1,1 -k2,2n {input} > {output}"
 
@@ -175,7 +183,7 @@ rule clodius_agg_1d_core:
 rule cream:
     input:
         script = "calc-cores.R",
-        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.narrowPeak"),
+        peaks = path.join(PEAK_DIR, "Pca{sampleid}_peaks.filtered.sorted.merged.narrowPeak"),
     output:
         path.join(CORE_DIR, "PCa{sampleid}.cores.bed"),
     shell:
