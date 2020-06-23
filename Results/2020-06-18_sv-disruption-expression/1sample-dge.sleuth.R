@@ -147,13 +147,13 @@ so_genes <- merge(
 # save annotated table
 fwrite(
     so_genes,
-    paste0("sleuth/test_", ARGS$test_ID, ".results.genes.all.tsv"),
+    paste0("sleuth/test_", ARGS$test_ID, ".genes.all.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 fwrite(
     so_transcripts,
-    paste0("sleuth/test_", ARGS$test_ID, ".results.transcripts.all.tsv"),
+    paste0("sleuth/test_", ARGS$test_ID, ".transcripts.all.tsv"),
     sep = "\t",
     col.names = TRUE
 )
