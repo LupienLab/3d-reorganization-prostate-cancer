@@ -73,6 +73,7 @@ rule plot_locus:
         res = lambda wildcards: LOCI.loc[(LOCI["chr"].astype(str) == wildcards.chr) & (LOCI["start"].astype(str) == wildcards.start) & (LOCI["end"].astype(str) == wildcards.end), "res"].values[0],
         zmin = lambda wildcards: LOCI.loc[(LOCI["chr"].astype(str) == wildcards.chr) & (LOCI["start"].astype(str) == wildcards.start) & (LOCI["end"].astype(str) == wildcards.end), "zmin"].values[0],
         zmax = lambda wildcards: LOCI.loc[(LOCI["chr"].astype(str) == wildcards.chr) & (LOCI["start"].astype(str) == wildcards.start) & (LOCI["end"].astype(str) == wildcards.end), "zmax"].values[0],
+        cmap = "bwr"
     shell:
-        "cooler show -b -o {output} --dpi 300 --zmin {params.zmin} --zmax {params.zmax} {input}::/resolutions/{params.res} {wildcards.chr}:{wildcards.start}-{wildcards.end}"
+        "cooler show -b -o {output} --cmap {params.cmap} --dpi 300 --zmin {params.zmin} --zmax {params.zmax} {input}::/resolutions/{params.res} {wildcards.chr}:{wildcards.start}-{wildcards.end}"
 
