@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000113448.19	PDE4D	26	134.868893418406	0.00051123778447621	0.020065569749743	chr5	58969038	60522120	-

@@ -66,6 +66,10 @@ transcripts <- fread(
     col.names = c("chr", "start", "end", "strand", "ens_gene", "gene_name", "target_id", "transcript_name")
 )
 
+# remove version numbers from IDs
+genes[, ens_gene := gsub("\\.\\d+", "", ens_gene)]
+transcripts[, `:=`(target_id = gsub("\\.\\d+", "", target_id), ens_gene = gsub("\\.\\d+", "", ens_gene))]
+
 # load TAD calls
 tads <- fread(
     file.path("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),

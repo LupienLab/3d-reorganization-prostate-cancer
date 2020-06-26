@@ -120,6 +120,10 @@ query_gene_tpm <- merge(
     x = query_gene_tpm,
     y = metadata[, .SD, .SDcols = c("SampleID", "Colour")]
 )
+query_transcript_tpm <- merge(
+    x = query_gene_tpm,
+    y = metadata[, .SD, .SDcols = c("SampleID", "Colour")]
+)
 
 gg_gene_tpm <- (
     ggplot(data = query_gene_tpm)

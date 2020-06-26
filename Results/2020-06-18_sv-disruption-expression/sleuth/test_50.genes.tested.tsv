@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000196159.11	FAT4	3	16.9902648467202	0.338783828045877	0.99999868969141	chr4	125316399	125492932	+

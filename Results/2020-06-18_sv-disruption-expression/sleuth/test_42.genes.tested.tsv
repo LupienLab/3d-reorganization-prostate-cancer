@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000101493.11	ZNF516	5	21.0510812443793	0.000741577635433402	0.0268921641227853	chr18	76357682	76495242	-

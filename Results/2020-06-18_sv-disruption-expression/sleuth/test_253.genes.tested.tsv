@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000235162.8	C12orf75	7	24.9872136241879	0.967793116481062	0.999999959877674	chr12	105235290	105396097	+
