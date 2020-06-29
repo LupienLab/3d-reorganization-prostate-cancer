@@ -26,7 +26,7 @@ rule all:
     input:
         "TAD-induced-regions.bed",
         expand(
-            path.join(ACETYL_DIR, "Induced", "PCa{sampleid}_{type}.induced-region-counts.bed"),
+            path.join(ACETYL_DIR, "Peaks", "PCa{sampleid}_{type}.induced-region-counts.bed"),
             sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
             type=["input", "H3K27ac"],
         ),
@@ -65,12 +65,12 @@ rule count_chip_breaks:
         # skip header in input.bed
         "bedtools coverage -abam {input.chip} -b <(awk '{{if (NR > 1) print }}' {input.bed}) | sort -k1,1 -V -k2,2n > {output}"
 
-rule count_chip_TADs:
+rule count_chip_peaks:
     input:
         chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
-        bed = "TAD-induced-regions.bed",
+        bed = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "catalogue-peaks.bed"),
     output:
-        path.join(ACETYL_DIR, "Induced", "PCa{sampleid}_{type}.induced-region-counts.bed")
+        path.join(ACETYL_DIR, "Peaks", "PCa{sampleid}_{type}.induced-region-counts.bed")
     wildcard_constraints:
         sampleid = "\d+",
         type = "(H3K27ac|input)",
@@ -84,7 +84,7 @@ rule altered_acetyl:
         tests = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-disruption-tests.tsv"),
         tads = path.join("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
         counts = expand(
-            path.join(ACETYL_DIR, "Induced", "{sample}_{type}.induced-region-counts.bed"),
+            path.join(ACETYL_DIR, "Peaks", "{sample}_{type}.induced-region-counts.bed"),
             sample=SAMPLES,
             type=["H3K27ac", "input"]
         )
