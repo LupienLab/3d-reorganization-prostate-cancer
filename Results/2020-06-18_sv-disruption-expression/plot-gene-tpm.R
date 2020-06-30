@@ -1,7 +1,6 @@
 # ==============================================================================
 # Environment
 # ==============================================================================
-suppressMessages(library("sleuth"))
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("argparse"))
@@ -12,19 +11,20 @@ if (!interactive()) {
         description = "Plot the TPM comparison for a given gene in a given test"
     )
     PARSER$add_argument(
-        "gene",
-        type = "character",
-        help = "Gene name to be shown"
-    )
-    PARSER$add_argument(
         "test_ID",
         type = "integer",
         help = "test_ID to plot comparison from"
     )
+    PARSER$add_argument(
+        "genes",
+        type = "character",
+        help = "Gene name to be shown",
+        nargs = "+"
+    )
     ARGS <- PARSER$parse_args()
 } else {
     ARGS <- list(
-        "gene" = "ERG",
+        "genes" = c("ERG", "TMPRSS2"),
         "test_ID" = 46
     )
 }
@@ -67,38 +67,42 @@ tests$nonmut_samples <- split_comma_col(tests$nonmut_samples)
 mut_samples <- tests[test_ID == ARGS$test_ID, unlist(mut_samples)]
 nonmut_samples <- tests[test_ID == ARGS$test_ID, unlist(nonmut_samples)]
 
-so <- readRDS("sleuth-object.rds")
+# full table of estimated counts as well as T2E-comparison results
 so_transcripts <- fread("results.transcripts.tsv", sep = "\t")
 so_genes <- fread("results.genes.tsv", sep = "\t")
-
-# full table of estimated counts
-full_table <- as.data.table(kallisto_table(so))
+full_table <- fread("all-samples.abundance.tsv", sep = "\t")
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
 query_transcript_counts <- rbindlist(lapply(
-    so_transcripts[gene_name == ARGS$gene, target_id],
+    so_transcripts[gene_name%in% ARGS$genes, target_id],
     function(target) {
         dt <- as.data.table(get_bootstrap_summary(so, target, "est_counts"))
         dt[, target_id := target]
+        dt[, condition := NULL]
         return(dt)
     }
 ))
 
 # get query transcript counts in TPM
-query_transcript_tpm <- merge(
-    x = query_transcript_counts,
-    y = full_table[, .(target_id, sample, tpm)],
-    by = c("target_id", "sample")
-)
+query_transcript_tpm <- rbindlist(mapply(
+    function(target, gene_id, gene_name) {
+        dt <- full_table[target_id == target, .SD]
+        dt[, gene_id := gene_id]
+        dt[, gene_name := gene_name]
+        return(dt)
+    },
+    so_transcripts[gene_name %in% ARGS$genes, target_id],
+    so_transcripts[gene_name %in% ARGS$genes, ens_gene],
+    so_transcripts[gene_name %in% ARGS$genes, gene_name],
+    SIMPLIFY = FALSE
+))
 colnames(query_transcript_tpm)[colnames(query_transcript_tpm) == "sample"] <- "SampleID"
-colnames(query_transcript_tpm)[colnames(query_transcript_tpm) == "tpm"] <- "TPM"
-query_transcript_tpm[, logTPM := log10(TPM + 1)]
+query_transcript_tpm[, log10p1TPM := log10(tpm + 1)]
 
 # get query gene counts in TPM
-query_gene_tpm <- query_transcript_tpm[, .(TPM = sum(TPM)), by = "SampleID"]
-
+query_gene_tpm <- query_transcript_tpm[, .(tpm = sum(tpm)), by = c("SampleID", "gene_id", "gene_name")]
 
 this_test_stratification <- data.table(
     SampleID = c(mut_samples, nonmut_samples),
@@ -110,7 +114,7 @@ query_gene_tpm <- merge(
     x = query_gene_tpm,
     y = this_test_stratification
 )
-query_gene_tpm[, logTPM := log10(TPM + 1)]
+query_gene_tpm[, log10p1TPM := log10(tpm + 1)]
 
 # ==============================================================================
 # Plots
@@ -125,38 +129,36 @@ query_transcript_tpm <- merge(
     y = metadata[, .SD, .SDcols = c("SampleID", "Colour")]
 )
 
+paths <- rbindlist(lapply(
+    ARGS$genes,
+    function(gene) {
+        data.table(
+            gene_name = gene,
+            x = rep(c("No", "Yes"), each = 2),
+            y = c(
+                (query_gene_tpm[Mutated == "No" & gene_name == gene, max(log10p1TPM)] + query_gene_tpm[gene_name == gene, max(log10p1TPM) * 1.05]) / 2,
+                query_gene_tpm[gene_name == gene, max(log10p1TPM) * 1.05],
+                query_gene_tpm[gene_name == gene, max(log10p1TPM) * 1.05],
+                (query_gene_tpm[Mutated == "Yes" & gene_name == gene, max(log10p1TPM)] + query_gene_tpm[gene_name == gene, max(log10p1TPM) * 1.05]) / 2
+            )
+        )
+    }
+))
+
 gg_gene_tpm <- (
     ggplot(data = query_gene_tpm)
     + geom_boxplot(
-        aes(x = Mutated, y = logTPM, fill = Mutated),
+        aes(x = Mutated, y = log10p1TPM, fill = Mutated),
         alpha = 0.3,
         colour = "black",
         outlier.shape = NA
     )
-    + geom_point(aes(x = Mutated, y = logTPM, colour = Colour), position = position_jitter(height = 0, width = 0.2))
+    + geom_point(aes(x = Mutated, y = log10p1TPM, colour = Colour), position = position_jitter(height = 0, width = 0.2))
     + geom_path(
-        data = data.table(
-            x = rep(c("No", "Yes"), each = 2),
-            y = c(
-                (query_gene_tpm[Mutated == "No", max(logTPM)] + query_gene_tpm[, max(logTPM) * 1.05]) / 2,
-                query_gene_tpm[, max(logTPM) * 1.05],
-                query_gene_tpm[, max(logTPM) * 1.05],
-                (query_gene_tpm[Mutated == "Yes", max(logTPM)] + query_gene_tpm[, max(logTPM) * 1.05]) / 2
-            ),
-            group = 1
-        ),
-        mapping = aes(x = x, y = y, group = group),
+        data = paths,
+        mapping = aes(x = x, y = y, group = gene_name),
         colour = "black"
     )
-    # + geom_text(
-    #     data = data.table(
-    #         x = 1.5,
-    #         y = query_gene_tpm[, max(TPM) + 1],
-    #         label = paste0("p = ", so_genes[gene_name == ARGS$gene, signif(pval, digits = 3)])
-    #     ),
-    #     mapping = aes(x = x, y = y, label = label),
-    #     vjust = -0.8
-    # )
     + scale_x_discrete(
         breaks = c("No", "Yes"),
         name = "Mutated"
@@ -171,14 +173,11 @@ gg_gene_tpm <- (
         values = query_gene_tpm$Colour,
         name = NULL
     )
-    + labs(
-        y = expression(log[10] * " (TPM + 1)"),
-        title = ARGS$gene
-    )
+    + labs(y = expression(log[10] * " (TPM + 1)"))
     + guides(colour = FALSE, fill = FALSE)
+    + facet_grid(. ~ gene_name, space = "free", scales = "free")
     + theme_minimal()
     + theme(
-        axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 1)
     )
 )
-savefig(gg_gene_tpm, paste0("Plots/", ARGS$gene, "-expression.gene-level"), width = 8)
+savefig(gg_gene_tpm, paste0("Plots/", paste(ARGS$genes, collapse = ","), "-expression.gene-level"), width = 8)
