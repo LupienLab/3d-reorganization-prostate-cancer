@@ -28,3 +28,6 @@ Comparing the _T2E_+/- samples, we can look at the differentially expressed gene
 As exprected, we find _ERG_ as the most significantly differentially expressed gene (qval < 2.2e-16), and almost all of its transcripts are greatly increased in expression.
 
 ![Differential expression of _ERG_ transcripts in _T2E_+/- patients](Plots/ERG-expression.png)
+
+### $n = 1$ comparison calibration
+

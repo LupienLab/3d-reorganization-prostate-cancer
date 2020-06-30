@@ -4,7 +4,14 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
+suppressMessages(library("gridExtra"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
+
+QVAL_THRESH <- 0.05
+LOG2FOLD_THRESH <- 1
+
+PLOT_DIR <- "Plots"
+
 
 # ==============================================================================
 # Functions
@@ -32,7 +39,19 @@ sv_tests$nonmut_samples <- split_comma_col(sv_tests$nonmut_samples)
 
 SAMPLES <- sv_tests[, sort(unique(unlist(mut_samples)))]
 
-gencode <- fread("../../Data/External/GENCODE/gencode.v33.all-transcripts.bed", sep = "\t", header = FALSE, col.names = c("chr", "start", "end", "strand", "gene_id", "gene_name", "target_id", "transcript_name"))
+# load TAD disruption test results
+tad_tests <- fread(
+    file.path("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
+    sep = "\t",
+    header = TRUE
+)
+
+gencode <- fread(
+    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
+    sep = "\t",
+    header = FALSE,
+    col.names = c("chr", "start", "end", "strand", "gene_id", "gene_name", "target_id", "transcript_name")
+)
 
 # load all naive test results
 tested_genes <- rbindlist(lapply(
@@ -118,7 +137,7 @@ merged_gene_tpm <- merge(
     by.x = c("test_ID", "target_id"),
     by.y = c("test_ID", "gene_id")
 )
-merged_gene_tpm[, altered_group := (qval < 0.05 & abs(log2fc) > log(2))]
+merged_gene_tpm[, altered_group := (qval < QVAL_THRESH & abs(log2fc) > log(2))]
 merged_gene_tpm[, test_ID := factor(test_ID)]
 
 counted_gene_tpm <- rbindlist(lapply(
@@ -126,24 +145,35 @@ counted_gene_tpm <- rbindlist(lapply(
     function(tid) {
         dt <- data.table(
             test_ID = tid,
-            altered_group = c(FALSE, TRUE),
+            Significant = c(FALSE, TRUE, TRUE),
+            LargeFold = c(NA, FALSE, TRUE),
             N = c(
-                merged_gene_tpm[test_ID == tid & altered_group == FALSE, .N],
-                merged_gene_tpm[test_ID == tid & altered_group == TRUE, .N]
+                merged_gene_tpm[(test_ID == tid) & (qval > QVAL_THRESH), .N],
+                merged_gene_tpm[(test_ID == tid) & (qval <= QVAL_THRESH) & (abs(log2fc) < LOG2FOLD_THRESH), .N],
+                merged_gene_tpm[(test_ID == tid) & (qval <= QVAL_THRESH) & (abs(log2fc) >= LOG2FOLD_THRESH), .N]
             ),
-            Total = rep(merged_gene_tpm[test_ID == tid, .N], each = 2)
+            Total = rep(merged_gene_tpm[test_ID == tid, .N], 3)
         )
         dt[, Frac := N / Total]
         return(dt)
     }
 ))
 
+counted_gene_tpm_plot <- dcast(
+    counted_gene_tpm,
+    test_ID ~ Significant + LargeFold,
+    value.var = "Frac"
+)
+
 # ==============================================================================
 # Plots
 # ==============================================================================
-gg_volcano <- (
+gg_volcano_transcripts <- (
     ggplot(data = tested_transcripts)
-    + geom_point(aes(x = b * log2(exp(1)), y = -log10(qval), colour = (qval < 0.05 & abs(b) > log(2))))
+    + geom_point(aes(x = b * log2(exp(1)), y = -log10(qval), colour = (qval < QVAL_THRESH & abs(b) >= log(2))))
+    + geom_vline(aes(xintercept = -1), linetype = "dashed")
+    + geom_vline(aes(xintercept = 1), linetype = "dashed")
+    + geom_hline(aes(yintercept = -log10(QVAL_THRESH)), linetype = "dashed")
     + labs(x = expression(log[2] * "(Fold change)"), y = expression(-log[10] * "(FDR)"))
     + scale_colour_manual(
         breaks = c(FALSE, TRUE),
@@ -151,13 +181,18 @@ gg_volcano <- (
     )
     + theme_minimal()
 )
-savefig(gg_volcano, "Plots/volcano.transcripts")
+savefig(gg_volcano_transcripts, "Plots/volcano.transcripts")
 
-gg_volcano <- (
+gg_volcano_genes <- (
     ggplot(data = merged_gene_tpm)
-    + geom_point(aes(x = log2fc, y = -log10(qval), colour = (qval < 0.05 & abs(log2fc) > log2(2))))
-    + geom_vline(aes(xintercept = -1))
-    + geom_vline(aes(xintercept = 1))
+    + geom_point(aes(
+        x = log2fc,
+        y = -log10(qval),
+        colour = ((qval < QVAL_THRESH) & (abs(log2fc) >= 1))
+    ))
+    + geom_vline(aes(xintercept = -1), linetype = "dashed")
+    + geom_vline(aes(xintercept = 1), linetype = "dashed")
+    + geom_hline(aes(yintercept = -log10(QVAL_THRESH)), linetype = "dashed")
     + labs(x = expression(log[2] * "(Fold change)"), y = expression(-log[10] * "(FDR)"))
     + scale_colour_manual(
         breaks = c(FALSE, TRUE),
@@ -169,29 +204,106 @@ gg_volcano <- (
     )
     + theme_minimal()
 )
-savefig(gg_volcano, "Plots/volcano.genes")
+savefig(gg_volcano_genes, "Plots/volcano.genes")
 
-gg_test_exprs_dist <- (
-    ggplot(data = counted_gene_tpm[complete.cases(counted_gene_tpm)])
+panel_height_ratios <- c(9, 1, 1)
+gg_fc_bars <- ggplotGrob(
+    ggplot(data = counted_gene_tpm)
     + geom_col(
         aes(
-            x = factor(test_ID, ordered = TRUE, levels = counted_gene_tpm[altered_group == FALSE][order(Frac), unique(test_ID)]),
+            x = factor(test_ID, levels = counted_gene_tpm_plot[order(FALSE_NA, TRUE_FALSE, TRUE_TRUE), test_ID], ordered = TRUE),
             y = Frac,
-            fill = altered_group,
-            group = factor(test_ID)
+            fill = paste(Significant, LargeFold, sep = "_"),
         ),
         position = "stack"
     )
-    + labs(x = "Breakpoint", y = "Genes in TAD with breakpoint (%)")
-    + scale_fill_discrete(
-        breaks = c(FALSE, TRUE),
-        labels = c("No difference", "Significant difference"),
+    + labs(x = NULL, y = "Genes in TAD around breakpoint (%)")
+    + scale_fill_manual(
+        breaks = c("FALSE_NA", "TRUE_FALSE", "TRUE_TRUE"),
+        labels = c(
+            "N.S.",
+            expression("|" * log[2] * "(Fold Change)| < 1"),
+            expression("|" * log[2] * "(Fold Change)| >= 1")
+        ),
+        values = c("#BDBDBD", "#DCA395", "#FF6347"),
         name = "Gene expression change"
     )
     + theme_minimal()
     + theme(
         axis.text.x = element_blank(),
-        legend.position = "bottom"
+        legend.position = "top",
+        panel.grid.major.x = element_blank()
     )
 )
-savefig(gg_test_exprs_dist, "Plots/barplot")
+gg_fc_ngenes <- ggplotGrob(
+    ggplot(data = counted_gene_tpm[Significant == FALSE])
+    + geom_col(aes(
+        x = factor(test_ID, levels = counted_gene_tpm_plot[order(FALSE_NA, TRUE_FALSE, TRUE_TRUE), test_ID], ordered = TRUE),
+        y = Total
+    ))
+    + labs(x = NULL)
+    + scale_y_continuous(
+        name = "Genes",
+        limits = c(0, counted_gene_tpm[, max(Total)]),
+        breaks = c(0, counted_gene_tpm[, max(Total)])
+    )
+    + theme_minimal()
+    + theme(
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank()
+    )
+)
+gg_fc_affecting_tad <- ggplotGrob(
+    ggplot(data = tad_tests)
+    + geom_col(aes(
+        x = factor(test_ID, levels = counted_gene_tpm_plot[order(FALSE_NA, TRUE_FALSE, TRUE_TRUE), test_ID], ordered = TRUE),
+        y = 1,
+        fill = altered_TAD
+    ))
+    + labs(x = NULL)
+    + scale_y_continuous(
+        limits = c(0, 1),
+        labels = NULL,
+        name = "Altered\nTAD"
+    )
+    + scale_fill_manual(
+        limits = c(TRUE, FALSE),
+        labels = c("Yes", "No"),
+        values = c("#000000", "#BDBDBD"),
+        name = "SV affects TAD boundaries"
+    )
+    + guides(fill = FALSE)
+    + theme_minimal()
+    + theme(
+        strip.text.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank()
+    )
+)
+maxWidth <- grid::unit.pmax(
+    gg_fc_bars$widths[2:5],
+    gg_fc_ngenes$widths[2:5],
+    gg_fc_affecting_tad$widths[2:5]
+)
+gg_fc_bars$widths[2:5] <- as.list(maxWidth)
+gg_fc_ngenes$widths[2:5] <- as.list(maxWidth)
+gg_fc_affecting_tad$widths[2:5] <- as.list(maxWidth)
+gg_fc <- grid.arrange(
+    gg_fc_bars,
+    gg_fc_affecting_tad,
+    gg_fc_ngenes,
+    nrow = 3,
+    heights = panel_height_ratios / sum(panel_height_ratios)
+)
+savefig(gg_fc, file.path(PLOT_DIR, "expression"))
+
+# ==============================================================================
+# Save tables
+# ==============================================================================
+fwrite(
+    counted_gene_tpm,
+    "1sample-results.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
