@@ -2,6 +2,7 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
+suppressMessages(library("stringr"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("argparse"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
@@ -16,16 +17,15 @@ if (!interactive()) {
         help = "test_ID to plot comparison from"
     )
     PARSER$add_argument(
-        "genes",
+        "loc",
         type = "character",
-        help = "Gene name to be shown",
-        nargs = "+"
+        help = "Genes overlapping this position will be plotted",
     )
     ARGS <- PARSER$parse_args()
 } else {
     ARGS <- list(
-        "genes" = c("INSM2", "BRMS1L", "RALGAPA1"),
-        "test_ID" = 44
+        "test_ID" = 44,
+        "loc" = "chr14:35340000-35930000"
     )
 }
 
@@ -73,10 +73,27 @@ so_transcripts <- fread("results.transcripts.tsv", sep = "\t")
 so_genes <- fread("results.genes.tsv", sep = "\t")
 full_table <- fread("all-samples.abundance.tsv", sep = "\t")
 
+# GENCODE transcript annotation
+gencode <- fread(
+    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
+    sep = "\t",
+    header = FALSE,
+    col.names = c("chr", "start", "end", "strand", "gene_id", "gene_name", "transcript_id", "transcript_name")
+)
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
 cat("Getting gene information\n")
+pos_regex <- str_match(ARGS$loc, "^(chr[0-9]{0,3}[XYM]?):(\\d+)-(\\d+)$")
+pos <- list(
+    chr = pos_regex[, 2],
+    start = as.integer(pos_regex[, 3]),
+    end = as.integer(pos_regex[, 4])
+)
+# get transcript IDs overlapping this posiiton
+overlapping_gencode <- gencode[(chr == pos$chr) & (end >= pos$start) & (start <= pos$end)]
+
 # get query transcript counts in TPM
 query_transcript_tpm <- rbindlist(mapply(
     function(target, gene_id, gene_name) {
@@ -85,9 +102,9 @@ query_transcript_tpm <- rbindlist(mapply(
         dt[, gene_name := gene_name]
         return(dt)
     },
-    so_transcripts[gene_name %in% ARGS$genes, target_id],
-    so_transcripts[gene_name %in% ARGS$genes, ens_gene],
-    so_transcripts[gene_name %in% ARGS$genes, gene_name],
+    overlapping_gencode[, transcript_id],
+    overlapping_gencode[, gene_id],
+    overlapping_gencode[, gene_name],
     SIMPLIFY = FALSE
 ))
 colnames(query_transcript_tpm)[colnames(query_transcript_tpm) == "sample"] <- "SampleID"
@@ -123,11 +140,11 @@ query_transcript_tpm <- merge(
 )
 
 paths <- rbindlist(lapply(
-    ARGS$genes,
+    query_gene_tpm[, unique(gene_name)],
     function(gene) {
-        data.table(
+        dt <- data.table(
             gene_name = gene,
-            x = rep(c("No", "Yes"), each = 2),
+            Mutated = rep(c("No", "Yes"), each = 2),
             y = c(
                 (query_gene_tpm[Mutated == "No" & gene_name == gene, max(log10p1TPM)] + query_gene_tpm[gene_name == gene, max(log10p1TPM) * 1.05]) / 2,
                 query_gene_tpm[gene_name == gene, max(log10p1TPM) * 1.05],
@@ -141,20 +158,22 @@ paths <- rbindlist(lapply(
 gg_gene_tpm <- (
     ggplot(data = query_gene_tpm)
     + geom_boxplot(
-        aes(x = Mutated, y = log10p1TPM, fill = Mutated),
+        aes(x = gene_name, y = log10p1TPM, fill = Mutated, group = paste(Mutated, gene_name, sep = "_")),
         alpha = 0.3,
         colour = "black",
         outlier.shape = NA
     )
-    + geom_point(aes(x = Mutated, y = log10p1TPM, colour = Colour), position = position_jitter(height = 0, width = 0.2))
-    + geom_path(
-        data = paths,
-        mapping = aes(x = x, y = y, group = gene_name),
-        colour = "black"
+    + geom_point(
+        aes(x = gene_name, y = log10p1TPM, colour = Colour, group = paste(Mutated, gene_name, sep = "_")),
+        position = position_dodge(width = 0.8)
     )
+    # + geom_path(
+    #     data = paths,
+    #     mapping = aes(x = gene_name, y = y, group = paste(Mutated, gene_name, sep = "_")),
+    #     colour = "black"
+    # )
     + scale_x_discrete(
-        breaks = c("No", "Yes"),
-        name = "Mutated"
+        name = "Gene"
     )
     + scale_fill_manual(
         breaks = c("No", "yes"),
@@ -162,15 +181,15 @@ gg_gene_tpm <- (
         name = NULL
     )
     + scale_colour_manual(
-        breaks = query_gene_tpm$Colour,
-        values = query_gene_tpm$Colour,
+        breaks = query_gene_tpm[, unique(Colour)],
+        values = query_gene_tpm[, unique(Colour)],
         name = NULL
     )
     + labs(y = expression(log[10] * " (TPM + 1)"))
     + guides(colour = FALSE, fill = FALSE)
-    + facet_grid(. ~ gene_name, scales = "free_y")
+    + coord_flip()
     + theme_minimal()
     + theme(
     )
 )
-savefig(gg_gene_tpm, paste0("Plots/", paste(sort(ARGS$genes), collapse = ","), "-expression.gene-level"), width = 8)
+savefig(gg_gene_tpm, paste0("Plots/", paste(pos, collapse = "_"), ".expression.gene-level"), height = 10, width = 8)
