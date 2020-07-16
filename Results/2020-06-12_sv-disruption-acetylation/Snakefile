@@ -36,6 +36,10 @@ rule all:
             type=["input", "H3K27ac"],
         ),
         "sv-disruption-tests.acetylation.tsv",
+        "dba_all.rds",
+        path.join(PLOT_DIR, "T2E", "position.png"),
+        path.join(PLOT_DIR, "T2E", "position.ERG.png"),
+        path.join(PLOT_DIR, "T2E", "position.TMPRSS2.png"),
 
 # ==============================================================================
 # Rules
@@ -59,6 +63,9 @@ rule plot_t2e_diffbind:
         path.join(ACETYL_DIR, "T2E", "t2e.all.tsv"),
         path.join(ACETYL_DIR, "T2E", "t2e.local.tsv"),
     output:
+        path.join(PLOT_DIR, "T2E", "position.png"),
+        path.join(PLOT_DIR, "T2E", "position.ERG.png"),
+        path.join(PLOT_DIR, "T2E", "position.TMPRSS2.png"),
     shell:
         "Rscript {input.script}"
 
