@@ -40,6 +40,28 @@ rule all:
 # ==============================================================================
 # Rules
 # ==============================================================================
+rule t2e_diffbind:
+    input:
+        script = "t2e-diffbind.R",
+        data = "config.tsv"
+    output:
+        "dba_all.rds",
+        path.join(ACETYL_DIR, "T2E", "dba_comp.rds"),
+        path.join(ACETYL_DIR, "T2E", "t2e.all.tsv"),
+        path.join(ACETYL_DIR, "T2E", "t2e.local.tsv"),
+    shell:
+        "Rscript {input.script}"
+
+rule plot_t2e_diffbind:
+    input:
+        script = "plot-t2e-diffbind.R",
+        path.join(ACETYL_DIR, "T2E", "dba_comp.rds"),
+        path.join(ACETYL_DIR, "T2E", "t2e.all.tsv"),
+        path.join(ACETYL_DIR, "T2E", "t2e.local.tsv"),
+    output:
+    shell:
+        "Rscript {input.script}"
+
 rule induced_boundaries:
     input:
         script = "create-induced-regions.py",
