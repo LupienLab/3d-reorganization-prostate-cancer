@@ -22,28 +22,45 @@ dependencies:
   - binutils_linux-64=2.34
   - bioconductor-annotate=1.64.0
   - bioconductor-annotationdbi=1.48.0
+  - bioconductor-annotationforge=1.28.0
   - bioconductor-biobase=2.46.0
+  - bioconductor-biocfilecache=1.10.0
   - bioconductor-biocgenerics=0.32.0
   - bioconductor-biocparallel=1.20.0
+  - bioconductor-biomart=2.42.0
   - bioconductor-biostrings=2.54.0
   - bioconductor-bsgenome=1.54.0
+  - bioconductor-category=2.52.0
   - bioconductor-delayedarray=0.12.0
   - bioconductor-deseq2=1.26.0
+  - bioconductor-diffbind=2.14.0
+  - bioconductor-edger=3.28.0
   - bioconductor-genefilter=1.68.0
   - bioconductor-geneplotter=1.64.0
   - bioconductor-genomeinfodb=1.22.0
   - bioconductor-genomeinfodbdata=1.2.2
   - bioconductor-genomicalignments=1.22.0
+  - bioconductor-genomicfeatures=1.38.0
   - bioconductor-genomicranges=1.38.0
+  - bioconductor-go.db=3.10.0
+  - bioconductor-gostats=2.52.0
+  - bioconductor-graph=1.64.0
+  - bioconductor-gseabase=1.48.0
   - bioconductor-iranges=2.20.0
+  - bioconductor-limma=3.42.0
+  - bioconductor-rbgl=1.62.1
   - bioconductor-regioner=1.18.0
+  - bioconductor-rgraphviz=2.30.0
   - bioconductor-rhdf5=2.30.0
   - bioconductor-rhdf5lib=1.8.0
   - bioconductor-rhtslib=1.18.0
   - bioconductor-rsamtools=2.2.0
   - bioconductor-rtracklayer=1.46.0
   - bioconductor-s4vectors=0.24.0
+  - bioconductor-shortread=1.44.0
   - bioconductor-summarizedexperiment=1.16.0
+  - bioconductor-systempiper=1.20.0
+  - bioconductor-variantannotation=1.32.0
   - bioconductor-xvector=0.26.0
   - bioconductor-zlibbioc=1.32.0
   - biopython=1.76
@@ -56,9 +73,9 @@ dependencies:
   - bwa=0.7.17
   - bwidget=1.9.14
   - bzip2=1.0.8
-  - ca-certificates=2020.4.5.2
+  - ca-certificates=2020.6.24
   - cairo=1.16.0
-  - certifi=2020.4.5.2
+  - certifi=2020.6.20
   - cffi=1.14.0
   - chardet=3.0.4
   - click=7.1.2
@@ -82,7 +99,6 @@ dependencies:
   - delly=0.8.3
   - dill=0.3.2
   - distributed=2.18.0
-  - docutils=0.16
   - eigen=3.3.7
   - entrypoints=0.3
   - expat=2.2.9
@@ -265,12 +281,15 @@ dependencies:
   - qtpy=1.9.0
   - r-acepack=1.4.1
   - r-aggregation=1.0.1
+  - r-amap=0.8_18
   - r-argparse=2.0.1
   - r-askpass=1.1
   - r-assertthat=0.2.1
   - r-backports=1.1.8
   - r-base=3.6.3
   - r-base64enc=0.1_3
+  - r-base64url=1.4
+  - r-batchtools=0.9.13
   - r-bh=1.72.0_3
   - r-biocmanager=1.30.10
   - r-bit=1.1_15.2
@@ -279,6 +298,7 @@ dependencies:
   - r-blob=1.2.1
   - r-brew=1.0_6
   - r-callr=3.4.3
+  - r-catools=1.18.0
   - r-checkmate=2.0.0
   - r-cli=2.0.2
   - r-clipr=0.7.0
@@ -292,6 +312,7 @@ dependencies:
   - r-curl=4.3
   - r-data.table=1.12.8
   - r-dbi=1.1.0
+  - r-dbplyr=1.4.4
   - r-desc=1.2.0
   - r-devtools=2.2.1
   - r-digest=0.6.25
@@ -309,25 +330,32 @@ dependencies:
   - r-fs=1.4.1
   - r-futile.logger=1.4.3
   - r-futile.options=1.0.1
+  - r-gdata=2.18.0
   - r-generics=0.0.2
   - r-getopt=1.20.3
   - r-ggplot2=3.2.1
+  - r-ggrepel=0.8.2
   - r-gh=1.1.0
   - r-git2r=0.27.1
   - r-glue=1.4.1
+  - r-gplots=3.0.4
   - r-gridextra=2.3
   - r-gtable=0.3.0
+  - r-gtools=3.8.2
   - r-highr=0.8
   - r-hmisc=4.4_0
+  - r-hms=0.5.3
   - r-htmltable=1.13.3
   - r-htmltools=0.5.0
   - r-htmlwidgets=1.5.1
   - r-httpuv=1.5.4
   - r-httr=1.4.1
+  - r-hwriter=1.3.2
   - r-ini=0.3.1
   - r-irlba=2.3.3
   - r-jpeg=0.1_8.1
   - r-jsonlite=1.6.1
+  - r-kernsmooth=2.23_17
   - r-knitr=1.28
   - r-labeling=0.3
   - r-lambda.r=1.2.4
@@ -360,10 +388,12 @@ dependencies:
   - r-praise=1.0.0
   - r-prettyunits=1.1.1
   - r-processx=3.4.2
+  - r-progress=1.2.2
   - r-promises=1.1.1
   - r-ps=1.3.3
   - r-purrr=0.3.4
   - r-r6=2.4.1
+  - r-rappdirs=0.3.1
   - r-rcircos=1.2.1
   - r-rcmdcheck=1.3.3
   - r-rcolorbrewer=1.1_2
@@ -375,6 +405,7 @@ dependencies:
   - r-remotes=2.1.1
   - r-reshape2=1.4.4
   - r-rex=1.2.0
+  - r-rjson=0.2.20
   - r-rlang=0.4.6
   - r-roxygen2=7.0.2
   - r-rpart=4.1_15
@@ -480,13 +511,17 @@ dependencies:
   - zlib=1.2.11
   - zstd=1.4.4
   - pip:
+    - boto3==1.14.16
+    - botocore==1.17.16
     - clodius==0.14.3
     - diskcache==4.1.0
+    - docutils==0.15.2
     - flask==1.1.1
     - flask-cors==3.0.8
     - fusepy==3.0.1
-    - higlass-python==0.4.0
+    - higlass-python==0.4.1
     - itsdangerous==1.1.0
+    - jmespath==0.10.0
     - negspy==0.2.24
     - nose==1.3.7
     - pandocfilters==1.4.2
@@ -496,8 +531,9 @@ dependencies:
     - pyqtchart==5.12
     - pyqtwebengine==5.12.1
     - pyzmq==18.1.1
+    - s3transfer==0.3.3
     - sh==1.12.14
-    - simple-httpfs==0.2.0
+    - simple-httpfs==0.4.2
     - slugid==2.0.0
     - terminado==0.8.3
     - webencodings==0.5.1
