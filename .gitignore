@@ -118,3 +118,6 @@ Logs/
 .vscode
 *.mcool
 *.cool
+
+# R data files
+*.rds
