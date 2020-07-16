@@ -8,40 +8,33 @@ suppressMessages(library("ggplot2"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
 
 PLOT_DIR <- "Plots"
+QVAL_THRESH <- 0.05
+LOG2FOLD_THRESH <- 1
 
 # ==============================================================================
 # Data
 # ==============================================================================
 # load sample metadata
 metadata <- fread(
-    "../../Data/External/LowC_Samples_Data_Available.tsv",
+    "config.tsv",
     sep = "\t",
     header = TRUE
 )
 metadata <- metadata[Include == "Yes"]
-metadata[, SampleID := paste0("PCa", get("Sample ID"))]
-metadata[, ChIP_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_H3K27ac.sorted.dedup.bam")]
-metadata[, Ctrl_file := paste0("../../Data/Processed/2019-05-03_PCa-H3K27ac-peaks/BAMs/Pca", get("Sample ID"), "_input.sorted.dedup.bam")]
 SAMPLES <- metadata[, SampleID]
 
-# load TAD acetylation hypothesis test values
-acetyl <- fread(
-    "sv-disruption-tests.acetylation.tsv",
-    sep = "\t",
-    header = TRUE
-)
+test_IDs <- sort(sapply(
+    list.files(file.path("Acetylation", "Tests"), "local.tsv"),
+    function(fn) {
+        as.numeric(gsub("\\.local\\.tsv", "", gsub("test_", "", fn)))
+    }
+))
 
-size_factors <- fread(
-    "sv-disruption-tests.acetylation.size-factors.tsv",
-    sep = "\t",
-    header = TRUE
-)
-
-test_group_acetyl <- rbindlist(lapply(
-    acetyl[, test_ID],
+acetyl <- rbindlist(lapply(
+    test_IDs,
     function(tid) {
         dt <- fread(
-            paste0("Acetylation/Tests/test_", tid, ".results.tsv"),
+            paste0("Acetylation/Tests/test_", tid, ".local.tsv"),
             sep = "\t",
             header = TRUE
         )
@@ -50,31 +43,27 @@ test_group_acetyl <- rbindlist(lapply(
     }
 ))
 
+# all_acetyl <- rbindlist(lapply(
+#     test_IDs,
+#     function(tid) {
+#         dt <- fread(
+#             paste0("Acetylation/Tests/test_", tid, ".all.tsv"),
+#             sep = "\t",
+#             header = TRUE
+#         )
+#         dt[, test_ID := tid]
+#         return(dt)
+#     }
+# ))
+
 
 # ==============================================================================
 # Plots
 # ==============================================================================
-# heatmap of acetylation across the genome for all samples
-ann_cols <- data.frame(
-    T2E = metadata[, get("T2E Status")],
-    LibrarySize = library_sizes
-)
-rownames(ann_cols) <- SAMPLES
-pheatmap(
-    mat = sample_corrs,
-    color = colorRampPalette(brewer.pal(n = 7, name = "YlOrRd"))(100),
-    #breaks = seq(0.8, 1, 0.01),
-    cluster_rows = TRUE,
-    cluster_cols = TRUE,
-    clustering_method = "ward.D2",
-    annotation_col = ann_cols,
-    legend = TRUE,
-    filename = file.path(PLOT_DIR, "H3K27ac-correlation-tad-induced.png")
-)
-
+# QQ plot of local p-values
 gg_qq <- (
-    ggplot(data = acetyl[order(p)])
-    + geom_point(aes(x = -log10(ppoints(acetyl[, .N])), y = -log10(p)))
+    ggplot(data = acetyl[order(p.value)])
+    + geom_point(aes(x = -log10(ppoints(acetyl[, .N])), y = -log10(p.value)))
     + geom_abline(aes(intercept = 0, slope = 1), linetype = "dashed")
     + scale_x_continuous(
         limits = c(0, 3)
@@ -88,41 +77,46 @@ gg_qq <- (
     )
     + theme_minimal()
 )
-savefig(gg_qq, file.path(PLOT_DIR, "acetylation.qq-plot"))
+savefig(gg_qq, file.path(PLOT_DIR, "Distribution", "acetylation.qq-plot"))
 
+# histogram of p-values
 gg_pval_hist <- (
     ggplot(data = acetyl)
-    + geom_histogram(aes(x = p))
+    + geom_histogram(aes(x = p.value))
     + labs(x = "p-value", y = "Frequency")
     + theme_minimal()
 )
-savefig(gg_pval_hist, file.path(PLOT_DIR, "acetylation.p-values"))
+savefig(gg_pval_hist, file.path(PLOT_DIR, "Distribution", "acetylation.p-values"))
 
-
+# volcano plot of p-value vs log2 fold change
 gg_volcano <- (
     ggplot(data = acetyl)
-    + geom_point(aes(x = z, y = -log10(padj)))
-    + geom_hline(aes(yintercept = -log10(0.05)), linetype = "dashed")
-    + labs(x = "Stouffer's Z", y = expression(-log[10] * " FDR"))
+    + geom_point(aes(x = Fold, y = -log10(FDR)))
+    + geom_vline(aes(xintercept = -LOG2FOLD_THRESH), linetype = "dashed")
+    + geom_vline(aes(xintercept = LOG2FOLD_THRESH), linetype = "dashed")
+    + geom_hline(aes(yintercept = -log10(QVAL_THRESH)), linetype = "dashed")
+    + labs(x = expression(log[2] * "(Fold Change)"), y = expression(-log[10] * " FDR"))
     + theme_minimal()
 )
-savefig(gg_volcano, file.path(PLOT_DIR, "acetylation.volcano"))
+savefig(gg_volcano, file.path(PLOT_DIR, "Distribution", "acetylation.volcano"))
 
-gg_all_tests_pval_hist <- (
-    ggplot(data = test_group_acetyl)
-    + geom_density(aes(x = p, colour = test_ID, group = test_ID))
-    + labs(x = "p-value", y = "Frequency")
-    + theme_minimal()
-)
-savefig(gg_all_tests_pval_hist, file.path(PLOT_DIR, "acetylation.p-values.all-tests"))
+# # p-value distribution for all tests
+# gg_all_tests_pval_hist <- (
+#     ggplot(data = all_acetyl)
+#     + geom_density(aes(x = p.value, colour = test_ID, group = test_ID))
+#     + labs(x = "p-value", y = "Frequency")
+#     + theme_minimal()
+# )
+# savefig(gg_all_tests_pval_hist, file.path(PLOT_DIR, "acetylation.p-values.all-tests"))
 
-for (tid in acetyl[, test_ID]) {
-    print(tid)
-    gg_test_pval_hist <- (
-        ggplot(data = test_group_acetyl[test_ID == tid, .SD])
-        + geom_density(aes(x = p))
-        + labs(x = "p-value", y = "Density")
-        + theme_minimal()
-    )
-    savefig(gg_test_pval_hist, file.path(PLOT_DIR, "Tests", paste0("acetylation.p-values.test_", tid)))
-}
+# # individual p-value distributions for each test
+# for (tid in acetyl[, test_ID]) {
+#     print(tid)
+#     gg_test_pval_hist <- (
+#         ggplot(data = test_group_acetyl[test_ID == tid, .SD])
+#         + geom_density(aes(x = p))
+#         + labs(x = "p-value", y = "Density")
+#         + theme_minimal()
+#     )
+#     savefig(gg_test_pval_hist, file.path(PLOT_DIR, "Tests", paste0("acetylation.p-values.test_", tid)))
+# }

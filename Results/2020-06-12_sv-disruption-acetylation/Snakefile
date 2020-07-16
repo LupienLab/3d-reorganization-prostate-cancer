@@ -46,7 +46,11 @@ rule all:
             sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
             type=["input", "H3K27ac"],
         ),
-        "sv-disruption-tests.acetylation.tsv",
+        expand(
+            path.join(PLOT_DIR, "Distribution", "acetylation.{plot}.{ext}"),
+            plot=["p-values", "p-values.all-tests", "qq-plot", "volcano"],
+            ext=PLOT_EXTS,
+        )
 
 # ==============================================================================
 # Rules
@@ -119,9 +123,19 @@ rule diffbind:
         tests = path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
         tads = path.join("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
     output:
+        path.join("Acetylation", "Tests", "test_6.local.tsv"),
+    shell:
+        "Rscript {input.script}"
+
+rule plot_diffbind:
+    input:
+        script = "plot-acetylation.R",
+        data = path.join("Acetylation", "Tests", "test_6.local.tsv"),
+    output:
         expand(
-            path.join("Acetylation", "Tests", "test_{testid}.local.tsv"),
-            testid = TEST_IDS,
+            path.join(PLOT_DIR, "Distribution", "acetylation.{plot}.{ext}"),
+            plot=["p-values", "p-values.all-tests", "qq-plot", "volcano"],
+            ext=PLOT_EXTS,
         )
     shell:
         "Rscript {input.script}"
