@@ -18,12 +18,23 @@ TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
 CHIP_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
 
 PLOT_EXTS = ["png", "pdf"]
+TESTS = pd.read_csv(
+    path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+    sep="\t",
+    header=0
+)
+TEST_IDS = sorted(TESTS.test_ID.tolist())
+
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
 rule all:
     input:
+        "dba_all.rds",
+        path.join(PLOT_DIR, "T2E", "position.png"),
+        path.join(PLOT_DIR, "T2E", "position.ERG.png"),
+        path.join(PLOT_DIR, "T2E", "position.TMPRSS2.png"),
         "TAD-induced-regions.bed",
         expand(
             path.join(ACETYL_DIR, "Peaks", "PCa{sampleid}_{type}.induced-region-counts.bed"),
@@ -36,10 +47,6 @@ rule all:
             type=["input", "H3K27ac"],
         ),
         "sv-disruption-tests.acetylation.tsv",
-        "dba_all.rds",
-        path.join(PLOT_DIR, "T2E", "position.png"),
-        path.join(PLOT_DIR, "T2E", "position.ERG.png"),
-        path.join(PLOT_DIR, "T2E", "position.TMPRSS2.png"),
 
 # ==============================================================================
 # Rules
@@ -59,9 +66,9 @@ rule t2e_diffbind:
 rule plot_t2e_diffbind:
     input:
         script = "plot-t2e-diffbind.R",
-        path.join(ACETYL_DIR, "T2E", "dba_comp.rds"),
-        path.join(ACETYL_DIR, "T2E", "t2e.all.tsv"),
-        path.join(ACETYL_DIR, "T2E", "t2e.local.tsv"),
+        rds = path.join(ACETYL_DIR, "T2E", "dba_comp.rds"),
+        all_data = path.join(ACETYL_DIR, "T2E", "t2e.all.tsv"),
+        local_data = path.join(ACETYL_DIR, "T2E", "t2e.local.tsv"),
     output:
         path.join(PLOT_DIR, "T2E", "position.png"),
         path.join(PLOT_DIR, "T2E", "position.ERG.png"),
@@ -106,19 +113,15 @@ rule count_chip_peaks:
     shell:
         "bedtools coverage -abam {input.chip} -b {input.bed} | sort -k1,1 -V -k2,2n > {output}"
 
-rule altered_acetyl:
+rule diffbind:
     input:
-        script = "altered-acetylation.R",
-        breaks = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-breakpoints.tsv"),
-        tests = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-disruption-tests.tsv"),
+        script = "diffbind.R",
+        tests = path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
         tads = path.join("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
-        counts = expand(
-            path.join(ACETYL_DIR, "Peaks", "{sample}_{type}.induced-region-counts.bed"),
-            sample=SAMPLES,
-            type=["H3K27ac", "input"]
-        )
     output:
-        "sv-disruption-tests.acetylation.tsv",
+        expand(
+            path.join("Acetylation", "Tests", "test_{testid}.local.tsv"),
+            testid = TEST_IDS,
+        )
     shell:
         "Rscript {input.script}"
-
