@@ -35,6 +35,11 @@ rule all:
         path.join(PLOT_DIR, "T2E", "position.png"),
         path.join(PLOT_DIR, "T2E", "position.ERG.png"),
         path.join(PLOT_DIR, "T2E", "position.TMPRSS2.png"),
+        "exprs-acetyl.tsv",
+        expand(
+            path.join(PLOT_DIR, "exprs-acetyl", "genes.{ext}"),
+            ext=PLOT_EXTS,
+        ),
         "TAD-induced-regions.bed",
         expand(
             path.join(ACETYL_DIR, "Peaks", "PCa{sampleid}_{type}.induced-region-counts.bed"),
@@ -137,5 +142,26 @@ rule plot_diffbind:
             plot=["p-values", "p-values.all-tests", "qq-plot", "volcano"],
             ext=PLOT_EXTS,
         )
+    shell:
+        "Rscript {input.script}"
+
+rule compare_exprs_acetyl:
+    input:
+        script = "compare-acetyl-expression.R",
+        data = path.join("Acetylation", "Tests", "test_6.local.tsv"),
+    output:
+        "exprs-acetyl.tsv",
+    shell:
+        "Rscript {input.script}"
+
+rule plot_exprs_acetyl:
+    input:
+        script = "plot-acetyl-expression.R",
+        data = "exprs-acetyl.tsv",
+    output:
+        expand(
+            path.join(PLOT_DIR, "exprs-acetyl", "genes.{ext}"),
+            ext=PLOT_EXTS,
+        ),
     shell:
         "Rscript {input.script}"
