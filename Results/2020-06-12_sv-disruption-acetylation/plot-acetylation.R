@@ -5,11 +5,12 @@ suppressMessages(library("data.table"))
 suppressMessages(library("pheatmap"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("ggplot2"))
+suppressMessages(library("ggrepel"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
 
 PLOT_DIR <- "Plots"
 QVAL_THRESH <- 0.05
-LOG2FOLD_THRESH <- 1
+FC_THRESH <- 1
 
 # ==============================================================================
 # Data
@@ -42,6 +43,12 @@ acetyl <- rbindlist(lapply(
         return(dt)
     }
 ))
+acetyl[, col := paste(
+    (FDR < QVAL_THRESH),
+    ifelse(abs(Fold) > FC_THRESH, ifelse(Fold > FC_THRESH, "Up", "Down"), "FALSE"),
+    sep = "_"
+)]
+
 
 # all_acetyl <- rbindlist(lapply(
 #     test_IDs,
@@ -91,14 +98,33 @@ savefig(gg_pval_hist, file.path(PLOT_DIR, "Distribution", "acetylation.p-values"
 # volcano plot of p-value vs log2 fold change
 gg_volcano <- (
     ggplot(data = acetyl)
-    + geom_point(aes(x = Fold, y = -log10(FDR)))
     + geom_vline(aes(xintercept = -LOG2FOLD_THRESH), linetype = "dashed")
     + geom_vline(aes(xintercept = LOG2FOLD_THRESH), linetype = "dashed")
     + geom_hline(aes(yintercept = -log10(QVAL_THRESH)), linetype = "dashed")
+    + geom_point(aes(x = Fold, y = -log10(FDR), colour = col))
+    + scale_colour_manual(
+        breaks = c(
+            "FALSE_Down",
+            "FALSE_FALSE",
+            "FALSE_Up",
+            "TRUE_Down",
+            "TRUE_FALSE",
+            "TRUE_Up"
+        ),
+        values = c(
+            "#777777",
+            "#b9b9b9",
+            "#777777",
+            "#0000cd",
+            "#777777",
+            "#ff6347"
+        )
+    )
     + labs(x = expression(log[2] * "(Fold Change)"), y = expression(-log[10] * " FDR"))
+    + guides(colour = FALSE)
     + theme_minimal()
 )
-savefig(gg_volcano, file.path(PLOT_DIR, "Distribution", "acetylation.volcano"))
+savefig(gg_volcano, file.path(PLOT_DIR, "Distribution", "acetylation.volcano"), ext="png")
 
 # # p-value distribution for all tests
 # gg_all_tests_pval_hist <- (

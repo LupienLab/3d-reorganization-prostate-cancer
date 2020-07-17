@@ -7,6 +7,7 @@ suppressMessages(library("ggrepel"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
 
 PLOT_DIR <- file.path("Plots", "exprs-acetyl")
+QVAL_THRESH <- 0.05
 FC_THRESH <- 1
 
 # ==============================================================================
@@ -24,14 +25,22 @@ SAMPLES <- metadata$SampleID
 
 # load comparison data
 delta <- fread("exprs-acetyl.tsv", sep = "\t", header = TRUE)
-delta[, col := paste((abs(acetyl) > FC_THRESH), (abs(exprs * log2(exp(1))) > FC_THRESH), sep = "_")]
+delta[, col := ifelse(
+    !sig,
+    "NS",
+    ifelse(
+        abs(log2acetyl_fc) < 0.1,
+        "NS",
+        ifelse(log2exprs_fc > 0, "Up", "Down")
+    )
+)]
 
 # ==============================================================================
 # Plots
 # ==============================================================================
 h_cor <- cor.test(
-    x = delta$exprs,
-    y = delta$acetyl,
+    x = delta$log2exprs_fc,
+    y = delta$log2acetyl_fc,
     method = "spearman"
 )
 
@@ -40,17 +49,23 @@ h_cor <- cor.test(
 # ==============================================================================
 gg_cor <- (
     ggplot()
-    + geom_hline(aes(yintercept = FC_THRESH), linetype = "dashed")
-    + geom_hline(aes(yintercept = -FC_THRESH), linetype = "dashed")
+    #+ geom_hline(aes(yintercept = FC_THRESH), linetype = "dashed")
+    #+ geom_hline(aes(yintercept = -FC_THRESH), linetype = "dashed")
     + geom_vline(aes(xintercept = FC_THRESH), linetype = "dashed")
     + geom_vline(aes(xintercept = -FC_THRESH), linetype = "dashed")
     + geom_point(
-        data = delta,
-        mapping = aes(x = exprs * log2(exp(1)), y = acetyl, colour = col)
+        data = delta[sig == FALSE],
+        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, colour = col),
+        alpha = 0.5
+    )
+    + geom_point(
+        data = delta[sig == TRUE],
+        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, colour = col),
+        alpha = 1
     )
     + geom_label_repel(
-        data = delta[col == "TRUE_TRUE"],
-        mapping = aes(x = exprs * log2(exp(1)), y = acetyl, label = gene_name)
+        data = delta[sig == TRUE & abs(log2acetyl_fc) > 0.1],
+        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, label = gene_name)
     )
     + annotate(
         geom = "text",
@@ -60,23 +75,28 @@ gg_cor <- (
     )
     + scale_colour_manual(
         breaks = c(
-            "FALSE_FALSE",
-            "FALSE_TRUE",
-            "TRUE_FALSE",
-            "TRUE_TRUE"
+            "Down",
+            "NS",
+            "Up"
+        ),
+        labels = c(
+            "Under-expressed",
+            "N.S.",
+            "Over-expressed"
         ),
         values = c(
+            "#0000cd",
             "#b9b9b9",
-            "#777777",
-            "#3b3b3b",
             "#ff6347"
-        )
+        ),
+        name = expression(FDR < 0.05)
     )
-    + labs(x = expression(log[2] * "(Expression fold change)"), y = expression(log[2] * "(H3K27ac fold change)"))
-    + guides(colour = FALSE)
-    + xlim(-6, 6)
-    + ylim(-6, 6)
+    + labs(x = expression(log[2] * "(Expression mut fold change)"), y = expression(log[2] * "(H3K27ac mut fold change)"))
+    # + guides(colour = FALSE)
+    # + xlim(-6, 6)
+    # + ylim(-6, 6)
     + theme_minimal()
+    + theme(legend.position = "bottom")
 )
 savefig(gg_cor, file.path(PLOT_DIR, "genes"))
 
