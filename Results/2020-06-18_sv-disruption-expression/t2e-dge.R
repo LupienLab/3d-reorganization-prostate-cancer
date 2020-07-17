@@ -118,3 +118,12 @@ t2e_transcripts <- rbindlist(list(
 
 fwrite(t2e_genes, "t2e-comparison.genes.tsv", sep = "\t", col.names = TRUE)
 fwrite(t2e_transcripts, "t2e-comparison.transcripts.tsv", sep = "\t", col.names = TRUE)
+
+# write full sleuth count table
+full_table <- as.data.table(kallisto_table(so))
+fwrite(
+    full_table[, .SD, .SDcols = c("target_id", "sample", "est_counts", "tpm", "eff_len", "len")],
+    "all-samples.abundance.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
