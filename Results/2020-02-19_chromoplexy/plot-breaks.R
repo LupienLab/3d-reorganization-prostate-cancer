@@ -190,6 +190,8 @@ fisher.test(
     alternative = "two.sided"
 )
 
+breakpoint_pairs[chr_x == chr_y, dist := pmin(abs(start_y - end_x), abs(start_x - end_y))]
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -344,6 +346,16 @@ gg_breakpoints_summed = (
     )
 )
 savefig(gg_breakpoints_summed, "Plots/breakpoint-stats/sv-loci", width = 40)
+
+gg_breakpoint_pair_dist <- (
+    ggplot(data = breakpoint_pairs)
+    + geom_histogram(aes(x = dist / 1e6, binwidth = 10))
+    + geom_density(aes(x = dist / 1e6, y = 10 * ..scaled..))
+    + labs(x = "Breakpoint pair distance (Mbp)", y = "Frequency")
+    + theme_minimal()
+)
+savefig(gg_breakpoint_pair_dist, "Plots/breakpoint-stats/sv-pair-distance-distribution")
+
 
 # megabase bins containing multiple breakpoints across samples
 gg_recurrence = (
