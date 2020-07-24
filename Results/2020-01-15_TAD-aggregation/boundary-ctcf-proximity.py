@@ -10,6 +10,18 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import sys
+import argparse
+
+PARSER = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
+PARSER.add_argument(
+    "cell",
+    type=str,
+    help="Cell line with CTCF binding sites to compare to",
+    choices=["LNCaP", "22Rv1", "C42B"],
+)
+ARGS = PARSER.parse_args()
 
 # ==============================================================================
 # Functions
@@ -37,6 +49,7 @@ def distance(p: pd.Series) -> pd.Series:
 # ==============================================================================
 # Data
 # ==============================================================================
+print("Loading data")
 metadata = pd.read_csv("config.tsv", sep="\t")
 ALL_SAMPLES = metadata["SampleID"].tolist()
 
@@ -44,7 +57,7 @@ ALL_SAMPLES = metadata["SampleID"].tolist()
 pairs = pd.concat(
     [
         pd.read_csv(
-            path.join("CTCF", s + ".LNCaP-CTCF-peaks.bed"),
+            path.join("CTCF", s + "." + ARGS.cell + "-CTCF-peaks.bed"),
             sep="\t",
             header=None,
             names=[
@@ -64,6 +77,7 @@ pairs = pd.concat(
 pairs.reset_index(inplace=True)
 pairs.drop("level_1", axis=1, inplace=True)
 
+print("Processing columns")
 # convert |-separated window size column into a proper list
 pairs["w"] = pairs.w.str.split("|")
 
@@ -74,6 +88,7 @@ pairs["Boundary_ID"] = pairs["chr_bound"].astype(str) + ":" + pairs["start_bound
 # Analysis
 # ==============================================================================
 # calculate distance between CTCF peak and the TAD boundary
+print("Calculating distances")
 pairs["Distance"] = pairs.apply(distance, axis=1)
 
 # create 5 kbp bins around the boundary
@@ -86,6 +101,7 @@ all_counts.reset_index(drop=False, inplace=True)
 # ==============================================================================
 # Save data
 # ==============================================================================
+print("Saving data")
 # convert window size column into a comma-separated string
 pairs["w"] = [",".join(pw) for pw in pairs["w"]]
 
@@ -96,9 +112,8 @@ all_counts["Bin_Upper"] = [b.right for b in all_counts["Distance_Bin"]]
 
 # save to TSV
 all_counts.to_csv(
-    path.join("CTCF", "TAD-boundary.LNCaP-CTCF-peaks.distances.tsv"),
+    path.join("CTCF", "TAD-boundary." + ARGS.cell + "-CTCF-peaks.distances.tsv"),
     sep="\t",
     header=True,
     index=False
 )
-
