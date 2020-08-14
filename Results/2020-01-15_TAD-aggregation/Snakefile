@@ -85,6 +85,17 @@ rule all:
         expand(
             path.join(PLOT_DIR, "{plot}.{ext}"),
             plot=[
+                "bp-score",
+                "bp-score.prostate-lines",
+                "bp-score.cluster",
+                "bp-score.window-similarity",
+                "bp-score.window-similarity.delta",
+            ],
+            ext=["png", "pdf"]
+        ),
+        expand(
+            path.join(PLOT_DIR, "{plot}.{ext}"),
+            plot=[
                 "boundary-counts",
                 "boundary-counts.by-persistence",
                 "boundary-counts.ctcf-proximity",
@@ -318,3 +329,22 @@ rule agg_ctcf_enrichment:
         path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{cell}.fold.pdf"),
     shell:
         "Rscript {input.script} {wildcards.cell}"
+
+rule plot_bpscore:
+    input:
+        script = "plot-bpscore.R",
+        tad_dist = path.join("Statistics", "tad-distances.tsv"),
+        tad_delta = path.join("Statistics", "tad-similarity-deltas.tsv"),
+    output:
+        path.join(PLOT_DIR, "bp-score.png"),
+        path.join(PLOT_DIR, "bp-score.pdf"),
+        path.join(PLOT_DIR, "bp-score.prostate-lines.png"),
+        path.join(PLOT_DIR, "bp-score.prostate-lines.pdf"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.png"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.pdf"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.delta.png"),
+        path.join(PLOT_DIR, "bp-score.window-similarity.delta.pdf"),
+        path.join(PLOT_DIR, "bp-score.cluster.png"),
+        path.join(PLOT_DIR, "bp-score.cluster.pdf"),
+    shell:
+        "Rscript {input.script}"

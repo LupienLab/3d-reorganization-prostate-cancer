@@ -2,10 +2,8 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
-suppressMessages(library("ggplot2"))
 suppressMessages(library("scales"))
-suppressMessages(library("MASS"))
-suppressMessages(library("pheatmap"))
+source("savefig.R")
 
 MAX_WINDOW <- 24
 MIN_WINDOW <- 3
@@ -21,25 +19,6 @@ split_comma_col <- function(v, f=identity) {
     # remove various non-informative characters (spaces, braces)
     splitv <- lapply(splitv, function(x) {gsub("[][ ]", "", x)})
     return(lapply(splitv, f))
-}
-
-#' Save figures in multiple formats
-#'
-#' @param gg ggplot object
-#' @param prefix Prefix for output file
-#' @param ext Output extensions
-#' @param dpi DPI resolution
-savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
-    for (e in ext) {
-        ggsave(
-            paste(prefix, e, sep = "."),
-            gg,
-            height = height,
-            width = width,
-            units = "cm",
-            dpi = dpi
-        )
-    }
 }
 
 
@@ -93,10 +72,6 @@ boundaries[, Persistence := pmin(MAX_PERSISTENCE, Order)]
 tads <- merge(tads, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour")])
 boundaries <- merge(boundaries, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour")])
 
-# load BPscore calculations
-bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
-window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header = TRUE)
-
 # TAD summary
 tad_summary <- tads[, .N, keyby = c("SampleID", "w")]
 tad_summary <- merge(tad_summary, metadata[, .SD, .SDcols = c("SampleID", "Label")], by = "SampleID")
@@ -145,29 +120,6 @@ tad_size_ecdf_est <- tad_size_ecdf[, .(Mean = mean(y), SD = sd(y)), by = c("w", 
 tad_size_ecdf_est[, Lower := Mean - SD]
 tad_size_ecdf_est[, Upper := Mean + SD]
 
-# colour bpscore rows by primary-primary, line-line, or primary-line comparisons
-cat("Counting similarity\n")
-bpscore <- merge(
-    bpscore,
-    metadata[, .(SampleID, Source, Label, Type_Colour)],
-    by.x = "s2",
-    by.y = "SampleID",
-    all.x = FALSE,
-    all.y = TRUE
-)
-bpscore <- merge(
-    bpscore,
-    metadata[, .(SampleID, Source, Label, Type_Colour)],
-    by.x = "s1",
-    by.y = "SampleID",
-    suffixes = c("_2", "_1"),
-    all.x = FALSE,
-    all.y = TRUE,
-)
-# if s1 and s2 come from the same source material, return Type_Colour, otherwise return green colour
-bpscore[Source_1 == Source_2 & Source_1 == "Primary", Colour := "#1F77B4"]
-bpscore[Source_1 == Source_2 & Source_1 == "Cell Line", Colour := "#FF7F0D"]
-bpscore[Source_1 != Source_2, Colour := "#3FE686"]
 
 # ==============================================================================
 # Plots
@@ -343,8 +295,6 @@ gg_tad_size_reduced <- (
 )
 savefig(gg_tad_size_reduced, file.path(PLOT_DIR, "tad-size.distribution.reduced"), height = 14)
 
-# Variance between samples 
-# --------------------------------------
 # coefficient of variation for BPscore
 gg_cov <- (
     ggplot(data = tads_cov)
@@ -360,100 +310,3 @@ gg_cov <- (
     + theme_minimal()
 )
 savefig(gg_cov, file.path(PLOT_DIR, "tad-size.coeff-var"))
-
-# plot distances between TADs of different samples across window sizes
-gg_bpscore = (
-    ggplot(data = bpscore[s1 != s2 & w <= MAX_WINDOW & !grepl("(4DN|SRR|BP)", s1) & !grepl("(4DN|SRR|BP)", s2)])
-    + geom_point(
-        # aes(x = w, y = 1 - dist, colour = Colour),
-        aes(x = w, y = 1 - dist, colour = w),
-        position = position_jitter(width = 0.2, height = 0)
-    )
-    + geom_boxplot(
-        aes(x = w, y = 1 - dist, group = w),
-        alpha = 0.5,
-        outlier.shape = NA,
-        width = 0.5
-    )
-    + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
-    + scale_x_discrete(
-        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
-    )
-    # + scale_colour_manual(
-    #     limits = bpscore[, unique(Colour)],
-    #     values = bpscore[, unique(Colour)]
-    # )
-    + scale_colour_viridis_c()
-    + guides(colour = FALSE)
-    + theme_minimal()
-)
-savefig(gg_bpscore, file.path(PLOT_DIR, "bp-score"))
-
-# plot the change in similarities over window sizes
-gg_sim_window = (
-    ggplot(data = window_diffs[w <= MAX_WINDOW])
-    + geom_path(aes(x = w, y = 1 - diff, group = SampleID, colour = SampleID))
-    + labs(x = "Window size", y = expression("1 - " * delta["w, w-1"]))
-    + scale_x_discrete(
-        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
-    )
-    + scale_colour_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, Label],
-        values = metadata[, Sample_Colour],
-        name = "Sample"
-    )
-    + theme_minimal()
-)
-savefig(gg_sim_window, file.path(PLOT_DIR, "bp-score.window-similarity"))
-
-
-# plot the change in similarities over window sizes
-gg_sim_window_delta = (
-    ggplot(data = window_diffs[w >= 5 & w <= MAX_WINDOW])
-    + geom_path(aes(x = w, y = abs_delta, group = SampleID, colour = SampleID))
-    + labs(x = "Window size", y = expression("|" * delta["w, w-1"] - delta["w-1, w-2"] * "|"))
-    + scale_x_discrete(
-        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
-    )
-    + scale_colour_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, Label],
-        values = metadata[, Sample_Colour],
-        name = "Patient"
-    )
-    + theme_minimal()
-)
-savefig(gg_sim_window_delta, file.path(PLOT_DIR, "bp-score.window-similarity.delta"))
-
-# cluster samples by BPscore distances
-# recast data to wide form for plotting with pheatmap
-mat <- as.matrix(
-    dcast(bpscore[w == MAX_WINDOW], s1 ~ s2, value.var = "dist", fill = 0),
-    rownames = "s1"
-)
-annot_col <- as.data.frame(metadata[, .SD, .SDcols = c("Type", "Tissue", "Source")])
-rownames(annot_col) <- metadata[, SampleID]
-
-for (ext in c("png", "pdf")) {
-    pheatmap(
-        mat = 1 - mat,
-        filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
-        clustering_rows = TRUE,
-        clustering_cols = TRUE,
-        clustering_distance_rows = as.dist(mat),
-        clustering_distance_cols = as.dist(mat),
-        clustering_method = "ward.D2",
-        labels_row = metadata[order(SampleID), Label],
-        labels_col = metadata[order(SampleID), Label],
-        legend = TRUE,
-        show_rownames = FALSE,
-        annotation_col = annot_col
-    )
-}
