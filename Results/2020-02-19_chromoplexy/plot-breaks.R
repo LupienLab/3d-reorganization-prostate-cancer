@@ -31,10 +31,19 @@ metadata[, SampleID := paste0("PCa", get("Sample ID"))]
 SAMPLES <- metadata$SampleID
 
 # load breakpoint data
-breakpoints <- fread("Graphs/sv-breakpoints.tsv", sep = "\t", header = TRUE)
+breakpoints <- fread(
+    file.path("Graphs", "sv-breakpoints.tsv"),
+    sep = "\t",
+    header = TRUE
+)
 # convert chr to ordered factor
 breakpoints[, chr := factor(chr, levels = CHRS, ordered = TRUE)]
-breakpoint_pairs <- fread("Graphs/sv-breakpoints.paired.tsv", sep = "\t", header = TRUE)
+
+breakpoint_pairs <- fread(
+    file.path("Graphs", "sv-breakpoints.paired.tsv"),
+    sep = "\t",
+    header = TRUE
+)
 
 # load hg38 ideogram
 data(UCSC.HG38.Human.CytoBandIdeogram)
