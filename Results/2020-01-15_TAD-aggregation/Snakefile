@@ -57,11 +57,25 @@ rule all:
         expand(
             path.join("CTCF", "{sample}.{line}-CTCF-peaks.bed"),
             sample=ALL_SAMPLES,
-            line=["LNCaP", "22Rv1"],
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
         ),
         expand(
             path.join("CTCF", "TAD-boundary.{line}-CTCF-peaks.distances.tsv"),
-            line=["LNCaP", "22Rv1"],
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
+        ),
+        expand(
+            path.join("Statistics", "tad-boundary-enrichment.{line}-CTCF.tsv"),
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
+        ),
+        expand(
+            path.join(PLOT_DIR, "boundary-counts.{line}-ctcf-proximity.{ext}"),
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
+            ext=["png", "pdf"],
+        ),
+        expand(
+            path.join(PLOT_DIR, "boundary-counts.{line}-ctcf-proximity.fold.{ext}"),
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
+            ext=["png", "pdf"],
         ),
         #expand(
         #    path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
@@ -247,7 +261,7 @@ rule boundary_prostateline_ctcf_intersection:
 
 rule boundary_prostateline_ctcf_proximity:
     input:
-        script = "boundary-ctcf-proximity.py",
+        script = "boundary-ctcf-proximity.R",
         pairs = expand(
             path.join("CTCF", "{sample}.{{line}}-CTCF-peaks.bed"),
             sample=ALL_SAMPLES,
@@ -255,7 +269,7 @@ rule boundary_prostateline_ctcf_proximity:
     output:
         path.join("CTCF", "TAD-boundary.{line}-CTCF-peaks.distances.tsv"),
     shell:
-        "python {input.script} {wildcards.line}"
+        "Rscript {input.script} {wildcards.line}"
 
 rule plots:
     input:
@@ -277,8 +291,6 @@ rule plots:
             plot=[
                 "boundary-counts",
                 "boundary-counts.by-persistence",
-                "boundary-counts.ctcf-proximity",
-                "boundary-counts.ctcf-proximity.fold",
                 "tad-counts",
                 "tad-counts.by-window",
                 "tad-counts.by-sample",
@@ -293,3 +305,16 @@ rule plots:
         ),
     shell:
         "Rscript {input.script}"
+
+rule agg_ctcf_enrichment:
+    input:
+        script = "ctcf-enrichment.R",
+        dists = path.join("CTCF", "TAD-boundary.{cell}-CTCF-peaks.distances.tsv"),
+    output:
+        path.join("Statistics", "tad-boundary-enrichment.{cell}-CTCF.tsv"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{cell}.png"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{cell}.pdf"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{cell}.fold.png"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{cell}.fold.pdf"),
+    shell:
+        "Rscript {input.script} {wildcards.cell}"

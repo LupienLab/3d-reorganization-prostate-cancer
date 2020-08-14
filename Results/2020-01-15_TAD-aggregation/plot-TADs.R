@@ -97,9 +97,10 @@ boundaries <- merge(boundaries, metadata[, .SD, .SDcols = c("SampleID", "Label",
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
 window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header = TRUE)
 
-# load CTCF distances
-ctcf_pairs = fread("CTCF/TAD-boundary.LNCaP-CTCF-peaks.distances.tsv", sep = "\t", header = TRUE)
-ctcf_pairs <- merge(ctcf_pairs, metadata[, .(SampleID, Source)])
+# TAD summary
+tad_summary <- tads[, .N, keyby = c("SampleID", "w")]
+tad_summary <- merge(tad_summary, metadata[, .SD, .SDcols = c("SampleID", "Label")], by = "SampleID")
+fwrite(tad_summary, "Statistics/tad-counts.tsv", sep = "\t", col.names = TRUE)
 
 # ==============================================================================
 # Analysis
@@ -107,6 +108,12 @@ ctcf_pairs <- merge(ctcf_pairs, metadata[, .(SampleID, Source)])
 cat("Counting boundaries\n")
 boundary_counts = boundaries[, .N, by = c("SampleID", "Label")]
 boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Label", "Persistence")]
+boundary_max_persistence <- merge(
+    boundaries[Persistence == MAX_PERSISTENCE, .(Max_Persistence = .N), by = "SampleID"],
+    boundaries[Persistence < MAX_PERSISTENCE, .(Lesser_Persistence = .N), by = "SampleID"]
+)
+boundary_max_persistence[, Frac_Max_Persistence := Max_Persistence / (Max_Persistence + Lesser_Persistence)]
+fwrite(boundary_max_persistence, "Statistics/boundary-hierarchy.tsv", sep = "\t", col.names = TRUE)
 
 cat("Counting TADs\n")
 # calculate coefficient of variation across TAD sizes to see where samples vary
@@ -137,9 +144,6 @@ tad_size_ecdf <- rbindlist(lapply(
 tad_size_ecdf_est <- tad_size_ecdf[, .(Mean = mean(y), SD = sd(y)), by = c("w", "x")]
 tad_size_ecdf_est[, Lower := Mean - SD]
 tad_size_ecdf_est[, Upper := Mean + SD]
-
-ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak=Freq), keyby = c("SampleID", "Source")]
-ctcf_fc$Background <- ctcf_pairs[abs(Bin_Mid) > 100000, mean(Freq), keyby = "SampleID"]$V1
 
 # colour bpscore rows by primary-primary, line-line, or primary-line comparisons
 cat("Counting similarity\n")
@@ -213,52 +217,6 @@ gg_bounds_persistence <- (
     )
 )
 savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts.by-persistence"))
-
-# CTCF binding site proximity to boundaries
-gg_bounds_ctcf <- (
-    ggplot(data = ctcf_pairs[SampleID %in% c(TUMOUR_SAMPLES, LINE_SAMPLES)])
-    + geom_path(aes(x = Bin_Mid / 1e3, y = Freq, colour = Source, group = SampleID))
-    + labs(x = "Distance from TAD boundary (kbp)", y = "Average # LNCaP CTCF Peaks / 5 kbp")
-    + scale_x_continuous(
-        breaks = seq(-150, 150, 50),
-        labels = seq(-150, 150, 50),
-    )
-    + scale_y_continuous(
-        limits = c(0, 0.03)
-    )
-    + scale_colour_manual(
-        limits = metadata[SampleID %in% c(TUMOUR_SAMPLES, LINE_SAMPLES), unique(Source)],
-        labels = metadata[SampleID %in% c(TUMOUR_SAMPLES, LINE_SAMPLES), unique(Source)],
-        values = c("#1F77B4", "#FF7F0D"),
-        name = "Source"
-    )
-    + coord_cartesian(xlim = c(-150, 150))
-    + theme_minimal()
-)
-savefig(gg_bounds_ctcf, file.path(PLOT_DIR, "boundary-counts.ctcf-proximity"))
-
-gg_bounds_ctcf_fc <- (
-    ggplot(data = ctcf_fc)
-    + geom_col(aes(x = SampleID, y = Peak / Background, fill = SampleID))
-    + labs(x = NULL, y = "Fold change (peak vs background)")
-    + scale_x_discrete(
-        breaks = metadata[, SampleID],
-        labels = metadata[, Label]
-    )
-    + scale_fill_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, Label],
-        values = metadata[, Sample_Colour],
-        name = "Patient"
-    )
-    + guides(fill = FALSE)
-    + theme_minimal()
-    + theme(
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
-    )
-)
-savefig(gg_bounds_ctcf_fc, file.path(PLOT_DIR, "boundary-counts.ctcf-proximity.fold"))
-
 
 # TADs
 # --------------------------------------
