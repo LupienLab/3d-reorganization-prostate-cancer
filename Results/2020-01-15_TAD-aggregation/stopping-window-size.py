@@ -18,34 +18,19 @@ from tqdm import tqdm
 # =============================================================================================================================
 TAD_DIR = path.join("resolved-TADs", "separated-TADs")
 WINDOWS = list(range(3, 41))
-CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+
+# drop chromosome Y, since some cell lines aren't derived from males
+CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
+
 DIFF_THRESH = 5e-3
-N_DIFFS = 2
+N_DIFFS = 1
 
 # =============================================================================================================================
 # Data
 # =============================================================================================================================
-TUMOUR_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
-    sep="\t"
-)
-TUMOUR_CONFIG = TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", :]
-
-BENIGN_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "Raw", "191220_A00827_0104_AHMW25DMXX", "config.tsv"),
-    sep="\t"
-)
-BENIGN_CONFIG = BENIGN_CONFIG.loc[BENIGN_CONFIG.Include == "Yes", :]
-
-CELL_LINE_CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "Rhie_2019", "config.tsv"),
-    sep="\t"
-)
-
-TUMOUR_SAMPLES = ["PCa" + str(i) for i in TUMOUR_CONFIG.loc[TUMOUR_CONFIG.Include == "Yes", "Sample ID"]]
-BENIGN_SAMPLES = BENIGN_CONFIG["Sample"].tolist()
-CELL_LINE_SAMPLES = CELL_LINE_CONFIG["Run_Accession"].tolist()
-ALL_SAMPLES = TUMOUR_SAMPLES + BENIGN_SAMPLES + CELL_LINE_SAMPLES
+print("Loading data")
+metadata = pd.read_csv("config.tsv", sep="\t")
+ALL_SAMPLES = metadata.loc[metadata.Include == "Yes", "SampleID"].tolist()
 
 # load TADs for each patient
 tads = {
@@ -67,8 +52,9 @@ chrom_sizes = pd.read_csv(
     header=None,
     names=["chr", "Length"]
 )
+# drop chromosome Y, since some cell lines aren't derived from males
 # drop chromosome M, since this isn't included in the TAD calls
-chrom_sizes.drop(index=chrom_sizes.loc[chrom_sizes.chr == "chrM", :].index, inplace=True)
+chrom_sizes.drop(index=chrom_sizes.loc[chrom_sizes.chr.isin(["chrY", "chrM"]), :].index, inplace=True)
 # calculate total genome size
 genome_size = chrom_sizes.Length.sum()
 
@@ -80,8 +66,8 @@ genome_size = chrom_sizes.Length.sum()
 window_diffs = pd.DataFrame({
     "SampleID": ALL_SAMPLES * (len(WINDOWS) - 1),
     "w": sorted(WINDOWS[1:] * len(ALL_SAMPLES)),
-    "diff": [0] * len(ALL_SAMPLES) * (len(WINDOWS) - 1),
-    "abs_delta": [0] * len(ALL_SAMPLES) * (len(WINDOWS) - 1),
+    "BPscore": [0] * len(ALL_SAMPLES) * (len(WINDOWS) - 1),
+    "window_step_abs_delta": [0] * len(ALL_SAMPLES) * (len(WINDOWS) - 1),
 })
 
 sup_windows = pd.DataFrame({
@@ -90,24 +76,33 @@ sup_windows = pd.DataFrame({
 })
 
 for s in tqdm(ALL_SAMPLES):
+    # bp-score from previous window size
     b_prev = 1
+    # count how many times in a row the difference threshold is met
     consistent_counter = 0
     sup_w = 0
     for w in WINDOWS[1:]:
         b = 0
         for c in CHROMS:
+            # get TADs at window size w and w - 1 for chromosome c
             tads_w = tads[s][w].loc[tads[s][w].chr == c, :]
             tads_w_1 = tads[s][w - 1].loc[tads[s][w - 1].chr == c, :]
+            # compare these TAD calls
             distance = bpscore(tads_w, tads_w_1)
+            # scale similarity based on chromosome size
             addition = chrom_sizes.loc[chrom_sizes.chr == c, "Length"].item() / genome_size * distance
             b += addition
+        # compare total BPscore (b) to BPscore for the previous window size (b_prev)
         delta = abs(b - b_prev)
         # save results
-        window_diffs.loc[(window_diffs["SampleID"] == s) & (window_diffs["w"] == w), "diff"] = b
-        window_diffs.loc[(window_diffs["SampleID"] == s) & (window_diffs["w"] == w), "abs_delta"] = delta
+        window_diffs.loc[(window_diffs["SampleID"] == s) & (window_diffs["w"] == w), "BPscore"] = b
+        window_diffs.loc[(window_diffs["SampleID"] == s) & (window_diffs["w"] == w), "window_step_abs_delta"] = delta
+        # if the gain in similarity over consecutive window size steps (BPscore delta) is small enough
         if delta < DIFF_THRESH:
+            # if it's not at the consistent threshold
             if consistent_counter < N_DIFFS:
                 consistent_counter += 1
+            # if the BPscore delta has been small enough for N_DIFFS consecutive times
             elif sup_w == 0:
                 sup_w = w
                 sup_windows.loc[(sup_windows["SampleID"] == s), "w"] = sup_w

@@ -11,11 +11,11 @@ PCa53687	Yes	Primary	Malignant	CPCG0339	#CF1C90	#1F77B4	../../Data/Processed/201
 PCa56413	Yes	Primary	Malignant	CPCG0331	#F97B72	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa56413.mcool	Prostate
 PCa57294	Yes	Primary	Malignant	CPCG0365	#4B4B8F	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa57294.mcool	Prostate
 PCa58215	Yes	Primary	Malignant	CPCG0345	#A5AA99	#1F77B4	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa58215.mcool	Prostate
-Benign-Prostate-1648133	No	Primary	Benign	BP1648133	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1648133.mcool	Prostate
-Benign-Prostate-1595983	No	Primary	Benign	BP1595983	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1595983.mcool	Prostate
-Benign-Prostate-1664855	No	Primary	Benign	BP1664855	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1664855.mcool	Prostate
-Benign-Prostate-3320942	No	Primary	Benign	BP3320942	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-3320942.mcool	Prostate
-Benign-Prostate-3330581	No	Primary	Benign	BP3330581	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-3330581.mcool	Prostate
+Benign-Prostate-1648133	Yes	Primary	Benign	BP1648133	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1648133.mcool	Prostate
+Benign-Prostate-1595983	Yes	Primary	Benign	BP1595983	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1595983.mcool	Prostate
+Benign-Prostate-1664855	Yes	Primary	Benign	BP1664855	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-1664855.mcool	Prostate
+Benign-Prostate-3320942	Yes	Primary	Benign	BP3320942	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-3320942.mcool	Prostate
+Benign-Prostate-3330581	Yes	Primary	Benign	BP3330581	#000000	#AEC7E8	../../Data/Raw/191220_A00827_0104_AHMW25DMXX/Contacts/Benign-Prostate-3330581.mcool	Prostate
 SRR7702334	Yes	Cell Line	Malignant	22Rv1 Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702334.mcool	Prostate
 SRR7702335	Yes	Cell Line	Malignant	22Rv1 Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702335.mcool	Prostate
 SRR8446383	Yes	Cell Line	Benign	RWPE1 Rep 1	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446383.mcool	Prostate
