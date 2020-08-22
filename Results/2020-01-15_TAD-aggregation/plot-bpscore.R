@@ -94,12 +94,6 @@ htests <- list(
     )
 )
 
-
-# calculate median similarity between different batches
-non_prostate <- 1:6
-prostate_primary <- 7:18
-prostate_line <- 19:25
-
 # cluster samples by BPscore distances
 # recast data to wide form for plotting with pheatmap
 mat <- as.matrix(
@@ -107,17 +101,30 @@ mat <- as.matrix(
     rownames = "s1"
 )
 
-# compare primary prostate to non-prostate lines
-cat("Non-prostate + Primary Prostate\n")
-summary(as.vector(1 - mat[non_prostate, prostate_primary]))
+# compare different groups of samples
+group_idx <- list(
+    "Primary prostate tumour" = 12:23,
+    "Primary prostate benign" = 7:11,
+    "Cell line prostate tumour" = c(24:25, 28:30),
+    "Cell line prostate benign" = 26:27,
+    "Cell line non-prostate" = 1:6
+)
+median_mat <- matrix(ncol = length(group_idx), nrow = length(group_idx))
+for (i in 1:length(group_idx)) {
+    for (j in i:length(group_idx)) {
+        median_mat[i, j] <- median(as.vector(1 - mat[group_idx[[i]], group_idx[[j]]]))
+    }
+}
+rownames(median_mat) <- names(group_idx)
+colnames(median_mat) <- rownames(median_mat)
 
-# compare primary prostate to prostate lines
-cat("Primary Prostate + Prostate Line\n")
-summary(as.vector(1 - mat[prostate_primary, prostate_line]))
-
-# compare non-prostate lines to prostate lines
-cat("Non-prostate + Prostate Line\n")
-summary(as.vector(1 - mat[non_prostate, prostate_line]))
+cat("Sample type comparisons\n")
+print(median_mat)
+write.matrix(
+    median_mat,
+    file.path("Statistics", "tad-similarity.sample-types.tsv"),
+    sep = "\t"
+)
 
 # ==============================================================================
 # Plots
