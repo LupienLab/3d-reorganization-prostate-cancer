@@ -183,8 +183,9 @@ gg_bpscore_primary_benign = (
 savefig(gg_bpscore_primary_benign, file.path(PLOT_DIR, "bp-score.primary.benign"))
 
 # primary samples: benign vs tumour
-gg_bpscore_primary_tumour_vs_benign = (
-    ggplot(
+gg_bpscore_primary_tumour_vs_benign <- (
+    ggplot()
+    + geom_smooth(
         data = bpscore[
             s1 < s2
             & w <= MAX_WINDOW
@@ -197,9 +198,7 @@ gg_bpscore_primary_tumour_vs_benign = (
             colour = Prostate_Type_Combo,
             fill = Prostate_Type_Combo,
             group = Prostate_Type_Combo
-        )
-    )
-    + geom_smooth(
+        ),
         method = "loess",
         alpha = 0.5
     )
@@ -214,11 +213,78 @@ gg_bpscore_primary_tumour_vs_benign = (
         breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
         labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
     )
+    + scale_fill_discrete(
+        name = "Comparison",
+        breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
+        labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
+    )
     + guides(fill = FALSE)
     + theme_minimal()
     + theme(legend.position = "bottom")
 )
 savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.primary.tumour-vs-benign"))
+
+# same as above, but using the sample standard deviation for the ribbon
+# instead of the 95% confidence interval around the regressed mean
+gg_bpscore_primary_tumour_vs_benign <- (
+    ggplot()
+    + geom_ribbon(
+        data = bpscore[
+            s1 < s2
+            & w <= MAX_WINDOW
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+            & (Source_1 == "Primary" & Source_2 == "Primary"),
+            # using `get` because `dist` is a builtin function name
+            .(Mean = mean(1 - dist), SD = sd(1 - dist)),
+            by = c("w", "Prostate_Type_Combo")
+        ],
+        mapping = aes(
+            x = w,
+            ymin = Mean - SD,
+            ymax = Mean + SD,
+            fill = Prostate_Type_Combo
+        ),
+        alpha = 0.2
+    )
+    + geom_smooth(
+        data = bpscore[
+            s1 < s2
+            & w <= MAX_WINDOW
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+        ],
+        mapping = aes(
+            x = w,
+            y = 1 - dist,
+            colour = Prostate_Type_Combo,
+            fill = Prostate_Type_Combo,
+            group = Prostate_Type_Combo
+        ),
+        method = "loess",
+        se = FALSE,
+        alpha = 0.5
+    )
+    + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_discrete(
+        name = "Comparison",
+        breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
+        labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
+    )
+    + scale_fill_discrete(
+        name = "Comparison",
+        breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
+        labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
+    )
+    + guides(fill = FALSE)
+    + theme_minimal()
+    + theme(legend.position = "bottom")
+)
+savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.primary.tumour-vs-benign.stdev"))
 
 # cell lines: benign vs tumour
 gg_bpscore_line_tumour_vs_benign = (
