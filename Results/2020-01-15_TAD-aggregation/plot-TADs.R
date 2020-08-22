@@ -31,11 +31,13 @@ metadata <- fread("config.tsv", sep = "\t", header = TRUE)
 metadata <- metadata[Include == "Yes"]
 SAMPLES <- metadata[, SampleID]
 TUMOUR_SAMPLES <- metadata[Source == "Primary" & Type == "Malignant", SampleID]
+BENIGN_SAMPLES <- metadata[Source == "Primary" & Type == "Benign", SampleID]
+PRIMARY_SAMPLES <- metadata[Source == "Primary", SampleID]
 LINE_SAMPLES <- metadata[Source == "Cell Line", SampleID]
 
 # load aggregated boundary calls from each sample
 boundaries = rbindlist(lapply(
-    TUMOUR_SAMPLES,
+    PRIMARY_SAMPLES,
     function(s) {
         dt = fread(
             file.path("resolved-TADs", paste0(s, ".40000bp.aggregated-boundaries.tsv")),
@@ -99,7 +101,7 @@ tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
 # ECDFs number of TADs of a given width
 tad_size_ecdf <- rbindlist(lapply(
-    TUMOUR_SAMPLES,
+    PRIMARY_SAMPLES,
     function(s) {
         rbindlist(lapply(
             seq(MIN_WINDOW, MAX_WINDOW, 1),
@@ -174,13 +176,17 @@ savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts.by-persisten
 # --------------------------------------
 # TAD counts per sample faceted by window size
 gg_tad_counts_window <- (
-    ggplot(data = tads[, .N, by = c("SampleID", "w", "Sample_Colour")])
-    + geom_col(aes(x = SampleID, y = N, fill = Sample_Colour))
+    ggplot(data = tads[, .N, by = c("SampleID", "w", "Type_Colour")])
+    + geom_col(aes(x = SampleID, y = N, fill = Type_Colour))
     + labs(x = NULL, y = "Number of TADs")
+    + scale_x_discrete(
+        limits = metadata[, SampleID],
+        labels = metadata[, Label]
+    )
     + scale_fill_manual(
-        limits = metadata[, Sample_Colour],
+        limits = metadata[, Type_Colour],
         labels = metadata[, paste(Source, Type)],
-        values = metadata[, Sample_Colour]
+        values = metadata[, Type_Colour]
     )
     + guides(fill = FALSE)
     + facet_wrap(~ w, nrow = 6)
@@ -190,17 +196,17 @@ gg_tad_counts_window <- (
         legend.position = "bottom"
     )
 )
-savefig(gg_tad_counts_window, file.path(PLOT_DIR, "tad-counts.by-window"), height = 20)
+savefig(gg_tad_counts_window, file.path(PLOT_DIR, "tad-counts.by-window"), height = 30, width = 30)
 
 # TAD counts per sample faceted by window size
 gg_tad_counts_sample <- (
-    ggplot(data = tads[, .N, by = c("SampleID", "w")])
+    ggplot(data = tads[, .N, by = c("SampleID", "Label", "w")])
     + geom_col(aes(x = w, y = N, fill = w))
     + labs(x = "Window size", y = "Number of TADs")
     + scale_fill_viridis_c()
     + guides(fill = FALSE)
     + facet_wrap(
-        ~ SampleID,
+        ~ Label,
         nrow = 3
         # labeller = as_labeller(metadata[, Label])
     )
@@ -209,16 +215,35 @@ gg_tad_counts_sample <- (
         legend.position = "bottom"
     )
 )
-savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), height = 20)
+savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), height = 20, width = 30)
 
 # TAD counts per sample at each window size
 gg_tad_counts <- (
-    ggplot(data = tads[SampleID %in% TUMOUR_SAMPLES, .N, by = c("SampleID", "w", "Sample_Colour")])
-    + geom_point(
-        aes(x = w, y = N, colour = SampleID),
-        position = position_jitter(width = 0.2, height = 0)
+    ggplot(
+        data = tads[
+            SampleID %in% PRIMARY_SAMPLES,
+            .N,
+            keyby = c("SampleID", "w", "Type_Colour")
+        ],
+        mapping = aes(
+            x = w,
+            y = N,
+            colour = Type_Colour,
+            group = paste(w, Type_Colour)
+        )
     )
-    + geom_boxplot(aes(x = w, y = N, group = w), outlier.shape = NA, alpha = 0.2)
+    + geom_point(
+        position = position_jitterdodge(
+            jitter.width = 0.2, jitter.height = 0,
+            dodge.width = 0.9
+        ),
+        size = 2
+    )
+    + geom_boxplot(
+        position = position_dodge(),
+        outlier.shape = NA,
+        alpha = 0.3
+    )
     + labs(x = "Window size", y = "Number of TADs")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
@@ -226,12 +251,13 @@ gg_tad_counts <- (
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
     + scale_colour_manual(
-        limits = metadata[SampleID %in% TUMOUR_SAMPLES, SampleID],
-        labels = metadata[SampleID %in% TUMOUR_SAMPLES, Label],
-        values = metadata[SampleID %in% TUMOUR_SAMPLES, Sample_Colour],
-        name = "Source"
+        limits = c("#AEC7E8", "#1F77B4"),
+        labels = c("Benign", "Tumour"),
+        values = c("#AEC7E8", "#1F77B4"),
+        name = "Sample Type"
     )
     + theme_minimal()
+    + theme(legend.position = "bottom")
 )
 savefig(gg_tad_counts, file.path(PLOT_DIR, "tad-counts"))
 
@@ -265,7 +291,7 @@ gg_tad_size <- (
 )
 savefig(gg_tad_size, file.path(PLOT_DIR, "tad-size.distribution"), height = 20)
 
-# same as above but only focussing on a few window sizes
+# same as above but only focusing on a few window sizes
 w_subset <- seq(MIN_WINDOW, MAX_WINDOW, length.out = 4)
 gg_tad_size_reduced <- (
     ggplot(data = tad_size_ecdf_est[w %in% w_subset])

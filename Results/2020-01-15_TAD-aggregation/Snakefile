@@ -33,6 +33,9 @@ TAD_DIR = {
 PLOT_DIR = "Plots"
 WINDOWS = list(range(3, 41))
 
+PLOT_EXTS=["png", "pdf"]
+
+
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
@@ -52,7 +55,6 @@ rule all:
             sample=ALL_SAMPLES,
             w=WINDOWS,
             ext=["bed", "beddb"],
-            #ext=["bed", "beddb", "bed2ddb"],
         ),
         expand(
             path.join("CTCF", "{sample}.{line}-CTCF-peaks.bed"),
@@ -68,49 +70,53 @@ rule all:
             line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
         ),
         expand(
-            path.join(PLOT_DIR, "boundary-counts.{line}-ctcf-proximity.{ext}"),
+            path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.{ext}"),
             line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
-            ext=["png", "pdf"],
+            ext=PLOT_EXTS,
         ),
         expand(
-            path.join(PLOT_DIR, "boundary-counts.{line}-ctcf-proximity.fold.{ext}"),
+            path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.fold.{ext}"),
             line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
-            ext=["png", "pdf"],
+            ext=PLOT_EXTS,
         ),
-        #expand(
-        #    path.join("resolved-TADs", "{sample}.40000bp.aggregated-domains.bed2ddb"),
-        #    sample=SAMPLES,
-        #),
         path.join("Statistics", "tad-distances.tsv"),
+        path.join("Statistics", "tad-similarity.sample-types.tsv"),
         expand(
             path.join(PLOT_DIR, "{plot}.{ext}"),
             plot=[
-                "bp-score",
-                "bp-score.prostate-lines",
-                "bp-score.cluster",
+                "bp-score.primary.tumour",
+                "bp-score.primary.benign",
+                "bp-score.primary.tumour-vs-benign",
+                "bp-score.line.tumour-vs-benign",
                 "bp-score.window-similarity",
                 "bp-score.window-similarity.delta",
+                "bp-score.cluster",
             ],
-            ext=["png", "pdf"]
+            ext=PLOT_EXTS
         ),
         expand(
             path.join(PLOT_DIR, "{plot}.{ext}"),
             plot=[
                 "boundary-counts",
                 "boundary-counts.by-persistence",
-                "boundary-counts.ctcf-proximity",
-                "boundary-counts.ctcf-proximity.fold",
                 "tad-counts",
                 "tad-counts.by-window",
                 "tad-counts.by-sample",
                 "tad-size.distribution",
                 "tad-size.distribution.reduced",
                 "tad-size.coeff-var",
-                "bp-score",
-                "bp-score.window-similarity",
-                "bp-score.window-similarity.delta",
             ],
-            ext=["png", "pdf"]
+            ext=PLOT_EXTS,
+        ),
+        expand(
+            path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.{ext}"),
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
+            ext=PLOT_EXTS,
+        ),
+        expand(
+            path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.fold.{ext}"),
+            line=["LNCaP", "22Rv1", "VCaP", "C4-2B"],
+            ext=PLOT_EXTS,
         ),
 
 # ==============================================================================
@@ -308,11 +314,8 @@ rule plots:
                 "tad-size.distribution",
                 "tad-size.distribution.reduced",
                 "tad-size.coeff-var",
-                "bp-score",
-                "bp-score.window-similarity",
-                "bp-score.window-similarity.delta",
             ],
-            ext=["png", "pdf"],
+            ext=PLOT_EXTS,
         ),
     shell:
         "Rscript {input.script}"
@@ -336,10 +339,15 @@ rule plot_bpscore:
         tad_dist = path.join("Statistics", "tad-distances.tsv"),
         tad_delta = path.join("Statistics", "tad-similarity-deltas.tsv"),
     output:
-        path.join(PLOT_DIR, "bp-score.png"),
-        path.join(PLOT_DIR, "bp-score.pdf"),
-        path.join(PLOT_DIR, "bp-score.prostate-lines.png"),
-        path.join(PLOT_DIR, "bp-score.prostate-lines.pdf"),
+        path.join("Statistics", "tad-similarity.sample-types.tsv"),
+        path.join(PLOT_DIR, "bp-score.primary.tumour.png"),
+        path.join(PLOT_DIR, "bp-score.primary.tumour.pdf"),
+        path.join(PLOT_DIR, "bp-score.primary.benign.png"),
+        path.join(PLOT_DIR, "bp-score.primary.benign.pdf"),
+        path.join(PLOT_DIR, "bp-score.primary.tumour-vs-benign.png"),
+        path.join(PLOT_DIR, "bp-score.primary.tumour-vs-benign.pdf"),
+        path.join(PLOT_DIR, "bp-score.line.tumour-vs-benign.png"),
+        path.join(PLOT_DIR, "bp-score.line.tumour-vs-benign.pdf"),
         path.join(PLOT_DIR, "bp-score.window-similarity.png"),
         path.join(PLOT_DIR, "bp-score.window-similarity.pdf"),
         path.join(PLOT_DIR, "bp-score.window-similarity.delta.png"),
