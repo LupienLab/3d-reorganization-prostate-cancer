@@ -45,30 +45,55 @@ window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header
 cat("Counting similarity\n")
 bpscore <- merge(
     bpscore,
-    metadata[, .(SampleID, Source, Label, Type_Colour)],
-    by.x = "s2",
+    metadata[, .(SampleID, Source, Tissue, Label, Type)],
+    by.x = "s1",
     by.y = "SampleID",
     all.x = FALSE,
     all.y = TRUE
 )
 bpscore <- merge(
     bpscore,
-    metadata[, .(SampleID, Source, Label, Type_Colour)],
-    by.x = "s1",
+    metadata[, .(SampleID, Source, Tissue, Label, Type)],
+    by.x = "s2",
     by.y = "SampleID",
-    suffixes = c("_2", "_1"),
+    suffixes = c("_1", "_2"),
     all.x = FALSE,
     all.y = TRUE,
 )
-# if s1 and s2 come from the same source material, return Type_Colour, otherwise return green colour
-bpscore[Source_1 == Source_2 & Source_1 == "Primary", Colour := "#1F77B4"]
-bpscore[Source_1 == Source_2 & Source_1 == "Cell Line", Colour := "#FF7F0D"]
-bpscore[Source_1 != Source_2, Colour := "#3FE686"]
-bpscore[, `:=`(
-    Cell_Type_1 = gsub(" .*", "", Label_1),
-    Cell_Type_2 = gsub(" .*", "", Label_2)
-)]
-bpscore[, Cell_Type_Combo := paste(Cell_Type_1, Cell_Type_2, sep = "+")]
+
+# sample comparisons for various plots
+bpscore[(Tissue_1 == "Prostate") & (Tissue_2 == "Prostate"), Prostate_Type_Combo := paste(Type_1, Type_2, sep = "+")]
+bpscore[
+    (Tissue_1 == "Prostate") & (Tissue_2 == "Prostate") & (Source_1 == "Cell Line") & (Source_2 == "Cell Line"),
+    Cell_Type_Combo := paste(
+        gsub(" .*", "", Label_1),
+        gsub(" .*", "", Label_2),
+        sep = "+"
+    )
+]
+
+# hypothesis testing for differences between TADs
+# (similarity of Benign-vs-Benign comparisons to Benign-vs-Tumour)
+# (and likewise, Tumour-vs-Tumour to Benign-vs-Tumour)
+bpscore_primary_tumour_vs_benign <- bpscore[
+    s1 < s2
+    & w == MAX_WINDOW
+    & (Source_1 == "Primary" & Source_2 == "Primary")
+]
+
+htests <- list(
+    "primary_benign-only_benign-vs-tumour" = wilcox.test(
+        x = bpscore_primary_tumour_vs_benign[Prostate_Type_Combo == "Benign+Benign", 1 - dist],
+        y = bpscore_primary_tumour_vs_benign[Prostate_Type_Combo == "Benign+Malignant", 1 - dist],
+        paired = FALSE
+    ),
+    "primary_tumour-only_benign-vs-tumour" = wilcox.test(
+        x = bpscore_primary_tumour_vs_benign[Prostate_Type_Combo == "Malignant+Malignant", 1 - dist],
+        y = bpscore_primary_tumour_vs_benign[Prostate_Type_Combo == "Benign+Malignant", 1 - dist],
+        paired = FALSE
+    )
+)
+
 
 # calculate median similarity between different batches
 non_prostate <- 1:6
@@ -98,9 +123,9 @@ summary(as.vector(1 - mat[non_prostate, prostate_line]))
 # Plots
 # ==============================================================================
 cat("Plotting\n")
-# plot distances between TADs of different samples across window sizes
-gg_bpscore_primary = (
-    ggplot(data = bpscore[s1 != s2 & w <= MAX_WINDOW & !grepl("(4DN|SRR|BP)", s1) & !grepl("(4DN|SRR|BP)", s2)])
+# plot distances between TADs of different primary tumour samples across window sizes
+gg_bpscore_primary_tumour = (
+    ggplot(data = bpscore[s1 < s2 & w <= MAX_WINDOW & grepl("PCa", s1) & grepl("PCa", s2)])
     + geom_point(
         # aes(x = w, y = 1 - dist, colour = Colour),
         aes(x = w, y = 1 - dist, colour = w),
@@ -122,20 +147,52 @@ gg_bpscore_primary = (
     + guides(colour = FALSE)
     + theme_minimal()
 )
-savefig(gg_bpscore_primary, file.path(PLOT_DIR, "bp-score"))
+savefig(gg_bpscore_primary_tumour, file.path(PLOT_DIR, "bp-score.primary.tumour"))
 
-# plot distances between TADs of different samples across window sizes
-# (same as above, but including all samples, not just the primaries)
-gg_bpscore_prostate_line = (
-    ggplot(
-        data = bpscore[s1 < s2 & w <= MAX_WINDOW & grepl("SRR", s1) & grepl("SRR", s2)],
-        mapping = aes(x = w, y = 1 - dist, colour = Cell_Type_Combo)
-    )
+# plot distances between TADs of different primary tumour samples across window sizes
+gg_bpscore_primary_benign = (
+    ggplot(data = bpscore[s1 < s2 & w <= MAX_WINDOW & grepl("Benign-Prostate", s1) & grepl("Benign-Prostate", s2)])
     + geom_point(
+        # aes(x = w, y = 1 - dist, colour = Colour),
+        aes(x = w, y = 1 - dist, colour = w),
         position = position_jitter(width = 0.2, height = 0)
     )
+    + geom_boxplot(
+        aes(x = w, y = 1 - dist, group = w),
+        alpha = 0.5,
+        outlier.shape = NA,
+        width = 0.5
+    )
+    + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_viridis_c()
+    + guides(colour = FALSE)
+    + theme_minimal()
+)
+savefig(gg_bpscore_primary_benign, file.path(PLOT_DIR, "bp-score.primary.benign"))
+
+# primary samples: benign vs tumour
+gg_bpscore_primary_tumour_vs_benign = (
+    ggplot(
+        data = bpscore[
+            s1 < s2
+            & w <= MAX_WINDOW
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+        ],
+        mapping = aes(
+            x = w,
+            y = 1 - dist,
+            colour = Prostate_Type_Combo,
+            fill = Prostate_Type_Combo,
+            group = Prostate_Type_Combo
+        )
+    )
     + geom_smooth(
-        aes(group = Cell_Type_Combo, fill = Cell_Type_Combo),
         method = "loess",
         alpha = 0.5
     )
@@ -145,25 +202,67 @@ gg_bpscore_prostate_line = (
         limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
-    + guides(colour = guide_legend(title = "Comparison"), fill = FALSE)
+    + scale_colour_discrete(
+        name = "Comparison",
+        breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
+        labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
+    )
+    + guides(fill = FALSE)
     + theme_minimal()
+    + theme(legend.position = "bottom")
 )
-savefig(gg_bpscore_prostate_line, file.path(PLOT_DIR, "bp-score.prostate-lines"))
+savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.primary.tumour-vs-benign"))
 
-# plot the change in similarities over window sizes
-gg_sim_window = (
-    ggplot(data = window_diffs[w <= MAX_WINDOW])
-    + geom_path(aes(x = w, y = 1 - diff, group = SampleID, colour = SampleID))
-    + labs(x = "Window size", y = expression("1 - " * delta["w, w-1"]))
+# cell lines: benign vs tumour
+gg_bpscore_line_tumour_vs_benign = (
+    ggplot(
+        data = bpscore[
+            s1 < s2
+            & w <= MAX_WINDOW
+            & (Source_1 == "Cell Line" & Source_2 == "Cell Line")
+            & (Tissue_1 == "Prostate" & Tissue_2 == "Prostate")
+        ],
+        mapping = aes(
+            x = w,
+            y = 1 - dist,
+            colour = Cell_Type_Combo,
+            fill = Cell_Type_Combo,
+            group = Cell_Type_Combo
+        )
+    )
+    + geom_smooth(
+        method = "loess",
+        alpha = 0.5
+    )
+    + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
-    + scale_colour_manual(
+    + scale_colour_discrete(
+        name = "Comparison"
+    )
+    + guides(fill = FALSE)
+    + theme_minimal()
+    + theme(legend.position = "bottom")
+)
+savefig(gg_bpscore_line_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.line.tumour-vs-benign"))
+
+
+# plot the change in similarities over window sizes
+gg_sim_window = (
+    ggplot(data = window_diffs[w <= MAX_WINDOW])
+    + geom_path(aes(x = w, y = 1 - BPscore, group = SampleID, colour = SampleID))
+    + labs(x = "Window size", y = "Similarity between consecutive window sizes\n(1 - BPscore)")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_discrete(
         limits = metadata[, SampleID],
         labels = metadata[, Label],
-        values = metadata[, Sample_Colour],
         name = "Sample"
     )
     + theme_minimal()
@@ -174,17 +273,16 @@ savefig(gg_sim_window, file.path(PLOT_DIR, "bp-score.window-similarity"))
 # plot the change in similarities over window sizes
 gg_sim_window_delta = (
     ggplot(data = window_diffs[w >= 5 & w <= MAX_WINDOW])
-    + geom_path(aes(x = w, y = abs_delta, group = SampleID, colour = SampleID))
-    + labs(x = "Window size", y = expression("|" * delta["w, w-1"] - delta["w-1, w-2"] * "|"))
+    + geom_path(aes(x = w, y = window_step_abs_delta, group = SampleID, colour = SampleID))
+    + labs(x = "Window size", y = "Gain of step-wise similarity")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
         labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
     )
-    + scale_colour_manual(
+    + scale_colour_discrete(
         limits = metadata[, SampleID],
         labels = metadata[, Label],
-        values = metadata[, Sample_Colour],
         name = "Patient"
     )
     + theme_minimal()
@@ -203,7 +301,8 @@ for (ext in c("png", "pdf")) {
         clustering_cols = TRUE,
         clustering_distance_rows = as.dist(mat),
         clustering_distance_cols = as.dist(mat),
-        clustering_method = "complete",
+        clustering_method = "ward.D2",
+        treeheight_col = 0,
         labels_row = metadata[order(SampleID), Label],
         labels_col = metadata[order(SampleID), Label],
         legend = TRUE,
