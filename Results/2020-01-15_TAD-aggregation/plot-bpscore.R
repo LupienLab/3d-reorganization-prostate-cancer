@@ -287,7 +287,7 @@ gg_bpscore_primary_tumour_vs_benign <- (
 savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.primary.tumour-vs-benign.stdev"))
 
 # cell lines: benign vs tumour
-gg_bpscore_line_tumour_vs_benign = (
+gg_bpscore_line_tumour_vs_benign <- (
     ggplot(
         data = bpscore[
             s1 < s2
@@ -321,6 +321,60 @@ gg_bpscore_line_tumour_vs_benign = (
     + theme(legend.position = "bottom")
 )
 savefig(gg_bpscore_line_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.line.tumour-vs-benign"))
+
+# same as above, using sample standard deviation for the ribbon
+gg_bpscore_line_tumour_vs_benign <- (
+    ggplot()
+    + geom_ribbon(
+        data = bpscore[
+            s1 < s2
+            & w <= MAX_WINDOW
+            & (Source_1 == "Cell Line" & Source_2 == "Cell Line")
+            & (Tissue_1 == "Prostate" & Tissue_2 == "Prostate"),
+            # using `get` because `dist` is a builtin function name
+            .(Mean = mean(1 - dist), SD = sd(1 - dist)),
+            by = c("w", "Cell_Type_Combo")
+        ],
+        mapping = aes(
+            x = w,
+            ymin = Mean - SD,
+            ymax = Mean + SD,
+            fill = Cell_Type_Combo
+        ),
+        alpha = 0.2
+    )
+    + geom_smooth(
+        data = bpscore[
+            s1 < s2
+            & w <= MAX_WINDOW
+            & (Source_1 == "Cell Line" & Source_2 == "Cell Line")
+            & (Tissue_1 == "Prostate" & Tissue_2 == "Prostate")
+        ],
+        mapping = aes(
+            x = w,
+            y = 1 - dist,
+            colour = Cell_Type_Combo,
+            fill = Cell_Type_Combo,
+            group = Cell_Type_Combo
+        ),
+        method = "loess",
+        se = FALSE,
+        alpha = 0.5
+    )
+    + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
+    + scale_x_discrete(
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+    )
+    + scale_colour_discrete(
+        name = "Comparison"
+    )
+    + guides(fill = FALSE)
+    + theme_minimal()
+    + theme(legend.position = "bottom")
+)
+savefig(gg_bpscore_line_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.line.tumour-vs-benign.stdev"))
 
 
 # plot the change in similarities over window sizes
