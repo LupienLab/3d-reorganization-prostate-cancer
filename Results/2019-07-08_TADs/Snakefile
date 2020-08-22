@@ -1,5 +1,6 @@
 import pandas as pd
 import os.path as path
+from os import getcwd
 
 # =============================================================================
 # Configuration
@@ -30,10 +31,6 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
-        expand(
-            path.join(TAD_DIR, "w_{w}", "{sample}.{res}bp.domains.bed"),
-            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
-        ),
         path.join(TAD_DIR, "tad-call-stats.tsv"),
         path.join(TAD_DIR, "tad-calls.tsv"),
 
@@ -45,7 +42,7 @@ rule dump_mat:
     input:
         path.join(CONTACT_DIR, "{sample}.mcool")
     output:
-        path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx")
+        temp(path.join(TMP_DIR, "{sample}.{res}bp.{chrom}.annotated.mtx")),
     params:
         "-H -b --one-based-ids --annotate chrom,start,end"
     shell:
@@ -71,7 +68,11 @@ rule call_tads:
 
 rule combine:
     input:
-        script = "combine-tad-calls.R"
+        script = "combine-tad-calls.R",
+        data = expand(
+            path.join(TAD_DIR, "w_{w}", "{sample}.{res}bp.domains.bed"),
+            w=WINDOWS, sample=SAMPLES, res=RESOLUTIONS
+        ),
     output:
         path.join(TAD_DIR, "tad-call-stats.tsv"),
         path.join(TAD_DIR, "tad-calls.tsv")
