@@ -5,15 +5,15 @@ import pandas as pd
 import os.path as path
 
 CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
-CONFIG = CONFIG.loc[~CONFIG.Sample.str.startswith("#"), :]
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
 
 REPORT_DIR = "Reports"
 ALIGN_DIR = "Aligned"
 CONTACT_DIR = "Contacts"
 RAW_DATA_DIR = path.join("..", "..", "Raw")
 BATCHES = {
-    "Malignant": ["190509_A00827_0007_AHKYH3DSXX", "190605_A00827_0009_BHLGJ3DSXX"],
-    "Benign": ["191213_A00827_0097_BHMV2YDMXX", "191220_A00827_0104_AHMW25DMXX"],
+    "Malignant": ["190509_A00827_0007_AHKYH3DSXX_HiC", "190605_A00827_0009_BHLGJ3DSXX_HiC"],
+    "Benign": ["191213_A00827_0097_BHMV2YDMXX_HiC", "191220_A00827_0104_AHMW25DMXX_HiC"],
 }
 
 SAMPLES = CONFIG["Sample"].tolist()
@@ -37,17 +37,20 @@ wildcard_constraints:
 # =============================================================================
 rule all:
     input:
+        # expand(
+        #     path.join(REPORT_DIR, "{sample}.balanced_report.txt"),
+        #     sample=SAMPLES
+        # ),
+        # expand(
+        #     path.join(CONTACT_DIR, "{sample}.mcool"),
+        #     sample=SAMPLES
+        # ),
         expand(
-            path.join(REPORT_DIR, "{sample}.balanced_report.txt"),
-            sample=SAMPLES
+            path.join(CONTACT_DIR, "{sample}.compartments.cis.{ext}"),
+            sample=SAMPLES,
+            ext=["bw", "lam.txt", ".vecs.tsv"],
         ),
-        expand(
-            path.join(CONTACT_DIR, "{sample}.mcool"),
-            sample=SAMPLES
-        ),
-#        path.join(REPORT_DIR, "HiCUP_summary_report.tsv"),
-#        path.join(REPORT_DIR, "multiqc_report.html"),
-#        path.join(REPORT_DIR, "hicup_class.png")
+
 
 rule rulegraph:
     output:
@@ -100,6 +103,39 @@ rule adjust_res:
     shell:
         "cooler zoomify {params} -o {output} {input}"
 
+rule compartments:
+    input:
+        cool = path.join(CONTACT_DIR, "{sample}.mcool"),
+    output:
+        path.join(CONTACT_DIR, "{sample}.compartments.cis.bw"),
+        path.join(CONTACT_DIR, "{sample}.compartments.cis.lam.txt"),
+        path.join(CONTACT_DIR, "{sample}.compartments.cis.vecs.tsv"),
+    params:
+        options = "--bigwig",
+        res = 40000
+    shell:
+        "cooltools call-compartments {params.options} -o {CONTACT_DIR}/{wildcards.sample}.compartments {input.cool}::/resolutions/{params.res}"
+
+rule expected:
+    input:
+        path.join(CONTACT_DIR, "{sample}.mcool"),
+    output:
+        path.join(CONTACT_DIR, "{sample}.exp.tsv"),
+    params:
+        res = 10000
+    shell:
+        "cooltools compute-expected -o {output} {input}::/resolutions/{params.res}"
+
+rule dots:
+    input:
+        cool = path.join(CONTACT_DIR, "{sample}.mcool"),
+        exp = path.join(CONTACT_DIR, "{sample}.exp.tsv"),
+    output:
+        path.join(CONTACT_DIR, "{sample}.dots.bedpe")
+    params:
+        res = 10000
+    shell:
+        "cooltools call-dots -o {output} {input.cool}::/resolutions/{params.res} {input.exp}"
 
 # Summaries
 # ------------------------------------------------------------------------------
