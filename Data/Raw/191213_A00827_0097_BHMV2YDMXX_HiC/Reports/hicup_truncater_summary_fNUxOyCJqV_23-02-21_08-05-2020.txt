@@ -1,0 +1,3 @@
+File	Total_Reads_Processed	Truncated	%Truncated	Not_truncated	%Not_truncated	Average_length_truncated_sequence
+Benign-Prostate-1595983_R1.fastq.gz	379905436	198712647	52.31	181192789	47.69	76.73
+Benign-Prostate-1595983_R2.fastq.gz	379905436	196249789	51.66	183655647	48.34	76.86
