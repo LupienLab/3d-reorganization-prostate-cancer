@@ -1,4 +1,9 @@
 Sample	HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP	HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques	HiCUP_mqc-generalstats-hicup-Percentage_Uniques	HiCUP_mqc-generalstats-hicup-Valid_Pairs	HiCUP_mqc-generalstats-hicup-Percentage_Valid	HiCUP_mqc-generalstats-hicup-Paired_Read_1	HiCUP_mqc-generalstats-hicup-Percentage_Mapped
+Benign-Prostate-1595983	55.83	398229261.0	83.48	477019720.0	98.81	482806993.0	67.69
+Benign-Prostate-1648133	57.86	397704639.0	84.28	471882151.0	99.14	475992372.0	69.25
+Benign-Prostate-1664855	53.62	312900145.0	79.18	395194018.0	99.22	398308483.0	68.25
+Benign-Prostate-3320942	53.82	389059009.0	81.04	480097076.0	97.43	492786270.0	68.17
+Benign-Prostate-3330581	53.84	336034915.0	79.87	420738424.0	97.88	429859994.0	68.88
 a13266	53.42	742238536.0	86.63	856747009.0	97.08	882549501.0	63.51
 a13848	56.66	453760108.0	89.42	507422655.0	95.86	529352596.0	66.1
 a14121	54.62	702775038.0	85.7	820086820.0	98.53	832340036.0	64.68
