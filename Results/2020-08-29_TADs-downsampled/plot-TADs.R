@@ -5,8 +5,8 @@ suppressMessages(library("data.table"))
 suppressMessages(library("scales"))
 suppressMessages(library("ggplot2"))
 
-MAX_WINDOW <- 25
-MIN_WINDOW <- 2
+MAX_WINDOW <- 23
+MIN_WINDOW <- 3
 RESOLUTION <- 40000
 MAX_PERSISTENCE <- MAX_WINDOW - MIN_WINDOW + 1
 PLOT_DIR <- "Plots"
@@ -14,14 +14,6 @@ PLOT_DIR <- "Plots"
 # ==============================================================================
 # Functions
 # ==============================================================================
-split_comma_col <- function(v, f=identity) {
-    # split into list
-    splitv <- lapply(v, function(x) {strsplit(x, "\\|")[[1]]})
-    # remove various non-informative characters (spaces, braces)
-    splitv <- lapply(splitv, function(x) {gsub("[][ ]", "", x)})
-    return(lapply(splitv, f))
-}
-
 #' Save figures in multiple formats
 #'
 #' @param gg ggplot object
@@ -54,74 +46,32 @@ TUMOUR_SAMPLES <- metadata[Source == "Primary" & Type == "Malignant", SampleID]
 BENIGN_SAMPLES <- metadata[Source == "Primary" & Type == "Benign", SampleID]
 PRIMARY_SAMPLES <- metadata[Source == "Primary", SampleID]
 
-# load aggregated boundary calls from each sample
-# boundaries = rbindlist(lapply(
-#     PRIMARY_SAMPLES,
-#     function(s) {
-#         dt = fread(
-#             file.path("TADs", paste0(s, "300000000.res_40000bp.aggregated-boundaries.tsv")),
-#             sep = "\t",
-#             header = TRUE
-#         )
-#         dt[, SampleID := s]
-#         return(dt)
-#     }
-# ))
-# boundaries$w <- split_comma_col(boundaries$w, as.numeric)
-
 # load TADs
 tads <- rbindlist(lapply(
     SAMPLES,
     function(s) {
-        dt1 <- rbindlist(lapply(
-            c(5, 10, 24),
-            function(w) {
-                dt2 <- fread(
-                    paste0("TADs/", s, ".300000000.res_", RESOLUTION, "bp.window_", as.integer(w * RESOLUTION), "bp.domains.bed"),
-                    sep = "\t",
-                    header = FALSE,
-                    col.names = c("chr", "start", "end")
-                )
-                dt2[, w := w]
-                return(dt2)
-            }
-        ))
-        dt1[, SampleID := s]
-        return(dt1)
+        dt <- fread(
+            file.path("Aggregated-TADs", paste0(s, ".300000000.res_", RESOLUTION, "bp.agg-domains.tsv")),
+            sep = "\t",
+            header = TRUE
+        )
+        dt[, SampleID := s]
+        return(dt)
     }
 ))
 tads[, width := as.numeric(end - start)]
 
-# # only keep TADs called at w <= MAX_WINDOW and no chrY
-# tads <- tads[w <= MAX_WINDOW & chr != "chrY"]
-# tads[, lower_persistence := pmin(MAX_PERSISTENCE, lower_persistence)]
-# tads[, upper_persistence := pmin(MAX_PERSISTENCE, upper_persistence)]
-# # boundaries[, Persistence := pmin(MAX_PERSISTENCE, Order)]
-
-# add Patient IDs to tads and boundaries, not just SampleIDs
-tads <- merge(tads, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour")])
+# add labels to TADs and boundaries, not just SampleIDs
+tads <- merge(tads, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour", "Type")])
 # boundaries <- merge(boundaries, metadata[, .SD, .SDcols = c("SampleID", "Label", "Type_Colour", "Sample_Colour")])
 
-# TAD summary
-tad_summary <- tads[, .N, keyby = c("SampleID", "w")]
-tad_summary <- merge(tad_summary, metadata[, .SD, .SDcols = c("SampleID", "Label")], by = "SampleID")
+# TAD summary (grepl => only keep TADs labelled domains, no gaps)
+tad_summary <- tads[grepl("domain", type), .(N_TADs = .N), keyby = c("w", "SampleID", "Label", "Type")]
 fwrite(tad_summary, "Statistics/tad-counts.tsv", sep = "\t", col.names = TRUE)
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# cat("Counting boundaries\n")
-# boundary_counts = boundaries[, .N, by = c("SampleID", "Label")]
-# boundary_counts_persistence = boundaries[, .N, by = c("SampleID", "Label", "Persistence")]
-# boundary_max_persistence <- merge(
-#     boundaries[Persistence == MAX_PERSISTENCE, .(Max_Persistence = .N), by = "SampleID"],
-#     boundaries[Persistence < MAX_PERSISTENCE, .(Lesser_Persistence = .N), by = "SampleID"]
-# )
-# boundary_max_persistence[, Frac_Max_Persistence := Max_Persistence / (Max_Persistence + Lesser_Persistence)]
-# fwrite(boundary_max_persistence, "Statistics/boundary-hierarchy.tsv", sep = "\t", col.names = TRUE)
-
-# boundaries_singleton <- boundaries[Persistence == 1]
-
 cat("Counting TADs\n")
 # calculate coefficient of variation across TAD sizes to see where samples vary
 tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
@@ -156,70 +106,17 @@ tad_size_ecdf_est[, Upper := Mean + SD]
 # ==============================================================================
 # Plots
 # ==============================================================================
-# # Boundaries
-# # --------------------------------------
-# # plot number of resolved boundaries
-# gg_boundaries <- (
-#     ggplot(data = boundary_counts)
-#     + geom_col(aes(x = SampleID, y = N, fill = SampleID))
-#    + scale_x_discrete(
-#        limits = metadata[, SampleID],
-#        labels = metadata[, Label]
-#    )
-#    + scale_fill_manual(
-#        limits = metadata[, SampleID],
-#        values = metadata[, Type_Colour]
-#    )
-#     + labs(x = NULL, y = "Number of unique boundaries")
-#     + guides(fill = FALSE)
-#     + theme_minimal()
-#     + theme(
-#         axis.text.x = element_text(angle = 90)
-#     )
-# )
-# savefig(gg_boundaries, file.path(PLOT_DIR, "boundary-counts"))
-
-# # plot number of resolved boundaries by order
-# gg_bounds_persistence <- (
-#     ggplot(data = boundary_counts_persistence)
-#     + geom_col(aes(x = Persistence, y = N, fill = SampleID, group = SampleID), position = "dodge")
-#     + labs(x = "Boundary Persistence", y = "Number of unique boundaries")
-#     + scale_x_discrete(
-#         breaks = c(1, 6, 11, 16, MAX_PERSISTENCE),
-#         limits = c(1, 6, 11, 16, MAX_PERSISTENCE),
-#         labels = c(1, 6, 11, 16, MAX_PERSISTENCE)
-#     )
-#     + scale_fill_manual(
-#         limits = metadata[SampleID %in% PRIMARY_SAMPLES, SampleID],
-#         labels = metadata[SampleID %in% PRIMARY_SAMPLES, Label],
-#         values = metadata[SampleID %in% PRIMARY_SAMPLES, Type_Colour],
-#         name = "Patient"
-#     )
-#     + theme_minimal()
-#     + theme(
-#         axis.text.x = element_text(angle = 90)
-#     )
-# )
-# savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts.by-persistence"))
-
-# gg_bounds_persistence_dist <- (
-#     ggplot(data = boundary_counts_persistence)
-#     + 
-# )
-
-# TADs
-# --------------------------------------
 # TAD counts per sample faceted by window size
 gg_tad_counts_window <- (
-    ggplot(data = tads[, .N, by = c("SampleID", "w", "Type_Colour")])
-    + geom_col(aes(x = SampleID, y = N, fill = Type_Colour))
+    ggplot(data = tad_summary)
+    + geom_col(aes(x = SampleID, y = N_TADs, fill = SampleID))
     + labs(x = NULL, y = "Number of TADs")
     + scale_x_discrete(
         limits = metadata[, SampleID],
         labels = metadata[, Label]
     )
     + scale_fill_manual(
-        limits = metadata[, Type_Colour],
+        limits = metadata[, SampleID],
         labels = metadata[, paste(Source, Type)],
         values = metadata[, Type_Colour]
     )
@@ -235,8 +132,8 @@ savefig(gg_tad_counts_window, file.path(PLOT_DIR, "tad-counts.by-window"), heigh
 
 # TAD counts per sample faceted by window size
 gg_tad_counts_sample <- (
-    ggplot(data = tads[, .N, by = c("SampleID", "Label", "w")])
-    + geom_col(aes(x = w, y = N, fill = w))
+    ggplot(data = tad_summary)
+    + geom_col(aes(x = w, y = N_TADs, fill = w))
     + labs(x = "Window size", y = "Number of TADs")
     + scale_fill_viridis_c()
     + guides(fill = FALSE)
@@ -255,16 +152,12 @@ savefig(gg_tad_counts_sample, file.path(PLOT_DIR, "tad-counts.by-sample"), heigh
 # TAD counts per sample at each window size
 gg_tad_counts <- (
     ggplot(
-        data = tads[
-            SampleID %in% PRIMARY_SAMPLES,
-            .N,
-            keyby = c("SampleID", "w", "Type_Colour")
-        ],
+        data = tad_summary,
         mapping = aes(
             x = w,
-            y = N,
-            colour = Type_Colour,
-            group = paste(w, Type_Colour)
+            y = N_TADs,
+            colour = Type,
+            group = paste(w,  Type)
         )
     )
     + geom_point(
@@ -281,12 +174,12 @@ gg_tad_counts <- (
     )
     + labs(x = "Window size", y = "Number of TADs")
     + scale_x_discrete(
-        breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        limits = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
-        labels = seq(MIN_WINDOW, MAX_WINDOW, by = 3)
+        breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5),
+        limits = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5),
+        labels = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5)
     )
     + scale_colour_manual(
-        limits = c("#AEC7E8", "#1F77B4"),
+        limits = c("Benign", "Malignant"),
         labels = c("Benign", "Tumour"),
         values = c("#AEC7E8", "#1F77B4"),
         name = "Sample Type"
