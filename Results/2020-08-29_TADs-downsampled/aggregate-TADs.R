@@ -38,9 +38,9 @@ if (!interactive()) {
     ARGS <- PARSER$parse_args()
 } else {
     ARGS = list(
-        id = "PCa58215",
-        prefix = "output",
-        count = 300000000,
+        id = "PCa13266",
+        prefix = "Aggregated-TADs/output",
+        count = "300000000",
         res = 40000,
         in_dir = "TADs"
     )
@@ -66,7 +66,7 @@ all_greater = function(a, b) {
 }
 
 list_to_str <- function(l) {
-    ifelse(length(l) == 0, NA, paste(sort(unlist(l)), collapse = ","))
+    ifelse(is.na(l) || length(l) == 0, NA, paste(sort(unlist(l)), collapse = ","))
 }
 
 # ==============================================================================
@@ -75,7 +75,7 @@ list_to_str <- function(l) {
 cat("Loading data\n")
 
 # identify all TAD boundaries from all TAD calls across window size parameters
-all_boundaries = rbindlist(lapply(
+all_boundaries <- rbindlist(lapply(
     W,
     function(w) {
         tads <- fread(
@@ -226,10 +226,10 @@ for (i in 1:length(conflicting_merges)) {
     resolved_idx_to_remove = c(resolved_idx_to_remove, idx[-which_idx_to_keep])
     agg_copy[kept_index, w := list(w_merged)]
 }
-# remove boundaries that have been resolved to be ignored
-agg_copy = agg_copy[-unique(resolved_idx_to_remove), .SD]
 # recalculate persistences based on resolved merges
 agg_copy[, Persistence := lengths(w)]
+# remove boundaries that have been resolved to be ignored
+agg_copy = agg_copy[-unique(resolved_idx_to_remove), .SD]
 
 cat("\tResolved to", agg_copy[, .N], "unique TAD boundaries\n")
 cat("\tBoundary persistence:\n")
@@ -274,6 +274,10 @@ agg_tads = rbindlist(lapply(
     }
 ))
 
+# convert window column to a comma-separated string, instead of a list, before saving
+agg_copy[, w := unlist(lapply(w, list_to_str))]
+agg_copy[, left_type := unlist(lapply(left_type, list_to_str))]
+agg_copy[, right_type := unlist(lapply(right_type, list_to_str))]
 
 # ==============================================================================
 # Save data
