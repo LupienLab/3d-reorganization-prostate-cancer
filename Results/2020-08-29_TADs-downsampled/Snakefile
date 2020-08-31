@@ -1,0 +1,179 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+# sample metadata
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+# various output folders
+REPORT_DIR = "Reports"
+CONTACT_DIR = "downsampled-contacts"
+TMP_DIR = "TMP"
+TAD_DIR = "TADs"
+AGGTAD_DIR = "Aggregated-TADs"
+PLOT_DIR = "Plots"
+
+# variables for controlling file generation
+SAMPLES = CONFIG.SampleID.tolist()
+COUNTS = [300000000] #[120000000, 200000000, 300000000]
+RESOLUTIONS = [40000]
+WINDOWS = list(range(2, 41))
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
+
+wildcard_constraints:
+    w = "\d+",
+    chrom = "chr[X]?[0-9]{0,2}",
+    res = "\d+"
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join("Contacts", "{sample}.mcool"),
+            sample=SAMPLES,
+        ),
+        expand(
+            path.join(CONTACT_DIR, "{sample}.{count}.{res}bp.cool"),
+            sample=SAMPLES,
+            count=COUNTS,
+            res=RESOLUTIONS,
+        ),
+        expand(
+            path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.domains.bed"),
+            sample=SAMPLES,
+            count=COUNTS,
+            w=WINDOWS,
+            res=RESOLUTIONS,
+        ),
+        expand(
+            path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+            sample=SAMPLES,
+            count=COUNTS,
+            res=RESOLUTIONS,
+        ),
+        path.join("Statistics", "tad-similarity-deltas.tsv"),
+        path.join("Statistics", "tad-similarity-supremum.tsv"),
+        # path.join("Statistics", "tad-distances.tsv"),
+#         expand(
+#             path.join(PLOT_DIR, "bp-score.primary.{plot}.{ext}"),
+#             plot=["tumour", "benign", "tumour-vs-benign", "tumour-vs-benign.stdev"],
+#             ext=["png", "pdf"],
+#         ),
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule link:
+    input:
+        "config.tsv",
+    output:
+        path.join("Contacts", "{sample}.mcool"),
+    params:
+        src = lambda wildcards: CONFIG.loc[CONFIG.SampleID == wildcards.sample, "Contact_File"].values[0]
+    shell:
+        "pushd Contacts; ln -s ../{params.src} {wildcards.sample}.mcool; popd"
+
+rule downsample:
+    input:
+        path.join("Contacts", "{sample}.mcool"),
+    output:
+        path.join(CONTACT_DIR, "{sample}.{count}.{res}bp.cool"),
+    shell:
+        "cooltools random-sample -c {wildcards.count} {input}::/resolutions/{wildcards.res} {output}"
+
+rule dump_mat:
+    input:
+        path.join(CONTACT_DIR, "{sample}.{count}.{res}bp.cool"),
+    output:
+        path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.mtx"),
+    params:
+        "-H -b --one-based-ids --annotate chrom,start,end"
+    shell:
+        "cooler dump {params} -r {wildcards.chrom} -o {output} {input}"
+
+rule call_chr_tads:
+    input:
+        script = "calc-tads.R",
+        topdom = "topdom.R",
+        data = path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.mtx"),
+    output:
+        tad = temp(path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.{chrom}.domains.bed")),
+        tsv = path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.{chrom}.domains.tsv"),
+        bins = path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.{chrom}.bins-signal.tsv"),
+    shell:
+        "Rscript {input.script} {input.data} -w {wildcards.w} -p {TAD_DIR}/{wildcards.sample}.{wildcards.count}.res_{wildcards.res}bp.window_{wildcards.w}.{wildcards.chrom}"
+
+rule merge_chr_tads:
+    input:
+        expand(
+            path.join(TAD_DIR, "{{sample}}.{{count}}.res_{{res}}bp.window_{{w}}.{chrom}.domains.bed"),
+            chrom=CHRS,
+        ),
+    output:
+        path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.domains.bed"),
+    shell:
+        "cat {input} > {output}"
+
+rule stopping_window:
+    input:
+        script = "stopping-window-size.py",
+        data = expand(
+            path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.domains.bed"),
+            sample=SAMPLES,
+            count=COUNTS,
+            w=WINDOWS,
+            res=RESOLUTIONS,
+        ),
+    output:
+        path.join("Statistics", "tad-similarity-deltas.tsv"),
+        path.join("Statistics", "tad-similarity-supremum.tsv"),
+    shell:
+        "python {input.script}"
+ 
+rule agg_tads:
+    input:
+        script = "aggregate-TADs.R",
+        data = expand(
+            path.join(TAD_DIR, "{{sample}}.{{count}}.res_{{res}}bp.window_{w}.domains.bed"),
+            w=list(range(3, 24)),
+        ),
+    output:
+        path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+        path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-boundaries.tsv"),
+    shell:
+        "Rscript {input.script} {wildcards.sample} {wildcards.count} {wildcards.res} -i {TAD_DIR} -p {AGGTAD_DIR}/{wildcards.sample}.{wildcards.count}.res_{wildcards.res}bp"
+
+# rule bpscore:
+#     input:
+#         script = "calc-tad-similarity.py",
+#         data = expand(
+#             path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}bp.domains.bed"),
+#             sample=SAMPLES,
+#             count=COUNTS,
+#             w=WINDOWS,
+#             res=RESOLUTIONS,
+#         ),
+#     output:
+#         path.join("Statistics", "tad-distances.tsv"),
+#     shell:
+#         "python {input.script}"
+# 
+# rule plots:
+#     input:
+#         script = "plot-bpscore.R",
+#         data = path.join("Statistics", "tad-distances.tsv"),
+#     output:
+#         expand(
+#             path.join(PLOT_DIR, "bp-score.primary.{plot}.{ext}"),
+#             plot=["tumour", "benign", "tumour-vs-benign", "tumour-vs-benign.stdev"],
+#             ext=["png", "pdf"],
+#         ),
+#     shell:
+#         "Rscript {input.script}"
