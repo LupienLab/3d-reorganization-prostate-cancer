@@ -18,12 +18,11 @@ PLOT_DIR = "Plots"
 
 # variables for controlling file generation
 SAMPLES = CONFIG.SampleID.tolist()
-COUNTS = [300000000] #[120000000, 200000000, 300000000]
+PRIMARY_SAMPLES = CONFIG.loc[CONFIG.Source == "Primary", "SampleID"].tolist()
+COUNTS = [120000000, 300000000]
 RESOLUTIONS = [40000]
 WINDOWS = list(range(2, 41))
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
-
-GOOD_WINDOWS = list(range(3, 24))
 
 wildcard_constraints:
     w = "\d+",
@@ -39,24 +38,32 @@ rule all:
         expand(
             path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
             sample=SAMPLES,
-            count=COUNTS,
+            count=120000000,
+            res=RESOLUTIONS,
+        ),
+        expand(
+            path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+            sample=PRIMARY_SAMPLES,
+            count=300000000,
+            res=RESOLUTIONS,
+        ),
+        expand(path.join("Statistics", "tad-similarity-deltas.{count}.tsv"), count=COUNTS),
+        expand(path.join("Statistics", "tad-similarity-supremum.{count}.tsv"), count=COUNTS),
+        expand(
+            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+            sample=SAMPLES,
+            count=120000000,
+            w=list(range(3, 33)),
             res=RESOLUTIONS,
         ),
         expand(
             path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
-            sample=SAMPLES,
-            count=COUNTS,
-            w=GOOD_WINDOWS,
+            sample=PRIMARY_SAMPLES,
+            count=300000000,
+            w=list(range(3, 21)),
             res=RESOLUTIONS,
         ),
-        path.join("Statistics", "tad-similarity-deltas.tsv"),
-        path.join("Statistics", "tad-similarity-supremum.tsv"),
-        path.join("Statistics", "tad-distances.tsv"),
-#         expand(
-#             path.join(PLOT_DIR, "bp-score.primary.{plot}.{ext}"),
-#             plot=["tumour", "benign", "tumour-vs-benign", "tumour-vs-benign.stdev"],
-#             ext=["png", "pdf"],
-#         ),
+        expand(path.join("Statistics", "tad-distances.{count}.tsv"), count=COUNTS),
 
 
 # ==============================================================================
@@ -113,77 +120,148 @@ rule merge_chr_tads:
     shell:
         "cat {input} > {output}"
 
-rule stopping_window:
+rule stopping_window_primary:
     input:
         script = "stopping-window-size.py",
         data = expand(
-            path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}.domains.bed"),
-            sample=SAMPLES,
-            count=COUNTS,
+            path.join(TAD_DIR, "{sample}.300000000.res_{res}bp.window_{w}.domains.bed"),
+            sample=PRIMARY_SAMPLES,
             w=WINDOWS,
             res=RESOLUTIONS,
         ),
     output:
-        path.join("Statistics", "tad-similarity-deltas.tsv"),
-        path.join("Statistics", "tad-similarity-supremum.tsv"),
+        path.join("Statistics", "tad-similarity-deltas.300000000.tsv"),
+        path.join("Statistics", "tad-similarity-supremum.300000000.tsv"),
+    params:
+        sample_ids=" ".join(PRIMARY_SAMPLES),
     shell:
-        "python {input.script}"
- 
-rule agg_tads:
+        "python {input.script} -c 300000000 -r 40000 -s {params.sample_ids}"
+
+
+rule stopping_window_all:
+    input:
+        script = "stopping-window-size.py",
+        data = expand(
+            path.join(TAD_DIR, "{sample}.120000000.res_{res}bp.window_{w}.domains.bed"),
+            sample=SAMPLES,
+            w=WINDOWS,
+            res=RESOLUTIONS,
+        ),
+    output:
+        path.join("Statistics", "tad-similarity-deltas.120000000.tsv"),
+        path.join("Statistics", "tad-similarity-supremum.120000000.tsv"),
+    params:
+        sample_ids=" ".join(SAMPLES),
+    shell:
+        "python {input.script} -c 120000000 -r 40000 -s {params.sample_ids}"
+
+rule agg_tads_primary:
     input:
         script = "aggregate-TADs.R",
         data = expand(
-            path.join(TAD_DIR, "{{sample}}.{{count}}.res_{{res}}bp.window_{w}.domains.bed"),
-            w=GOOD_WINDOWS,
+            path.join(TAD_DIR, "{{sample}}.300000000.res_{{res}}bp.window_{w}.domains.bed"),
+            w=list(range(3, 21)),
         ),
     output:
-        path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
-        path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-boundaries.tsv"),
+        path.join(AGGTAD_DIR, "{sample}.300000000.res_{res}bp.agg-domains.tsv"),
+        path.join(AGGTAD_DIR, "{sample}.300000000.res_{res}bp.agg-boundaries.tsv"),
+    params:
+        "-m 3 -M 20"
     shell:
-        "Rscript {input.script} {wildcards.sample} {wildcards.count} {wildcards.res} -i {TAD_DIR} -p {AGGTAD_DIR}/{wildcards.sample}.{wildcards.count}.res_{wildcards.res}bp"
+        "Rscript {input.script} {wildcards.sample} 300000000 {wildcards.res} -i {TAD_DIR} -p {AGGTAD_DIR}/{wildcards.sample}.300000000.res_{wildcards.res}bp {params}"
 
-rule separate_by_window_size:
+rule agg_tads_all:
     input:
-        path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv")
+        script = "aggregate-TADs.R",
+        data = expand(
+            path.join(TAD_DIR, "{{sample}}.120000000.res_{{res}}bp.window_{w}.domains.bed"),
+            w=list(range(3, 33)),
+        ),
+    output:
+        path.join(AGGTAD_DIR, "{sample}.120000000.res_{res}bp.agg-domains.tsv"),
+        path.join(AGGTAD_DIR, "{sample}.120000000.res_{res}bp.agg-boundaries.tsv"),
+    params:
+        "-m 3 -M 32"
+    shell:
+        "Rscript {input.script} {wildcards.sample} 120000000 {wildcards.res} -i {TAD_DIR} -p {AGGTAD_DIR}/{wildcards.sample}.120000000.res_{wildcards.res}bp {params}"
+
+rule separate_by_window_size_primary:
+    input:
+        path.join(AGGTAD_DIR, "{sample}.300000000.res_{res}bp.agg-domains.tsv")
     output:
         expand(
-            path.join(AGGTAD_DIR, "separated-TADs", "{{sample}}.{{count}}.res_{{res}}bp.window_{w}.domains.tsv"),
-            w=GOOD_WINDOWS
+            path.join(AGGTAD_DIR, "separated-TADs", "{{sample}}.300000000.res_{{res}}bp.window_{w}.domains.tsv"),
+            w=list(range(3, 21))
         )
     shell:
         # using +0 to cast the w as an integer (there are some issues with \r and \n, depending on the system)
-        "awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $4, $5, $6 > \"{AGGTAD_DIR}/separated-TADs/{wildcards.sample}.{wildcards.count}.res_{wildcards.res}bp.window_\"$7+0\".domains.tsv\"}}' {input}"
+        "awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $4, $5, $6 > \"{AGGTAD_DIR}/separated-TADs/{wildcards.sample}.300000000.res_{wildcards.res}bp.window_\"$7+0\".domains.tsv\"}}' {input}"
 
-rule bpscore:
+rule separate_by_window_size_all:
+    input:
+        path.join(AGGTAD_DIR, "{sample}.120000000.res_{res}bp.agg-domains.tsv")
+    output:
+        expand(
+            path.join(AGGTAD_DIR, "separated-TADs", "{{sample}}.120000000.res_{{res}}bp.window_{w}.domains.tsv"),
+            w=list(range(3, 33))
+        )
+    shell:
+        # using +0 to cast the w as an integer (there are some issues with \r and \n, depending on the system)
+        "awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $4, $5, $6 > \"{AGGTAD_DIR}/separated-TADs/{wildcards.sample}.120000000.res_{wildcards.res}bp.window_\"$7+0\".domains.tsv\"}}' {input}"
+
+rule bpscore_primary:
     input:
         script = "calc-tad-similarity.py",
         data = expand(
-            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
-            sample=SAMPLES,
-            count=COUNTS,
-            w=GOOD_WINDOWS,
+            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.300000000.res_{res}bp.window_{w}.domains.tsv"),
+            sample=PRIMARY_SAMPLES,
+            w=list(range(3, 21)),
             res=RESOLUTIONS,
         ),
     output:
-        path.join("Statistics", "tad-distances.tsv"),
+        path.join("Statistics", "tad-distances.300000000.tsv"),
+    params:
+        count = 300000000,
+        min = 3,
+        max = 20,
+        sample_ids = " ".join(PRIMARY_SAMPLES)
     shell:
-        "python {input.script}"
+        "python {input.script} -c {params.count} -m {params.min} -M {params.max} -s {params.sample_ids}"
 
-rule plot_sim:
+rule bpscore_all:
     input:
-        script = "plot-bpscore.R",
-        data = path.join("Statistics", "tad-distances.tsv"),
+        script = "calc-tad-similarity.py",
+        data = expand(
+            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.120000000.res_{res}bp.window_{w}.domains.tsv"),
+            sample=PRIMARY_SAMPLES,
+            w=list(range(3, 33)),
+            res=RESOLUTIONS,
+        ),
     output:
-        path.join(PLOT_DIR, "bp-score.cluster.png"),
-        path.join(PLOT_DIR, "bp-score.cluster.pdf"),
-        path.join(PLOT_DIR, "bp-score.primary.benign.png"),
-        path.join(PLOT_DIR, "bp-score.primary.benign.pdf"),
-        path.join(PLOT_DIR, "bp-score.primary.tumour.png"),
-        path.join(PLOT_DIR, "bp-score.primary.tumour.pdf"),
-        path.join(PLOT_DIR, "bp-score.primary.tumour-vs-benign.png"),
-        path.join(PLOT_DIR, "bp-score.primary.tumour-vs-benign.pdf"),
-        path.join(PLOT_DIR, "bp-score.primary.tumour-vs-benign.stdev.png"),
-        path.join(PLOT_DIR, "bp-score.primary.tumour-vs-benign.stdev.pdf"),
+        path.join("Statistics", "tad-distances.120000000.tsv"),
+    params:
+        count = 120000000,
+        min = 3,
+        max = 32,
+        sample_ids = " ".join(SAMPLES)
+    shell:
+        "python {input.script} -c {params.count} -m {params.min} -M {params.max} -s {params.sample_ids}"
+
+rule plot_sim_primary:
+    input:
+        script = "plot-bpscore.primary.R",
+        data = path.join("Statistics", "tad-distances.300000000.tsv"),
+    output:
+        path.join(PLOT_DIR, "primary", "bp-score.cluster.png"),
+        path.join(PLOT_DIR, "primary", "bp-score.cluster.pdf"),
+        path.join(PLOT_DIR, "primary", "bp-score.benign.png"),
+        path.join(PLOT_DIR, "primary", "bp-score.benign.pdf"),
+        path.join(PLOT_DIR, "primary", "bp-score.tumour.png"),
+        path.join(PLOT_DIR, "primary", "bp-score.tumour.pdf"),
+        path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.png"),
+        path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.pdf"),
+        path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.stdev.png"),
+        path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.stdev.pdf"),
     shell:
         "Rscript {input.script}"
 
@@ -197,6 +275,7 @@ rule plot_tads:
             res=RESOLUTIONS,
         ),
     output:
+        path.join("Statistics", "tad-counts.tsv"),
         path.join(PLOT_DIR, "tad-counts.png"),
         path.join(PLOT_DIR, "tad-counts.pdf"),
         path.join(PLOT_DIR, "tad-counts.by-sample.png"),
@@ -206,9 +285,9 @@ rule plot_tads:
     shell:
         "Rscript {input.script}"
 
-rule plot_tads:
+rule plot_boundaries:
     input:
-        script = "plot-TADs.R",
+        script = "plot-boundaries.R",
         data = expand(
             path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
             sample=SAMPLES,
@@ -216,11 +295,10 @@ rule plot_tads:
             res=RESOLUTIONS,
         ),
     output:
-        path.join(PLOT_DIR, "tad-counts.png"),
-        path.join(PLOT_DIR, "tad-counts.pdf"),
-        path.join(PLOT_DIR, "tad-counts.by-sample.png"),
-        path.join(PLOT_DIR, "tad-counts.by-sample.pdf"),
-        path.join(PLOT_DIR, "tad-counts.by-window.png"),
-        path.join(PLOT_DIR, "tad-counts.by-window.pdf"),
+        path.join("Statistics", "boundary-hierarchy.tsv"),
+        path.join(PLOT_DIR, "boundary-counts.png"),
+        path.join(PLOT_DIR, "boundary-counts.pdf"),
+        path.join(PLOT_DIR, "boundary-counts.by-persistence.png"),
+        path.join(PLOT_DIR, "boundary-counts.by-persistence.pdf"),
     shell:
         "Rscript {input.script}"

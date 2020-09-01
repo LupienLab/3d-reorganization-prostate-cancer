@@ -5,29 +5,60 @@ calc-tad-similarity
 Calculate the BPscore for a set of samples
 """
 
+import argparse
 import os.path as path
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from bpscore import bpscore
 
+PARSER = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
+PARSER.add_argument(
+    "-c", "--count",
+    type=int,
+    help="Downsampling count number",
+    default=300000000,
+)
+PARSER.add_argument(
+    "-m", "--min",
+    type=int,
+    help="Minimum window size to consider",
+    default=3,
+)
+PARSER.add_argument(
+    "-M", "--max",
+    type=int,
+    help="Maximum window size to consider",
+    default=20,
+)
+PARSER.add_argument(
+    "-s", "--sample-id",
+    type=str,
+    help="Sample ID(s) to include",
+    nargs="+",
+    dest="sample_ids",
+    required=True,
+)
+ARGS = PARSER.parse_args()
+
+
 # ==============================================================================
 # Constants
 # ==============================================================================
 TAD_DIR = path.join("Aggregated-TADs", "separated-TADs")
-DWNSAMPLE = 300000000
 RESOLUTION = 40000
-WINDOWS = list(range(3, 24))
+WINDOWS = list(range(ARGS.min, ARGS.max + 1))
+DWNSAMPLE = ARGS.count
+ALL_SAMPLES = ARGS.sample_ids
+
 # exclude chrY from comparisons, to account for female-derived cell lines
 CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
 # ==============================================================================
 # Data
 # ==============================================================================
-metadata = pd.read_csv("config.tsv", sep="\t")
-metadata = metadata.loc[metadata.Include == "Yes", :]
-ALL_SAMPLES = metadata["SampleID"].tolist()
-
 # load TADs for each patient
 tads = {
     s: {
@@ -36,10 +67,8 @@ tads = {
             sep="\t",
             header=None,
             names=["chr", "start", "end", "persistence_left", "persistence_right", "type"],
-        )
-        for w in WINDOWS
-    }
-    for s in ALL_SAMPLES
+        ) for w in WINDOWS
+    } for s in ALL_SAMPLES
 }
 
 # load chromosomes sizes
@@ -79,7 +108,7 @@ for w in tqdm(WINDOWS, desc="Window sizes", position=0):
 # Save data
 # =============================================================================================================================
 dists_df.to_csv(
-    path.join("Statistics", "tad-distances.tsv"),
+    path.join("Statistics", "tad-distances." + str(DWNSAMPLE) + ".tsv"),
     sep="\t",
     index=False
 )

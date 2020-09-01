@@ -16,10 +16,17 @@ Benign-Prostate-1595983	Yes	Primary	Benign	BP1595983	#000000	#AEC7E8	../../Data/
 Benign-Prostate-1664855	Yes	Primary	Benign	BP1664855	#000000	#AEC7E8	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/Benign-Prostate-1664855.mcool	Prostate	No
 Benign-Prostate-3320942	Yes	Primary	Benign	BP3320942	#000000	#AEC7E8	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/Benign-Prostate-3320942.mcool	Prostate	No
 Benign-Prostate-3330581	Yes	Primary	Benign	BP3330581	#000000	#AEC7E8	../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/Benign-Prostate-3330581.mcool	Prostate	No
-SRR7702334	No	Cell Line	Malignant	22Rv1 Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702334.mcool	Prostate	No
-SRR7702335	No	Cell Line	Malignant	22Rv1 Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702335.mcool	Prostate	No
-SRR8446383	No	Cell Line	Benign	RWPE1 Rep 1	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446383.mcool	Prostate	No
-SRR8446384	No	Cell Line	Benign	RWPE1 Rep 2	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446384.mcool	Prostate	No
-SRR8446385	No	Cell Line	Malignant	C4-2B Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446385.mcool	Prostate	No
-SRR8446386	No	Cell Line	Malignant	C4-2B Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446386.mcool	Prostate	No
-SRR8446387	No	Cell Line	Malignant	C4-2B Rep 3	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446387.mcool	Prostate	No
+SRR7702334	Yes	Cell Line	Malignant	22Rv1 Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702334.mcool	Prostate	No
+SRR7702335	Yes	Cell Line	Malignant	22Rv1 Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR7702335.mcool	Prostate	No
+SRR8446383	Yes	Cell Line	Benign	RWPE1 Rep 1	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446383.mcool	Prostate	No
+SRR8446384	Yes	Cell Line	Benign	RWPE1 Rep 2	#000000	#FFBB78	../../Data/External/Rhie_2019/Contacts/SRR8446384.mcool	Prostate	No
+SRR8446385	Yes	Cell Line	Malignant	C4-2B Rep 1	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446385.mcool	Prostate	No
+SRR8446386	Yes	Cell Line	Malignant	C4-2B Rep 2	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446386.mcool	Prostate	No
+SRR8446387	Yes	Cell Line	Malignant	C4-2B Rep 3	#000000	#FF7F0D	../../Data/External/Rhie_2019/Contacts/SRR8446387.mcool	Prostate	No
+4DNFI6HDY7WZ	Yes	Cell Line	Other	H1-hESC Rep 1	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFI6HDY7WZ.mcool	Embryonic Stem Cell	No
+4DNFITH978XV	Yes	Cell Line	Other	H1-hESC Rep 2	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFITH978XV.mcool	Embryonic Stem Cell	No
+4DNFIT64Q7A3	Yes	Cell Line	Other	HAP-1 Rep 1	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIT64Q7A3.mcool	Bone Marrow	No
+4DNFINSKEZND	Yes	Cell Line	Other	HAP-1 Rep 2	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFINSKEZND.mcool	Bone Marrow	No
+4DNFIIV4M7TF	Yes	Cell Line	Other	GM12878 Rep 1	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIIV4M7TF.mcool	Peripheral Blood	No
+4DNFIXVAKX9Q	Yes	Cell Line	Other	GM12878 Rep 2	#000000	#000000	../../Data/External/4DNucleome/Contacts/4DNFIXVAKX9Q.mcool	Peripheral Blood	No
+

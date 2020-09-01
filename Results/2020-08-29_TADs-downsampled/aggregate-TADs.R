@@ -35,6 +35,18 @@ if (!interactive()) {
         help = "Parent directory for TAD calls",
         dest = "in_dir"
     )
+    PARSER$add_argument(
+        "-m", "--min",
+        type = "integer",
+        help = "Minimum window size to consider",
+        default=3
+    )
+    PARSER$add_argument(
+        "-M", "--max",
+        type = "integer",
+        help = "Maximum window size to consider",
+        default=20
+    )
     ARGS <- PARSER$parse_args()
 } else {
     ARGS = list(
@@ -42,12 +54,14 @@ if (!interactive()) {
         prefix = "Aggregated-TADs/output",
         count = "300000000",
         res = 40000,
-        in_dir = "TADs"
+        in_dir = "TADs",
+        min = 3,
+        max = 20
     )
 }
 
 # set of window sizes upon which TADs are called
-W = seq(3, 23)
+W = seq(ARGS$min, ARGS$max)
 
 # number of bins to look up-/down-stream for merging together
 K = 1

@@ -12,17 +12,50 @@ import pandas as pd
 from bpscore import bpscore
 from tqdm import tqdm
 
+PARSER = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
+PARSER.add_argument(
+    "-c", "--count",
+    type=int,
+    help="Downsampling count number",
+    default=300000000,
+)
+PARSER.add_argument(
+    "-r", "--res",
+    type=int,
+    help="Contact matrix resolution",
+    default=40000,
+)
+PARSER.add_argument(
+    "-i", "--in-dir",
+    type=str,
+    help="Input directory containing TAD calls",
+    default="TADs",
+)
+PARSER.add_argument(
+    "-s", "--sample-id",
+    type=str,
+    help="Sample ID to include",
+    nargs="+",
+    dest="sample_ids",
+    required=True,
+)
+ARGS = PARSER.parse_args()
+
 # =============================================================================================================================
 # Constants
 # =============================================================================================================================
-TAD_DIR = "TADs"
+TAD_DIR = ARGS.in_dir
 WINDOWS = list(range(2, 41))
-RESOLUTION = 40000
+RESOLUTION = ARGS.res
+DWNSAMPLE = ARGS.count
+ALL_SAMPLES = ARGS.sample_ids
 
 # drop chromosome Y, since some cell lines aren't derived from males
 CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
-DIFF_THRESH_1o = 7e-2
+DIFF_THRESH_1o = 8e-2
 DIFF_THRESH_2o = 1e-2
 N_DIFFS = 2
 
@@ -30,20 +63,16 @@ N_DIFFS = 2
 # Data
 # =============================================================================================================================
 print("Loading data")
-metadata = pd.read_csv("config.tsv", sep="\t")
-ALL_SAMPLES = metadata.loc[metadata.Include == "Yes", "SampleID"].tolist()
 
 # load TADs for each patient
 tads = {
     s: {
         w: pd.read_csv(
-            path.join(TAD_DIR, s + ".300000000.res_" + str(RESOLUTION) + "bp.window_" + str(w) + ".domains.bed"),
+            path.join(TAD_DIR, "{s}.{c}.res_{r}bp.window_{w}.domains.bed".format(s=s, c=DWNSAMPLE, r=RESOLUTION, w=w)),
             sep="\t",
             names=["chr", "start", "end", "type"],
-        )
-        for w in WINDOWS
-    }
-    for s in ALL_SAMPLES
+        ) for w in WINDOWS
+    } for s in ALL_SAMPLES
 }
 
 # load chromosomes sizes
@@ -117,6 +146,10 @@ for w in tqdm(WINDOWS[1:]):
                     sup_windows.loc[:, "w"] = sup_w
             else:
                 consistent_counter += 1
+        else:
+            consistent_counter = 0
+    else:
+        consistent_counter = 0
 
 print(sup_w)
 
@@ -125,12 +158,12 @@ print(sup_w)
 # Save data
 # =============================================================================================================================
 window_diffs.to_csv(
-    path.join("Statistics", "tad-similarity-deltas.tsv"),
+    path.join("Statistics", "tad-similarity-deltas." + str(DWNSAMPLE) + ".tsv"),
     sep="\t",
     index=False
 )
 sup_windows.to_csv(
-    path.join("Statistics", "tad-similarity-supremum.tsv"),
+    path.join("Statistics", "tad-similarity-supremum." + str(DWNSAMPLE) + ".tsv"),
     sep="\t",
     index=False
 )
