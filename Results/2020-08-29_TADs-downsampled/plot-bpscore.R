@@ -15,9 +15,9 @@ suppressMessages(library("ggplot2"))
 suppressMessages(library("MASS"))
 suppressMessages(library("pheatmap"))
 
-RESOLUTION = 40000
-MAX_WINDOW <- 25
-MIN_WINDOW <- 2
+RESOLUTION <- 40000
+MAX_WINDOW <- 23
+MIN_WINDOW <- 3
 MAX_PERSISTENCE <- MAX_WINDOW - MIN_WINDOW + 1
 PLOT_DIR <- "Plots"
 
@@ -31,7 +31,7 @@ PLOT_DIR <- "Plots"
 #' @param prefix Prefix for output file
 #' @param ext Output extensions
 #' @param dpi DPI resolution
-savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
+savefig <- function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
     for (e in ext) {
         ggsave(
             paste(prefix, e, sep = "."),
@@ -58,7 +58,6 @@ LINE_SAMPLES <- metadata[Source == "Cell Line", SampleID]
 
 # load BPscore calculations
 bpscore <- fread("Statistics/tad-distances.tsv", sep = "\t", header = TRUE)
-bpscore[, w := w / RESOLUTION]
 # window_diffs <- fread("Statistics/tad-similarity-deltas.tsv", sep = "\t", header = TRUE)
 
 
@@ -459,24 +458,25 @@ savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.prima
 # )
 # savefig(gg_sim_window_delta, file.path(PLOT_DIR, "bp-score.window-similarity.delta"))
 
-# # heatmap of similarity at MAX_WINDOW
-# annot_col <- as.data.frame(metadata[, .SD, .SDcols = c("Type", "Tissue", "Source")])
-# rownames(annot_col) <- metadata[, SampleID]
+# heatmap of similarity at MAX_WINDOW
+annot_col <- as.data.frame(metadata[, .SD, .SDcols = c("Type", "Tissue", "Source", "T2E")])
+rownames(annot_col) <- metadata[, SampleID]
 
-# for (ext in c("png", "pdf")) {
-#     pheatmap(
-#         mat = 1 - mat,
-#         filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
-#         clustering_rows = TRUE,
-#         clustering_cols = TRUE,
-#         clustering_distance_rows = as.dist(mat),
-#         clustering_distance_cols = as.dist(mat),
-#         clustering_method = "ward.D2",
-#         treeheight_col = 0,
-#         labels_row = metadata[order(SampleID), Label],
-#         labels_col = metadata[order(SampleID), Label],
-#         legend = TRUE,
-#         show_rownames = FALSE,
-#         annotation_col = annot_col
-#     )
-# }
+
+for (ext in c("png", "pdf")) {
+    pheatmap(
+        mat = 1 - mat,
+        filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
+        clustering_rows = TRUE,
+        clustering_cols = TRUE,
+        clustering_distance_rows = as.dist(mat),
+        clustering_distance_cols = as.dist(mat),
+        clustering_method = "ward.D2",
+        treeheight_col = 0,
+        labels_row = metadata[order(SampleID), Label],
+        labels_col = metadata[order(SampleID), Label],
+        legend = TRUE,
+        show_rownames = FALSE,
+        annotation_col = annot_col
+    )
+}

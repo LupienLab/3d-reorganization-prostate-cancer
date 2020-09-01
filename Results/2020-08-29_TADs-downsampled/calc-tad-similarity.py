@@ -14,10 +14,10 @@ from bpscore import bpscore
 # ==============================================================================
 # Constants
 # ==============================================================================
-TAD_DIR = "TADs"
+TAD_DIR = path.join("Aggregated-TADs", "separated-TADs")
 DWNSAMPLE = 300000000
 RESOLUTION = 40000
-WINDOWS = [RESOLUTION * i for i in range(2, 41)]
+WINDOWS = list(range(3, 24))
 # exclude chrY from comparisons, to account for female-derived cell lines
 CHROMS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
@@ -32,10 +32,10 @@ ALL_SAMPLES = metadata["SampleID"].tolist()
 tads = {
     s: {
         w: pd.read_csv(
-            path.join(TAD_DIR, s + "." + str(DWNSAMPLE) + ".res_" + str(RESOLUTION) + "bp.window_" + str(w) + "bp.domains.bed"),
+            path.join(TAD_DIR, s + "." + str(DWNSAMPLE) + ".res_" + str(RESOLUTION) + "bp.window_" + str(w) + ".domains.tsv"),
             sep="\t",
             header=None,
-            names=["chr", "start", "end",],
+            names=["chr", "start", "end", "persistence_left", "persistence_right", "type"],
         )
         for w in WINDOWS
     }
