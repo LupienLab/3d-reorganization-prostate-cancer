@@ -54,6 +54,8 @@ metadata <- fread("config.tsv", sep = "\t", header = TRUE)
 metadata <- metadata[Include == "Yes"]
 metadata <- metadata[Source == "Primary"]
 SAMPLES <- metadata[, SampleID]
+T2E_SAMPLES <- metadata[T2E == "Yes", SampleID]
+NONT2E_SAMPLES <- metadata[T2E == "Yes", SampleID]
 
 # load BPscore calculations
 bpscore <- fread("Statistics/tad-distances.300000000.tsv", sep = "\t", header = TRUE)
@@ -67,7 +69,7 @@ bpscore <- fread("Statistics/tad-distances.300000000.tsv", sep = "\t", header = 
 cat("Counting similarity\n")
 bpscore <- merge(
     bpscore,
-    metadata[, .(SampleID, Source, Tissue, Label, Type)],
+    metadata[, .(SampleID, Source, Tissue, Label, Type, T2E)],
     by.x = "s1",
     by.y = "SampleID",
     all.x = FALSE,
@@ -75,7 +77,7 @@ bpscore <- merge(
 )
 bpscore <- merge(
     bpscore,
-    metadata[, .(SampleID, Source, Tissue, Label, Type)],
+    metadata[, .(SampleID, Source, Tissue, Label, Type, T2E)],
     by.x = "s2",
     by.y = "SampleID",
     suffixes = c("_1", "_2"),
@@ -85,14 +87,6 @@ bpscore <- merge(
 
 # sample comparisons for various plots
 bpscore[(Tissue_1 == "Prostate") & (Tissue_2 == "Prostate"), Prostate_Type_Combo := paste(Type_1, Type_2, sep = "+")]
-bpscore[
-    (Tissue_1 == "Prostate") & (Tissue_2 == "Prostate") & (Source_1 == "Cell Line") & (Source_2 == "Cell Line"),
-    Cell_Type_Combo := paste(
-        gsub(" .*", "", Label_1),
-        gsub(" .*", "", Label_2),
-        sep = "+"
-    )
-]
 
 # hypothesis testing for differences between TADs
 # (similarity of Benign-vs-Benign comparisons to Benign-vs-Tumour)
@@ -128,30 +122,6 @@ mat <- as.matrix(
     rownames = "s1"
 )
 
-# compare different groups of samples
-# group_idx <- list(
-#     "Primary prostate tumour" = 12:23,
-#     "Primary prostate benign" = 7:11,
-#     "Cell line prostate tumour" = c(24:25, 28:30),
-#     "Cell line prostate benign" = 26:27,
-#     "Cell line non-prostate" = 1:6
-# )
-# median_mat <- matrix(ncol = length(group_idx), nrow = length(group_idx))
-# for (i in 1:length(group_idx)) {
-#     for (j in i:length(group_idx)) {
-#         median_mat[i, j] <- median(as.vector(1 - mat[group_idx[[i]], group_idx[[j]]]))
-#     }
-# }
-# rownames(median_mat) <- names(group_idx)
-# colnames(median_mat) <- rownames(median_mat)
-
-# cat("Sample type comparisons\n")
-# print(median_mat)
-# write.matrix(
-#     median_mat,
-#     file.path("Statistics", "tad-similarity.sample-types.tsv"),
-#     sep = "\t"
-# )
 
 # ==============================================================================
 # Plots
@@ -251,6 +221,46 @@ savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.tumou
 
 # same as above, but using the sample standard deviation for the ribbon
 # instead of the 95% confidence interval around the regressed mean
+gg_bpscore_primary_tumour_vs_benign_comp <- (
+    ggplot(
+        data = bpscore[
+            s1 < s2
+            & w == MAX_WINDOW
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+            & (Source_1 == "Primary" & Source_2 == "Primary")
+        ],
+        mapping = aes(
+            x = Prostate_Type_Combo,
+            y = 1 - BPscore,
+            colour = Prostate_Type_Combo,
+            group = Prostate_Type_Combo
+        ),
+    )
+    + geom_boxplot(alpha = 0.2)
+    + geom_point(
+        position = position_jitter(width = 0.2, height = 0),
+        alpha = 0.5
+    )
+    + labs(y = "TAD similarity (1 - BPscore)")
+    + scale_x_discrete(
+        name = NULL,
+        breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
+        labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
+    )
+    + scale_colour_discrete(
+        name = "Comparison",
+        breaks = c("Benign+Benign", "Benign+Malignant", "Malignant+Malignant"),
+        labels = c("Benign vs Benign", "Benign vs Tumour", "Tumour vs Tumour")
+    )
+    + guides(fill = FALSE, colour = FALSE)
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+    )
+)
+savefig(gg_bpscore_primary_tumour_vs_benign_comp, file.path(PLOT_DIR, "bp-score.tumour-vs-benign.comp"), width = 6)
+
 gg_bpscore_primary_tumour_vs_benign <- (
     ggplot()
     + geom_ribbon(
@@ -286,10 +296,7 @@ gg_bpscore_primary_tumour_vs_benign <- (
             colour = Prostate_Type_Combo,
             group = Prostate_Type_Combo
         ),
-        # method = "loess",
-        # se = FALSE,
         size = 2,
-        alpha = 0.5
     )
     + geom_point(
         data = bpscore[
