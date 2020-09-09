@@ -1,0 +1,89 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+# sample metadata
+CONFIG = pd.read_csv(
+    "config.tsv",
+    index_col=False,
+    sep="\t"
+)
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+# various output folders
+REPORT_DIR = "Reports"
+CONTACT_DIR = path.join("..", "2020-08-29_TADs-downsampled", "downsampled-contacts")
+TMP_DIR = "TMP"
+PLOT_DIR = "Plots"
+
+# variables for controlling file generation
+SAMPLES = CONFIG.SampleID.tolist()
+PRIMARY_SAMPLES = CONFIG.loc[CONFIG.Source == "Primary", "SampleID"].tolist()
+COUNTS = [300000000]
+RESOLUTIONS = [40000]
+WINDOWS = list(range(2, 41))
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
+
+wildcard_constraints:
+    w = "\d+",
+    chrom = "chr[X]?[0-9]{0,2}",
+    res = "\d+"
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.noheader.mtx.gz"),
+            sample=SAMPLES,
+            count=COUNTS,
+            res=RESOLUTIONS,
+            chrom=CHRS,
+        )
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule dump_mat:
+    input:
+        path.join(CONTACT_DIR, "{sample}.{count}.{res}bp.cool"),
+    output:
+        path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.mtx.gz"),
+    shell:
+        "cooltools dump-cworld --region {wildcards.chrom} {input} {output}"
+
+rule trim_header:
+    input:
+        path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.mtx.gz"),
+    output:
+        path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.noheader.mtx.gz"),
+    shell:
+        # extract data into text | remove first line | remove first column | replace 'nan's with 0 | zip and save
+        "zcat {input} | awk '{{if (NR > 1) print}}' | cut -f 2- | sed 's/nan/0/g' | gzip -nc > {output}"
+
+rule merge_types:
+    input:
+        script = "merge-matrices.R",
+        data = expand(
+            path.join(TMP_DIR, "{sample}.{{count}}.res_{{res}}bp.{chrom}.noheader.mtx.gz"),
+            sample=SAMPLES,
+            chrom=CHRS,
+        ),
+    output:
+        expand(
+            path.join(TMP_DIR, "tumour.{{count}}.res_{{res}}bp.{chrom}.mtx"),
+            chrom=CHRS,
+        ),
+        expand(
+            path.join(TMP_DIR, "benign.{{count}}.res_{{res}}bp.{chrom}.mtx"),
+            chrom=CHRS,
+        ),
+    shell:
+        "Rscript {input.script}"
+
+
