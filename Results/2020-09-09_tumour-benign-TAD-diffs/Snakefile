@@ -38,8 +38,8 @@ wildcard_constraints:
 rule all:
     input:
         expand(
-            path.join(TMP_DIR, "{sample}.{count}.res_{res}bp.{chrom}.noheader.mtx.gz"),
-            sample=SAMPLES,
+            path.join(TMP_DIR, "{type}.{count}.res_{res}bp.{chrom}.mtx"),
+            type=["tumour", "benign"],
             count=COUNTS,
             res=RESOLUTIONS,
             chrom=CHRS,
@@ -70,20 +70,13 @@ rule merge_types:
     input:
         script = "merge-matrices.R",
         data = expand(
-            path.join(TMP_DIR, "{sample}.{{count}}.res_{{res}}bp.{chrom}.noheader.mtx.gz"),
+            path.join(TMP_DIR, "{sample}.{{count}}.res_{{res}}bp.{{chrom}}.noheader.mtx.gz"),
             sample=SAMPLES,
-            chrom=CHRS,
         ),
     output:
-        expand(
-            path.join(TMP_DIR, "tumour.{{count}}.res_{{res}}bp.{chrom}.mtx"),
-            chrom=CHRS,
-        ),
-        expand(
-            path.join(TMP_DIR, "benign.{{count}}.res_{{res}}bp.{chrom}.mtx"),
-            chrom=CHRS,
-        ),
+        path.join(TMP_DIR, "tumour.{count}.res_{res}bp.{chrom}.mtx"),
+        path.join(TMP_DIR, "benign.{count}.res_{res}bp.{chrom}.mtx"),
     shell:
-        "Rscript {input.script}"
+        "Rscript {input.script} {wildcards.chrom}"
 
 

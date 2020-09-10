@@ -2,10 +2,28 @@
 # Environment
 # ==============================================================================
 suppressMessages(library("data.table"))
-suppressMessages(library("MASS"))
+suppressMessages(library("Matrix"))
+suppressMessages(library("argparse"))
+
 
 
 CHRS <- paste0("chr", c(1:22, "X"))
+
+if (!interactive()) {
+    PARSER <- argparse::ArgumentParser(
+        description = "Merge contact matrices together"
+    )
+    PARSER$add_argument(
+        "chrom",
+        type = "character",
+        help = "The chromosome to merge"
+    )
+    ARGS <- PARSER$parse_args()
+} else {
+    ARGS <- list(
+        chrom = "chr22"
+    )
+}
 
 
 # ==============================================================================
@@ -24,9 +42,11 @@ read_contacts <- function(id, chrom) {
     dt <- dt[, .SD, .SDcols = -na_cols]
     # convert to a matrix and remove column names
     mat <- as.matrix(dt)
-    colnames(mat) <- NULL
+    matnew <- Matrix(mat, sparse = TRUE)
+    rm(mat)
+
     # return the matrix itself
-    return(mat)
+    return(matnew)
 }
 
 
@@ -37,44 +57,35 @@ cat("Loading Data\n")
 # load metadata
 metadata <- fread("config.tsv", sep = "\t", header = TRUE)
 metadata <- metadata[Include == "Yes"]
-TUMOUR_SAMPLES <- metadata[Type == "Malignant", SampleID]
-BENIGN_SAMPLES <- metadata[Type == "Benign", SampleID]
+SAMPLES <- list(
+    "tumour" = metadata[Type == "Malignant", SampleID],
+    "benign" = metadata[Type == "Benign", SampleID]
+)
 
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
-# loop over each chromosome
-chrom_mats <- list(
-    "tumour" = list(),
-    "benign" = list()
-)
 
-for (chrom in CHRS) {
-    cat(chrom, "\n")
-    tumour_mats <- lapply(TUMOUR_SAMPLES[1:2], read_contacts, chrom)
+cat(ARGS$chrom, "\n")
+for (i in c("tumour", "benign")) {
+    cat("\t", i, "\n")
+    matrices <- lapply(SAMPLES[[i]], read_contacts, ARGS$chrom)
+    cat("\t\tSize of all sparse matrices in memory:", as.numeric(object.size(matrices)) / (1024 ^ 3), "GB\n")
     # calculate the mean contact matrix from all the tumour matrices
-    chrom_mats[["tumour"]][[chrom]] <- Reduce("+", tumour_mats) / length(tumour_mats)
-    benign_mats <- lapply(BENIGN_SAMPLES[1:2], read_contacts, chrom)
-    # calculate the mean contact matrix from all the tumour matrices
-    chrom_mats[["benign"]][[chrom]] <- Reduce("+", benign_mats) / length(benign_mats)
+    mean_mat <- Reduce("+", matrices) / length(matrices)
+    cat("\t\tSize of mean matrix in memory:", as.numeric(object.size(mean_mat)) / (1024 ^ 3), "GB\n")
+    # convert to data.table for faster saving
+    dt <- as.data.table(as.matrix(mean_mat))
+    cat("\t\tSize of data.table:", as.numeric(object.size(dt)) / (1024 ^ 3), "GB\n")
+    # save to output file
+    fwrite(
+        dt,
+        paste0("TMP/", i, ".300000000.res_40000bp.", ARGS$chrom, ".mtx"),
+        sep = "\t",
+        col.names = FALSE
+    )
+    rm(dt, mean_mat, matrices)
 }
 
-
-# ==============================================================================
-# Save data
-# ==============================================================================
-for (chrom in CHRS) {
-    cat(chrom, "\n")
-    for (i in c("tumour", "benign")) {
-        cat("\t", i, "\n")
-        dt <- as.data.table(chrom_mats[[i]][[chrom]])
-        fwrite(
-            dt,
-            paste0("TMP/", i, ".300000000.res_40000bp.", chrom, ".mtx"),
-            sep = "\t",
-            col.names = FALSE
-        )
-    }
-}
 
