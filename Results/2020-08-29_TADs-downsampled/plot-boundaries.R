@@ -5,7 +5,7 @@ suppressMessages(library("data.table"))
 suppressMessages(library("scales"))
 suppressMessages(library("ggplot2"))
 
-MAX_WINDOW <- 23
+MAX_WINDOW <- 20
 MIN_WINDOW <- 3
 RESOLUTION <- 40000
 MAX_PERSISTENCE <- MAX_WINDOW - MIN_WINDOW + 1
