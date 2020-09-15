@@ -1,0 +1,8 @@
+__default__:
+    params: "--export=ALL -p all --mem 12G -c 1 -t 01:00:00"
+
+dump_mat:
+    params: "--export=ALL -p all --mem=12G -t 01:00:00"
+
+multihiccompare:
+    params: "--export=ALL -p himem --mem=30G -t 5-00:00:00 -c 12"
