@@ -69,6 +69,7 @@ rule all:
             ],
             ext=PLOT_EXTS,
         ),
+        path.join(PLOT_DIR, "chr3.pdf"),
 
 # ==============================================================================
 # Rules
@@ -172,3 +173,14 @@ rule plot_breaks:
         ),
     shell:
         "Rscript {input.script}"
+
+rule plot_chr3:
+    input:
+        path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Contacts", "PCa56413.mcool"),
+    output:
+        path.join(PLOT_DIR, "chr3.pdf"),
+    params:
+        "-b -o chr3.pdf --dpi 300 --zmin=-3.1 --zmax=-1.7 --cmap bwr"
+    shell:
+        "cooler show {params} {input}::/resolutions/400000 chr3"
+
