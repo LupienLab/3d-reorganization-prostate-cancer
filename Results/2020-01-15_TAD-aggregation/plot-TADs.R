@@ -92,6 +92,8 @@ boundary_max_persistence <- merge(
 boundary_max_persistence[, Frac_Max_Persistence := Max_Persistence / (Max_Persistence + Lesser_Persistence)]
 fwrite(boundary_max_persistence, "Statistics/boundary-hierarchy.tsv", sep = "\t", col.names = TRUE)
 
+boundaries_singleton <- boundaries[Persistence == 1]
+
 cat("Counting TADs\n")
 # calculate coefficient of variation across TAD sizes to see where samples vary
 tads_mean_size <- tads[, mean(width), by = c("SampleID", "w")]
@@ -160,9 +162,9 @@ gg_bounds_persistence <- (
         labels = c(1, 6, 11, 16, MAX_PERSISTENCE)
     )
     + scale_fill_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, Label],
-        values = metadata[, Type_Colour],
+        limits = metadata[SampleID %in% PRIMARY_SAMPLES, SampleID],
+        labels = metadata[SampleID %in% PRIMARY_SAMPLES, Label],
+        values = metadata[SampleID %in% PRIMARY_SAMPLES, Type_Colour],
         name = "Patient"
     )
     + theme_minimal()
@@ -171,6 +173,11 @@ gg_bounds_persistence <- (
     )
 )
 savefig(gg_bounds_persistence, file.path(PLOT_DIR, "boundary-counts.by-persistence"))
+
+gg_bounds_persistence_dist <- (
+    ggplot(data = boundary_counts_persistence)
+    + 
+)
 
 # TADs
 # --------------------------------------

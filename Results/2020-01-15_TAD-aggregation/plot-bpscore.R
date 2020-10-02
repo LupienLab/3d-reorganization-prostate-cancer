@@ -234,7 +234,6 @@ gg_bpscore_primary_tumour_vs_benign <- (
             & w <= MAX_WINDOW
             & (Source_1 == "Primary" & Source_2 == "Primary")
             & (Source_1 == "Primary" & Source_2 == "Primary"),
-            # using `get` because `dist` is a builtin function name
             .(Mean = mean(1 - dist), SD = sd(1 - dist)),
             by = c("w", "Prostate_Type_Combo")
         ],
@@ -242,28 +241,46 @@ gg_bpscore_primary_tumour_vs_benign <- (
             x = w,
             ymin = Mean - SD,
             ymax = Mean + SD,
-            fill = Prostate_Type_Combo
+            fill = Prostate_Type_Combo,
+            group = Prostate_Type_Combo
         ),
         alpha = 0.2
     )
-    + geom_smooth(
+    + geom_path(
         data = bpscore[
             s1 < s2
             & w <= MAX_WINDOW
             & (Source_1 == "Primary" & Source_2 == "Primary")
-            & (Source_1 == "Primary" & Source_2 == "Primary")
+            & (Source_1 == "Primary" & Source_2 == "Primary"),
+            .(Mean = mean(1 - dist), SD = sd(1 - dist)),
+            by = c("w", "Prostate_Type_Combo")
         ],
         mapping = aes(
             x = w,
-            y = 1 - dist,
+            y = Mean,
             colour = Prostate_Type_Combo,
-            fill = Prostate_Type_Combo,
             group = Prostate_Type_Combo
         ),
-        method = "loess",
-        se = FALSE,
+        # method = "loess",
+        # se = FALSE,
+        size = 2,
         alpha = 0.5
     )
+    # + geom_point(
+    #     data = bpscore[
+    #         s1 < s2
+    #         & w <= MAX_WINDOW
+    #         & (Source_1 == "Primary" & Source_2 == "Primary")
+    #         & (Source_1 == "Primary" & Source_2 == "Primary")
+    #     ],
+    #     mapping = aes(
+    #         x = w,
+    #         y = 1 - dist,
+    #         colour = Prostate_Type_Combo
+    #     ),
+    #     alpha = 0.5,
+    #     position = position_jitter(width = 0.2, height = 0)
+    # )
     + labs(x = "Window size", y = "TAD similarity (1 - BPscore)")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, by = 3),
