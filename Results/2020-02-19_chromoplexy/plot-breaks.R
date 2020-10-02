@@ -224,11 +224,11 @@ savefig(gg_breakpoint_pair_dist, file.path(PLOT_DIR, "breakpoint-stats", "breakp
 gg_recurrence = (
     ggplot(data = breakpoints_summed[, length(unique(SampleID)), by = c("chr", "Bin")])
     + geom_bar(aes(x = V1))
-    + labs(x = "Number of patients", y = "Number of Mbp bins with a breakpoint")
+    + labs(x = "# Patients sharing a mutated Mbp bin", y = "# Mbp bins with a recurrent breakpoint")
     + scale_x_discrete(
-        limits = seq(1, 13),
-        breaks = seq(1, 13, by = 2),
-        labels = seq(1, 13, by = 2)
+        limits = seq(1, 6),
+        breaks = seq(1, 6),
+        labels = seq(1, 6)
     )
     + theme_minimal()
 )
