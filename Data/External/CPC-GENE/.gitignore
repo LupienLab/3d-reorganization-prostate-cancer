@@ -1,3 +1,5 @@
 structural-variant-vcfs/*.vcf
 structural-variant-vcfs/*.bed
 structural-variant-vcfs/*.tsv
+RNA-files.md
+RNA-files.tsv

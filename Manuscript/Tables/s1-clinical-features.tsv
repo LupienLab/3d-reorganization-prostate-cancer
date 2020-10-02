@@ -1,13 +1,13 @@
-SampleID	CPCGENE_ID	Primary_Treatment	Gleason_Score	T_Category	PreTreatment_PSA	Age_at_Treatment	BCR	Time_to_BCR_(years)	Pct_Genome_Altered	Pathologic_Cellularity	Qpure_Cellularity	ASCAT_Cellularity	ASCAT_Ploidy	LUMP_Cellularity	ETS_consensus	LaLonde_cluster	CPCG_cluster	Methylation_cluster	WGSvsOS_accuracy
-PCa13266	CPCG0268	Radical prostatectomy	3+3	T3a	12.35	59.29	Yes	7.258042437	3.74	0.6	0.22	NA	NA	0.799236656	Negative	4	4	3	0.979609124
-PCa13848	CPCG0366	Radical prostatectomy	3+4	T3a	15	60.54	No	11.20328542	4.40	0.8	0.6	NA	NA	0.794102707	Positive	4	5	3	0.981709127
-PCa14121	CPCG0255	Radical prostatectomy	3+3	T2c	6.9	72.02	No	11.1266256	4.22	0.8	0.64	NA	NA	0.810652806	Negative	4	4	2	0.97869518
-PCa19121	CPCG0258	Radical prostatectomy	3+3	T2c	5.13	49.22	No	10.61738535	2.30	0.7	0.27	NA	NA	0.857536385	Positive	3	4	3	0.968158014
-PCa3023	CPCG0324	Radical prostatectomy	3+4	T3a	12.1	64.75	Yes	7.507186858	5.36	0.7	0.31	NA	NA	0.82600947	Positive	3	6	3	0.979947426
-PCa33173	CPCG0246	Radical prostatectomy	3+3	T2c	5.64	60.6	Yes	1.086926763	1.73	0.8	0.15	NA	NA	0.879390161	Negative	4	5	2	0.976779552
-PCa40507	CPCG0342	Radical prostatectomy	4+3	T3a	6.3	52.18	No	6.663928816	2.24	0.8	0.27	NA	NA	0.819186007	Positive	4	4	3	0.980102317
-PCa51852	CPCG0336	Radical prostatectomy	3+3	T3a	9.08	60.87	No	6.006844627	1.68	0.6	0.23	NA	NA	0.834513649	Positive	4	5	3	0.986674797
-PCa53687	CPCG0339	Radical prostatectomy	3+4	T3a	14.29	57.69	No	5.869952088	3.23	0.7	0.23	NA	NA	0.846144953	Negative	4	5	3	0.970407057
-PCa56413	CPCG0331	Radical prostatectomy	3+4	T3a	11.08	69.89	No	5.941136208	4.99	0.7	0.22	NA	NA	0.843416016	Positive	4	4	3	0.91582805
-PCa57294	CPCG0365	Radical prostatectomy	3+3	T2c	4.23	71.69	No	5.464750171	0.99	0.6	0.13	NA	NA	0.888577658	Negative	4	5	3	0.984424731
-PCa58215	CPCG0345	Radical prostatectomy	3+4	T3b	6.6	60.38	No	4.97467488	18.78	0.7	0.78	0.57	1.99	0.861514803	Negative	1	3	2	0.99150328
+SampleID	CPCGENE_ID	Primary_Treatment	Gleason_Score	T_Category	T2E_Status	PreTreatment_PSA	Age_at_Treatment	BCR	Time_to_BCR_(years)	Pct_Genome_Altered	Pathologic_Cellularity	Qpure_Cellularity	ASCAT_Cellularity	ASCAT_Ploidy	LUMP_Cellularity	ETS_consensus	LaLonde_cluster	CPCG_cluster	Methylation_cluster	WGSvsOS_accuracy
+PCa13266	CPCG0268	Radical prostatectomy	3+3	T3a	No	12.35	59.29	Yes	7.258042437	3.74	0.6	0.22	NA	NA	0.799236656	Negative	4	4	3	0.979609124
+PCa13848	CPCG0366	Radical prostatectomy	3+4	T3a	Yes	15	60.54	No	11.20328542	4.40	0.8	0.6	NA	NA	0.794102707	Positive	4	5	3	0.981709127
+PCa14121	CPCG0255	Radical prostatectomy	3+3	T2c	No	6.9	72.02	No	11.1266256	4.22	0.8	0.64	NA	NA	0.810652806	Negative	4	4	2	0.97869518
+PCa19121	CPCG0258	Radical prostatectomy	3+3	T2c	Yes	5.13	49.22	No	10.61738535	2.30	0.7	0.27	NA	NA	0.857536385	Positive	3	4	3	0.968158014
+PCa3023	CPCG0324	Radical prostatectomy	3+4	T3a	Yes	12.1	64.75	Yes	7.507186858	5.36	0.7	0.31	NA	NA	0.82600947	Positive	3	6	3	0.979947426
+PCa33173	CPCG0246	Radical prostatectomy	3+3	T2c	No	5.64	60.6	Yes	1.086926763	1.73	0.8	0.15	NA	NA	0.879390161	Negative	4	5	2	0.976779552
+PCa40507	CPCG0342	Radical prostatectomy	4+3	T3a	Yes	6.3	52.18	No	6.663928816	2.24	0.8	0.27	NA	NA	0.819186007	Positive	4	4	3	0.980102317
+PCa51852	CPCG0336	Radical prostatectomy	3+3	T3a	Yes	9.08	60.87	No	6.006844627	1.68	0.6	0.23	NA	NA	0.834513649	Positive	4	5	3	0.986674797
+PCa53687	CPCG0339	Radical prostatectomy	3+4	T3a	No	14.29	57.69	No	5.869952088	3.23	0.7	0.23	NA	NA	0.846144953	Negative	4	5	3	0.970407057
+PCa56413	CPCG0331	Radical prostatectomy	3+4	T3a	Yes	11.08	69.89	No	5.941136208	4.99	0.7	0.22	NA	NA	0.843416016	Positive	4	4	3	0.91582805
+PCa57294	CPCG0365	Radical prostatectomy	3+3	T2c	No	4.23	71.69	No	5.464750171	0.99	0.6	0.13	NA	NA	0.888577658	Negative	4	5	3	0.984424731
+PCa58215	CPCG0345	Radical prostatectomy	3+4	T3b	No	6.6	60.38	No	4.97467488	18.78	0.7	0.78	0.57	1.99	0.861514803	Negative	1	3	2	0.99150328
