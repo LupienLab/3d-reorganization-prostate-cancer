@@ -112,7 +112,10 @@ dba_all <- readRDS("dba_all.rds")
 # calculate weighted-mean gene expression fold change for each gene in each test
 # `b` column from sleuth is natural log, convert to log2 before saving
 delta_exprs <- exprs[,
-    .(log2exprs_fc = sum(mean_obs * b * log2(exp(1))) / sum(mean_obs)),
+    .(
+        log2exprs_fc = sum( (mean_obs * log2(exp(1)) / sum(mean_obs)) * b),
+        log2exprs_var = sum( (mean_obs * log2(exp(1)) / sum(mean_obs)) ^ 2 * se_b ^ 2)
+    ),
     keyby = "ens_gene"
 ]
 delta_exprs <- merge(
@@ -137,10 +140,11 @@ matched_acetyl <- as.data.table(matched_acetyl_gr)
 # calculate weighted-mean acetylation fold change for each gene in each test
 delta_acetyl <- matched_acetyl[,
     .(
-        log2acetyl_fc = sum(Conc_Nonmutated * Fold) / sum(Conc_Nonmutated),
-        acetyl_pval = pchisq((-2 * sum(log(p.value))), df = 2 * .N, lower.tail = FALSE),
+        log2acetyl_fc = sum( (Conc_Nonmutated / sum(Conc_Nonmutated)) * Fold),
+        log2acetyl_var = sum( (Conc_Nonmutated / sum(Conc_Nonmutated)) ^ 2 * ),
+        acetyl_pval = pchisq((-2 * sum(log(FDR))), df = 2 * .N, lower.tail = FALSE),
         # Fisher's method for combination, followed by FDR correction
-        acetyl_qval = p.adjust(pchisq((-2 * sum(log(p.value))), df = 2 * .N, lower.tail = FALSE), method = "fdr")
+        acetyl_qval = p.adjust(pchisq((-2 * sum(log(FDR))), df = 2 * .N, lower.tail = FALSE), method = "fdr")
     ),
     keyby = c("gene_id", "gene_name")
     # keyby = c("gene_id", "gene_name", "p.value", "FDR")

@@ -213,5 +213,8 @@ for (i in 1:length(all_comparisons)) {
             sep = "\t",
             col.names = TRUE
         )
+
+        # save DiffBind analyses to RDS file
+        saveRDS(dba_comp, file.path(TEST_DIR, paste0("test_", ti, ".rds")))
     }
 }

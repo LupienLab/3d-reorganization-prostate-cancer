@@ -1,0 +1,775 @@
+#	Symbol	Description	Category	Score	PubmedIds
+1	CHEK2	Checkpoint Kinase 2	Protein Coding	1446.4	15122511 15239132 16257342 (more) 
+2	PTEN	Phosphatase And Tensin Homolog	Protein Coding	1383.71	24071797 19042984 25394175 (more) 
+	PTEN::MIR21 46 	MIR21 Macro RNA (hsa-miR-21) targets PTEN			
+3	MXI1	MAX Interactor 1, Dimerization Protein	Protein Coding	1343.75	24071797 19042984 25394175 (more) 
+4	AR	Androgen Receptor	Protein Coding	1151.07	24071797 1631125 1779964 (more) 
+5	CDH1	Cadherin 1	Protein Coding	1121.28	16189707 24071797 14961571 (more) 
+6	BRCA2	BRCA2 DNA Repair Associated	Protein Coding	1103.18	24071797 11170288 19042984 (more) 
+7	KLF6	Kruppel Like Factor 6	Protein Coding	1044.19	11752579 12651626 18755691 (more) 
+8	MAD1L1	Mitotic Arrest Deficient 1 Like 1	Protein Coding	1019.21	11423979
+9	ZFHX3	Zinc Finger Homeobox 3	Protein Coding	629.67	16637072 15750593 16932943 (more) 
+10	TP53	Tumor Protein P53	Protein Coding	440.67	24071797 19042984 25394175 (more) 
+11	PIK3CA	Phosphatidylinositol-4,5-Bisphosphate 3-Kinase Catalytic Subunit Alpha	Protein Coding	430.65	24071797 19042984 25394175 (more) 
+12	MIR221	MicroRNA 221	RNA Gene	428.95	17569667 17616669
+13	MIR145	MicroRNA 145	RNA Gene	428.82	17891175 17616669
+14	MIR21	MicroRNA 21	RNA Gene	428.34	19302977 16461460
+15	MIR17	MicroRNA 17	RNA Gene	427.66	19771525 16461460
+16	MIR222	MicroRNA 222	RNA Gene	422.81	17569667 17616669
+17	MIR146A	MicroRNA 146a	RNA Gene	421.48	18174313 16461460
+18	MIR23B	MicroRNA 23b	RNA Gene	420.62	18949015 17616669
+19	MIR205	MicroRNA 205	RNA Gene	419.5	19244118 19676045
+20	POLK	DNA Polymerase Kappa	Protein Coding	419.18	24071797 19042984 25394175 (more) 
+21	MIRLET7C	MicroRNA Let-7c	RNA Gene	417.69	17891175 19372056
+22	MIR20A	MicroRNA 20a	RNA Gene	415.36	20944140 16461460
+23	DNAJC6	DnaJ Heat Shock Protein Family (Hsp40) Member C6	Protein Coding	403.33	24071797 19042984 25394175 (more) 
+24	MIR34A	MicroRNA 34a	RNA Gene	372.55	18834855
+25	MIR15A	MicroRNA 15a	RNA Gene	372.31	18931683
+26	MIR200B	MicroRNA 200b	RNA Gene	372.05	20473869
+27	HOXB13	Homeobox B13	Protein Coding	368.97	
+28	MIR106B	MicroRNA 106b	RNA Gene	368.83	18676839
+29	MIR16-1	MicroRNA 16-1	RNA Gene	366.26	18931683
+30	MIR449A	MicroRNA 449a	RNA Gene	366.01	19252524
+31	EPHB2	EPH Receptor B2	Protein Coding	364.68	16155194 16740153 17249693 (more) 
+32	MIR331	MicroRNA 331	RNA Gene	364.26	19584056
+33	MIR127	MicroRNA 127	RNA Gene	363.18	16766263
+34	MIR521-1	MicroRNA 521-1	RNA Gene	358.74	18668526
+35	MIR203A	MicroRNA 203a	RNA Gene	358.44	21159887
+36	FGFR4	Fibroblast Growth Factor Receptor 4	Protein Coding	340.7	18670643 18762813 17607666 (more) 
+37	PCA3	Prostate Cancer Associated 3	RNA Gene	209.43	10606244 11980670 14607216 (more) 
+38	PCGEM1	PCGEM1 Prostate-Specific Transcript	RNA Gene	186.62	11050243 14724589 16515751 (more) 
+39	PCAT29	Prostate Cancer Associated Transcript 29	RNA Gene	185.29	25030374 25700553
+40	PCAT1	Prostate Cancer Associated Transcript 1	RNA Gene	178.08	21804560 22386265 22664915 (more) 
+41	SCHLAP1	SWI/SNF Complex Antagonist Associated With Prostate Cancer 1	RNA Gene	177.64	24076601 25035039 25456366 (more) 
+42	PRNCR1	Prostate Cancer Associated Non-Coding RNA 1	RNA Gene	177.17	20874843 23945587 23948400 (more) 
+43	PCAT7	Prostate Cancer Associated Transcript 7	RNA Gene	175.06	23728290
+44	CDKN2B-AS1	CDKN2B Antisense RNA 1	RNA Gene	175.05	20541999 20729297 22664915 (more) 
+45	PCAT18	Prostate Cancer Associated Transcript 18	RNA Gene	175	24519926
+46	CBR3-AS1	CBR3 Antisense RNA 1	RNA Gene	174	22264502 26808578 26965999 (more) 
+47	CTBP1-AS	CTBP1 Antisense RNA	RNA Gene	173.47	23644382
+48	PCAT14	Prostate Cancer Associated Transcript 14	RNA Gene	171.57	27460352 27566105
+49	PCAT5	Prostate Cancer Associated Transcript 5	RNA Gene	170.92	26282172
+50	SPRY4-IT1	SPRY4 Intronic Transcript 1	RNA Gene	170.22	25307116 26503110
+51	PCOTH	Pro-X-Gly Collagen Triple Helix Like Repeat Containing	Protein Coding	168.72	15930275 27507663
+52	HOTAIR	HOX Transcript Antisense RNA	RNA Gene	168.12	20864820 23936419 25895025 (more) 
+53	PCAT2	Prostate Cancer Associated Transcript 2	RNA Gene	167.69	26823525
+54	POU5F1B	POU Class 5 Homeobox 1B	Protein Coding	166.46	20017164
+55	PVT1	Pvt1 Oncogene	RNA Gene	166.46	21814516 23728290 27507663 (more) 
+56	PCSEAT	Prostate Cancer Expressed EZH2 Associated Transcript	RNA Gene	165.79	26797523
+57	PCAT6	Prostate Cancer Associated Transcript 6	RNA Gene	163.56	23728290
+58	TERC	Telomerase RNA Component	RNA Gene	163.44	27507663 12746472 10547577 (more) 
+59	CCAT2	Colon Cancer Associated Transcript 2	RNA Gene	161.91	27558961
+60	MALAT1	Metastasis Associated Lung Adenocarcinoma Transcript 1	RNA Gene	161.25	21489289 22349460 23726266 (more) 
+61	GAS5	Growth Arrest Specific 5	RNA Gene	160.73	18836484 22664915 23676682 (more) 
+62	NEAT1	Nuclear Paraspeckle Assembly Transcript 1	RNA Gene	160.15	23728290 25415230
+63	XIST	X Inactive Specific Transcript	RNA Gene	159.84	16261845 27507663 29212233
+64	UCA1	Urothelial Cancer Associated 1	RNA Gene	159.83	23728290 26550172 27686228 (more) 
+65	TP53COR1	Tumor Protein P53 Pathway Corepressor 1	RNA Gene	159.78	25999983 27976428 28994148
+66	TUG1	Taurine Up-Regulated 1	RNA Gene	159.58	26975529
+67	HOTTIP	HOXA Distal Transcript Antisense RNA	RNA Gene	159.42	23728290 27064878
+68	FENDRR	FOXF1 Adjacent Non-Coding Developmental Regulatory RNA	RNA Gene	158.85	29465000
+69	SNHG1	Small Nucleolar RNA Host Gene 1	RNA Gene	158.8	28400279
+70	LINC00963	Long Intergenic Non-Protein Coding RNA 963	RNA Gene	158.66	24691949
+71	SOCS2-AS1	SOCS2 Antisense RNA 1	RNA Gene	158.47	27342777
+72	RNY1	RNA, Ro60-Associated Y1	RNA Gene	157.48	18283318
+73	DANCR	Differentiation Antagonizing Non-Protein Coding RNA	RNA Gene	155.69	23728290 27191265
+74	MIAT	Myocardial Infarction Associated Transcript	RNA Gene	155.17	27096814
+75	KCNQ1OT1	KCNQ1 Opposite Strand/Antisense Transcript 1	RNA Gene	155.16	23728290
+76	HCG11	HLA Complex Group 11	RNA Gene	155.15	27522256
+77	TRPM2-AS	TRPM2 Antisense RNA	RNA Gene	155.12	24931166 26484139 26503110
+78	SNHG5	Small Nucleolar RNA Host Gene 5	RNA Gene	155.02	28033303
+79	ZFAS1	ZNFX1 Antisense RNA 1	RNA Gene	154.94	29416676
+80	IGF2-AS	IGF2 Antisense RNA	RNA Gene	154.78	27507663
+81	LINC01138	Long Intergenic Non-Protein Coding RNA 1138	RNA Gene	154.74	27556357
+82	CASC2	Cancer Susceptibility 2	RNA Gene	154.73	29373811
+83	SRA1	Steroid Receptor RNA Activator 1	Protein Coding	154.5	16607388 17710122 20219889
+84	MEG3	Maternally Expressed 3	RNA Gene	154.18	14602737 23728290 26610246 (more) 
+85	THBS4	Thrombospondin 4	Protein Coding	154.12	27357608
+86	FALEC	Focally Amplified Long Non-Coding RNA In Epithelial Cancer	RNA Gene	153.96	28585762
+87	RNY3	RNA, Ro60-Associated Y3	RNA Gene	153.7	18283318
+88	H19	H19 Imprinted Maternally Expressed Transcript	RNA Gene	153.64	24063685 24988946
+89	SMKR1	Small Lysine Rich Protein 1	Protein Coding	153.54	25513185
+90	ENSG00000277524		RNA Gene	153.48	29723810
+91	EGOT	Eosinophil Granule Ontogeny Transcript	RNA Gene	153.38	23728290
+92	PRINS	Psoriasis Associated Non-Protein Coding RNA Induced By Stress	RNA Gene	153.3	23728290
+93	DRAIC	Downregulated RNA In Cancer, Inhibitor Of Cell Invasion And Migration	RNA Gene	150	25700553
+94	DUXAP9	Double Homeobox A Pseudogene 9	Pseudogene	150	28392705
+95	ENSG00000261777		Uncategorized	150	25385343
+96	HULC	Hepatocellular Carcinoma Up-Regulated Long Non-Coding RNA	RNA Gene	150	23728290
+97	LINC01564	Long Intergenic Non-Protein Coding RNA 1564	RNA Gene	150	25513185
+98	LRRC74B	Leucine Rich Repeat Containing 74B	Protein Coding	150	26797783
+99	POTEF-AS1	POTEF Antisense RNA 1	RNA Gene	150	28032932
+100	PTENP1	Phosphatase And Tensin Homolog Pseudogene 1	Pseudogene	150	20577206
+101	SUZ12P1	SUZ12 Pseudogene 1	Pseudogene	150	27556357
+102	WARS2-IT1	WARS2 Intronic Transcript 1	RNA Gene	150	26612002
+103	XLOC_007697	Uncharacterized LOC105500239	RNA Gene	150	25513185
+104	XLOC_008559	Uncharacterized LOC105378427	RNA Gene	150	25513185
+105	XLOC_009911	Uncharacterized LOC105500240	RNA Gene	150	25513185
+106	RNASEL	Ribonuclease L	Protein Coding	119.31	16609730 25394175 12415269 (more) 
+107	ELAC2	ElaC Ribonuclease Z 2	Protein Coding	91.53	18375959 20086112 12384782 (more) 
+108	MSMB	Microseminoprotein Beta	Protein Coding	86.42	7688168 10477906 9136076 (more) 
+109	SRD5A2	Steroid 5 Alpha-Reductase 2	Protein Coding	83.24	12949937 11588134 12746845 (more) 
+110	MIR141	MicroRNA 141	RNA Gene	74.43	20473869
+111	MIR199A1	MicroRNA 199a-1	RNA Gene	74.38	16461460
+112	MIR143	MicroRNA 143	RNA Gene	73.07	17616669
+113	FOLH1	Folate Hydrolase 1	Protein Coding	72.5	10640975 9111600 15733392 (more) 
+114	MIR182	MicroRNA 182	RNA Gene	72.29	19676045
+115	MIR126	MicroRNA 126	RNA Gene	72.1	18459106
+116	MIR183	MicroRNA 183	RNA Gene	71.25	19676045
+117	MIR29A	MicroRNA 29a	RNA Gene	71.04	17616669
+118	MIR96	MicroRNA 96	RNA Gene	70.99	19676045
+119	MIR195	MicroRNA 195	RNA Gene	70.91	18459106
+120	MIR224	MicroRNA 224	RNA Gene	70.66	18459106
+121	KLK3	Kallikrein Related Peptidase 3	Protein Coding	70.11	8874692 10524873 17450256 (more) 
+122	MIR25	MicroRNA 25	RNA Gene	68.72	16461460
+123	MIR30A	MicroRNA 30a	RNA Gene	68.49	17616669
+124	MIR375	MicroRNA 375	RNA Gene	68.41	19676045
+125	TMPRSS2	Transmembrane Serine Protease 2	Protein Coding	68.34	19465903 19642730 17334343 (more) 
+126	MSR1	Macrophage Scavenger Receptor 1	Protein Coding	67.36	16114055 20086112 15042613 (more) 
+127	MIR210	MicroRNA 210	RNA Gene	67.18	17616669
+128	MIR100	MicroRNA 100	RNA Gene	67.18	16192569
+129	MIR31	MicroRNA 31	RNA Gene	65.92	19676045
+130	MIR125A	MicroRNA 125a	RNA Gene	65.92	17616669
+131	ACP3	Acid Phosphatase 3	Protein Coding	65.88	7840515 7602779 8564745 (more) 
+132	HPC3	Prostate Cancer, Hereditary, 3	Genetic Locus	65.5	
+133	HPC14	Prostate Cancer, Hereditary, 14	Genetic Locus	65.46	
+134	HPC10	Prostate Cancer, Hereditary, 10	Genetic Locus	65.41	
+135	PCAP	Predisposing For Prostate Cancer	Genetic Locus	65.41	
+136	HPC4	Prostate Cancer, Hereditary, 4	Genetic Locus	65.35	
+137	HPC5	Prostate Cancer, Hereditary, 5	Genetic Locus	65.35	
+138	MIR99A	MicroRNA 99a	RNA Gene	65.14	17616669
+139	MIR22	MicroRNA 22	RNA Gene	65.05	17616669
+140	MIR149	MicroRNA 149	RNA Gene	65.01	19676045
+141	MIR27A	MicroRNA 27a	RNA Gene	64.67	17616669
+142	MIR106A	MicroRNA 106a	RNA Gene	64.5	16461460
+143	MIR181A1	MicroRNA 181a-1	RNA Gene	64.43	18459106
+144	MIR148A	MicroRNA 148a	RNA Gene	64.42	17616669
+145	MIR223	MicroRNA 223	RNA Gene	64.17	16461460
+146	MIR10B	MicroRNA 10b	RNA Gene	64.09	18459106
+147	MIR151A	MicroRNA 151a	RNA Gene	64.02	18459106
+148	MIR181B1	MicroRNA 181b-1	RNA Gene	63.88	16461460
+149	MIR214	MicroRNA 214	RNA Gene	63.69	16461460
+150	MIR23A	MicroRNA 23a	RNA Gene	63.62	17616669
+151	MIR296	MicroRNA 296	RNA Gene	63.35	17616669
+152	MIR191	MicroRNA 191	RNA Gene	63.22	16461460
+153	MIR30B	MicroRNA 30b	RNA Gene	62.9	17616669
+154	MIR491	MicroRNA 491	RNA Gene	62.15	17616669
+155	MIR99B	MicroRNA 99b	RNA Gene	62.14	18459106
+156	BRCA1	BRCA1 DNA Repair Associated	Protein Coding	61.97	19223505 17585057 20043088 (more) 
+157	MIR27B	MicroRNA 27b	RNA Gene	61.73	17616669
+158	MIRLET7B	MicroRNA Let-7b	RNA Gene	61.18	17616669
+159	MIR32	MicroRNA 32	RNA Gene	60.47	16461460
+160	MIR26B	MicroRNA 26b	RNA Gene	60.11	17616669
+161	MIRLET7D	MicroRNA Let-7d	RNA Gene	59.96	17616669
+162	MIR497	MicroRNA 497	RNA Gene	59.9	17616669
+163	MIR10A	MicroRNA 10a	RNA Gene	59.7	18459106
+164	MIRLET7G	MicroRNA Let-7g	RNA Gene	59.55	17616669
+165	MIR503	MicroRNA 503	RNA Gene	59.29	17616669
+166	MIR184	MicroRNA 184	RNA Gene	59.01	19676045
+167	MIR199B	MicroRNA 199b	RNA Gene	58.64	18459106
+168	HPC15	Prostate Cancer, Hereditary, 15	Genetic Locus	57.6	
+169	HPC6	Prostate Cancer, Susceptibility To	Genetic Locus	57.6	
+170	HPC7	Prostate Cancer, Hereditary, 7	Genetic Locus	57.6	
+171	GSTP1	Glutathione S-Transferase Pi 1	Protein Coding	57.42	11555585 15623627 16446401 (more) 
+172	NKX3-1	NK3 Homeobox 1	Protein Coding	57.16	9226374 16310933 11839815 (more) 
+173	KLK2	Kallikrein Related Peptidase 2	Protein Coding	56.58	11753974 8889697 7664987 (more) 
+174	MIR320A	MicroRNA 320a	RNA Gene	55.56	17616669
+175	MIR370	MicroRNA 370	RNA Gene	55.45	17616669
+176	MIR345	MicroRNA 345	RNA Gene	55.28	17616669
+177	SLC43A1	Solute Carrier Family 43 Member 1	Protein Coding	55.18	9722952 14612934
+178	MIR202	MicroRNA 202	RNA Gene	55.18	17616669
+179	MIR498	MicroRNA 498	RNA Gene	54.42	17616669
+180	MIR92A2	MicroRNA 92a-2	RNA Gene	53.29	16461460
+181	MIR198	MicroRNA 198	RNA Gene	53.24	17616669
+182	HNF1B	HNF1 Homeobox B	Protein Coding	53.01	18696045 17603485
+183	DAB2IP	DAB2 Interacting Protein	Protein Coding	52.23	11944990 20154697 20332235 (more) 
+184	CTNNB1	Catenin Beta 1	Protein Coding	51.2	15316903 17363566 17721186 (more) 
+185	MIR29B2	MicroRNA 29b-2	RNA Gene	50	16461460
+186	AMACR	Alpha-Methylacyl-CoA Racemase	Protein Coding	49.18	15743746 17134736 17527076 (more) 
+187	PSCA	Prostate Stem Cell Antigen	Protein Coding	48.04	11034097 16015594 11368875 (more) 
+188	AKT1	AKT Serine/Threonine Kinase 1	Protein Coding	46.65	17639041 20102399 14743383 (more) 
+189	EGFR	Epidermal Growth Factor Receptor	Protein Coding	45.77	1394216 7892162 9041461 (more) 
+190	ERG	ETS Transcription Factor ERG	Protein Coding	45.37	
+191	EGF	Epidermal Growth Factor	Protein Coding	45.23	16804520 9518259 7586799 (more) 
+192	ITGA6	Integrin Subunit Alpha 6	Protein Coding	44.79	17303120 11336792 18058365 (more) 
+193	EHBP1	EH Domain Binding Protein 1	Protein Coding	43.68	
+194	ERBB2	Erb-B2 Receptor Tyrosine Kinase 2	Protein Coding	43.11	11920466 12352406 15139054 (more) 
+	ERBB2::MIR125A 46 	MIR125A Macro RNA (hsa-miR-125a) targets ERBB2			
+195	IGF1	Insulin Like Growth Factor 1	Protein Coding	43.09	15540247 11158033 1722685 (more) 
+196	SERPINA3	Serpin Family A Member 3	Protein Coding	43.05	15822791 9250919 11920529 (more) 
+197	STAT3	Signal Transducer And Activator Of Transcription 3	Protein Coding	42.91	11987152 11141475 16804520 (more) 
+198	PLAU	Plasminogen Activator, Urokinase	Protein Coding	42.87	15988036 7515534 9816041 (more) 
+199	CDKN1B	Cyclin Dependent Kinase Inhibitor 1B	Protein Coding	42.79	14960249 12210483 9731735 (more) 
+200	CDKN1A	Cyclin Dependent Kinase Inhibitor 1A	Protein Coding	42.68	1562975 15736438 10761703 (more) 
+201	TRPM8	Transient Receptor Potential Cation Channel Subfamily M Member 8	Protein Coding	42.51	16174775 17517434 12858355 (more) 
+202	MMP9	Matrix Metallopeptidase 9	Protein Coding	42.5	9466586 12586837 11912173 (more) 
+203	CDK2	Cyclin Dependent Kinase 2	Protein Coding	42.17	9794232 11052627 12352461 (more) 
+204	PIM1	Pim-1 Proto-Oncogene, Serine/Threonine Kinase	Protein Coding	41.83	20215828 13679438 16186805 (more) 
+205	SRD5A1	Steroid 5 Alpha-Reductase 1	Protein Coding	41.63	11228931 15650886 18499161 (more) 
+206	TRIM68	Tripartite Motif Containing 68	Protein Coding	41.24	
+207	BCL2	BCL2 Apoptosis Regulator	Protein Coding	40.97	9260915 9366376 9417872 (more) 
+208	CYP17A1	Cytochrome P450 Family 17 Subfamily A Member 1	Protein Coding	40.75	20437447 17704407 11571725 (more) 
+209	NBN	Nibrin	Protein Coding	40.64	
+210	IGF1R	Insulin Like Growth Factor 1 Receptor	Protein Coding	39.95	18196535 19211828 10984278 (more) 
+211	SLC45A3	Solute Carrier Family 45 Member 3	Protein Coding	39.6	15048720 18193184 14997204
+212	CCND1	Cyclin D1	Protein Coding	38.81	17375037 10815912 9568672 (more) 
+	CCND1::MIR15A 46 	MIR15A Macro RNA (hsa-miR-15a) targets CCND1			
+	CCND1::MIR16-1 46 	MIR16-1 Macro RNA (hsa-miR-16-1) targets CCND1			
+213	ETV1	ETS Variant Transcription Factor 1	Protein Coding	38.76	17505060 16254181 18996329 (more) 
+214	CD82	CD82 Molecule	Protein Coding	38.74	9589471 9121765 10440748 (more) 
+215	KLK15	Kallikrein Related Peptidase 15	Protein Coding	38.58	11434875 11010966
+216	MAPK1	Mitogen-Activated Protein Kinase 1	Protein Coding	38.1	15284244 15735699 15774218 (more) 
+217	HPN	Hepsin	Protein Coding	38.08	16783571 14665873 18784072 (more) 
+218	CHGA	Chromogranin A	Protein Coding	38.06	12209687 8996358 8632569 (more) 
+219	TGFA	Transforming Growth Factor Alpha	Protein Coding	37.63	10360641 10420153 15355899 (more) 
+220	RB1	RB Transcriptional Corepressor 1	Protein Coding	37.52	2217208 12479270 11943705 (more) 
+	RB1::MIR106A 46 	MIR106A Macro RNA (hsa-miR-106a) targets RB1			
+221	BMP6	Bone Morphogenetic Protein 6	Protein Coding	37.37	9820184 7686495 1437857 (more) 
+222	CASP3	Caspase 3	Protein Coding	37.29	11122438 10786680 15467752 (more) 
+223	JUN	Jun Proto-Oncogene, AP-1 Transcription Factor Subunit	Protein Coding	37.23	10413424 15486991 11462854 (more) 
+224	GRP	Gastrin Releasing Peptide	Protein Coding	37.09	1434289 8661226 15866427 (more) 
+225	HSP90AA1	Heat Shock Protein 90 Alpha Family Class A Member 1	Protein Coding	36.75	18840695 16452239 18954528 (more) 
+226	CASP9	Caspase 9	Protein Coding	36.15	20437871 10861750 16322271 (more) 
+227	ANO7	Anoctamin 7	Protein Coding	35.82	
+228	MYC	MYC Proto-Oncogene, BHLH Transcription Factor	Protein Coding	35.63	15712208 17404030 9012485 (more) 
+	MYC::GH08J127396	TSS distance: -334.5kb			25910213
+		Elite enhancer			
+		with elite association with MYC			
+	MYC::GH08J127471	TSS distance: -262.6kb			22382457 23226612
+229	STEAP2	STEAP2 Metalloreductase	Protein Coding	35.44	
+230	GNRH1	Gonadotropin Releasing Hormone 1	Protein Coding	35.11	2118285 15081579 2046209 (more) 
+231	HIF1A	Hypoxia Inducible Factor 1 Subunit Alpha	Protein Coding	35.02	15735682 14971644 11454426 (more) 
+232	LEF1	Lymphoid Enhancer Binding Factor 1	Protein Coding	34.88	
+233	CDKN3	Cyclin Dependent Kinase Inhibitor 3	Protein Coding	34.77	12624952 15774218 19470463 (more) 
+234	PRUNE2	Prune Homolog 2 With BCH Domain	Protein Coding	34.69	
+235	NFKBIA	NFKB Inhibitor Alpha	Protein Coding	34.57	8824277 18468507 15856023 (more) 
+236	TNFSF10	TNF Superfamily Member 10	Protein Coding	34.33	16052230 17106251 15498932 (more) 
+237	GRPR	Gastrin Releasing Peptide Receptor	Protein Coding	34.32	9495364 18491928 9406683 (more) 
+238	MTOR	Mechanistic Target Of Rapamycin Kinase	Protein Coding	34.28	18519641 12414639 19725049 (more) 
+239	BCL2L1	BCL2 Like 1	Protein Coding	34.26	17653717 16794010 9141489 (more) 
+240	E2F1	E2F Transcription Factor 1	Protein Coding	34.15	11052627 17349545 17178887 (more) 
+	E2F1::MIR17 46 	MIR17 Macro RNA (hsa-miR-17-5p) targets E2F1			
+241	FGFR1	Fibroblast Growth Factor Receptor 1	Protein Coding	33.9	17137506 9844400 17607666 (more) 
+242	FGFR2	Fibroblast Growth Factor Receptor 2	Protein Coding	33.81	16956712 11170144 11069376 (more) 
+243	EZH2	Enhancer Of Zeste 2 Polycomb Repressive Complex 2 Subunit	Protein Coding	33.7	16963837 17483039 18095286 (more) 
+244	OR51E2	Olfactory Receptor Family 51 Subfamily E Member 2	Protein Coding	33.64	11118034 15499628 16491480 (more) 
+245	NCOA4	Nuclear Receptor Coactivator 4	Protein Coding	33.58	15166229 12649293 10405524 (more) 
+246	IGFBP3	Insulin Like Growth Factor Binding Protein 3	Protein Coding	33.46	10875240 15540247 14694521 (more) 
+247	TGFB1I1	Transforming Growth Factor Beta 1 Induced Transcript 1	Protein Coding	33.45	12858356 11501969 12700349 (more) 
+248	MDM2	MDM2 Proto-Oncogene	Protein Coding	33.41	15269162 12518324 15176048 (more) 
+249	TRPS1	Transcriptional Repressor GATA Binding 1	Protein Coding	33.29	14997205 15613454 17467349 (more) 
+250	PAGE4	PAGE Family Member 4	Protein Coding	33.24	
+251	PARP1	Poly(ADP-Ribose) Polymerase 1	Protein Coding	33.07	18607066 15252149 15868402 (more) 
+252	MMP2	Matrix Metallopeptidase 2	Protein Coding	33.01	14991864 14679018 17121023 (more) 
+253	SLC39A1	Solute Carrier Family 39 Member 1	Protein Coding	32.97	17400177 16153295
+254	CASP8	Caspase 8	Protein Coding	32.67	11992615 9865748 17898872 (more) 
+255	ESR2	Estrogen Receptor 2	Protein Coding	32.63	11596023 15498298 12152165 (more) 
+256	CDH3	Cadherin 3	Protein Coding	32.61	9815605 9250159 10652439 (more) 
+257	BAD	BCL2 Associated Agonist Of Cell Death	Protein Coding	32.57	12754297 19593445 16767165 (more) 
+258	PROS1	Protein S	Protein Coding	32.44	11555588 9105163 7504042 (more) 
+259	CDK4	Cyclin Dependent Kinase 4	Protein Coding	32.34	10640976 11052627 19017637 (more) 
+260	EP300	E1A Binding Protein P300	Protein Coding	32.2	17409453 15705864 15994976 (more) 
+261	RNF14	Ring Finger Protein 14	Protein Coding	32.13	17110431 11501969 10085091
+262	CD44	CD44 Molecule (Indian Blood Group)	Protein Coding	32.1	9492843 7544562 10950120 (more) 
+263	CD164	CD164 Molecule	Protein Coding	32.06	
+264	TMEFF2	Transmembrane Protein With EGF Like And Two Follistatin Like Domains 2	Protein Coding	31.95	15805286 12729735 16439095 (more) 
+265	SRC	SRC Proto-Oncogene, Non-Receptor Tyrosine Kinase	Protein Coding	31.94	16894533 18223692 17449913 (more) 
+266	SERPINB5	Serpin Family B Member 5	Protein Coding	31.92	14996730 17536309 12430137 (more) 
+267	PRAC1	PRAC1 Small Nuclear Protein	Protein Coding	31.88	
+268	PSAT1	Phosphoserine Aminotransferase 1	Protein Coding	31.85	10897582 7535074 19533181 (more) 
+269	SPDEF	SAM Pointed Domain Containing ETS Transcription Factor	Protein Coding	31.65	17483333 10625666 17521701 (more) 
+270	MAK	Male Germ Cell Associated Kinase	Protein Coding	31.52	
+271	CREB3L4	CAMP Responsive Element Binding Protein 3 Like 4	Protein Coding	31.49	
+272	MAP2K1	Mitogen-Activated Protein Kinase Kinase 1	Protein Coding	31.46	15774218 15488643
+273	IL6R	Interleukin 6 Receptor	Protein Coding	31.38	12913106 18295256 12461182 (more) 
+274	KLK10	Kallikrein Related Peptidase 10	Protein Coding	31.28	9809976 16103744 11705853 (more) 
+275	CYCS	Cytochrome C, Somatic	Protein Coding	31.27	12419835 10786680 15467752 (more) 
+276	MAPK8	Mitogen-Activated Protein Kinase 8	Protein Coding	31.24	12538493 14766760 19178296 (more) 
+277	VEGFA	Vascular Endothelial Growth Factor A	Protein Coding	31.2	18814815 9146665 11856116 (more) 
+278	BIRC5	Baculoviral IAP Repeat Containing 5	Protein Coding	31.18	14770431 17134550 17615972 (more) 
+	BIRC5::MIR203A 46 	MIR203A Macro RNA (hsa-miR-203) targets BIRC5			
+279	E2F3	E2F Transcription Factor 3	Protein Coding	31.11	15184867 16909110 16938365 (more) 
+	E2F3::MIR34A 46 	MIR34A Macro RNA (hsa-miR-34a) targets E2F3			
+280	FGF2	Fibroblast Growth Factor 2	Protein Coding	31.11	8635036 15191726 10792180 (more) 
+281	FASN	Fatty Acid Synthase	Protein Coding	31.06	17904792 15543204 15609334 (more) 
+282	BAX	BCL2 Associated X, Apoptosis Regulator	Protein Coding	30.98	12515134 11571575 12655519 (more) 
+283	TRPV6	Transient Receptor Potential Cation Channel Subfamily V Member 6	Protein Coding	30.95	14586412 19857260 12869611 (more) 
+284	PLAUR	Plasminogen Activator, Urokinase Receptor	Protein Coding	30.91	15302576 16689831 10388537 (more) 
+285	KRT18	Keratin 18	Protein Coding	30.89	15129425 11254220 19152342 (more) 
+286	PTHLH	Parathyroid Hormone Like Hormone	Protein Coding	30.86	10606251 10898344 11742494 (more) 
+287	PIK3R1	Phosphoinositide-3-Kinase Regulatory Subunit 1	Protein Coding	30.83	18372911 16015604 18476967 (more) 
+288	MAPK3	Mitogen-Activated Protein Kinase 3	Protein Coding	30.77	9010448 19724911 9645439
+289	CLU	Clusterin	Protein Coding	30.74	11641613 19879420 16979705 (more) 
+290	GDF15	Growth Differentiation Factor 15	Protein Coding	30.67	17908975 18413810 15757899 (more) 
+291	CRISP3	Cysteine Rich Secretory Protein 3	Protein Coding	30.65	12433721 17634540 16388501
+292	HRAS	HRas Proto-Oncogene, GTPase	Protein Coding	30.63	10955786
+293	KRAS	KRAS Proto-Oncogene, GTPase	Protein Coding	30.5	19212633
+294	PDGFRB	Platelet Derived Growth Factor Receptor Beta	Protein Coding	30.44	20505768 17908974 15176001 (more) 
+295	URI1	URI1 Prefoldin Like Chaperone	Protein Coding	30.29	
+296	ALKBH3	AlkB Homolog 3, Alpha-Ketoglutarate Dependent Dioxygenase	Protein Coding	30.28	18077911 17968469 17970783 (more) 
+297	KRT8	Keratin 8	Protein Coding	30.16	1711687 11102954 7516071 (more) 
+298	CAV1	Caveolin 1	Protein Coding	29.93	15712208 12599229 11920460 (more) 
+299	AKT2	AKT Serine/Threonine Kinase 2	Protein Coding	29.93	20102399 16721361 20018812 (more) 
+300	TGFB1	Transforming Growth Factor Beta 1	Protein Coding	29.85	16078668 7850789 11064817 (more) 
+301	ST14	ST14 Transmembrane Serine Protease Matriptase	Protein Coding	29.85	18813126 18649738 16492908 (more) 
+302	ESR1	Estrogen Receptor 1	Protein Coding	29.84	10676656 12891629 15358197 (more) 
+303	FOXO1	Forkhead Box O1	Protein Coding	29.82	12351634 12482965 17597184 (more) 
+304	HSD17B1	Hydroxysteroid 17-Beta Dehydrogenase 1	Protein Coding	29.59	16311626 17507624
+305	PTK2	Protein Tyrosine Kinase 2	Protein Coding	29.58	18922979 14767470 15866427 (more) 
+306	CASP7	Caspase 7	Protein Coding	29.58	9865748 10786680 9927051 (more) 
+307	LYVE1	Lymphatic Vessel Endothelial Hyaluronan Receptor 1	Protein Coding	29.56	7512791 9032526 1710213 (more) 
+308	HYAL1	Hyaluronidase 1	Protein Coding	29.55	16140946 18718911 12084718 (more) 
+309	TP63	Tumor Protein P63	Protein Coding	29.48	19142959 19155438 18300803 (more) 
+310	VDR	Vitamin D Receptor	Protein Coding	29.4	9816072 7682937 8836163 (more) 
+311	IGF2	Insulin Like Growth Factor 2	Protein Coding	29.27	8855837 9809814 9671770 (more) 
+312	PAWR	Pro-Apoptotic WT1 Regulator	Protein Coding	29.24	19470463 19625770 15202013 (more) 
+313	ENO2	Enolase 2	Protein Coding	29.19	18452460 1715080 12932928 (more) 
+314	CCNB1	Cyclin B1	Protein Coding	29.09	10761703 17513602 14613989 (more) 
+315	CREBBP	CREB Binding Protein	Protein Coding	29.07	12507906 15635605 12239622 (more) 
+316	SPINT1	Serine Peptidase Inhibitor, Kunitz Type 1	Protein Coding	29	16353247 17786295 18813126 (more) 
+317	RAF1	Raf-1 Proto-Oncogene, Serine/Threonine Kinase	Protein Coding	28.95	15754006 15151133 12171880 (more) 
+318	PIK3CG	Phosphatidylinositol-4,5-Bisphosphate 3-Kinase Catalytic Subunit Gamma	Protein Coding	28.93	10362360 15548710 14743383 (more) 
+319	CDH2	Cadherin 2	Protein Coding	28.93	10487836 12095980 12526217 (more) 
+320	MKI67	Marker Of Proliferation Ki-67	Protein Coding	28.92	9457254 18312749 8751578 (more) 
+321	REPS2	RALBP1 Associated Eps Domain Containing 2	Protein Coding	28.89	15184881 15455380 15707977
+322	CREB1	CAMP Responsive Element Binding Protein 1	Protein Coding	28.89	20370681 15663358 19026724 (more) 
+323	FAS	Fas Cell Surface Death Receptor	Protein Coding	28.87	12939396 12782597 11340632 (more) 
+324	RELA	RELA Proto-Oncogene, NF-KB Subunit	Protein Coding	28.84	19664134 16205698
+325	TERT	Telomerase Reverse Transcriptase	Protein Coding	28.8	12467061 16515751 17712489 (more) 
+326	TNFSF11	TNF Superfamily Member 11	Protein Coding	28.79	18366009 19085839 18645583 (more) 
+327	MSMP	Microseminoprotein, Prostate Associated	Protein Coding	28.78	
+328	CHUK	Component Of Inhibitor Of Nuclear Factor Kappa B Kinase Complex	Protein Coding	28.75	17377533 15576374 17616684
+329	MIR335	MicroRNA 335	RNA Gene	28.66	
+330	FN1	Fibronectin 1	Protein Coding	28.59	
+331	ZEB1	Zinc Finger E-Box Binding Homeobox 1	Protein Coding	28.41	
+332	TSPY1	Testis Specific Protein Y-Linked 1	Protein Coding	28.39	11743352 16618725 10090875 (more) 
+333	ERBB3	Erb-B2 Receptor Tyrosine Kinase 3	Protein Coding	28.24	9590694 17634423 12888923 (more) 
+	ERBB3::MIR125A 46 	MIR125A Macro RNA (hsa-miR-125a) targets ERBB3			
+334	ALOX12	Arachidonate 12-Lipoxygenase, 12S Type	Protein Coding	28.12	14669797 10667391 17443494 (more) 
+335	PTGS2	Prostaglandin-Endoperoxide Synthase 2	Protein Coding	28.09	15907789 16597032 17609663 (more) 
+336	IKBKB	Inhibitor Of Nuclear Factor Kappa B Kinase Subunit Beta	Protein Coding	28.07	17000695 16052230 17616684
+337	GSK3B	Glycogen Synthase Kinase 3 Beta	Protein Coding	28.06	14985354 15178691
+338	MMP7	Matrix Metallopeptidase 7	Protein Coding	28.06	9783977 11494336 1848860 (more) 
+339	SETD2	SET Domain Containing 2, Histone Lysine Methyltransferase	Protein Coding	27.95	12070140 16678800 12213806 (more) 
+340	AKT3	AKT Serine/Threonine Kinase 3	Protein Coding	27.92	10419456 20102399 16721361
+341	INS	Insulin	Protein Coding	27.8	
+342	FGF7	Fibroblast Growth Factor 7	Protein Coding	27.71	8759054 11061946 10544296 (more) 
+343	MET	MET Proto-Oncogene, Receptor Tyrosine Kinase	Protein Coding	27.63	7639332 15274358 11948964 (more) 
+344	XIAP	X-Linked Inhibitor Of Apoptosis	Protein Coding	27.62	18259199 15595685 17947468 (more) 
+345	SKP2	S-Phase Kinase Associated Protein 2	Protein Coding	27.61	14960249 12855638 12188931 (more) 
+346	GNRHR	Gonadotropin Releasing Hormone Receptor	Protein Coding	27.52	19331222 16301116 16712461 (more) 
+347	SYT7	Synaptotagmin 7	Protein Coding	27.48	
+348	EGR1	Early Growth Response 1	Protein Coding	27.39	16552752 19885607 11567222 (more) 
+349	CCNA2	Cyclin A2	Protein Coding	27.35	11444193 10068341 8797586 (more) 
+350	PDPK1	3-Phosphoinositide Dependent Protein Kinase 1	Protein Coding	27.27	19822882
+351	HDAC9	Histone Deacetylase 9	Protein Coding	27.12	14729640 15447991 15389787 (more) 
+352	MCL1	MCL1 Apoptosis Regulator, BCL2 Family Member	Protein Coding	27.1	18691406 11781193 8623925 (more) 
+353	CFLAR	CASP8 And FADD Like Apoptosis Regulator	Protein Coding	27.09	17106251 15638938 19095249 (more) 
+354	BMP4	Bone Morphogenetic Protein 4	Protein Coding	27.08	16294272 8146069 16166304 (more) 
+355	KLK4	Kallikrein Related Peptidase 4	Protein Coding	27.06	17545602 12370833 16322328 (more) 
+356	ETS2	ETS Proto-Oncogene 2, Transcription Factor	Protein Coding	26.99	15314206 11114728
+357	ILK	Integrin Linked Kinase	Protein Coding	26.98	15704679 15870868 15782140 (more) 
+358	RHOA	Ras Homolog Family Member A	Protein Coding	26.96	15075243 19920825 16402387 (more) 
+359	GRB2	Growth Factor Receptor Bound Protein 2	Protein Coding	26.93	18645672
+360	PIAS3	Protein Inhibitor Of Activated STAT 3	Protein Coding	26.68	15138572 11071847
+361	TCHP	Trichoplein Keratin Filament Binding	Protein Coding	26.67	
+362	IGFBP2	Insulin Like Growth Factor Binding Protein 2	Protein Coding	26.64	9156044 9135695 7682560 (more) 
+363	PRKCE	Protein Kinase C Epsilon	Protein Coding	26.61	12616719
+364	ANXA5	Annexin A5	Protein Coding	26.44	18377872 11971968 16585199 (more) 
+365	PDGFRA	Platelet Derived Growth Factor Receptor Alpha	Protein Coding	26.41	18850002 20442296 16007172
+366	TCF7L2	Transcription Factor 7 Like 2	Protein Coding	26.4	18302196 12799378
+367	CDC25C	Cell Division Cycle 25C	Protein Coding	26.4	17936851 16000564 15961392 (more) 
+368	HSP90B1	Heat Shock Protein 90 Beta Family Member 1	Protein Coding	26.34	16204082
+369	TSG101	Tumor Susceptibility 101	Protein Coding	26.11	9444960 14991575 10505033 (more) 
+370	MMP3	Matrix Metallopeptidase 3	Protein Coding	26.01	
+371	MCAM	Melanoma Cell Adhesion Molecule	Protein Coding	25.94	11722842 18196513 14980717 (more) 
+372	COL18A1	Collagen Type XVIII Alpha 1 Chain	Protein Coding	25.89	
+373	ETV5	ETS Variant Transcription Factor 5	Protein Coding	25.87	
+374	EDNRB	Endothelin Receptor Type B	Protein Coding	25.84	8988036 16956712 16026642 (more) 
+375	TGFBR2	Transforming Growth Factor Beta Receptor 2	Protein Coding	25.83	9487120 14654931 18381416 (more) 
+	TGFBR2::MIR20A 46 	MIR20A Macro RNA (hsa-miR-20a) targets TGFBR2			
+376	AKR1C3	Aldo-Keto Reductase Family 1 Member C3	Protein Coding	25.81	18508192 19489685 17220347 (more) 
+377	HSPB1	Heat Shock Protein Family B (Small) Member 1	Protein Coding	25.74	8814840 16038406 11156417 (more) 
+378	SEMA4F	Ssemaphorin 4F	Protein Coding	25.73	
+379	CDK1	Cyclin Dependent Kinase 1	Protein Coding	25.71	17070313 17043241 15961392 (more) 
+380	CDH5	Cadherin 5	Protein Coding	25.68	
+381	DNMT1	DNA Methyltransferase 1	Protein Coding	25.55	16533763 11870882 11563853 (more) 
+382	PLK1	Polo Like Kinase 1	Protein Coding	25.55	15176053 17265445 14718382 (more) 
+383	INHA	Inhibin Subunit Alpha	Protein Coding	25.53	14665874 15451570 14765992 (more) 
+384	PDZD2	PDZ Domain Containing 2	Protein Coding	25.48	
+385	CYP19A1	Cytochrome P450 Family 19 Subfamily A Member 1	Protein Coding	25.45	14981949 18483761 11595700 (more) 
+386	SHBG	Sex Hormone Binding Globulin	Protein Coding	25.42	18339472 8757191 17514649 (more) 
+387	CCNG1	Cyclin G1	Protein Coding	25.35	10196184 11451350
+388	PDGFD	Platelet Derived Growth Factor D	Protein Coding	25.31	
+389	BGLAP	Bone Gamma-Carboxyglutamate Protein	Protein Coding	25.29	1385126 2180721 15781644 (more) 
+390	MMP14	Matrix Metallopeptidase 14	Protein Coding	25.29	14673954 12727852 18196535 (more) 
+391	ODC1	Ornithine Decarboxylase 1	Protein Coding	25.28	9570735 16103892 15378650 (more) 
+392	CCNE1	Cyclin E1	Protein Coding	25.24	
+393	PIK3CB	Phosphatidylinositol-4,5-Bisphosphate 3-Kinase Catalytic Subunit Beta	Protein Coding	25.21	
+394	TNFRSF10B	TNF Receptor Superfamily Member 10b	Protein Coding	25.2	17320696 11559570 18483298 (more) 
+395	ATM	ATM Serine/Threonine Kinase	Protein Coding	25.19	16997395 18634747 15629612 (more) 
+396	NFKB1	Nuclear Factor Kappa B Subunit 1	Protein Coding	25.19	
+397	GSTM1	Glutathione S-Transferase Mu 1	Protein Coding	25.16	15472409 16720291 18304461 (more) 
+398	HDAC1	Histone Deacetylase 1	Protein Coding	25.15	11563853 19252524 15042618 (more) 
+399	ALOX15B	Arachidonate 15-Lipoxygenase Type B	Protein Coding	25.1	11839751 20428779 12189136 (more) 
+400	CCN1	Cellular Communication Network Factor 1	Protein Coding	25.06	20172544 19180570 9655260 (more) 
+401	NCOA2	Nuclear Receptor Coactivator 2	Protein Coding	25.04	19240160 17079484 14871982 (more) 
+402	E2F2	E2F Transcription Factor 2	Protein Coding	25.04	
+403	UGT2B15	UDP Glucuronosyltransferase Family 2 Member B15	Protein Coding	25.04	15126881 9564848 17848572 (more) 
+404	GAPDH	Glyceraldehyde-3-Phosphate Dehydrogenase	Protein Coding	25.01	8650074 18651557 17553795 (more) 
+405	PDGFB	Platelet Derived Growth Factor Subunit B	Protein Coding	24.98	
+406	EIF3H	Eukaryotic Translation Initiation Factor 3 Subunit H	Protein Coding	24.93	11733359 14997205 10825005 (more) 
+407	CHKA	Choline Kinase Alpha	Protein Coding	24.91	19154451 18172309 15389786 (more) 
+408	PXN	Paxillin	Protein Coding	24.89	11478803 18449907 17329398 (more) 
+409	FOXO3	Forkhead Box O3	Protein Coding	24.81	12351634 17522055 15798096 (more) 
+410	CDK6	Cyclin Dependent Kinase 6	Protein Coding	24.8	15790678 18199714
+411	FLT4	Fms Related Receptor Tyrosine Kinase 4	Protein Coding	24.75	15880525 16044920 16197616 (more) 
+412	TPD52	Tumor Protein D52	Protein Coding	24.73	17418805 15172988 14996714 (more) 
+413	CTNND1	Catenin Delta 1	Protein Coding	24.71	17639504 16226102 14748788 (more) 
+414	ITGB4	Integrin Subunit Beta 4	Protein Coding	24.67	11026565 9563778 11170153 (more) 
+415	KDR	Kinase Insert Domain Receptor	Protein Coding	24.66	17018613 17013882 16197616 (more) 
+416	PRDX3	Peroxiredoxin 3	Protein Coding	24.64	
+417	VEGFC	Vascular Endothelial Growth Factor C	Protein Coding	24.63	10390013 16978291 18798279 (more) 
+418	RASSF1	Ras Association Domain Family Member 1	Protein Coding	24.62	12360410 15289848 17698033 (more) 
+419	NTS	Neurotensin	Protein Coding	24.61	10365121 16601285 9167771 (more) 
+420	LOX	Lysyl Oxidase	Protein Coding	24.61	8564968 15010818 19020742 (more) 
+421	TOP2A	DNA Topoisomerase II Alpha	Protein Coding	24.59	17363613 16556661 8712704 (more) 
+422	BMI1	BMI1 Proto-Oncogene, Polycomb Ring Finger	Protein Coding	24.57	16963837 17483039 17134822 (more) 
+423	CLDN7	Claudin 7	Protein Coding	24.54	
+424	UGT2B17	UDP Glucuronosyltransferase Family 2 Member B17	Protein Coding	24.46	17826523 18247404 16896035 (more) 
+425	TNFRSF11B	TNF Receptor Superfamily Member 11b	Protein Coding	24.44	15753366 15042606 11912131 (more) 
+426	LGALS3	Galectin 3	Protein Coding	24.39	19286570 11757037 16540661 (more) 
+427	TOP1	DNA Topoisomerase I	Protein Coding	24.34	11280753 17080014 18089815 (more) 
+428	PRKCA	Protein Kinase C Alpha	Protein Coding	24.33	14719062 7518003 11723237 (more) 
+429	CCNE2	Cyclin E2	Protein Coding	24.31	
+430	SMAD4	SMAD Family Member 4	Protein Coding	24.27	9285566 19288748 18213629 (more) 
+431	APC	APC Regulator Of WNT Signaling Pathway	Protein Coding	24.15	17947477 14743506 11251183 (more) 
+432	USP7	Ubiquitin Specific Peptidase 7	Protein Coding	24.14	
+433	ARAF	A-Raf Proto-Oncogene, Serine/Threonine Kinase	Protein Coding	24.09	
+434	SPP1	Secreted Phosphoprotein 1	Protein Coding	24.01	16424021 20501415 19010864 (more) 
+435	RARB	Retinoic Acid Receptor Beta	Protein Coding	24.01	16956712 15289848 9528984 (more) 
+436	SCAP	SREBF Chaperone	Protein Coding	24	15133039
+437	TIMP3	TIMP Metallopeptidase Inhibitor 3	Protein Coding	23.97	15623627 19798124 16950615 (more) 
+438	PCAT4	Prostate Cancer Associated Transcript 4	RNA Gene	23.95	
+439	TNFRSF10A	TNF Receptor Superfamily Member 10a	Protein Coding	23.93	11212279 17320696 18056199 (more) 
+440	FOS	Fos Proto-Oncogene, AP-1 Transcription Factor Subunit	Protein Coding	23.9	1714628 7522082 18381418 (more) 
+441	IKBKG	Inhibitor Of Nuclear Factor Kappa B Kinase Regulatory Subunit Gamma	Protein Coding	23.89	
+442	HGF	Hepatocyte Growth Factor	Protein Coding	23.88	12792760 11215208 18312940 (more) 
+443	PPARG	Peroxisome Proliferator Activated Receptor Gamma	Protein Coding	23.83	11034093 10984506 12767049 (more) 
+444	PROM1	Prominin 1	Protein Coding	23.83	17409422 20407603
+445	HOXB9	Homeobox B9	Protein Coding	23.82	
+446	NCOA3	Nuclear Receptor Coactivator 3	Protein Coding	23.81	16140970 19305643 18260363 (more) 
+447	SPANXD	SPANX Family Member D	Protein Coding	23.8	
+448	CIP2A	Cellular Inhibitor Of PP2A	Protein Coding	23.78	
+449	S100P	S100 Calcium Binding Protein P	Protein Coding	23.75	
+450	PMEPA1	Prostate Transmembrane Protein, Androgen Induced 1	Protein Coding	23.75	12907594 14639658
+451	FGF8	Fibroblast Growth Factor 8	Protein Coding	23.74	8891346 8645626 9525747 (more) 
+452	STEAP4	STEAP4 Metalloreductase	Protein Coding	23.74	
+453	CXCR4	C-X-C Motif Chemokine Receptor 4	Protein Coding	23.67	15240098 18983683 18431597 (more) 
+454	BRAF	B-Raf Proto-Oncogene, Serine/Threonine Kinase	Protein Coding	23.66	
+455	IBSP	Integrin Binding Sialoprotein	Protein Coding	23.6	14524533 15781644 9665149 (more) 
+456	HSD3B2	Hydroxy-Delta-5-Steroid Dehydrogenase, 3 Beta- And Steroid Delta-Isomerase 2	Protein Coding	23.59	17823934 9294620 19505920 (more) 
+457	KLK11	Kallikrein Related Peptidase 11	Protein Coding	23.56	10209959 11550212 15893744 (more) 
+458	TUSC3	Tumor Suppressor Candidate 3	Protein Coding	23.56	
+459	RARRES1	Retinoic Acid Receptor Responder 1	Protein Coding	23.54	
+460	KRT5	Keratin 5	Protein Coding	23.54	1711687 16512601 18257370
+461	WNT3A	Wnt Family Member 3A	Protein Coding	23.51	15604245 18724388
+	WNT3A::MIR15A 46 	MIR15A Macro RNA (hsa-miR-15a) targets WNT3A			
+	WNT3A::MIR16-1 46 	MIR16-1 Macro RNA (hsa-miR-16-1) targets WNT3A			
+462	FKBP5	FKBP Prolyl Isomerase 5	Protein Coding	23.48	15131019 15821585 20023700
+463	NOTCH1	Notch Receptor 1	Protein Coding	23.46	19147749 16230388 11585768 (more) 
+	NOTCH1::MIR23B 46 	MIR23B Macro RNA (hsa-miR-23b) targets NOTCH1			
+	NOTCH1::MIR27B 46 	MIR27B Macro RNA (hsa-miR-27b) targets NOTCH1			
+464	CXCL12	C-X-C Motif Chemokine Ligand 12	Protein Coding	23.45	18983683 17034033 15240098 (more) 
+	CXCL12::MIR23A 46 	MIR23A Macro RNA (hsa-miR-23a) targets CXCL12			
+465	PIK3R3	Phosphoinositide-3-Kinase Regulatory Subunit 3	Protein Coding	23.39	
+466	PRAC2	PRAC2 Small Nuclear Protein	Protein Coding	23.38	
+467	PLAT	Plasminogen Activator, Tissue Type	Protein Coding	23.37	
+468	XRCC1	X-Ray Repair Cross Complementing 1	Protein Coding	23.24	12643788 19428062 12433703 (more) 
+469	TGM4	Transglutaminase 4	Protein Coding	23.23	18983858 17552366 17244021 (more) 
+470	PIK3CD	Phosphatidylinositol-4,5-Bisphosphate 3-Kinase Catalytic Subunit Delta	Protein Coding	23.21	
+471	GLI1	GLI Family Zinc Finger 1	Protein Coding	23.17	20333644 19158486
+472	SP1	Sp1 Transcription Factor	Protein Coding	23.12	15708372 11336792 19017637 (more) 
+473	PIK3R2	Phosphoinositide-3-Kinase Regulatory Subunit 2	Protein Coding	23.06	
+474	NWD1	NACHT And WD Repeat Domain Containing 1	Protein Coding	23.02	
+475	HSP90AB1	Heat Shock Protein 90 Alpha Family Class B Member 1	Protein Coding	23	
+476	SHC1	SHC Adaptor Protein 1	Protein Coding	22.99	18504439 20111892 14696093 (more) 
+477	PEBP1	Phosphatidylethanolamine Binding Protein 1	Protein Coding	22.98	15565643 16175585 19779262 (more) 
+478	NTRK1	Neurotrophic Receptor Tyrosine Kinase 1	Protein Coding	22.98	17596848 16242838 11027413 (more) 
+479	HBEGF	Heparin Binding EGF Like Growth Factor	Protein Coding	22.95	9518259 14518027 10579352 (more) 
+480	EPCAM	Epithelial Cell Adhesion Molecule	Protein Coding	22.94	16404366 17516570 10810356
+481	STEAP3	STEAP3 Metalloreductase	Protein Coding	22.93	
+482	SOS1	SOS Ras/Rac Guanine Nucleotide Exchange Factor 1	Protein Coding	22.91	
+483	KDM4C	Lysine Demethylase 4C	Protein Coding	22.91	
+484	MIEN1	Migration And Invasion Enhancer 1	Protein Coding	22.88	
+485	CYP27B1	Cytochrome P450 Family 27 Subfamily B Member 1	Protein Coding	22.84	17932346 15947108 20147525 (more) 
+486	CCND2	Cyclin D2	Protein Coding	22.83	19577536 14581343 20418948 (more) 
+487	VAV3	Vav Guanine Nucleotide Exchange Factor 3	Protein Coding	22.83	18676865 16762975 18079321 (more) 
+488	HSPA5	Heat Shock Protein Family A (Hsp70) Member 5	Protein Coding	22.77	19097122 17062670 17640713 (more) 
+489	CSNK2A1	Casein Kinase 2 Alpha 1	Protein Coding	22.74	17044081 12738992 16489027 (more) 
+490	ANXA1	Annexin A1	Protein Coding	22.73	16324197 19351789 16741918 (more) 
+491	ELOC	Elongin C	Protein Coding	22.7	
+492	MAP2K2	Mitogen-Activated Protein Kinase Kinase 2	Protein Coding	22.69	
+493	BIRC2	Baculoviral IAP Repeat Containing 2	Protein Coding	22.67	15065090 19549337 11948968
+494	INTS6	Integrator Complex Subunit 6	Protein Coding	22.67	
+495	TNS4	Tensin 4	Protein Coding	22.65	
+496	IGSF8	Immunoglobulin Superfamily Member 8	Protein Coding	22.62	
+497	HMGN2P46	High Mobility Group Nucleosomal Binding Domain 2 Pseudogene 46	Pseudogene	22.61	
+498	CYP1B1	Cytochrome P450 Family 1 Subfamily B Member 1	Protein Coding	22.59	16115918 12200121 19919114 (more) 
+	CYP1B1::MIR27B 46 	MIR27B Macro RNA (hsa-miR-27b) targets CYP1B1			
+499	DIABLO	Diablo IAP-Binding Mitochondrial Protein	Protein Coding	22.59	12752217 19895686 16517140 (more) 
+500	RPS6KB1	Ribosomal Protein S6 Kinase B1	Protein Coding	22.58	12799464 17624310 19443706
+501	DKK1	Dickkopf WNT Signaling Pathway Inhibitor 1	Protein Coding	22.57	18453541
+502	BMP7	Bone Morphogenetic Protein 7	Protein Coding	22.52	17656261 15861517 19111825 (more) 
+503	RECK	Reversion Inducing Cysteine Rich Protein With Kazal Motifs	Protein Coding	22.49	16806661 17583418 15928670 (more) 
+504	JAK2	Janus Kinase 2	Protein Coding	22.48	15256446 14749471 20233708 (more) 
+	JAK2::MIR375 46 	MIR375 Macro RNA (hsa-miR-375) targets JAK2			
+505	NR3C1	Nuclear Receptor Subfamily 3 Group C Member 1	Protein Coding	22.46	11717335 17062674 11357055 (more) 
+506	CYP24A1	Cytochrome P450 Family 24 Subfamily A Member 1	Protein Coding	22.41	12270218 12485911 17368180 (more) 
+507	ITGB1	Integrin Subunit Beta 1	Protein Coding	22.4	11205242 8878413 9135498 (more) 
+508	CYP1A1	Cytochrome P450 Family 1 Subfamily A Member 1	Protein Coding	22.38	14743400 18304461 16466991 (more) 
+509	FASLG	Fas Ligand	Protein Coding	22.33	17875776 11585763 18790782 (more) 
+510	EDNRA	Endothelin Receptor Type A	Protein Coding	22.27	17368711 12193141 17656249 (more) 
+511	RCN1	Reticulocalbin 1	Protein Coding	22.21	
+512	FGF1	Fibroblast Growth Factor 1	Protein Coding	22.21	14673954 11146443 9777371 (more) 
+513	BCL2L11	BCL2 Like 11	Protein Coding	22.19	12019181 15767553 12629510
+514	HSD3B1	Hydroxy-Delta-5-Steroid Dehydrogenase, 3 Beta- And Steroid Delta-Isomerase 1	Protein Coding	22.16	11912155 19505920
+515	BAK1	BCL2 Antagonist/Killer 1	Protein Coding	22.14	16794010 17062688 9815595 (more) 
+516	LPXN	Leupaxin	Protein Coding	22.12	
+517	TNFRSF10D	TNF Receptor Superfamily Member 10d	Protein Coding	22.11	17853923 11212279 16541419 (more) 
+518	CDH11	Cadherin 11	Protein Coding	22.1	18708358 20484040 10910081 (more) 
+519	STK4	Serine/Threonine Kinase 4	Protein Coding	22.09	
+520	H2AC18	H2A Clustered Histone 18	Protein Coding	22.09	
+521	PCNA	Proliferating Cell Nuclear Antigen	Protein Coding	22.02	14748788 1360498 15555337 (more) 
+522	FADD	Fas Associated Via Death Domain	Protein Coding	22.02	19955841 15906275 18196534 (more) 
+523	CREB5	CAMP Responsive Element Binding Protein 5	Protein Coding	22.01	
+524	MME	Membrane Metalloendopeptidase	Protein Coding	22.01	17083125 19047112 15217945 (more) 
+525	IL6	Interleukin 6	Protein Coding	22	
+526	TCF7L1	Transcription Factor 7 Like 1	Protein Coding	21.97	
+527	EZR	Ezrin	Protein Coding	21.96	16230228 18459457 15028477 (more) 
+528	CREB3	CAMP Responsive Element Binding Protein 3	Protein Coding	21.93	
+529	BMX	BMX Non-Receptor Tyrosine Kinase	Protein Coding	21.93	16912182 15355990 9520419 (more) 
+530	ERBB4	Erb-B2 Receptor Tyrosine Kinase 4	Protein Coding	21.92	17922460 17440944 9072304 (more) 
+531	EEF1A1	Eukaryotic Translation Elongation Factor 1 Alpha 1	Protein Coding	21.91	16707856 8988032 18853312 (more) 
+532	PRKD1	Protein Kinase D1	Protein Coding	21.89	12859948 17979146 19767773 (more) 
+533	ID1	Inhibitor Of DNA Binding 1, HLH Protein	Protein Coding	21.89	18752043 20388787 20186495 (more) 
+534	JAK1	Janus Kinase 1	Protein Coding	21.86	10660600 14749471 16102578 (more) 
+535	HSPA4	Heat Shock Protein Family A (Hsp70) Member 4	Protein Coding	21.86	17114456 17079215 15764345 (more) 
+536	TGIF1	TGFB Induced Factor Homeobox 1	Protein Coding	21.83	1650622 7974525 9486855 (more) 
+537	BIRC3	Baculoviral IAP Repeat Containing 3	Protein Coding	21.83	19549337 12269771 11948968
+538	NCOR1	Nuclear Receptor Corepressor 1	Protein Coding	21.83	16886664 14744261 16373395
+539	SOD2	Superoxide Dismutase 2	Protein Coding	21.8	18784358 19647296 19528373 (more) 
+540	DMTN	Dematin Actin Binding Protein	Protein Coding	21.79	10565303
+541	AGR3	Anterior Gradient 3, Protein Disulphide Isomerase Family Member	Protein Coding	21.76	
+542	AKR1C2	Aldo-Keto Reductase Family 1 Member C2	Protein Coding	21.76	17283174 12539226 18508192 (more) 
+543	TWIST1	Twist Family BHLH Transcription Factor 1	Protein Coding	21.71	15958559 17394502 18453541
+544	RDH11	Retinol Dehydrogenase 11	Protein Coding	21.67	
+545	ANXA2	Annexin A2	Protein Coding	21.66	18636554 12629510 18924133 (more) 
+546	RUNX2	RUNX Family Transcription Factor 2	Protein Coding	21.65	19509141 19915614 18453541 (more) 
+547	SOS2	SOS Ras/Rho Guanine Nucleotide Exchange Factor 2	Protein Coding	21.62	
+548	NCOR2	Nuclear Receptor Corepressor 2	Protein Coding	21.62	15300237 15948728 17804755 (more) 
+549	THBS1	Thrombospondin 1	Protein Coding	21.6	11856116 15180634 11228532 (more) 
+550	AREG	Amphiregulin	Protein Coding	21.55	8049525 19735466 18023415 (more) 
+551	MAP2K4	Mitogen-Activated Protein Kinase Kinase 4	Protein Coding	21.53	11306453 17577251 18337456 (more) 
+552	FLT1	Fms Related Receptor Tyrosine Kinase 1	Protein Coding	21.51	18814815 19385972 16197616 (more) 
+553	LGALS1	Galectin 1	Protein Coding	21.51	17616672 16607379 9917496 (more) 
+554	F2R	Coagulation Factor II Thrombin Receptor	Protein Coding	21.46	14716737 16245281 12429291 (more) 
+555	MAPK14	Mitogen-Activated Protein Kinase 14	Protein Coding	21.46	17531530 12589052 18337475 (more) 
+556	BMP2	Bone Morphogenetic Protein 2	Protein Coding	21.4	16391828 18512729 19811499 (more) 
+557	AGK	Acylglycerol Kinase	Protein Coding	21.35	19549252 16246119 15939762
+558	PCAT19	Prostate Cancer Associated Transcript 19	RNA Gene	21.32	
+559	SAT1	Spermidine/Spermine N1-Acetyltransferase 1	Protein Coding	21.28	15096507
+560	MIRLET7A1	MicroRNA Let-7a-1	RNA Gene	21.27	
+561	IGFBP1	Insulin Like Growth Factor Binding Protein 1	Protein Coding	21.26	12746292 11352850 20166103 (more) 
+562	NDRG1	N-Myc Downstream Regulated 1	Protein Coding	21.26	14734473 16920733 19622774
+563	TUBB	Tubulin Beta Class I	Protein Coding	21.25	18957327 19947927 19690549 (more) 
+564	SPINK1	Serine Peptidase Inhibitor Kazal Type 1	Protein Coding	21.25	17306443 20442300 18538735 (more) 
+565	EIF4EBP1	Eukaryotic Translation Initiation Factor 4E Binding Protein 1	Protein Coding	21.24	17440067 16652388 19383915
+566	NCOA1	Nuclear Receptor Coactivator 1	Protein Coding	21.22	19305643 19255064 15027889 (more) 
+567	ABCG2	ATP Binding Cassette Subfamily G Member 2 (Junior Blood Group)	Protein Coding	21.22	18056989 18710444 16061644
+568	TNK2	Tyrosine Kinase Non Receptor 2	Protein Coding	21.21	17494760 18190847 16288044
+569	CTSB	Cathepsin B	Protein Coding	21.2	15330217 10652560 11536307 (more) 
+570	IFI27	Interferon Alpha Inducible Protein 27	Protein Coding	21.2	17938263 20208355 10066070 (more) 
+571	NPM1	Nucleophosmin 1	Protein Coding	21.14	10344220 17549383 7511264 (more) 
+572	SMAD2	SMAD Family Member 2	Protein Coding	21.13	12853969
+573	KLK6	Kallikrein Related Peptidase 6	Protein Coding	21.12	12218299 14696124 12142373
+574	CALR	Calreticulin	Protein Coding	21.08	19608864 10213498 10229657
+575	CDKN2B	Cyclin Dependent Kinase Inhibitor 2B	Protein Coding	21.07	10797499 20021940 9112579 (more) 
+576	TIMP2	TIMP Metallopeptidase Inhibitor 2	Protein Coding	21.07	17847032 9174126 15999602 (more) 
+577	ITGA2	Integrin Subunit Alpha 2	Protein Coding	21.06	19424590 11918080 9009105
+578	SPOP	Speckle Type BTB/POZ Protein	Protein Coding	21.04	
+579	MAPK9	Mitogen-Activated Protein Kinase 9	Protein Coding	21.03	12538493 12633850
+580	NME1	NME/NM23 Nucleoside Diphosphate Kinase 1	Protein Coding	21.03	10072163 9394845 7510345 (more) 
+581	FST	Follistatin	Protein Coding	21.01	10081911 9360551 8940339 (more) 
+582	FOXA1	Forkhead Box A1	Protein Coding	20.95	
+583	SNAI1	Snail Family Transcriptional Repressor 1	Protein Coding	20.93	
+584	WDR77	WD Repeat Domain 77	Protein Coding	20.92	
+585	RAC1	Rac Family Small GTPase 1	Protein Coding	20.9	19242540 15077174 20203103 (more) 
+586	TGFB2	Transforming Growth Factor Beta 2	Protein Coding	20.89	9000208 8274428 9316654 (more) 
+587	NOG	Noggin	Protein Coding	20.88	18931653 17200191 19111821 (more) 
+588	LIMK1	LIM Domain Kinase 1	Protein Coding	20.86	12821664 15908432 18424072 (more) 
+589	GLIPR1	GLI Pathogenesis Related 1	Protein Coding	20.85	
+590	CDKN2A	Cyclin Dependent Kinase Inhibitor 2A	Protein Coding	20.8	
+591	TNF	Tumor Necrosis Factor	Protein Coding	20.78	
+592	SMAD3	SMAD Family Member 3	Protein Coding	20.76	17908958 16597033 19255064 (more) 
+593	PIAS1	Protein Inhibitor Of Activated STAT 1	Protein Coding	20.74	14871982
+594	CXCL8	C-X-C Motif Chemokine Ligand 8	Protein Coding	20.74	
+595	NRP1	Neuropilin 1	Protein Coding	20.74	19817889 15161648 16322239 (more) 
+596	RARS1	Arginyl-TRNA Synthetase 1	Protein Coding	20.7	10068347 15266311 10623701
+597	ALCAM	Activated Leukocyte Cell Adhesion Molecule	Protein Coding	20.68	12481253 18279810 15509676 (more) 
+598	SSTR1	Somatostatin Receptor 1	Protein Coding	20.67	9253335 12743527
+599	MIF	Macrophage Migration Inhibitory Factor	Protein Coding	20.63	11920501 17142775 16328065 (more) 
+600	RELB	RELB Proto-Oncogene, NF-KB Subunit	Protein Coding	20.59	16261162 19351823
+601	WNT5A	Wnt Family Member 5A	Protein Coding	20.56	20101234
+602	PTGS1	Prostaglandin-Endoperoxide Synthase 1	Protein Coding	20.52	11310211 11069387 15546559 (more) 
+603	GREB1	Growth Regulating Estrogen Receptor Binding 1	Protein Coding	20.51	
+604	NGFR	Nerve Growth Factor Receptor	Protein Coding	20.5	16912916 15517907 17302525 (more) 
+605	ANXA3	Annexin A3	Protein Coding	20.48	18222597 19012935 20218320 (more) 
+606	NFE2L2	Nuclear Factor, Erythroid 2 Like 2	Protein Coding	20.46	20124447 18372916
+607	CYP3A4	Cytochrome P450 Family 3 Subfamily A Member 4	Protein Coding	20.41	15496535 9719084 18163429 (more) 
+608	KAT5	Lysine Acetyltransferase 5	Protein Coding	20.33	19938016 18397884 15947099 (more) 
+609	ETS1	ETS Proto-Oncogene 1, Transcription Factor	Protein Coding	20.3	15693893
+610	CD36	CD36 Molecule	Protein Coding	20.3	17349550 16951179 19111827 (more) 
+611	CCL5	C-C Motif Chemokine Ligand 5	Protein Coding	20.3	16161154 19099590
+612	TBC1D3	TBC1 Domain Family Member 3	Protein Coding	20.28	
+613	NQO1	NAD(P)H Quinone Dehydrogenase 1	Protein Coding	20.27	11279125 1637346 12750552 (more) 
+614	MIR124-1	MicroRNA 124-1	RNA Gene	20.25	
+615	PRKD3	Protein Kinase D3	Protein Coding	20.24	
+616	CXCL1	C-X-C Motif Chemokine Ligand 1	Protein Coding	20.21	10329603 16934957
+617	STAT1	Signal Transducer And Activator Of Transcription 1	Protein Coding	20.18	14656722 14871982 16652143
+618	SNAI2	Snail Family Transcriptional Repressor 2	Protein Coding	20.16	
+619	STAT5A	Signal Transducer And Activator Of Transcription 5A	Protein Coding	20.15	15256446 16115927 20233708 (more) 
+620	CTAG2	Cancer/Testis Antigen 2	Protein Coding	20.14	
+621	STAT5B	Signal Transducer And Activator Of Transcription 5B	Protein Coding	20.1	12719422 14695191 16862179
+622	HSPA1A	Heat Shock Protein Family A (Hsp70) Member 1A	Protein Coding	20.07	20043082 15735699 11471985
+623	WNT1	Wnt Family Member 1	Protein Coding	20.06	15316903
+624	ELK1	ETS Transcription Factor ELK1	Protein Coding	20.05	18712680 16369914
+625	EIF4E	Eukaryotic Translation Initiation Factor 4E	Protein Coding	20.03	19383915 18809972 20049173 (more) 
+626	ERCC1	ERCC Excision Repair 1, Endonuclease Non-Catalytic Subunit	Protein Coding	20	18332046 11682011 16315315 (more) 
+627	CSF2	Colony Stimulating Factor 2	Protein Coding	19.99	
+628	CD274	CD274 Molecule	Protein Coding	19.97	
+629	DHRS9	Dehydrogenase/Reductase 9	Protein Coding	19.95	18923939 12539226 18320593
+630	RAD51	RAD51 Recombinase	Protein Coding	19.94	20002770 10344722
+631	DNMT3B	DNA Methyltransferase 3 Beta	Protein Coding	19.93	16012746 18637271 17938735 (more) 
+632	SCGB1D1	Secretoglobin Family 1D Member 1	Protein Coding	19.91	
+633	TFAP2A	Transcription Factor AP-2 Alpha	Protein Coding	19.89	10765096 11751506 15580298 (more) 
+634	CDC6	Cell Division Cycle 6	Protein Coding	19.88	19520769 18541154 19107233 (more) 
+635	EPHA2	EPH Receptor A2	Protein Coding	19.88	10544301 19264906 14633601 (more) 
+636	APAF1	Apoptotic Peptidase Activating Factor 1	Protein Coding	19.87	12804598 16920735
+637	NR1H2	Nuclear Receptor Subfamily 1 Group H Member 2	Protein Coding	19.87	10440698 15663994 15703837 (more) 
+638	CPA4	Carboxypeptidase A4	Protein Coding	19.87	
+639	ENG	Endoglin	Protein Coding	19.86	19004009 11987155 15175661 (more) 
+640	ADAM9	ADAM Metallopeptidase Domain 9	Protein Coding	19.84	17018608 18061337 16230393 (more) 
+641	IGFBP7	Insulin Like Growth Factor Binding Protein 7	Protein Coding	19.83	14633696 10344746 10383131 (more) 
+642	IRS1	Insulin Receptor Substrate 1	Protein Coding	19.79	18615538 18264722 12019176 (more) 
+643	SOX2	SRY-Box Transcription Factor 2	Protein Coding	19.77	
+644	MIR301A	MicroRNA 301a	RNA Gene	19.76	
+645	STMN1	Stathmin 1	Protein Coding	19.75	7638082 17172428 16373697 (more) 
+646	ALB	Albumin	Protein Coding	19.75	
+647	XRCC6	X-Ray Repair Cross Complementing 6	Protein Coding	19.73	17545612
+648	PGR	Progesterone Receptor	Protein Coding	19.72	
+649	ETV4	ETS Variant Transcription Factor 4	Protein Coding	19.69	
+650	MSH2	MutS Homolog 2	Protein Coding	19.68	16908935 12684669
+651	GPER1	G Protein-Coupled Estrogen Receptor 1	Protein Coding	19.68	
+652	PI16	Peptidase Inhibitor 16	Protein Coding	19.67	
+653	TNFRSF10C	TNF Receptor Superfamily Member 10c	Protein Coding	19.65	16541419 14999791
+654	NOS3	Nitric Oxide Synthase 3	Protein Coding	19.64	18823560 18398039 16458450 (more) 
+655	ID4	Inhibitor Of DNA Binding 4, HLH Protein	Protein Coding	19.63	19500415 16106424
+656	CDH13	Cadherin 13	Protein Coding	19.63	20067451
+657	TTLL12	Tubulin Tyrosine Ligase Like 12	Protein Coding	19.61	
+658	JUP	Junction Plakoglobin	Protein Coding	19.61	15781623 17639504 17155983 (more) 
+659	SMARCA4	SWI/SNF Related, Matrix Associated, Actin Dependent Regulator Of Chromatin, Subfamily A, Member 4	Protein Coding	19.61	12684665 17075831 18336616
+660	CXCR2	C-X-C Motif Chemokine Receptor 2	Protein Coding	19.58	15930347 17533374 16679868
+661	SPARC	Secreted Protein Acidic And Cysteine Rich	Protein Coding	19.55	17638862 10485497 16103089 (more) 
+662	GHRH	Growth Hormone Releasing Hormone	Protein Coding	19.53	12364462 11920625 11494334 (more) 
+663	NAB2	NGFI-A Binding Protein 2	Protein Coding	19.53	11567222 16956712
+664	ALOX5	Arachidonate 5-Lipoxygenase	Protein Coding	19.48	14975747 12859962 9199209 (more) 
+665	VIPR1	Vasoactive Intestinal Peptide Receptor 1	Protein Coding	19.47	15870945 7562054 18077536
+666	IL2	Interleukin 2	Protein Coding	19.47	
+667	IL10	Interleukin 10	Protein Coding	19.46	
+668	LINC01194	Long Intergenic Non-Protein Coding RNA 1194	RNA Gene	19.45	16457651 17982114 10713685
+669	CDC20	Cell Division Cycle 20	Protein Coding	19.44	14710249
+670	ARNT	Aryl Hydrocarbon Receptor Nuclear Translocator	Protein Coding	19.42	11394885 14971642 17213816
+671	TGFBR1	Transforming Growth Factor Beta Receptor 1	Protein Coding	19.42	18951571 9633523 16887915
+672	SCGB1D2	Secretoglobin Family 1D Member 2	Protein Coding	19.41	
+673	MSH6	MutS Homolog 6	Protein Coding	19.4	18355840
+674	MUC1	Mucin 1, Cell Surface Associated	Protein Coding	19.38	
+675	ATF3	Activating Transcription Factor 3	Protein Coding	19.38	18755691 16516039 17178897 (more) 
+676	FES	FES Proto-Oncogene, Tyrosine Kinase	Protein Coding	19.37	
+677	CISH	Cytokine Inducible SH2 Containing Protein	Protein Coding	19.35	16529812 12765682 15138280 (more) 
+678	PRLR	Prolactin Receptor	Protein Coding	19.35	10614630 16989600 20053995
+679	CASP6	Caspase 6	Protein Coding	19.34	20437871 16322271
+680	TIMELESS	Timeless Circadian Regulator	Protein Coding	19.34	
+681	AURKA	Aurora Kinase A	Protein Coding	19.34	
+682	CCL2	C-C Motif Chemokine Ligand 2	Protein Coding	19.29	
+683	YY1	YY1 Transcription Factor	Protein Coding	19.27	15942652 16784892 17134822 (more) 
+684	IRX5	Iroquois Homeobox 5	Protein Coding	19.27	
+685	YBX1	Y-Box Binding Protein 1	Protein Coding	19.27	15042610 19930682 19318582
+686	CD59	CD59 Molecule (CD59 Blood Group)	Protein Coding	19.27	15389793 9185710 19116988 (more) 
+687	IL1B	Interleukin 1 Beta	Protein Coding	19.26	
+688	ATF4	Activating Transcription Factor 4	Protein Coding	19.24	
+689	POU5F1	POU Class 5 Homeobox 1	Protein Coding	19.22	
+690	SSTR2	Somatostatin Receptor 2	Protein Coding	19.19	9253335 12210479 10407215 (more) 
+691	MCM2	Minichromosome Maintenance Complex Component 2	Protein Coding	19.18	20332239
+692	SFRP1	Secreted Frizzled Related Protein 1	Protein Coding	19.17	19277043 16288033
+693	CASP2	Caspase 2	Protein Coding	19.16	16849572 18615564 17110788 (more) 
+694	SSTR5	Somatostatin Receptor 5	Protein Coding	19.15	9253335 19423539
+695	MIR212	MicroRNA 212	RNA Gene	19.15	
+696	SIRT1	Sirtuin 1	Protein Coding	19.1	
+	SIRT1::MIR34A 46 	MIR34A Macro RNA (hsa-miR-34a) targets SIRT1			
+697	WNT2	Wnt Family Member 2	Protein Coding	19.08	1650622 11476942 14517837 (more) 
+698	PKIB	CAMP-Dependent Protein Kinase Inhibitor Beta	Protein Coding	19.07	
+699	EPHA3	EPH Receptor A3	Protein Coding	19.01	12589052 18794135 11371939 (more) 
+700	BNIP3	BCL2 Interacting Protein 3	Protein Coding	18.99	20332243 20437871 18163427
+	BNIP3::MIR145 46 	MIR145 Macro RNA (hsa-miR-145) targets BNIP3			
+701	KLF5	Kruppel Like Factor 5	Protein Coding	18.97	12661032 18774944 19460858
+702	TBC1D3D	TBC1 Domain Family Member 3D	Protein Coding	18.96	
+703	TCF7	Transcription Factor 7	Protein Coding	18.96	
+704	NANOG	Nanog Homeobox	Protein Coding	18.95	
+705	SPHK1	Sphingosine Kinase 1	Protein Coding	18.95	19956567 16357178 19372554 (more) 
+706	AHR	Aryl Hydrocarbon Receptor	Protein Coding	18.94	20140206 11891538 15830838 (more) 
+707	CCND3	Cyclin D3	Protein Coding	18.94	18317945 18199714 18084330
+708	ITGB3	Integrin Subunit Beta 3	Protein Coding	18.93	18512729 19414838
+709	CTCF	CCCTC-Binding Factor	Protein Coding	18.92	
+710	ZNF280B	Zinc Finger Protein 280B	Protein Coding	18.91	
+711	SELENBP1	Selenium Binding Protein 1	Protein Coding	18.91	
+712	GHR	Growth Hormone Receptor	Protein Coding	18.9	10200341 7628369 1754517 (more) 
+713	SREBF1	Sterol Regulatory Element Binding Transcription Factor 1	Protein Coding	18.89	18774944 20071336 15026365
+714	SYP	Synaptophysin	Protein Coding	18.88	
+715	XAGE1B	X Antigen Family Member 1B	Protein Coding	18.86	
+716	SLC5A8	Solute Carrier Family 5 Member 8	Protein Coding	18.85	
+717	TNFRSF11A	TNF Receptor Superfamily Member 11a	Protein Coding	18.84	16752412 18008334 16005175 (more) 
+718	GPX1	Glutathione Peroxidase 1	Protein Coding	18.84	18563616 17548672 12496980 (more) 
+719	BTNL2	Butyrophilin Like 2	Protein Coding	18.82	
+720	NES	Nestin	Protein Coding	18.82	17909025 20127735
+721	BMPR2	Bone Morphogenetic Protein Receptor Type 2	Protein Coding	18.81	17203235 10850425 18922975 (more) 
+722	MMP1	Matrix Metallopeptidase 1	Protein Coding	18.81	
+723	CYP3A5	Cytochrome P450 Family 3 Subfamily A Member 5	Protein Coding	18.81	15876487 17914095 18566991 (more) 
+724	MAPK7	Mitogen-Activated Protein Kinase 7	Protein Coding	18.8	18071319 19855844 17406359
+725	MMP13	Matrix Metallopeptidase 13	Protein Coding	18.8	15138554 12664060 15623660 (more) 
+726	GJA1	Gap Junction Protein Alpha 1	Protein Coding	18.79	16652385 11792947 17641845 (more) 
+727	SOCS3	Suppressor Of Cytokine Signaling 3	Protein Coding	18.78	20335309 19634073 19738059 (more) 
+728	CTNNA1	Catenin Alpha 1	Protein Coding	18.78	11272805 14666968 18566211 (more) 
+729	XAGE1A	X Antigen Family Member 1A	Protein Coding	18.78	
+730	GPR68	G Protein-Coupled Receptor 68	Protein Coding	18.77	
+731	INSRR	Insulin Receptor Related Receptor	Protein Coding	18.75	
+732	KAT2B	Lysine Acetyltransferase 2B	Protein Coding	18.73	17627840
+733	CHD1	Chromodomain Helicase DNA Binding Protein 1	Protein Coding	18.73	
+734	DDIT3	DNA Damage Inducible Transcript 3	Protein Coding	18.73	9365549
+735	PMS2	PMS1 Homolog 2, Mismatch Repair System Component	Protein Coding	18.73	17044039 12684669
+736	PSAP	Prosaposin	Protein Coding	18.73	16080200 17044040 15897971 (more) 
+737	SERPINB10	Serpin Family B Member 10	Protein Coding	18.72	
+738	KDM1A	Lysine Demethylase 1A	Protein Coding	18.7	
+739	PHB	Prohibitin	Protein Coding	18.7	19725029 16733518 16964284 (more) 
+740	FHL2	Four And A Half LIM Domains 2	Protein Coding	18.7	15948728 17975004 17145880
+741	COX6C	Cytochrome C Oxidase Subunit 6C	Protein Coding	18.69	
+742	AKR1C4	Aldo-Keto Reductase Family 1 Member C4	Protein Coding	18.69	9415401 18320593
+743	SHH	Sonic Hedgehog Signaling Molecule	Protein Coding	18.68	
+744	SQSTM1	Sequestosome 1	Protein Coding	18.66	14613989 15538718 16405664
+745	TLR4	Toll Like Receptor 4	Protein Coding	18.66	
+746	MIR200C	MicroRNA 200c	RNA Gene	18.66	
+747	SOCS1	Suppressor Of Cytokine Signaling 1	Protein Coding	18.65	19342366
+748	SST	Somatostatin	Protein Coding	18.65	
+749	DUSP1	Dual Specificity Phosphatase 1	Protein Coding	18.64	10544965 9010448 19530895 (more) 
+750	CD151	CD151 Molecule (Raph Blood Group)	Protein Coding	18.63	15533898
+751	PLG	Plasminogen	Protein Coding	18.61	16678057 11555588 12431818 (more) 
