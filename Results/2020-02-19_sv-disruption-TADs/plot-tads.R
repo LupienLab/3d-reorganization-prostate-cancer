@@ -40,12 +40,12 @@ gg <- (
         colour = "white",
         position = position_stack(vjust = 0.5)
     )
-    + labs(x = "SV affects TAD boundaries", y = "Count")
+    + labs(x = NULL, y = "Breakpoints affecting\nTAD boundaries")
     + guides(fill = FALSE)
     + scale_fill_manual(
         breaks = c(TRUE, FALSE),
         labels = c("Yes", "No"),
-        values = c("#000000", "#BDBDBD")
+        values = c("#000000", "#AEA28E")
     )
     + theme_minimal()
     + theme(
@@ -55,7 +55,7 @@ gg <- (
         panel.grid.major.x = element_blank()
     )
 )
-savefig(gg, "Plots/tads.count", width = 6)
+savefig(gg, "Plots/tads.count", width = 5, height = 5.5)
 
 # ==============================================================================
 # Save data
