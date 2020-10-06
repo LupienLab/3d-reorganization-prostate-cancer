@@ -126,9 +126,9 @@ gg_bounds_persistence <- (
     + geom_col(aes(x = Persistence, y = N, fill = Type, group = SampleID), position = "dodge")
     + labs(x = "Boundary Persistence", y = "Number of unique boundaries")
     + scale_x_discrete(
-        breaks = c(1, 6, 11, 16, MAX_PERSISTENCE),
-        limits = c(1, 6, 11, 16, MAX_PERSISTENCE),
-        labels = c(1, 6, 11, 16, MAX_PERSISTENCE)
+        breaks = seq(1, MAX_PERSISTENCE, length.out = 4),
+        limits = seq(1, MAX_PERSISTENCE, length.out = 4),
+        labels = seq(1, MAX_PERSISTENCE, length.out = 4)
     )
     + scale_fill_manual(
         limits = c("Benign", "Malignant"),

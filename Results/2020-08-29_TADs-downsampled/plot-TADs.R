@@ -48,7 +48,7 @@ PRIMARY_SAMPLES <- metadata[Source == "Primary", SampleID]
 
 # load TADs
 tads <- rbindlist(lapply(
-    SAMPLES,
+    PRIMARY_SAMPLES,
     function(s) {
         dt <- fread(
             file.path("Aggregated-TADs", paste0(s, ".300000000.res_", RESOLUTION, "bp.agg-domains.tsv")),
@@ -80,27 +80,27 @@ tads_median_size <- tads[, median(width), by = c("SampleID", "w")]
 tads_madm <- tads_median_size[, median(abs(V1 - median(V1))), by = "w"]
 
 # ECDFs number of TADs of a given width
-tad_size_ecdf <- rbindlist(lapply(
-    PRIMARY_SAMPLES,
-    function(s) {
-        rbindlist(lapply(
-            seq(MIN_WINDOW, MAX_WINDOW, 1),
-            function(window) {
-                f <- ecdf(tads[SampleID == s & w == window, width])
-                return(data.table(
-                    SampleID = s,
-                    w = window,
-                    x = seq(0, 5e6, 4e4),
-                    y = f(seq(0, 5e6, 4e4))
-                ))
-            }
-        ))
-    }
-))
-
-tad_size_ecdf_est <- tad_size_ecdf[, .(Mean = mean(y), SD = sd(y)), by = c("w", "x")]
-tad_size_ecdf_est[, Lower := Mean - SD]
-tad_size_ecdf_est[, Upper := Mean + SD]
+# tad_size_ecdf <- rbindlist(lapply(
+#     PRIMARY_SAMPLES,
+#     function(s) {
+#         rbindlist(lapply(
+#             seq(MIN_WINDOW, MAX_WINDOW, 1),
+#             function(window) {
+#                 f <- ecdf(tads[SampleID == s & w == window, width])
+#                 return(data.table(
+#                     SampleID = s,
+#                     w = window,
+#                     x = seq(0, 5e6, 4e4),
+#                     y = f(seq(0, 5e6, 4e4))
+#                 ))
+#             }
+#         ))
+#     }
+# ))
+# 
+# tad_size_ecdf_est <- tad_size_ecdf[, .(Mean = mean(y), SD = sd(y)), by = c("w", "x")]
+# tad_size_ecdf_est[, Lower := Mean - SD]
+# tad_size_ecdf_est[, Upper := Mean + SD]
 
 
 # ==============================================================================
@@ -172,11 +172,15 @@ gg_tad_counts <- (
         outlier.shape = NA,
         alpha = 0.3
     )
-    + labs(x = "Window size", y = "Number of TADs")
     + scale_x_discrete(
         breaks = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5),
         limits = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5),
-        labels = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5)
+        labels = seq(MIN_WINDOW, MAX_WINDOW, length.out = 5),
+        name = "Window size"
+    )
+    + scale_y_continuous(
+          limits = c(0, 6500),
+          name = "Number of TADs"
     )
     + scale_colour_manual(
         limits = c("Benign", "Malignant"),

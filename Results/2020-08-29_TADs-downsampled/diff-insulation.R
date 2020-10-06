@@ -6,6 +6,14 @@ suppressMessages(library("logging"))
 
 
 # ==============================================================================
+# Functions
+# ==============================================================================
+#' Return a vector scaled between -1 and 1 with mean 0
+winsorize_normalize <- function(x) {
+    return((x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE))
+}
+
+# ==============================================================================
 # Data
 # ==============================================================================
 loginfo("Loading Data")
@@ -56,15 +64,30 @@ diff_insulation <- insulation[,
     by = c("chrom", "start", "end", "Type")
 ]
 
+
 # remove positions with no variance
 diff_insulation <- diff_insulation[sd_ins > 0, .SD]
 # re-cast table to have a single position for each row
 wide_diff_ins <- dcast(diff_insulation,  chrom + start + end ~ Type, value.var = c("mean_ins", "sd_ins"))
 
+# normalize insulation scores to have min -1, max +1, mean 0 for better comparisons
+winsor_bounds <- c(
+    "benign_min" = wide_diff_ins[, quantile(mean_ins_Benign, 0.02, na.rm = TRUE)],
+    "benign_max" = wide_diff_ins[, quantile(mean_ins_Benign, 0.98, na.rm = TRUE)],
+    "tumour_min" = wide_diff_ins[, quantile(mean_ins_Malignant, 0.02, na.rm = TRUE)],
+    "tumour_max" = wide_diff_ins[, quantile(mean_ins_Malignant, 0.98, na.rm = TRUE)]
+)
+wide_diff_ins[,
+    `:=`(
+        normalized_mean_ins_Benign = winsorize_normalize(mean_ins_Benign),
+        normalized_mean_ins_Malignant = winsorize_normalize(mean_ins_Malignant)
+    )
+]
+
 # calculate pooled means and variance
 wide_diff_ins[, `:=`(
-    diff_mean_ins = mean_ins_Malignant - mean_ins_Benign,
-    pooled_var = ((n_tumour - 1) * sd_ins_Malignant + (n_benign - 1) * sd_ins_Benign) / (n_tumour + n_benign - 2)
+    diff_mean_ins = normalized_mean_ins_Malignant - normalized_mean_ins_Benign
+    # pooled_var = ((n_tumour - 1) * sd_ins_Malignant + (n_benign - 1) * sd_ins_Benign) / (n_tumour + n_benign - 2)
 )]
 
 # save results

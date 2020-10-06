@@ -316,5 +316,5 @@ rule insulation:
     params:
         "--window-pixels --ignore-diags 1"
     shell:
-        "cooltools diamond-insulation {params} {input} 3 > {output}"
+        "cooltools diamond-insulation {params} {input} 10 > {output}"
 
