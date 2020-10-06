@@ -3,6 +3,7 @@
 # ==============================================================================
 import pandas as pd
 import os.path as path
+from os import getcwd
 
 # sample metadata
 CONFIG = pd.read_csv(
@@ -43,7 +44,11 @@ rule all:
             count=COUNTS,
             res=RESOLUTIONS,
             chrom=CHRS,
-        )
+        ),
+        expand(
+            path.join("splits", "{chrom}", "benign->tumour.all.split.txt"),
+            chrom=CHRS,
+        ),
 
 
 # ==============================================================================
@@ -79,4 +84,20 @@ rule merge_types:
     shell:
         "Rscript {input.script} {wildcards.chrom}"
 
+rule splimer:
+    input:
+        path.join(TMP_DIR, "tumour.300000000.res_40000bp.{chrom}.mtx"),
+        path.join(TMP_DIR, "benign.300000000.res_40000bp.{chrom}.mtx"),
+    output:
+        path.join("splits", "{chrom}", "benign->tumour.all.merge.txt"),
+        path.join("splits", "{chrom}", "benign->tumour.all.split.txt"),
+        path.join("splits", "{chrom}", "benign.TAD.txt"),
+        path.join("splits", "{chrom}", "tumour.TAD.txt"),
+    params:
+        local_dir = path.abspath(getcwd()),
+        container_dir = "/data/",
+        image = "guangywang/tadsplimer:v1.0.3",
+        image_exec = "python3 /bin/TADsplimer.py split_TADs",
+    shell:
+        "docker run -v {params.local_dir}:{params.container_dir} {params.image} {params.image_exec} -c {params.container_dir}/TMP/benign.300000000.res_40000bp.{wildcards.chrom}.mtx,{params.container_dir}/TMP/benign.300000000.res_40000bp.{wildcards.chrom}.mtx --contact_maps_aliases benign,tumour -o {params.container_dir}/splits/{wildcards.chrom}"
 
