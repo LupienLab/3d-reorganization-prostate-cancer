@@ -13,9 +13,6 @@ balance:
 adjust_res:
     params: "--export=ALL -p himem --mem=30G -c 8"
 
-calc_expected:
-    params: "--export=all -p himem --mem=30g -c 8 -t 1-00:00:00"
-
-call_dots:
+call_loops:
     params: "--export=ALL -p himem --mem=30G -c 8 -t 1-00:00:00"
 

@@ -19,7 +19,7 @@ BATCHES = {
 
 SAMPLES = CONFIG["Sample"].tolist()
 
-CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
 RESOLUTIONS = [
     2000, 3000, 4000, 5000,
@@ -52,8 +52,8 @@ rule all:
         #     ext=["bw", "lam.txt", ".vecs.tsv"],
         # ),
         expand(
-			path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.bedpe"),
-            sample=SAMPLES,
+			path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.tsv"),
+			sample=SAMPLES,
 			res=[10000],
         ),
 
@@ -121,24 +121,25 @@ rule compartments:
     shell:
         "cooltools call-compartments {params.options} -o {CONTACT_DIR}/{wildcards.sample}.compartments {input.cool}::/resolutions/{params.res}"
 
-rule calc_expected:
+rule call_loops:
 	input:
 		path.join(CONTACT_DIR, "{sample}.mcool")
 	output:
-		path.join(CONTACT_DIR, "{sample}.res_{res}bp.expected.tsv"),
+		path.join(LOOP_DIR, "{sample}.res_{res}bp.{chrom}.loops.tsv"),
 	threads: 8
 	shell:
-		"cooltools compute-expected -p {threads} -o {output} {input}::/resolutions/{wildcards.res}"
+		"mustache -f {input} -r {wildcards.res} -ch {wildcards.chrom} -p {threads} -o {output}"
 
-rule call_dots:
+rule merge_loops:
 	input:
-		cool = path.join(CONTACT_DIR, "{sample}.mcool"),
-		exp = path.join(CONTACT_DIR, "{sample}.res_{res}bp.expected.tsv"),
+		expand(
+			path.join(LOOP_DIR, "{{sample}}.res_{{res}}bp.{chrom}.loops.tsv"),
+			chrom=CHRS,
+		),
 	output:
-		path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.bedpe"),
-	threads: 8
+		path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.tsv"),
 	shell:
-		"cooltools call-dots -p {threads} -o {output} {input.cool}::/resolutions/{wildcards.res} {input.exp}"
+		"echo -e 'chr_x\tstart_x\tend_x\tchr_y\tstart_y\tend_y\tfdr\tdetection_scale' > {output}; awk '{{FS=OFS=\"\\t\"}}{{if ($1 != \"BIN1_CHR\") print}}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n >> {output}"
 
 
 # Summaries

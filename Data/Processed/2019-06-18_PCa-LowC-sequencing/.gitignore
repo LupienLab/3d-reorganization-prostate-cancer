@@ -2,3 +2,4 @@
 *.mcool
 Aligned/log/
 *.bedpe
+Loops/*.chr*.loops.tsv
