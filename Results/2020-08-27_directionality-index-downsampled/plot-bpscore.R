@@ -459,24 +459,24 @@ savefig(gg_bpscore_primary_tumour_vs_benign, file.path(PLOT_DIR, "bp-score.prima
 # )
 # savefig(gg_sim_window_delta, file.path(PLOT_DIR, "bp-score.window-similarity.delta"))
 
-# # heatmap of similarity at MAX_WINDOW
-# annot_col <- as.data.frame(metadata[, .SD, .SDcols = c("Type", "Tissue", "Source")])
-# rownames(annot_col) <- metadata[, SampleID]
+# heatmap of similarity at MAX_WINDOW
+annot_col <- as.data.frame(metadata[, .SD, .SDcols = c("Type", "Tissue", "Source")])
+rownames(annot_col) <- metadata[, SampleID]
 
-# for (ext in c("png", "pdf")) {
-#     pheatmap(
-#         mat = 1 - mat,
-#         filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
-#         clustering_rows = TRUE,
-#         clustering_cols = TRUE,
-#         clustering_distance_rows = as.dist(mat),
-#         clustering_distance_cols = as.dist(mat),
-#         clustering_method = "ward.D2",
-#         treeheight_col = 0,
-#         labels_row = metadata[order(SampleID), Label],
-#         labels_col = metadata[order(SampleID), Label],
-#         legend = TRUE,
-#         show_rownames = FALSE,
-#         annotation_col = annot_col
-#     )
-# }
+for (ext in c("png", "pdf")) {
+    pheatmap(
+        mat = 1 - mat,
+        filename = paste0(file.path(PLOT_DIR, "bp-score.cluster."), ext),
+        clustering_rows = TRUE,
+        clustering_cols = TRUE,
+        clustering_distance_rows = as.dist(mat),
+        clustering_distance_cols = as.dist(mat),
+        clustering_method = "ward.D2",
+        treeheight_col = 0,
+        labels_row = metadata[order(SampleID), Label],
+        labels_col = metadata[order(SampleID), Label],
+        legend = TRUE,
+        show_rownames = FALSE,
+        annotation_col = annot_col
+    )
+}

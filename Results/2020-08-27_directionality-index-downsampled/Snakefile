@@ -44,6 +44,13 @@ rule all:
             w=WINDOWS,
             res=RESOLUTIONS,
         ),
+        expand(
+            path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}bp.domains.beddb"),
+            sample=SAMPLES,
+            count=COUNTS,
+            w=WINDOWS,
+            res=RESOLUTIONS,
+        ),
         path.join("Statistics", "tad-distances.tsv"),
         expand(
             path.join(PLOT_DIR, "bp-score.primary.{plot}.{ext}"),
@@ -82,6 +89,16 @@ rule call_tads:
         log = path.join("Logs", "{sample}.{count}.res_{res}bp.window_{w}bp.log"),
     shell:
         "domaincaller --uri {input} -O {output.tad} -D {output.di} --logFile {output.log} --window-size {wildcards.w}"
+
+rule clodius_1d:
+    input:
+        path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}bp.domains.bed"),
+    output:
+        path.join(TAD_DIR, "{sample}.{count}.res_{res}bp.window_{w}bp.domains.beddb"),
+    params:
+        "--no-header -a hg38"
+    shell:
+        "clodius aggregate bedfile {params} -o {output} {input}"
 
 rule bpscore:
     input:
