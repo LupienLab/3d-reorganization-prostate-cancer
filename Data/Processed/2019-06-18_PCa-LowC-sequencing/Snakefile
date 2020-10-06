@@ -10,6 +10,7 @@ CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
 REPORT_DIR = "Reports"
 ALIGN_DIR = "Aligned"
 CONTACT_DIR = "Contacts"
+LOOP_DIR = "Loops"
 RAW_DATA_DIR = path.join("..", "..", "Raw")
 BATCHES = {
     "Malignant": ["190509_A00827_0007_AHKYH3DSXX_HiC", "190605_A00827_0009_BHLGJ3DSXX_HiC"],
@@ -45,12 +46,16 @@ rule all:
         #     path.join(CONTACT_DIR, "{sample}.mcool"),
         #     sample=SAMPLES
         # ),
+        # expand(
+        #     path.join(CONTACT_DIR, "{sample}.compartments.cis.{ext}"),
+        #     sample=SAMPLES,
+        #     ext=["bw", "lam.txt", ".vecs.tsv"],
+        # ),
         expand(
-            path.join(CONTACT_DIR, "{sample}.compartments.cis.{ext}"),
+			path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.bedpe"),
             sample=SAMPLES,
-            ext=["bw", "lam.txt", ".vecs.tsv"],
+			res=[10000],
         ),
-
 
 rule rulegraph:
     output:
@@ -76,8 +81,8 @@ rule merge_coolers_tumour:
 
 rule merge_coolers_benign:
     input:
-        path.join(RAW_DATA_DIR, BATCHES["Benign"][0], "Contacts", "{sample}.mcool"),
-        path.join(RAW_DATA_DIR, BATCHES["Benign"][1], "Contacts", "{sample}.mcool"),
+        path.join(RAW_DATA_DIR, BATCHES["Benign"][0], "Contacts", "{sample}.cool"),
+        path.join(RAW_DATA_DIR, BATCHES["Benign"][1], "Contacts", "{sample}.cool"),
     output:
         temp(path.join(CONTACT_DIR, "{sample}.cool")),
     wildcard_constraints:
@@ -116,26 +121,25 @@ rule compartments:
     shell:
         "cooltools call-compartments {params.options} -o {CONTACT_DIR}/{wildcards.sample}.compartments {input.cool}::/resolutions/{params.res}"
 
-rule expected:
-    input:
-        path.join(CONTACT_DIR, "{sample}.mcool"),
-    output:
-        path.join(CONTACT_DIR, "{sample}.exp.tsv"),
-    params:
-        res = 10000
-    shell:
-        "cooltools compute-expected -o {output} {input}::/resolutions/{params.res}"
+rule calc_expected:
+	input:
+		path.join(CONTACT_DIR, "{sample}.mcool")
+	output:
+		path.join(CONTACT_DIR, "{sample}.res_{res}bp.expected.tsv"),
+	threads: 8
+	shell:
+		"cooltools compute-expected -p {threads} -o {output} {input}::/resolutions/{wildcards.res}"
 
-rule dots:
-    input:
-        cool = path.join(CONTACT_DIR, "{sample}.mcool"),
-        exp = path.join(CONTACT_DIR, "{sample}.exp.tsv"),
-    output:
-        path.join(CONTACT_DIR, "{sample}.dots.bedpe")
-    params:
-        res = 10000
-    shell:
-        "cooltools call-dots -o {output} {input.cool}::/resolutions/{params.res} {input.exp}"
+rule call_dots:
+	input:
+		cool = path.join(CONTACT_DIR, "{sample}.mcool"),
+		exp = path.join(CONTACT_DIR, "{sample}.res_{res}bp.expected.tsv"),
+	output:
+		path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.bedpe"),
+	threads: 8
+	shell:
+		"cooltools call-dots -p {threads} -o {output} {input.cool}::/resolutions/{wildcards.res} {input.exp}"
+
 
 # Summaries
 # ------------------------------------------------------------------------------
@@ -175,3 +179,4 @@ rule plot_contact_class:
         path.join(REPORT_DIR, "hicup_class.png")
     shell:
         "Rscript {input.script}"
+
