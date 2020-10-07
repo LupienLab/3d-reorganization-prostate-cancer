@@ -18,11 +18,3 @@ Results of the loop calls can be found in [`../../Data/Processed/2019-06-18_PCa-
 There should be thousands of loops, given that the current working model of gene regulation involves gene promoters looping to enhancer regions.
 
 After switching to [Mustache](https://doi.org/10.1186/s13059-020-02167-0), we identified thousands of loops per sample, which appears much more reasonable.
-
-### Comparing cLoops with Mustache
-
-![Loop calls with Mustache]()
-
-![Loop calls with cLoops]()
-
-![Sample-wise comparison of loop calls between cLoops and Mustache]()

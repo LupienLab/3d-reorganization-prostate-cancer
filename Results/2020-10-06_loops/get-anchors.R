@@ -174,6 +174,21 @@ merged_loops_with_consistency <- merge(
     by = "loopID"
 )
 
+
+# collapse list of loopIDs by the sample
+collapsed_IDs_by_sample <- merged_loops_with_consistency[
+    Consistent_in_benign_or_tumour == TRUE,
+    .(SampleID = list(unique(SampleID))),
+    keyby = "loopID"
+]
+
+# collapse list of loopIDs by the tissue type
+collapsed_IDs_by_type <- merged_loops_with_consistency[
+    Consistent_in_benign_or_tumour == TRUE,
+    .(Type = list(unique(Type))),
+    keyby = "loopID"
+]
+
 # ==============================================================================
 # Save data
 # ==============================================================================
@@ -192,24 +207,49 @@ fwrite(
     col.names = TRUE
 )
 
+# save benign-specific loops
+fwrite(
+    # put the columns in an order compatible with BEDPE format
+    loop_counts_with_pos[
+        Consistent_in_benign_or_tumour == TRUE & Benign > 0 & Malignant == 0,
+        .SD,
+        .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")
+    ],
+    file.path("Loops", "benign-specific-loops.tsv"),
+    sep = "\t",
+    col.names = TRUE
+)
+
+# save tumour-specific loops
+fwrite(
+    # put the columns in an order compatible with BEDPE format
+    loop_counts_with_pos[
+        Consistent_in_benign_or_tumour == TRUE & Benign == 0 & Malignant > 0,
+        .SD,
+        .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")
+    ],
+    file.path("Loops", "tumour-specific-loops.tsv"),
+    sep = "\t",
+    col.names = TRUE
+)
+
+# save shared tumour-benign loops
+fwrite(
+    # put the columns in an order compatible with BEDPE format
+    loop_counts_with_pos[
+        Consistent_in_benign_or_tumour == TRUE & Benign > 0 & Malignant > 0,
+        .SD,
+        .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID", "Benign", "Malignant")
+    ],
+    file.path("Loops", "shared-loops.tsv"),
+    sep = "\t",
+    col.names = TRUE
+)
+
 # ==============================================================================
 # Plots
 # ==============================================================================
 loginfo("Plotting figures")
-
-# collapse list of loopIDs by the sample
-collapsed_IDs_by_sample <- merged_loops_with_consistency[
-    Consistent_in_benign_or_tumour == TRUE,
-    .(SampleID = list(unique(SampleID))),
-    keyby = "loopID"
-]
-
-# collapse list of loopIDs by the tissue type
-collapsed_IDs_by_type <- merged_loops_with_consistency[
-    Consistent_in_benign_or_tumour == TRUE,
-    .(Type = list(unique(Type))),
-    keyby = "loopID"
-]
 
 # plots
 gg_type <- (
@@ -220,7 +260,7 @@ gg_type <- (
     + scale_y_continuous(
         limits = c(0, 5200),
         breaks = seq(0, 5000, by = 1000),
-        name = "Shared Loops"
+        name = "Loops"
     )
     + theme_minimal()
 )
@@ -229,7 +269,7 @@ savefig(gg_type, file.path("Plots", "loop-calls.by-type"), width = 8, height = 1
 gg_sample <- (
     ggplot(data = collapsed_IDs_by_sample)
     + geom_bar(aes(x = SampleID))
-    + labs(y = "Shared Loops")
+    + labs(y = "Loops")
     + scale_x_upset(name = "Samples", order_by = "freq", n_intersections = 40)
     + theme_minimal()
 )

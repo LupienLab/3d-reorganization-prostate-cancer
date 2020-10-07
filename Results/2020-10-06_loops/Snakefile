@@ -1,0 +1,53 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+SAMPLES = CONFIG["SampleID"].tolist()
+
+LOOP_DIR = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Loops")
+PROC_DIR = "Loops"
+PLOT_DIR = "Plots"
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        path.join(PROC_DIR, "merged-loops.tsv"),
+        path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+        path.join(PROC_DIR, "shared-loops.tsv"),
+        path.join(PROC_DIR, "benign-specific-loops.tsv"),
+        path.join(PROC_DIR, "tumour-specific-loops.tsv"),
+        path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
+        path.join(PLOT_DIR, "loop-calls.by-sample.png"),
+        path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
+        path.join(PLOT_DIR, "loop-calls.by-type.png"),
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule anchors:
+    input:
+        script = "get-anchors.R",
+        data = expand(
+            path.join(LOOP_DIR, "{sample}.res_10000bp.loops.tsv"),
+            sample=SAMPLES,
+        ),
+    output:
+        path.join(PROC_DIR, "merged-loops.tsv"),
+        path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+        path.join(PROC_DIR, "shared-loops.tsv"),
+        path.join(PROC_DIR, "benign-specific-loops.tsv"),
+        path.join(PROC_DIR, "tumour-specific-loops.tsv"),
+        path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
+        path.join(PLOT_DIR, "loop-calls.by-sample.png"),
+        path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
+        path.join(PLOT_DIR, "loop-calls.by-type.png"),
+    shell:
+        "Rscript {input.script}"
