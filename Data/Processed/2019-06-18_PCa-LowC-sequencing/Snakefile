@@ -52,16 +52,15 @@ rule all:
         #     ext=["bw", "lam.txt", ".vecs.tsv"],
         # ),
         expand(
+            path.join(CONTACT_DIR, "{sample}.res_{res}bp.exp.cis.tsv"),
+            sample=SAMPLES,
+            res=[10000],
+        ),
+        expand(
 			path.join(LOOP_DIR, "{sample}.res_{res}bp.loops.tsv"),
 			sample=SAMPLES,
 			res=[10000],
         ),
-
-rule rulegraph:
-    output:
-        "rulegraph.png",
-    shell:
-        "snakemake --rulegraph | dot -Tpng > {output}"
 
 # =============================================================================
 # Rules
@@ -120,6 +119,28 @@ rule compartments:
         res = 40000
     shell:
         "cooltools call-compartments {params.options} -o {CONTACT_DIR}/{wildcards.sample}.compartments {input.cool}::/resolutions/{params.res}"
+
+rule expected_cis:
+    input:
+        cool = path.join(CONTACT_DIR, "{sample}.mcool"),
+    output:
+        path.join(CONTACT_DIR, "{sample}.res_{res}bp.exp.cis.tsv"),
+    threads: 8
+    params:
+        "-t cis --balance"
+    shell:
+        "cooltools compute-expected -p {threads} {params} -o {CONTACT_DIR}/{wildcards.sample}.cis.exp.tsv {input.cool}::/resolutions/{wildcards.res}"
+
+rule expected_trans:
+    input:
+        cool = path.join(CONTACT_DIR, "{sample}.mcool"),
+    output:
+        path.join(CONTACT_DIR, "{sample}.res_{res}bp.exp.trans.tsv"),
+    threads: 8
+    params:
+        "-t trans --balance"
+    shell:
+        "cooltools compute-expected -p {threads} {params} -o {CONTACT_DIR}/{wildcards.sample}.cis.exp.tsv {input.cool}::/resolutions/{wildcards.res}"
 
 rule call_loops:
 	input:
