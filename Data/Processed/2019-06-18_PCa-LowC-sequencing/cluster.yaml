@@ -16,3 +16,9 @@ adjust_res:
 call_loops:
     params: "--export=ALL -p himem --mem=30G -c 8 -t 1-00:00:00"
 
+expected_cis:
+    params: "--export=ALL -p all --mem=16G -t 1-00:00:00"
+
+expected_trans:
+    params: "--export=ALL -p all --mem=16G -t 1-00:00:00"
+

@@ -129,7 +129,7 @@ rule expected_cis:
     params:
         "-t cis --balance"
     shell:
-        "cooltools compute-expected -p {threads} {params} -o {CONTACT_DIR}/{wildcards.sample}.cis.exp.tsv {input.cool}::/resolutions/{wildcards.res}"
+        "cooltools compute-expected -p {threads} {params} -o {CONTACT_DIR}/{wildcards.sample}.res_{wildcards.res}bp.exp.cis.tsv {input.cool}::/resolutions/{wildcards.res}"
 
 rule expected_trans:
     input:
@@ -140,7 +140,7 @@ rule expected_trans:
     params:
         "-t trans --balance"
     shell:
-        "cooltools compute-expected -p {threads} {params} -o {CONTACT_DIR}/{wildcards.sample}.cis.exp.tsv {input.cool}::/resolutions/{wildcards.res}"
+        "cooltools compute-expected -p {threads} {params} -o {CONTACT_DIR}/{wildcards.sample}.res_{wildcards.res}bp.exp.trans.tsv {input.cool}::/resolutions/{wildcards.res}"
 
 rule call_loops:
 	input:
