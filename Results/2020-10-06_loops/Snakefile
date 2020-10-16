@@ -17,37 +17,59 @@ PLOT_DIR = "Plots"
 # Meta Rules
 # ==============================================================================
 rule all:
-    input:
-        path.join(PROC_DIR, "merged-loops.tsv"),
-        path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
-        path.join(PROC_DIR, "shared-loops.tsv"),
-        path.join(PROC_DIR, "benign-specific-loops.tsv"),
-        path.join(PROC_DIR, "tumour-specific-loops.tsv"),
-        path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
-        path.join(PLOT_DIR, "loop-calls.by-sample.png"),
-        path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
-        path.join(PLOT_DIR, "loop-calls.by-type.png"),
+	input:
+		path.join(PROC_DIR, "merged-loops.tsv"),
+		path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+		path.join(PROC_DIR, "shared-loops.tsv"),
+		path.join(PROC_DIR, "benign-specific-loops.tsv"),
+		path.join(PROC_DIR, "tumour-specific-loops.tsv"),
+		path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
+		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
+		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
+		path.join(PLOT_DIR, "loop-calls.by-type.png"),
+		expand(
+			path.join(PROC_DIR, "{stack}.{loop_type}.obj"),
+			stack=["stack", "pile", "condition_pile"],
+			loop_type=["shared", "tumour", "benign"],
+		),
 
 
 # ==============================================================================
 # Rules
 # ==============================================================================
 rule anchors:
-    input:
-        script = "get-anchors.R",
-        data = expand(
-            path.join(LOOP_DIR, "{sample}.res_10000bp.loops.tsv"),
-            sample=SAMPLES,
-        ),
-    output:
-        path.join(PROC_DIR, "merged-loops.tsv"),
-        path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
-        path.join(PROC_DIR, "shared-loops.tsv"),
-        path.join(PROC_DIR, "benign-specific-loops.tsv"),
-        path.join(PROC_DIR, "tumour-specific-loops.tsv"),
-        path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
-        path.join(PLOT_DIR, "loop-calls.by-sample.png"),
-        path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
-        path.join(PLOT_DIR, "loop-calls.by-type.png"),
-    shell:
-        "Rscript {input.script}"
+	input:
+		script = "get-anchors.R",
+		data = expand(
+			path.join(LOOP_DIR, "{sample}.res_10000bp.loops.tsv"),
+			sample=SAMPLES,
+		),
+	output:
+		path.join(PROC_DIR, "merged-loops.tsv"),
+		path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+		path.join(PROC_DIR, "shared-loops.tsv"),
+		path.join(PROC_DIR, "benign-specific-loops.tsv"),
+		path.join(PROC_DIR, "tumour-specific-loops.tsv"),
+		path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
+		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
+		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
+		path.join(PLOT_DIR, "loop-calls.by-type.png"),
+	shell:
+		"Rscript {input.script}"
+
+rule apa:
+	input:
+		script = "apa.py",
+	output:
+		path.join(PROC_DIR, "stack.shared.obj"),
+		path.join(PROC_DIR, "stack.benign.obj"),
+		path.join(PROC_DIR, "stack.tumour.obj"),
+		path.join(PROC_DIR, "pile.shared.obj"),
+		path.join(PROC_DIR, "pile.benign.obj"),
+		path.join(PROC_DIR, "pile.tumour.obj"),
+		path.join(PROC_DIR, "condition_pile.shared.obj"),
+		path.join(PROC_DIR, "condition_pile.benign.obj"),
+		path.join(PROC_DIR, "condition_pile.tumour.obj"),
+	shell:
+		"python {input.script}"
+

@@ -15,7 +15,7 @@ import negspy.coordinates as nc
 import logging
 from cooltools import snipping
 import pandas as pd
-import bioframe
+import pickle
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -38,7 +38,13 @@ SHIFT_SIZE = 25000
 # genome coordinates
 hg38 = nc.get_chrominfo("hg38")
 
-CHROM_SIZES = bioframe.fetch_chromsizes("hg38")
+CHROM_SIZES = pd.read_csv(
+    path.join(DIR["contacts"], "..", "hg38.sizes.txt"),
+    sep="\t",
+    index_col=0,
+    header=None,
+    names=["size"],
+)
 CHRS = list(CHROM_SIZES.index)
 
 # ==============================================================================
@@ -84,7 +90,7 @@ expected_mtx = {
 logging.info("Calculating loop matrix indices")
 
 # chromosomes and their sizes
-supports = [(chrom, 0, CHROM_SIZES[chrom]) for chrom in CHRS]
+supports = [(chrom, 0, CHROM_SIZES.at[chrom, "size"]) for chrom in CHRS]
 
 # placeholder for all loop positions and matrix indices
 windows = {
@@ -129,70 +135,52 @@ logging.info("Aggregating matrices")
 snipper = {
     s: snipping.ObsExpSnipper(mtx[s], expected_mtx[s]) for s in SAMPLES
 }
-for (loop_type, typed_loops) in loops.items():
+# save serialized object
+snipper_obj = open("Loops/snipper.obj", "wb")
+pickle.dump(snipper, snipper_obj)
+snipper_obj.close()
+
+for (loop_type, typed_loops) in tqdm(loops.items()):
+    logging.info("Loops {}".format(loop_type))
     # taken from https://cooltools.readthedocs.io/en/latest/notebooks/06_snipping-pileups.html
+    # create a stack of obs/exp matrices based on the locations in windows[loop_type]
+    print(windows[loop_type])
     stack = {
         s: snipping.pileup(windows[loop_type], snipper[s].select, snipper[s].snip) for s in SAMPLES
     }
-    print(stack)
-    piles = np.nanmean(stack, axis=2)
-    print(piles)
-    input()
-
-    # store local matrices in the regions of interest
-    for i in tqdm(range(l.nrows)):
-        local_loop_matrices["tumour"][i] = np.nanconda actmean(
-            [
-                mtx[s].matrix()[
-                    l[i, "x_left"] : l[i, "x_right"], l[i, "y_left"] : l[i, "y_right"]
-                ]
-                for s in TUMOUR_SAMPLES
-            ],
-            axis=0,
-        )
-        local_loop_matrices["benign"][i] = np.nanmean(
-            [
-                mtx[s].matrix()[
-                    l[i, "x_left"] : l[i, "x_right"], l[i, "y_left"] : l[i, "y_right"]
-                ]
-                for s in BENIGN_SAMPLES
-            ],
-            axis=0,
-        )
-    # aggregate matrices by summing over all loops
-    agg_loop_matrices = {
-        sample_type: np.nansum(local_loop_matrices[sample_type], axis=0)
-        for sample_type in ["tumour", "benign"]
+    # save serialized object
+    stack_obj = open(".".join(["Loops/stack", loop_type, "obj"]), "wb")
+    pickle.dump(stack, stack_obj)
+    stack_obj.close()
+    # sum each stack to create an obs/exp pileup for each sample
+    piles = {s: np.nanmean(stack[s], axis=2) for s in SAMPLES}
+    # save serialized object
+    piles_obj = open(".".join(["Loops/pile", loop_type, "obj"]), "wb")
+    pickle.dump(piles, piles_obj)
+    piles_obj.close()
+    # take the mean over each condition (benign/tumour sample)
+    condition_piles = {
+        "tumour": np.nanmean([piles[s] for s in TUMOUR_SAMPLES], axis=0),
+        "benign": np.nanmean([piles[s] for s in BENIGN_SAMPLES], axis=0),
     }
-    # save data for future use
-    for sample_type in ["tumour", "benign"]:
-        # save list of matrices at each loop call
-        np.savez_compressed(
-            "Loops/{loop_type}-loops.{sample_type}-samples.npz".format(
-                loop_type=t, sample_type=sample_type
-            ),
-            args=local_loop_matrices[sample_type],
-        )
-        # save aggregated matrices
-        np.savez_compressed(
-            "Loops/{loop_type}-loops.{sample_type}-samples.agg.npz".format(
-                loop_type=t, sample_type=sample_type
-            ),
-            args=agg_loop_matrices[sample_type],
-        )
+    # save serialized object
+    condition_piles_obj = open(".".join(["Loops/condition_pile", loop_type, "obj"]), "wb")
+    pickle.dump(condition_piles, condition_piles_obj)
+    condition_piles_obj.close()
     print(
-        dt.Frame(
+        pd.DataFrame(
             {
                 "Sample Type": ["Tumour", "Benign"],
                 "Min": [
-                    agg_loop_matrices["tumour"].min(),
-                    agg_loop_matrices["benign"].min(),
+                    condition_piles["tumour"].min(),
+                    condition_piles["benign"].min(),
                 ],
                 "Max": [
-                    agg_loop_matrices["tumour"].max(),
-                    agg_loop_matrices["benign"].max(),
+                    condition_piles["tumour"].max(),
+                    condition_piles["benign"].max(),
                 ],
             },
         )
     )
+
 
