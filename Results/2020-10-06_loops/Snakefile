@@ -36,6 +36,8 @@ rule all:
 			stack=["stack", "pile", "condition_pile"],
 			loop_type=["shared", "tumour", "benign"],
 		),
+		path.join(PLOT_DIR, "apa.png")
+		path.join(PLOT_DIR, "apa.by-sample.png")
 
 
 # ==============================================================================
@@ -84,5 +86,21 @@ rule apa:
 		path.join(PROC_DIR, "condition_pile.shared.obj"),
 		path.join(PROC_DIR, "condition_pile.benign.obj"),
 		path.join(PROC_DIR, "condition_pile.tumour.obj"),
+	shell:
+		"python {input.script}"
+
+rule plot_apa:
+	input:
+		script = "plot-apa.py",
+	output:
+		path.join(PLOT_DIR, "apa.png")
+	shell:
+		"python {input.script}"
+
+rule plot_apa_by_sample:
+	input:
+		script = "plot-sample-apa.py",
+	output:
+		path.join(PLOT_DIR, "apa.by-sample.png")
 	shell:
 		"python {input.script}"
