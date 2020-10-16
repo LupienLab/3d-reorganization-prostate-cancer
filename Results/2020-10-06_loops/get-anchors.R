@@ -19,6 +19,8 @@ suppressMessages(library("regioneR"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("ggupset"))
 
+MIN_SAMPLES <- 3
+
 # ==============================================================================
 # Functions
 # ==============================================================================
@@ -156,7 +158,7 @@ loop_counts <- dcast(
 )
 
 # calculate if a loop occurs in at least 3 samples in one tissue type
-loop_counts[, Consistent_in_benign_or_tumour := ((Benign >= 3) | (Malignant >= 3))]
+loop_counts[, Consistent_in_benign_or_tumour := ((Benign >= MIN_SAMPLES) | (Malignant >= MIN_SAMPLES))]
 
 # merge back in position information for loops
 loop_counts_with_pos <- merge(
@@ -211,7 +213,7 @@ fwrite(
 fwrite(
     # put the columns in an order compatible with BEDPE format
     loop_counts_with_pos[
-        Consistent_in_benign_or_tumour == TRUE & Benign > 0 & Malignant == 0,
+        Consistent_in_benign_or_tumour == TRUE & Benign > MIN_SAMPLES & Malignant == 0,
         .SD,
         .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")
     ],
@@ -224,7 +226,7 @@ fwrite(
 fwrite(
     # put the columns in an order compatible with BEDPE format
     loop_counts_with_pos[
-        Consistent_in_benign_or_tumour == TRUE & Benign == 0 & Malignant > 0,
+        Consistent_in_benign_or_tumour == TRUE & Benign == 0 & Malignant > MIN_SAMPLES,
         .SD,
         .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")
     ],
