@@ -11,6 +11,7 @@ SAMPLES = CONFIG["SampleID"].tolist()
 
 LOOP_DIR = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Loops")
 PROC_DIR = "Loops"
+TRACK_DIR = "Tracks"
 PLOT_DIR = "Plots"
 
 # ==============================================================================
@@ -27,6 +28,9 @@ rule all:
 		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
 		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
 		path.join(PLOT_DIR, "loop-calls.by-type.png"),
+		path.join(TRACK_DIR, "shared-loops.bed2ddb"),
+		path.join(TRACK_DIR, "benign-specific-loops.bed2ddb"),
+		path.join(TRACK_DIR, "tumour-specific-loops.bed2ddb"),
 		expand(
 			path.join(PROC_DIR, "{stack}.{loop_type}.obj"),
 			stack=["stack", "pile", "condition_pile"],
@@ -57,6 +61,16 @@ rule anchors:
 	shell:
 		"Rscript {input.script}"
 
+rule clodius_2d:
+	input:
+		path.join(PROC_DIR, "{loop_type}-loops.tsv"),
+	output:
+		path.join(TRACK_DIR, "{loop_type}-loops.bed2ddb"),
+	params:
+		"--assembly hg38 --has-header --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
+	shell:
+		"clodius aggregate bedpe {params} -o {output} {input}"
+
 rule apa:
 	input:
 		script = "apa.py",
@@ -72,4 +86,3 @@ rule apa:
 		path.join(PROC_DIR, "condition_pile.tumour.obj"),
 	shell:
 		"python {input.script}"
-
