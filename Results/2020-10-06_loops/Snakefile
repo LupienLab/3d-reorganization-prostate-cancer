@@ -36,8 +36,8 @@ rule all:
 			stack=["stack", "pile", "condition_pile"],
 			loop_type=["shared", "tumour", "benign"],
 		),
-		path.join(PLOT_DIR, "apa.png")
-		path.join(PLOT_DIR, "apa.by-sample.png")
+		path.join(PLOT_DIR, "apa.png"),
+		path.join(PLOT_DIR, "apa.by-sample.png"),
 
 
 # ==============================================================================
@@ -76,6 +76,9 @@ rule clodius_2d:
 rule apa:
 	input:
 		script = "apa.py",
+		shared = path.join(PROC_DIR, "shared-loops.tsv"),
+		benign = path.join(PROC_DIR, "benign-specific-loops.tsv"),
+		tumour = path.join(PROC_DIR, "tumour-specific-loops.tsv"),
 	output:
 		path.join(PROC_DIR, "stack.shared.obj"),
 		path.join(PROC_DIR, "stack.benign.obj"),
@@ -92,15 +95,24 @@ rule apa:
 rule plot_apa:
 	input:
 		script = "plot-apa.py",
+		data = expand(
+			path.join(PROC_DIR, "condition_pile.{loop_type}.obj"),
+			loop_type=["shared", "benign", "tumour"],
+		),
 	output:
-		path.join(PLOT_DIR, "apa.png")
+		path.join(PLOT_DIR, "apa.png"),
 	shell:
 		"python {input.script}"
 
 rule plot_apa_by_sample:
 	input:
 		script = "plot-sample-apa.py",
+		data = expand(
+			path.join(PROC_DIR, "pile.{loop_type}.obj"),
+			loop_type=["shared", "benign", "tumour"],
+		),
 	output:
-		path.join(PLOT_DIR, "apa.by-sample.png")
+		path.join(PLOT_DIR, "apa.by-sample.png"),
 	shell:
 		"python {input.script}"
+
