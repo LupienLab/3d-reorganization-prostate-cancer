@@ -28,10 +28,12 @@
 # ==============================================================================
 suppressMessages(library("logging"))
 suppressMessages(library("data.table"))
+suppressMessages(library("matrixStats"))
 suppressMessages(library("ggplot2"))
 
 N_ITERS <- 100
 MAX_SAMPLES <- 60
+set.seed(42)
 
 # ==============================================================================
 # Data
@@ -53,6 +55,7 @@ loops <- fread("Loops/merged-loops.tsv", sep = "\t", header = TRUE)
 # ==============================================================================
 # Analysis
 # ==============================================================================
+loginfo("Generating bootstraps")
 # create peaks list
 loops_per_sample <- lapply(
     SAMPLES$all,
@@ -110,8 +113,9 @@ bootstraps_long <- melt(
 )
 bootstraps_long[, Iteration := as.numeric(Iteration)]
 
-# use self starting model for asymptotic data SSasymp
+loginfo("Fitting asymptotic model")
 
+# use self starting model for asymptotic data SSasymp
 # it follows the formula: Asym+(R0-Asym)*exp(-exp(lrc)*input)
 # input  a numeric vector of values at which to evaluate the model.
 # Asym  a numeric parameter representing the upper asymptotic value of the model (as input goes to Inf).
@@ -163,8 +167,39 @@ model_ests[, Est_N_Loops := Asym_coef + (R0_coef - Asym_coef) * exp(-exp(lrc_coe
 model_ests[, Frac_Saturation := Est_N_Loops / Asym_coef]
 
 # ==============================================================================
+# Save tables
+# ==============================================================================
+loginfo("Saving tables")
+fwrite(
+    model_ests,
+    "Loops/loop-saturation.model-estimates.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+fwrite(
+    saturation_ests,
+    "Loops/loop-saturation.saturation-estimates.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+fwrite(
+    bootstrap_summary,
+    "Loops/loop-saturation.bootstrap_summary.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+fwrite(
+    bootstraps_long,
+    "Loops/loop-saturation.bootstraps.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
+# ==============================================================================
 # Plots
 # ==============================================================================
+loginfo("Generating plots")
+
 gg <- (
     ggplot()
     + geom_point(
@@ -249,7 +284,7 @@ gg <- (
         )
     )
     + scale_y_continuous(
-        name = "Number of samples",
+        name = "Number of loops",
         limits = c(0, 1.05 * Asym_coef)
     )
     + guides(fill = FALSE, colour = FALSE)
