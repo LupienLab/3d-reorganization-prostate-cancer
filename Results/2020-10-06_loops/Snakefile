@@ -31,6 +31,11 @@ rule all:
 		path.join(TRACK_DIR, "shared-loops.bed2ddb"),
 		path.join(TRACK_DIR, "benign-specific-loops.bed2ddb"),
 		path.join(TRACK_DIR, "tumour-specific-loops.bed2ddb"),
+		path.join(PROC_DIR, "loop-saturation.model-estimates.tsv"),
+		path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
+		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
+		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
+		path.join(PLOT_DIR, "loop-saturation.png"),
 		expand(
 			path.join(PROC_DIR, "{stack}.{loop_type}.obj"),
 			stack=["stack", "pile", "condition_pile"],
@@ -60,6 +65,19 @@ rule anchors:
 		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
 		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
 		path.join(PLOT_DIR, "loop-calls.by-type.png"),
+	shell:
+		"Rscript {input.script}"
+
+rule loop_saturation:
+	input:
+		script = "loop-saturation.R",
+		loops = path.join(PROC_DIR, "merged-loops.tsv"),
+	output:
+		path.join(PROC_DIR, "loop-saturation.model-estimates.tsv"),
+		path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
+		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
+		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
+		path.join(PLOT_DIR, "loop-saturation.png"),
 	shell:
 		"Rscript {input.script}"
 
@@ -116,3 +134,11 @@ rule plot_apa_by_sample:
 	shell:
 		"python {input.script}"
 
+
+rule makebins:
+	input:
+		chrs = "../../Data/Processed/2019-06-18_PCa-LowC-sequencing/hg38.sizes.txt"
+	output:
+		"hg38.bins.bed"
+	shell:
+		"cooler makebins -o {output} {input} 10000"
