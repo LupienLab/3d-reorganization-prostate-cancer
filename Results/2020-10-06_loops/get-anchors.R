@@ -163,7 +163,7 @@ loop_counts[, Consistent_in_benign_or_tumour := ((Benign >= MIN_SAMPLES) | (Mali
 # merge back in position information for loops
 loop_counts_with_pos <- merge(
     x = loop_counts,
-    y = merged_loops[, unique(.SD), .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")],
+    y = merged_loops[, unique(.SD), .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "anchor_ID_x", "anchor_ID_y", "loopID")],
     by = "loopID",
     all.x = TRUE,
     all.y = FALSE
@@ -203,7 +203,7 @@ fwrite(
 )
 fwrite(
     # put the columns in an order compatible with BEDPE format
-    loop_counts_with_pos[, .SD, .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID", "Benign", "Malignant", "Consistent_in_benign_or_tumour")],
+    loop_counts_with_pos[, .SD, .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "anchor_ID_x", "anchor_ID_y", "loopID", "Benign", "Malignant", "Consistent_in_benign_or_tumour")],
     file.path("Loops", "merged-loops.sample-counts.tsv"),
     sep = "\t",
     col.names = TRUE
