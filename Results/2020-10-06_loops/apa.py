@@ -61,15 +61,10 @@ TUMOUR_SAMPLES = metadata.loc[metadata.Type == "Malignant", "SampleID"].tolist()
 BENIGN_SAMPLES = metadata.loc[metadata.Type == "Benign", "SampleID"].tolist()
 
 # load loop calls
-loops = {
-    "shared": pd.read_csv(path.join(DIR["loops"], "shared-loops.tsv"), sep="\t"),
-    "tumour": pd.read_csv(
-        path.join(DIR["loops"], "tumour-specific-loops.tsv"), sep="\t"
-    ),
-    "benign": pd.read_csv(
-        path.join(DIR["loops"], "benign-specific-loops.tsv"), sep="\t"
-    ),
-}
+loops = pd.read_csv(
+    path.join(DIR["loops"], "merged-loops.sample-counts.tsv"),
+    sep="\t",
+)
 
 # contact matrices
 mtx = {
@@ -92,45 +87,35 @@ logging.info("Calculating loop matrix indices")
 # chromosomes and their sizes
 supports = [(chrom, 0, CHROM_SIZES.at[chrom, "size"]) for chrom in CHRS]
 
-# placeholder for all loop positions and matrix indices
-windows = {
-    "shared": pd.DataFrame(),
-    "tumour": pd.DataFrame(),
-    "benign": pd.DataFrame(),
-}
+# use snipping module to get chromosome locations around each loop anchor
+windows_x = snipping.make_bin_aligned_windows(
+    binsize=RES,
+    chroms=loops["chr_x"],
+    centers_bp=(loops["start_x"] + loops["end_x"]) // 2,  # integer division
+    flank_bp=SHIFT_SIZE,
+)
+windows_y = snipping.make_bin_aligned_windows(
+    binsize=RES,
+    chroms=loops["chr_y"],
+    centers_bp=(loops["start_y"] + loops["end_y"]) // 2,  # integer division
+    flank_bp=SHIFT_SIZE,
+)
+# merge the two pairs of windows together
+windows_merged = pd.merge(
+    left=windows_x,
+    right=windows_y,
+    left_index=True,
+    right_index=True,
+    suffixes=(
+        "1",
+        "2",
+    ),  # these suffixes are required, assign_regions doesn't work properly if not '1' and '2'
+)
+# assign chromosome regions to the low/high indices
+windows = snipping.assign_regions(windows_merged, supports)
+windows = windows.dropna()
 
-for (loop_type, typed_loops) in loops.items():
-    # use snipping module to get chromosome locations around each loop anchor
-    windows_x = snipping.make_bin_aligned_windows(
-        binsize=RES,
-        chroms=typed_loops["chr_x"],
-        centers_bp=(typed_loops["start_x"] + typed_loops["end_x"])
-        // 2,  # integer division
-        flank_bp=SHIFT_SIZE,
-    )
-    windows_y = snipping.make_bin_aligned_windows(
-        binsize=RES,
-        chroms=typed_loops["chr_y"],
-        centers_bp=(typed_loops["start_y"] + typed_loops["end_y"])
-        // 2,  # integer division
-        flank_bp=SHIFT_SIZE,
-    )
-    # merge the two pairs of windows together
-    windows_merged = pd.merge(
-        left=windows_x,
-        right=windows_y,
-        left_index=True,
-        right_index=True,
-        suffixes=(
-            "1",
-            "2",
-        ),  # these suffixes are required, assign_regions doesn't work properly if not '1' and '2'
-    )
-    # assign chromosome regions to the low/high indices
-    windows[loop_type] = snipping.assign_regions(windows_merged, supports)
-    windows[loop_type] = windows[loop_type].dropna()
-
-logging.info("Aggregating matrices")
+logging.info("Calculating Obs/Exp matrices")
 # calculate obs/exp matrix for each sample
 snipper = {s: snipping.ObsExpSnipper(mtx[s], expected_mtx[s]) for s in SAMPLES}
 # save serialized object
@@ -138,18 +123,18 @@ snipper_obj = open("Loops/snipper.obj", "wb")
 pickle.dump(snipper, snipper_obj)
 snipper_obj.close()
 
-for (loop_type, typed_loops) in tqdm(loops.items()):
-    logging.info("Loops {}".format(loop_type))
-    # taken from https://cooltools.readthedocs.io/en/latest/notebooks/06_snipping-pileups.html
-    # create a stack of obs/exp matrices based on the locations in windows[loop_type]
-    # this is the part that takes the longest time
-    stack = {
-        s: snipping.pileup(windows[loop_type], snipper[s].select, snipper[s].snip)
-        for s in SAMPLES
-    }
-    # save serialized object
-    stack_obj = open(".".join(["Loops/stack", loop_type, "obj"]), "wb")
-    pickle.dump(stack, stack_obj)
-    stack_obj.close()
+logging.info("Aggregating matrices at loops")
+# taken from https://cooltools.readthedocs.io/en/latest/notebooks/06_snipping-pileups.html
+# create a stack of obs/exp matrices based on the locations in windows
+# this is the part that takes the longest time
+stack = {
+    s: snipping.pileup(windows, snipper[s].select, snipper[s].snip)
+    for s in SAMPLES
+}
+# save serialized object
+stack_obj = open("Loops/stack.obj", "wb")
+pickle.dump(stack, stack_obj)
+stack_obj.close()
 
 logging.info("Done")
+
