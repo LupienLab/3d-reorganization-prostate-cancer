@@ -30,10 +30,10 @@ DIR = {
 }
 
 # resolution for contact matrices
-RES = 5000
+RES = 10000
 
 # +/- number of bps for aggregate peak analysis
-SHIFT_SIZE = 25000
+SHIFT_SIZE = 300000
 
 # genome coordinates
 hg38 = nc.get_chrominfo("hg38")
@@ -132,9 +132,7 @@ for (loop_type, typed_loops) in loops.items():
 
 logging.info("Aggregating matrices")
 # calculate obs/exp matrix for each sample
-snipper = {
-    s: snipping.ObsExpSnipper(mtx[s], expected_mtx[s]) for s in SAMPLES
-}
+snipper = {s: snipping.ObsExpSnipper(mtx[s], expected_mtx[s]) for s in SAMPLES}
 # save serialized object
 snipper_obj = open("Loops/snipper.obj", "wb")
 pickle.dump(snipper, snipper_obj)
@@ -144,43 +142,14 @@ for (loop_type, typed_loops) in tqdm(loops.items()):
     logging.info("Loops {}".format(loop_type))
     # taken from https://cooltools.readthedocs.io/en/latest/notebooks/06_snipping-pileups.html
     # create a stack of obs/exp matrices based on the locations in windows[loop_type]
-    print(windows[loop_type])
+    # this is the part that takes the longest time
     stack = {
-        s: snipping.pileup(windows[loop_type], snipper[s].select, snipper[s].snip) for s in SAMPLES
+        s: snipping.pileup(windows[loop_type], snipper[s].select, snipper[s].snip)
+        for s in SAMPLES
     }
     # save serialized object
     stack_obj = open(".".join(["Loops/stack", loop_type, "obj"]), "wb")
     pickle.dump(stack, stack_obj)
     stack_obj.close()
-    # sum each stack to create an obs/exp pileup for each sample
-    piles = {s: np.nanmean(stack[s], axis=2) for s in SAMPLES}
-    # save serialized object
-    piles_obj = open(".".join(["Loops/pile", loop_type, "obj"]), "wb")
-    pickle.dump(piles, piles_obj)
-    piles_obj.close()
-    # take the mean over each condition (benign/tumour sample)
-    condition_piles = {
-        "tumour": np.nanmean([piles[s] for s in TUMOUR_SAMPLES], axis=0),
-        "benign": np.nanmean([piles[s] for s in BENIGN_SAMPLES], axis=0),
-    }
-    # save serialized object
-    condition_piles_obj = open(".".join(["Loops/condition_pile", loop_type, "obj"]), "wb")
-    pickle.dump(condition_piles, condition_piles_obj)
-    condition_piles_obj.close()
-    print(
-        pd.DataFrame(
-            {
-                "Sample Type": ["Tumour", "Benign"],
-                "Min": [
-                    condition_piles["tumour"].min(),
-                    condition_piles["benign"].min(),
-                ],
-                "Max": [
-                    condition_piles["tumour"].max(),
-                    condition_piles["benign"].max(),
-                ],
-            },
-        )
-    )
 
-
+logging.info("Done")
