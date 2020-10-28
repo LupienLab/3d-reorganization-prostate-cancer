@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 import scipy.stats as stats
 import pickle
+import pandas as pd
+from itertools import chain
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -28,69 +30,264 @@ logging.getLogger().setLevel(logging.INFO)
 LOOP_DIR = "Loops"
 
 # resolution for contact matrices
-RES = 5000
+RES = 10000
 
 # +/- number of bps for aggregate peak analysis
-SHIFT_SIZE = 25000
+SHIFT_SIZE = 300000
 
-LOOP_TYPES = ["shared", "benign", "tumour"]
 SAMPLE_TYPES = ["benign", "tumour"]
+
 
 # ==============================================================================
 # Functions
 # ==============================================================================
+def filter_arr(x: np.ndarray) -> np.ndarray:
+    return x[~np.isnan(x) & np.isfinite(x)]
+
 
 # ==============================================================================
 # Data
 # ==============================================================================
 logging.info("Loading data")
-# load pileups
-agg_loop_matrices = {
-    (loop_type, sample_type): pickle.load(
-        open(
-            path.join(
-                LOOP_DIR, "condition_pile.{loop_type}.obj".format(loop_type=loop_type)
-            ),
-            "rb",
-        )
-    )[sample_type]
-    for loop_type in LOOP_TYPES
-    for sample_type in SAMPLE_TYPES
+# load metadata
+metadata = pd.read_csv("config.tsv", sep="\t")
+SAMPLES = {
+    "all": metadata.loc[metadata.Include == "Yes", "SampleID"].tolist(),
+    "tumour": metadata.loc[metadata.Type == "Malignant", "SampleID"].tolist(),
+    "benign": metadata.loc[metadata.Type == "Benign", "SampleID"].tolist(),
 }
+
+pileup = pickle.load(open(path.join(LOOP_DIR, "pileup.obj"), "rb"))
+conditional_stack = pickle.load(
+    open(path.join(LOOP_DIR, "stack.conditional.obj"), "rb")
+)
+conditional_pileup = pickle.load(
+    open(path.join(LOOP_DIR, "pileup.conditional.obj"), "rb")
+)
+conditional_differential = pickle.load(
+    open(path.join(LOOP_DIR, "differential.obj"), "rb")
+)
+
+
+# ==============================================================================
+# Analysis
+# ==============================================================================
+# rank the loops by their mean differential between benign and tumour samples
+difference_stack = np.array(
+    [
+        conditional_stack["tumour"][i, :, :] - conditional_stack["benign"][i, :, :]
+        for i in range(conditional_stack["benign"].shape[0])
+    ]
+)
+
+normed_stack = np.array(
+    [
+        np.linalg.norm(
+            conditional_stack["tumour"][i, :, :] - conditional_stack["benign"][i, :, :],
+            ord="fro",  # Frobenius norm on the difference matrix
+        )
+        for i in range(conditional_stack["benign"].shape[0])
+    ]
+)
+
+# replace any NaN's with 0 to not mess with ranking
+normed_stack[np.isnan(normed_stack)] = 0
+# rank the differential so we can identify the strongest "benign-specific" and "tumour-specific" loops
+loop_ordering = np.argsort(normed_stack)
+
+n_top_loops = 10
+top_loops_idx = list(
+    chain(loop_ordering[0 : (n_top_loops // 2)], loop_ordering[-(n_top_loops // 2) :],)
+)
+
 
 # ==============================================================================
 # Plots
 # ==============================================================================
-logging.info("Plotting")
-# create grid for plotting
-gs = GridSpec(
-    nrows=len(LOOP_TYPES), ncols=len(SAMPLE_TYPES) + 1, width_ratios=[20] * 2 + [1]
-)
-
+# create heatmap for each pileup plot
+ncols = len(SAMPLES["all"]) + 1
+nrows = 1
+# create grid specification
+gs = GridSpec(nrows=nrows, ncols=ncols, width_ratios=[20] * (ncols - 1) + [1],)
 # plotting options
-plt.figure(figsize=(5 * 2, 10))
-opts = dict(
-    # vmin=-0.75,
-    # vmax=0.75,
-    extent=[-10, 10, -10, 10],
-    cmap="coolwarm",
-)
+plt.figure(figsize=(4 * (ncols - 1), 4 * nrows))
+opts = dict(extent=[-10, 10, -10, 10], cmap="coolwarm",)  # vmin=-2, vmax=2,)
+# make component plots
+for j, s in enumerate(SAMPLES["all"]):
+    ax = plt.subplot(gs[0, j])
+    img = ax.matshow(np.log2(pileup[s]), **opts)
+    # add x axis labels to bottom-most subplots
+    ax.set_xlabel(s)
+    ax.xaxis.set_visible(True)
+    ax.xaxis.tick_bottom()
 
-# create heatmap for each plot
-for i, loop_type in enumerate(LOOP_TYPES):
-    for j, sample_type in enumerate(SAMPLE_TYPES):
-        ax = plt.subplot(gs[i, j])
-        img = ax.matshow(np.log2(agg_loop_matrices[(loop_type, sample_type)]), **opts)
-        ax.xaxis.tick_bottom()
-        ax.set_xlabel(sample_type.title())
-        ax.set_ylabel(loop_type.title())
-        if i < 2:
-            ax.xaxis.set_visible(False)
-        if j > 0:
-            ax.yaxis.set_visible(False)
 
-ax = plt.subplot(gs[:, 2])
+# add colourbar
+ax = plt.subplot(gs[:, ncols - 1])
 ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
 ax.yaxis.tick_right()
 plt.colorbar(img, cax=ax)
-plt.savefig("Plots/apa.png")
+plt.savefig("Plots/apa.pileup.samples.png")
+plt.close()
+
+
+# create heatmap for each conditional pileup plot
+# get rows and columns per loop type
+ncols = len(SAMPLE_TYPES) + 1
+nrows = 1
+# create grid specification
+gs = GridSpec(nrows=nrows, ncols=ncols, width_ratios=[20] * (ncols - 1) + [1],)
+# plotting options
+plt.figure(figsize=(4 * (ncols - 1), 4 * nrows))
+# make component plots
+opts = dict(
+    extent=[
+        -(SHIFT_SIZE // 1000),  # values in kbp
+        (SHIFT_SIZE // 1000),
+        -(SHIFT_SIZE // 1000),
+        (SHIFT_SIZE // 1000),
+    ],
+    cmap="coolwarm",
+)
+for j, sample_type in enumerate(SAMPLE_TYPES):
+    ax = plt.subplot(gs[0, j])
+    img = ax.matshow(np.log2(conditional_pileup[sample_type]), **opts)
+    # add x axis labels to bottom-most subplots
+    ax.set_xlabel(sample_type.title())
+    ax.xaxis.set_visible(True)
+    ax.xaxis.tick_bottom()
+
+# add colourbar
+ax = plt.subplot(gs[0, ncols - 1])
+ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
+ax.yaxis.tick_right()
+plt.colorbar(img, cax=ax)
+plt.savefig("Plots/apa.pileup.conditional.png")
+plt.close()
+
+
+# create differential heatmap for each conditional pileup plot
+# get rows and columns per loop type
+ncols = 2
+nrows = 1
+# create grid specification
+gs = GridSpec(nrows=nrows, ncols=ncols, width_ratios=[20] * (ncols - 1) + [1],)
+# plotting options
+plt.figure(figsize=(5 * (ncols - 1), 4 * nrows))
+# make component plots
+opts = dict(
+    extent=[
+        -(SHIFT_SIZE // 1000),  # values in kbp
+        (SHIFT_SIZE // 1000),
+        -(SHIFT_SIZE // 1000),
+        (SHIFT_SIZE // 1000),
+    ],
+    cmap="bwr",
+)
+ax = plt.subplot(gs[0, 0])
+img = ax.matshow(conditional_differential, **opts)
+ax.xaxis.set_visible(False)
+# add x axis labels to bottom-most subplots
+ax.set_xlabel("log2(Tumour / Benign)")
+ax.xaxis.set_visible(True)
+ax.xaxis.tick_bottom()
+
+# add colourbar
+ax = plt.subplot(gs[:, ncols - 1])
+ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
+ax.yaxis.tick_right()
+plt.colorbar(img, cax=ax)
+plt.savefig("Plots/apa.differential.png")
+plt.close()
+
+# create differential heatmap
+# create grid specification
+ncols = 2
+nrows = 1
+gs = GridSpec(nrows=nrows, ncols=ncols, width_ratios=[20] * (ncols - 1) + [1],)
+# plotting options
+plt.figure(figsize=(5 * (ncols - 1), 4 * nrows))
+# make component plots
+opts = dict(
+    extent=[
+        -(SHIFT_SIZE // 1000),  # values in kbp
+        (SHIFT_SIZE // 1000),
+        -(SHIFT_SIZE // 1000),
+        (SHIFT_SIZE // 1000),
+    ],
+    cmap="bwr",
+)
+ax = plt.subplot(gs[0, 0])
+img = ax.matshow(conditional_differential, **opts)
+# add x axis labels to bottom-most subplots
+ax.set_xlabel("log2(Tumour / Benign)")
+ax.xaxis.set_visible(True)
+ax.xaxis.tick_bottom()
+
+# add colourbar
+ax = plt.subplot(gs[:, ncols - 1])
+ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
+ax.yaxis.tick_right()
+plt.colorbar(img, cax=ax)
+plt.savefig("Plots/apa.differential.png")
+plt.close()
+
+
+# create differential heatmap for the top 5 and bottom 5 ranked loops
+# create grid specification
+ncols = len(SAMPLE_TYPES) + 3
+nrows = n_top_loops
+gs = GridSpec(
+    nrows=nrows, ncols=ncols, width_ratios=[20] * len(SAMPLE_TYPES) + [1, 20, 1]
+)
+# plotting options
+fig = plt.figure(figsize=(5 * (ncols - 1), 4 * nrows))
+# make component plots
+opts = dict(
+    extent=[
+        -(SHIFT_SIZE // 1000),  # values in kbp
+        (SHIFT_SIZE // 1000),
+        -(SHIFT_SIZE // 1000),
+        (SHIFT_SIZE // 1000),
+    ],
+    cmap="bwr",
+)
+# plot benign and tumour stacks for the top and bottom loci
+for i, ranked_idx in enumerate(top_loops_idx):
+    for j, sample_type in enumerate(SAMPLE_TYPES):
+        ax = fig.add_subplot(gs[i, j])
+        img = ax.matshow(
+            conditional_stack[sample_type][ranked_idx, :, :], vmin=0, vmax=4, **opts
+        )
+        ax.xaxis.set_visible(False)
+        # add x axis labels to bottom-most subplots
+        if i == nrows - 1:
+            ax.set_xlabel(sample_type.title())
+            ax.xaxis.set_visible(True)
+            ax.xaxis.tick_bottom()
+
+# add colourbar for conditional_stacks
+ax = fig.add_subplot(gs[:, len(SAMPLE_TYPES)])
+ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
+ax.yaxis.tick_right()
+plt.colorbar(img, cax=ax)
+
+for i, ranked_idx in enumerate(top_loops_idx):
+    # plot the difference matrix
+    ax = fig.add_subplot(gs[i, len(SAMPLE_TYPES) + 1])
+    img = ax.matshow(difference_stack[ranked_idx, :, :], vmin=-2, vmax=2, **opts)
+
+# add colourbar for difference matrix
+ax = fig.add_subplot(gs[:, len(SAMPLE_TYPES) + 2])
+ax.set_xlabel("Tumour - Benign\nlog2(Obs / Exp)\nContact Frequency")
+ax.yaxis.tick_right()
+plt.colorbar(img, cax=ax)
+# add x axis labels to bottom-most subplots
+if i == nrows - 1:
+    ax.set_xlabel("Tumour - Benign")
+    ax.xaxis.set_visible(True)
+    ax.xaxis.tick_bottom()
+
+
+plt.savefig("Plots/apa.differential.ranked.png")
+plt.close()
