@@ -1,0 +1,13 @@
+{
+	"n_targets": 188753,
+	"n_bootstraps": 100,
+	"n_processed": 67621612,
+	"n_pseudoaligned": 44492323,
+	"n_unique": 13519683,
+	"p_pseudoaligned": 65.8,
+	"p_unique": 20.0,
+	"kallisto_version": "0.46.2",
+	"index_version": 10,
+	"start_time": "Tue Oct 27 22:37:07 2020",
+	"call": "kallisto quant -b 100 -t 8 --verbose --pseudobam -i ../../Raw/Kallisto_GRCh38_Index/transcriptome.idx -o Benign-Prostate-1664855 ../../Raw/191213_A00827_0097_BHMV2YDMXX_RNA/FASTQs/Benign-Prostate-1664855_L001_R1.fastq.gz ../../Raw/191213_A00827_0097_BHMV2YDMXX_RNA/FASTQs/Benign-Prostate-1664855_L001_R2.fastq.gz ../../Raw/191213_A00827_0097_BHMV2YDMXX_RNA/FASTQs/Benign-Prostate-1664855_L002_R1.fastq.gz ../../Raw/191213_A00827_0097_BHMV2YDMXX_RNA/FASTQs/Benign-Prostate-1664855_L002_R2.fastq.gz ../../Raw/191220_A00827_0104_AHMW25DMXX_RNA/FASTQs/Benign-Prostate-1664855_L002_R1.fastq.gz ../../Raw/191220_A00827_0104_AHMW25DMXX_RNA/FASTQs/Benign-Prostate-1664855_L002_R2.fastq.gz"
+}

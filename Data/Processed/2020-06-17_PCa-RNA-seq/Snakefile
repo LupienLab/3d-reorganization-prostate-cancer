@@ -1,0 +1,60 @@
+# =============================================================================
+# Configuration
+# =============================================================================
+import pandas as pd
+import os.path as path
+
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+SAMPLES = {
+	"tumour": CONFIG.loc[CONFIG.Type == "Malignant", "SampleID"].tolist(),
+	"benign": CONFIG.loc[CONFIG.Type == "Benign", "SampleID"].tolist(),
+	"all": CONFIG["SampleID"].tolist(),
+}
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
+
+RAW_DIR = [
+	path.join("..", "..", "Raw", "191213_A00827_0097_BHMV2YDMXX_RNA", "FASTQs"),
+	path.join("..", "..", "Raw", "191220_A00827_0104_AHMW25DMXX_RNA", "FASTQs"),
+]
+
+IDX = path.join("..", "..", "Raw", "Kallisto_GRCh38_Index", "transcriptome.idx")
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+	input:
+		expand(
+			path.join("{sample}", "{file}"),
+			sample=SAMPLES["benign"],
+			file=["pseudoalignments.bam", "run_info.json", "abundance.h5", "abundance.tsv"],
+		),
+
+# =============================================================================
+# Rules
+# =============================================================================
+rule kallisto_quant:
+	input:
+		batch1 = expand(
+			path.join(RAW_DIR[0], "{{sample}}_L00{lane}_R{mate}.fastq.gz"),
+			lane=[1, 2],
+			mate=[1, 2],
+		),
+		batch2 = expand(
+			path.join(RAW_DIR[1], "{{sample}}_L00{lane}_R{mate}.fastq.gz"),
+			lane=[2],
+			mate=[1, 2],
+		),
+		index = IDX,
+	output:
+		expand(
+			path.join("{{sample}}", "{file}"),
+			file=["abundance.h5", "abundance.tsv", "pseudoalignments.bam", "run_info.json"],
+		),
+	params:
+		"-b 100 -t 8 --verbose --pseudobam"
+	shell:
+		"kallisto quant {params} -i {input.index} -o {wildcards.sample} {input.batch1} {input.batch2}"
+
