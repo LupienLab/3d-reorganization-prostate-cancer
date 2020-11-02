@@ -6,6 +6,7 @@ rule all:
         "gencode.v33.genes.sorted.bed",
         "gencode.v33.tss.sorted.bed",
         "gencode.v33.all-genes.bed",
+        "gencode.v33.all-genes.promoters.bed",
         "gencode.v33.all-transcripts.bed",
 
 # ==============================================================================
@@ -35,6 +36,15 @@ rule all_transcripts:
         "gencode.v33.all-transcripts.bed"
     shell:
         # use either tab or "; " as field separators, only keep transcripts
+        "awk -f {input.script} {input.annot} > {output}"
+
+rule promoters:
+    input:
+        script = "promoters.awk",
+        annot = "gencode.v33.all-genes.bed",
+    output:
+        "gencode.v33.all-genes.promoters.bed",
+    shell:
         "awk -f {input.script} {input.annot} > {output}"
 
 rule filter:
