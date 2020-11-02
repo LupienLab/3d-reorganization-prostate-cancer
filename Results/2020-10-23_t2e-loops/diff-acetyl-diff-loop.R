@@ -63,18 +63,35 @@ acetyl_sig <- acetyl[FDR < 0.05]
 # ==============================================================================
 loginfo("Overlapping loops with peaks")
 
-loops_gr <- toGRanges(loops)
+# convert loops to anchors for overlap
+anchors <- unique(rbind(
+    loops[, .(
+        chr = chr_x,
+        start = start_x,
+        end = end_x,
+        anchor_ID = anchor_ID_x
+    )],
+    loops[, .(
+        chr = chr_y,
+        start = start_y,
+        end = end_y,
+        anchor_ID = anchor_ID_y
+    )]
+))
+
+anchors_gr <- toGRanges(anchors)
+
 acetyl_gr <- toGRanges(acetyl[, .SD, .SDcols = -c("width", "strand")])
 acetyl_sig_gr <- toGRanges(acetyl_sig[, .SD, .SDcols = -c("width", "strand")])
 
 hits <- as.data.table(findOverlaps(
-    query = loops_gr,
+    query = anchors_gr,
     subject = acetyl_gr
 ))
 
 # sort hits by the loop type
 hits <- merge(
-    x = loops[, .(.SD, .I)],        # include the index in the table for merging
+    x = anchors[, .(.SD, .I)],        # include the index in the table for merging
     y = hits,
     by.x = "I",
     by.y = "queryHits"
@@ -82,7 +99,7 @@ hits <- merge(
 
 # fix column names
 # remove ".SD." prefix for column names
-colnames(hits) <- gsub(".SD.", "loop_", colnames(hits))
+colnames(hits) <- gsub(".SD.", "anchor_", colnames(hits))
 # remove "queryHits" column
 hits[, I := NULL]
 
@@ -103,13 +120,13 @@ hits[, subjectHits := NULL]
 
 # repeat all of the above with only the differentially acetylated regions
 hits_sig <- as.data.table(findOverlaps(
-    query = loops_gr,
+    query = anchors_gr,
     subject = acetyl_sig_gr
 ))
 
 # sort hits by the loop type
 hits_sig <- merge(
-    x = loops[, .(.SD, .I)],        # include the index in the table for merging
+    x = anchors[, .(.SD, .I)],        # include the index in the table for merging
     y = hits_sig,
     by.x = "I",
     by.y = "queryHits"
@@ -117,7 +134,7 @@ hits_sig <- merge(
 
 # fix column names
 # remove ".SD." prefix for column names
-colnames(hits_sig) <- gsub(".SD.", "loop_", colnames(hits_sig))
+colnames(hits_sig) <- gsub(".SD.", "anchor_", colnames(hits_sig))
 # remove "queryHits" column
 hits_sig[, I := NULL]
 
@@ -147,8 +164,7 @@ fwrite(
     hits[,
         .SD,
         .SDcols = c(
-            "loop_chr_x", "loop_start_x", "loop_end_x", "loop_chr_y", "loop_start_y", "loop_end_y",
-            "loop_anchor_ID_x", "loop_anchor_ID_y", "loop_loopID", "loop_Loop_Type",
+            "anchor_chr", "anchor_start", "anchor_end", "anchor_anchor_ID",
             "peak_chr", "peak_start", "peak_end", "peak_Conc_T2E", "peak_Conc_NonT2E", "peak_Fold",
             "peak_p.value", "peak_FDR"
         )
@@ -162,8 +178,7 @@ fwrite(
     hits_sig[,
         .SD,
         .SDcols = c(
-            "loop_chr_x", "loop_start_x", "loop_end_x", "loop_chr_y", "loop_start_y", "loop_end_y",
-            "loop_anchor_ID_x", "loop_anchor_ID_y", "loop_loopID", "loop_Loop_Type",
+            "anchor_chr", "anchor_start", "anchor_end", "anchor_anchor_ID",
             "peak_chr", "peak_start", "peak_end", "peak_Conc_T2E", "peak_Conc_NonT2E", "peak_Fold",
             "peak_p.value", "peak_FDR"
         )
