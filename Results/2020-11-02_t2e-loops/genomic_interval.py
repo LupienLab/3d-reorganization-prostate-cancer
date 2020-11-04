@@ -2,6 +2,7 @@
 # Environment
 # ==============================================================================
 from interval import interval
+from typing import Tuple
 
 # ==============================================================================
 # Classes
@@ -12,7 +13,7 @@ class GenomicInterval:
         self.interval = interval([start, end])
         self.data = data
 
-    def coord_str(self):
+    def coord_str(self) -> str:
         return (
             self.chr
             + " ["
@@ -22,7 +23,7 @@ class GenomicInterval:
             + "e6)"
         )
 
-    def plot_str(self):
+    def plot_str(self) -> str:
         return "".join(
             [
                 self.chr,
@@ -34,22 +35,46 @@ class GenomicInterval:
             ]
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.plot_str()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.plot_str()
 
-    def inf(self):
+    def inf(self) -> int:
         return int(self.interval[0].inf)
 
-    def sup(self):
+    def sup(self) -> int:
         return int(self.interval[0].sup)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if self.chr == other.chr:
-            return self.sup() < other.sup()
+            return self.inf() < other.inf()
         return self.chr < other.chr
+
+    def __le__(self, other) -> bool:
+        if self.chr == other.chr:
+            return self.inf() <= other.inf()
+        return self.chr < other.chr
+
+    def __gt__(self, other) -> bool:
+        if self.chr == other.chr:
+            return self.sup() > other.sup()
+        return self.chr > other.chr
+
+    def __ge__(self, other) -> bool:
+        if self.chr == other.chr:
+            return self.sup() >= other.sup()
+        return self.chr > other.chr
+
+    def __ne__(self, other) -> bool:
+        if self.chr == other.chr:
+            return self.sup() >= other.sup()
+        return (
+            (self.chr != other.chr)
+            and (self.inf() != other.inf())
+            and (self.sup() != other.sup())
+        )
 
 
 class TopologicalDomain(GenomicInterval):
@@ -58,18 +83,56 @@ class TopologicalDomain(GenomicInterval):
         super().__init__(chrom, start, end)
 
 
+class Loop:
+    def __init__(
+        self,
+        chrom_x,
+        start_x,
+        end_x,
+        chrom_y,
+        start_y,
+        end_y,
+        x_data=None,
+        y_data=None,
+        loop_data=None,
+    ):
+        # create anchors
+        anchor_x = GenomicInterval(chrom_x, start_x, end_x, data=x_data,)
+        anchor_y = GenomicInterval(chrom_y, start_y, end_x, data=y_data,)
+        # anchor with the smaller coordinate is always the 0th element
+        if anchor_x <= anchor_y:
+            self.left = anchor_x
+            self.right = anchor_y
+        else:
+            self.left = anchor_y
+            self.right = anchor_x
+        self.data = loop_data
+
+    def gap(self) -> int:
+        if self.left.chr != self.right.chr:
+            return -1
+        else:
+            return self.right.inf() - self.left.sup()
+
+    def __str__(self) -> str:
+        return self.left.plot_str() + "--" + self.right.plot_str()
+
+    def __repr__(self) -> str:
+        return self.left.plot_str() + "--" + self.right.plot_str()
+
+
 # ==============================================================================
 # Functions
 # ==============================================================================
 
 
-def coord_pos_str(i: int):
+def coord_pos_str(i: int) -> str:
     return str(round(i / 1e6, 2))
 
 
-def overlapping(a: GenomicInterval, b: GenomicInterval, extend: int = 0):
+def overlapping(a: GenomicInterval, b: GenomicInterval, extend: int = 0) -> bool:
     """
-    Boolean function to see if two GenomicIntervals overlap
+    Determine if two GenomicIntervals overlap
 
     Parameters
     ----------
@@ -137,5 +200,10 @@ def find_tad(i: GenomicInterval, tads):
         return tads_lower
     # if not, return the set of TADs spanned by the breakpoint coordinates
     else:
-        return tads.iloc[range(min(lower_idx), max(upper_idx) + 1), :]
+        range_slice = list(range(min(lower_idx), max(upper_idx) + 1))
+        return GenomicInterval(
+            i.chr,
+            tads.loc[range_slice, "start"].min(),
+            tads.loc[range_slice, "end"].max(),
+        )
 
