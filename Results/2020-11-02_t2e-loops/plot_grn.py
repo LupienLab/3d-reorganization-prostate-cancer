@@ -28,50 +28,7 @@ import logging
 # set logging parameters
 logging.getLogger().setLevel(logging.INFO)
 
-unique_annots = [
-    "nearby",
-    "recurrent",
-    "DUP",
-    "INS",
-    "INV",
-    "DEL",
-    "BND",
-    "UNKNOWN",
-    "equivalent-TAD",
-]
-
-annot_map = {"INV": "V", "DEL": "Δ", "DUP": "+", "UNKNOWN": "?"}
-
-chroms = ["chr" + str(i) for i in list(range(1, 23)) + ["X", "Y"]]
-
-chrom_colours = [
-    "#cf4336",
-    "#5dbe4a",
-    "#a35bce",
-    "#a6b535",
-    "#5e6ace",
-    "#d7a036",
-    "#5d88c7",
-    "#d46e2b",
-    "#47bcd2",
-    "#dc406f",
-    "#52c39a",
-    "#d14da5",
-    "#458631",
-    "#c08ed8",
-    "#7aba6f",
-    "#924d89",
-    "#b7ab5d",
-    "#9f455c",
-    "#37835c",
-    "#df83a3",
-    "#6a762c",
-    "#bb5a53",
-    "#92662d",
-    "#e49670",
-]
-
-chrom_colour_map = {c: v for c, v in zip(chroms, chrom_colours)}
+unique_annots = ["T2E-specific", "nonT2E-specific", "shared"]
 
 GRAPH_DIR = "Graphs"
 PLOT_DIR = "Plots"
@@ -111,21 +68,16 @@ def plot_graph(
     edge_labels=False,
     **kwargs
 ):
-    if colocate_chroms:
-        for c in chroms:
-            for n in [m for m in G if m.chr == c]:
-                for i in range(n_centres):
-                    chrom_node = GenomicInterval(c, 0, 1, {"sample": None})
-                    G.add_node(chrom_node)
-                    G.add_edge(chrom_node, n)
-        # get colours for the nodes
-        chrom_nodes = [n for n in G if n.data["sample"] is None]
-    # get nodes and colours corresponding to breakpoints
-    bp_nodes = [n for n in G]
     # get colours for the nodes
-    n_colours = [chrom_colour_map[n.chr] for n in bp_nodes]
-    # get edges and colours corresponding to SV type
-    edges = G.edges()
+    n_colours = {}
+    for n in G:
+        if n.data["type"] == "enhancer":
+            n_colours[n] = plt.cm.tab10(unique_annots.index(n.data["condition"]))
+        else:
+            n_colours[n] = "#000000"
+    # get edges and colours corresponding to loop type
+    edges, e_annots = zip(*nx.get_edge_attributes(G, "condition").items())
+    e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
     # get spring layout for the entire graph
     if colocate_chroms:
         pos_spring = nx.spring_layout(
@@ -151,9 +103,9 @@ def plot_graph(
         pos=pos,
         ax=ax,
         edgelist=edges,
-        node_color=n_colours,
+        node_color=n_colours.values(),
         linewidths=1,
-        edgecolors="#000000",
+        edge_color=e_colours,
         with_labels=False,
     )
     # save without node labels
@@ -195,31 +147,23 @@ print(len(G))
 logging.info("Plotting GRNs")
 random.seed(42)
 
-counter = 0
-for gene_id, grn in G.items():
-    if len(grn) <= 1:
-        continue
-    if counter > 5:
-        continue
-    else:
-        counter += 1
-    plot_graph(
-        grn,
-        path.join(PLOT_DIR, gene_id),
-        node_labels=True,
-        dpi=96,
-        bbox_inches="tight",
-    )
-
-# figure for chromosome colour legend
-fig_leg, ax_leg = plt.subplots()
-cols = [locus_to_plotpos(GenomicInterval(c, 0, 1)) for c in chroms]
-ax_leg.scatter(
-    x=[a for (a, b) in cols], y=[b for (a, b) in cols], s=2000, c=chrom_colours,
+plot_graph(
+    G["ENSG00000129514.7"],
+    path.join(PLOT_DIR, "FOXA1"),
+    node_labels=True,
+    dpi=96,
+    bbox_inches="tight",
 )
-ax_leg.set_ylim([0, 5])
-for i, c in enumerate(chroms):
-    ax_leg.annotate(c, cols[i], ha="center", va="center")
 
-plt.axis("off")
-savefig(fig_leg, path.join("Plots", "chrom-colour-map"), bbox_inches="tight")
+# # figure for chromosome colour legend
+# fig_leg, ax_leg = plt.subplots()
+# cols = [locus_to_plotpos(GenomicInterval(c, 0, 1)) for c in chroms]
+# ax_leg.scatter(
+#     x=[a for (a, b) in cols], y=[b for (a, b) in cols], s=2000, c=chrom_colours,
+# )
+# ax_leg.set_ylim([0, 5])
+# for i, c in enumerate(chroms):
+#     ax_leg.annotate(c, cols[i], ha="center", va="center")
+
+# plt.axis("off")
+# savefig(fig_leg, path.join("Plots", "chrom-colour-map"), bbox_inches="tight")
