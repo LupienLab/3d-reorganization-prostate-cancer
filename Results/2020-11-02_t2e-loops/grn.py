@@ -47,6 +47,11 @@ def sat_grn(grn: nx.Graph) -> bool:
     enhn_conditions = set(
         [e.data["condition"] for e in grn if e.data["type"] == "enhancer"]
     )
+    # if no enhancers or loops, don't test
+    if len(loop_conditions) == 0:
+        return False
+    if len(enhn_conditions) == 0:
+        return False
     # if all the loops and enhancers are shared, don't test it
     all_shared_loops = loop_conditions == set(["shared"])
     all_shared_enhns = enhn_conditions == set(["shared"])
@@ -130,6 +135,11 @@ tads.drop(labels=["level_1"], axis=1, inplace=True)
 tads.sort_values(
     by=["chr", "start", "end", "SampleID"], inplace=True, ignore_index=True
 )
+
+# tads = tads.loc[tads.chr == "chr1", :]
+# promoters = promoters.loc[promoters.chr == "chr1", :]
+# loops = loops.loc[loops.chr_x == "chr1", :]
+# enhancers = enhancers.loc[enhancers.chr == "chr1", :]
 
 # ==============================================================================
 # Analysis
