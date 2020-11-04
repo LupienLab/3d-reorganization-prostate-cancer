@@ -48,15 +48,13 @@ def sat_grn(grn: nx.Graph) -> bool:
 logging.info("Loading data")
 
 # load pre-processed promoters
-promoters = pd.read_csv("promoters.overlapping-loops.tsv", sep="\t", header=[0],)
+promoters = pd.read_csv("overlapping.promoters.tsv", sep="\t", header=[0],)
 
 # load catalogue of H3K27ac peaks and differential test results
-enhancers = pd.read_csv("enhancers.overlapping-loops.tsv", sep="\t", header=[0],)
+enhancers = pd.read_csv("overlapping.enhancers.tsv", sep="\t", header=[0],)
 
 # load catalogue of loop calls from all 17 samples
-loops = pd.read_csv(
-    "loops.overlapping-promoters.overlapping-enhancers.tsv", sep="\t", header=[0],
-)
+loops = pd.read_csv("overlapping.loops.tsv", sep="\t", header=[0],)
 
 # load sample metadata
 metadata = pd.read_csv("config.tsv", sep="\t", header=[0],)
@@ -142,6 +140,7 @@ for gene in tqdm(promoters.itertuples(), total=promoters.shape[0]):
     # add the promoter to the GRN for this gene
     G[gene.gene_id].add_node(prom)
 
+
 L = {}  # loops
 for (gene_id, prom), (_, tad) in tqdm(
     zip(P.items(), T.items()), total=promoters.shape[0]
@@ -177,7 +176,7 @@ for (gene_id, prom), (_, tad) in tqdm(
             l.end_y,
             {"row": l.Index, "id": l.anchor_ID_x,},
             {"row": l.Index, "id": l.anchor_ID_y,},
-            {"row": l.Index, "id": l.loopID,},
+            {"row": l.Index, "id": l.loopID, "condition": l.loop_type},
         )
         for l in tad_loops.itertuples()
     ]
@@ -199,22 +198,33 @@ for (gene_id, prom), (_, tad), (_, loops) in tqdm(
     # if no enhancers, no GRN to be made, so skip the rest
     if len(tad_enhancers) == 0:
         continue
+    # calculate whether the enhancer is condition-specific or shared
+    enhn_conditions = [""] * tad_enhancers.shape[0]
+    for i, e in enumerate(tad_enhancers.itertuples()):
+        if e.FDR < 0.05:
+            if e.Fold > 0:
+                enhn_conditions[i] = "T2E-specific"
+            else:
+                enhn_conditions[i] = "nonT2E-specific"
+        else:
+            enhn_conditions[i] = "shared"
     # convert to GenomicInterval objects
     tad_peak_intvls = [
         GenomicInterval(
-            p.chr,
-            p.start,
-            p.end,
+            e.chr,
+            e.start,
+            e.end,
             {
-                "row": p.Index,
-                "id": p.Index,
+                "row": e.Index,
+                "id": e.Index,
                 "name": "",
                 "type": "enhancer",
-                "sig": p.FDR < 0.05,
-                "fc": p.Fold,
+                "sig": e.FDR < 0.05,
+                "fc": e.Fold,
+                "condition": cdn,
             },
         )
-        for p in tad_enhancers.itertuples()
+        for p, cdn in zip(tad_enhancers.itertuples(), enhn_conditions)
     ]
     # only include enhancers that overlap a loop anchor
     for e in tad_peak_intvls:
@@ -228,17 +238,32 @@ for (gene_id, prom), (_, tad), (_, loops) in tqdm(
 
 
 logging.info("Checking GRN satisfiability")
+# only consider genes that have at least 1 loop and at least 1 enhancer
+genes_with_loops = set(
+    [gene_id for gene_id, grn_loops in L.items() if len(grn_loops) > 0]
+)
+genes_with_enhancers = set(
+    [gene_id for gene_id, grn_enhns in E.items() if len(grn_enhns) > 0]
+)
+genes_to_consider = genes_with_loops.intersection(genes_with_enhancers)
+# remove other genes from the dict of GRNs
+G = {gene_id: grn for gene_id, grn in G.items() if gene_id in genes_to_consider}
+T = {gene_id: tad for gene_id, tad in T.items() if gene_id in genes_to_consider}
+P = {gene_id: prom for gene_id, prom in P.items() if gene_id in genes_to_consider}
+E = {gene_id: enhn for gene_id, enhn in E.items() if gene_id in genes_to_consider}
+L = {gene_id: loop for gene_id, loop in L.items() if gene_id in genes_to_consider}
+
 grn_sat_table = pd.DataFrame(
     {
         "gene_id": [gene_id for gene_id in G.keys()],
         "Satisfies_Requirements": [False] * len(G),
     }
 )
-# check if each gene has a satisfactory GRN
-for gene in tqdm(grn_sat_table.itertuples(), total=grn_sat_table.shape[0]):
-    # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
-    if sat_grn(G[gene.gene_id]):
-        grn_sat_table.loc[gene.Index, "Satisfies_Requirements"] = True
+# # check if each gene has a satisfactory GRN
+# for gene in tqdm(grn_sat_table.itertuples(), total=grn_sat_table.shape[0]):
+#     # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
+#     if sat_grn(G[gene.gene_id]):
+#         grn_sat_table.loc[gene.Index, "Satisfies_Requirements"] = True
 
 # ==============================================================================
 # Save data
