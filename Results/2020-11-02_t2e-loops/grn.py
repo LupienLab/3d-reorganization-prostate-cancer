@@ -14,6 +14,7 @@ import negspy.coordinates as nc
 import logging
 import pickle
 from tqdm import tqdm
+
 from genomic_interval import GenomicInterval, overlapping, find_tad, Loop
 
 # ==============================================================================
@@ -40,6 +41,42 @@ def sat_grn(grn: nx.Graph) -> bool:
     ==========
     grn: Gene regulatory network for a single gene
     """
+    loop_conditions = set(
+        [loop_data["condition"] for _, _, loop_data in grn.edges(data=True)]
+    )
+    enhn_conditions = set(
+        [e.data["condition"] for e in grn if e.data["type"] == "enhancer"]
+    )
+    # if all the loops and enhancers are shared, don't test it
+    all_shared_loops = loop_conditions == set(["shared"])
+    all_shared_enhns = enhn_conditions == set(["shared"])
+    if all_shared_loops and all_shared_enhns:
+        return False
+    elif all_shared_loops:
+        if ("T2E-specific" in enhn_conditions) and (
+            "nonT2E-specific" in enhn_conditions
+        ):
+            return False
+    elif all_shared_enhns:
+        if ("T2E-specific" in loop_conditions) and (
+            "nonT2E-specific" in loop_conditions
+        ):
+            return False
+        return False
+    # if there are multiple loops with different changes of direction (i.e. one TE2+ and one T2E- loop), skip
+    if ("T2E-specific" in loop_conditions) and ("nonT2E-specific" in loop_conditions):
+        return False
+    # if the direction of change in the loop and the enhancer are opposite, don't test
+    for cre1, cre2, loop_data in grn.edges(data=True):
+        if cre1.data["type"] == "enhancer":
+            enhn_cdn = cre1.data["condition"]
+        else:
+            enhn_cdn = cre2.data["condition"]
+        if set([loop_data["condition"], enhn_cdn]) == set(
+            ["T2E-specific", "nonT2E-specific"]
+        ):
+            return False
+    return True
 
 
 # ==============================================================================
@@ -93,11 +130,6 @@ tads.drop(labels=["level_1"], axis=1, inplace=True)
 tads.sort_values(
     by=["chr", "start", "end", "SampleID"], inplace=True, ignore_index=True
 )
-
-tads = tads.loc[tads.chr == "chr14", :]
-promoters = promoters.loc[promoters.chr == "chr14", :]
-loops = loops.loc[loops.chr_x == "chr14", :]
-enhancers = enhancers.loc[enhancers.chr == "chr14", :]
 
 # ==============================================================================
 # Analysis
@@ -184,7 +216,7 @@ for (gene_id, prom), (_, tad) in tqdm(
 
 
 E = {}  # Enhancers
-for (gene_id, prom), (_, tad), (_, loops) in tqdm(
+for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
     zip(P.items(), T.items(), L.items()), total=promoters.shape[0]
 ):
     # find all H3K27ac peaks within the TAD, exlcuding promoter regions
@@ -228,12 +260,14 @@ for (gene_id, prom), (_, tad), (_, loops) in tqdm(
     ]
     # only include enhancers that overlap a loop anchor
     for e in tad_peak_intvls:
-        if any(
-            [overlapping(e, l.left) or overlapping(e, l.right) for l in tad_loop_intvls]
-        ):
-            G[gene_id].add_node(e)
-            # connect the enhancer to the gene promoter
-            G[gene_id].add_edge(prom, e)
+        # this may produce multiple edges between the enhancer and the promoters
+        # (although biologically, this shouldn't happen at the enhancers, only the promoters)
+        # I will need to check for this in future code
+        for l in tad_loops:
+            if overlapping(e, l.left) or overlapping(e, l.right):
+                G[gene_id].add_node(e)
+                # connect the enhancer to the gene promoter
+                G[gene_id].add_edge(prom, e, condition=l.data["condition"])
     E[gene_id] = tad_peak_intvls
 
 
@@ -256,14 +290,14 @@ L = {gene_id: loop for gene_id, loop in L.items() if gene_id in genes_to_conside
 grn_sat_table = pd.DataFrame(
     {
         "gene_id": [gene_id for gene_id in G.keys()],
-        "Satisfies_Requirements": [False] * len(G),
+        "Satisfies_Testing_Requirements": [False] * len(G),
     }
 )
-# # check if each gene has a satisfactory GRN
-# for gene in tqdm(grn_sat_table.itertuples(), total=grn_sat_table.shape[0]):
-#     # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
-#     if sat_grn(G[gene.gene_id]):
-#         grn_sat_table.loc[gene.Index, "Satisfies_Requirements"] = True
+# check if each gene has a satisfactory GRN
+for gene in tqdm(grn_sat_table.itertuples(), total=grn_sat_table.shape[0]):
+    # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
+    if sat_grn(G[gene.gene_id]):
+        grn_sat_table.loc[gene.Index, "Satisfies_Testing_Requirements"] = True
 
 # ==============================================================================
 # Save data
@@ -279,6 +313,6 @@ pickle.dump(L, open(path.join("Graphs", "loops.p"), "wb"))
 
 # save the satisfiability table for future reference
 grn_sat_table.to_csv(
-    "Graphs/grn-satisfiability.tsv", sep="\t", index_col=False,
+    "Graphs/grn-satisfiability.tsv", sep="\t",
 )
 
