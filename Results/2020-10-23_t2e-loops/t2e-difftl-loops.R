@@ -39,9 +39,9 @@ loop_counts <- fread("../2020-10-06_loops/Loops/merged-loops.sample-counts.tsv",
 # Analysis
 # ==============================================================================
 loginfo("Performing calculations")
-# start with the loops that are called in at least 3 samples
-consistent_loops <- loop_counts[Malignant >= 3, loopID]
-loops <- loops[loopID %in% consistent_loops]
+# # start with the loops that are called in at least 3 samples
+# consistent_loops <- loop_counts[Malignant >= 3, loopID]
+# loops <- loops[loopID %in% consistent_loops]
 
 # get loop IDs by tumour type
 loops <- merge(loops, metadata[, .SD, .SDcols = c("SampleID", "T2E")])

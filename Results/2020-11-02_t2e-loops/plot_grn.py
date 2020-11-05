@@ -10,6 +10,7 @@ import networkx as nx
 import pickle
 from typing import List, Set, Tuple, Dict
 import numpy as np
+import pandas as pd
 import random
 import matplotlib
 
@@ -21,6 +22,13 @@ plt.rcParams["figure.figsize"] = (20 / 2.54, 20 / 2.54)  # 20x20 cm
 
 from genomic_interval import GenomicInterval, overlapping
 import logging
+
+import argparse
+
+PARSER = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+PARSER.add_argument("gene_id", type=str, help="Gene ID to plot", nargs="+")
+ARGS = PARSER.parse_args()
+
 
 # ==============================================================================
 # Constants
@@ -59,15 +67,7 @@ def savefig(fig, prefix="figure", exts=["png", "pdf"], dpi=400, **kwargs):
         fig.savefig(prefix + "." + ext, dpi=dpi, **kwargs)
 
 
-def plot_graph(
-    G,
-    prefix,
-    colocate_chroms=False,
-    n_centres=10,
-    node_labels=False,
-    edge_labels=False,
-    **kwargs
-):
+def plot_graph(G, prefix, n_centres=10, node_labels=False, edge_labels=False, **kwargs):
     # get colours for the nodes
     n_colours = {}
     for n in G:
@@ -79,12 +79,7 @@ def plot_graph(
     edges, e_annots = zip(*nx.get_edge_attributes(G, "condition").items())
     e_colours = [plt.cm.tab10(unique_annots.index(a)) for a in e_annots]
     # get spring layout for the entire graph
-    if colocate_chroms:
-        pos_spring = nx.spring_layout(
-            G=G, pos={n: locus_to_plotpos(n) for n in chrom_nodes}, fixed=chrom_nodes,
-        )
-    else:
-        pos_spring = nx.spring_layout(G)
+    pos_spring = nx.spring_layout(G)
     # calculate optimal distances for nodes
     optimal_dists = {}
     for n in G:
@@ -104,7 +99,7 @@ def plot_graph(
         ax=ax,
         edgelist=edges,
         node_color=n_colours.values(),
-        linewidths=1,
+        width=2,
         edge_color=e_colours,
         with_labels=False,
     )
@@ -139,7 +134,14 @@ def plot_graph(
 logging.info("Loading data")
 # load graphs
 G = pickle.load(open(path.join(GRAPH_DIR, "grns.p"), "rb"))
-print(len(G))
+
+# load gene annotations
+genes = pd.read_csv(
+    "../../Data/External/GENCODE/gencode.v33.all-genes.promoters.bed",
+    sep="\t",
+    header=None,
+    names=["chr", "start", "end", "strand", "gene_id", "gene_name"],
+)
 
 # ==============================================================================
 # Plots
@@ -147,13 +149,14 @@ print(len(G))
 logging.info("Plotting GRNs")
 random.seed(42)
 
-plot_graph(
-    G["ENSG00000129514.7"],
-    path.join(PLOT_DIR, "FOXA1"),
-    node_labels=True,
-    dpi=96,
-    bbox_inches="tight",
-)
+for gid in ARGS.gene_id:
+    plot_graph(
+        G[gid],
+        path.join(PLOT_DIR, genes.loc[genes.gene_id == gid, "gene_name"].values[0]),
+        node_labels=True,
+        dpi=96,
+        bbox_inches="tight",
+    )
 
 # # figure for chromosome colour legend
 # fig_leg, ax_leg = plt.subplots()

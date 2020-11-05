@@ -14,7 +14,7 @@ import negspy.coordinates as nc
 import logging
 import pickle
 from tqdm import tqdm
-from typing import Tuple
+from typing import Tuple, Dict
 
 from genomic_interval import GenomicInterval, overlapping, find_tad, Loop
 
@@ -79,6 +79,63 @@ def sat_grn(grn: nx.Graph) -> Tuple[bool, str]:
         ):
             return (False, "Connected loop and enhancer change in opposing directions")
     return (True, "Not rejected")
+
+
+def gain_of_reg_in_grn(grn: nx.Graph) -> Tuple[str, str]:
+    """
+    Determine if a GRN for a specific genehas a gain of regulatory elements in T2E+ samples or not
+
+    Parameters
+    ==========
+    grn: Gene regulatory network for a single gene
+    """
+    loop_conditions = set(
+        [loop_data["condition"] for _, _, loop_data in grn.edges(data=True)]
+    )
+    enhn_conditions = set(
+        [e.data["condition"] for e in grn if e.data["type"] == "enhancer"]
+    )
+    # check for loops
+    if len(loop_conditions) == 0:
+        loop_gain = "No loops"
+    elif "T2E-specific" in loop_conditions:
+        loop_gain = "Gained loop(s)"
+    elif "nonT2E-specific" in loop_conditions:
+        loop_gain = "Lost loop(s)"
+    else:
+        loop_gain = "Same loop(s)"
+    # check for enhancers
+    if len(enhn_conditions) == 0:
+        enhn_gain = "No enhancers"
+    elif "T2E-specific" in enhn_conditions:
+        enhn_gain = "Gained enhancer(s)"
+    elif "nonT2E-specific" in enhn_conditions:
+        enhn_gain = "Lost enhancer(s)"
+    else:
+        enhn_gain = "Same enhancer(s)"
+    return (loop_gain, enhn_gain)
+
+
+def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
+    data = {
+        "loops_gained": len(
+            [1 for l in grn_loops if l.data["condition"] == "T2E-specific"]
+        ),
+        "loops_shared": len([1 for l in grn_loops if l.data["condition"] == "shared"]),
+        "loops_lost": len(
+            [1 for l in grn_loops if l.data["condition"] == "nonT2E-specific"]
+        ),
+        "enhancers_gained": len(
+            [1 for e in grn_enhns if e.data["condition"] == "T2E-specific"]
+        ),
+        "enhancers_shared": len(
+            [1 for e in grn_enhns if e.data["condition"] == "shared"]
+        ),
+        "enhancers_lost": len(
+            [1 for e in grn_enhns if e.data["condition"] == "nonT2E-specific"]
+        ),
+    }
+    return data
 
 
 # ==============================================================================
@@ -297,18 +354,40 @@ L = {gene_id: loop for gene_id, loop in L.items() if gene_id in genes_to_conside
 grn_sat_table = pd.DataFrame(
     {
         "gene_id": list(G.keys()),
-        "Satisfies_Testing_Requirements": [False] * len(G),
+        "GRN_Satisfies_Testing_Requirements": [False] * len(G),
         "Rejection_Reason": [""] * len(G),
+        "GRN_Class": [""] * len(G),
     }
 )
 # check if each gene has a satisfactory GRN
 for gene_id in tqdm(grn_sat_table["gene_id"], total=grn_sat_table.shape[0]):
     # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
     sat, reason = sat_grn(G[gene_id])
+    classification = gain_of_reg_in_grn(G[gene_id])
     grn_sat_table.loc[
-        grn_sat_table.gene_id == gene_id, "Satisfies_Testing_Requirements"
+        grn_sat_table.gene_id == gene_id, "GRN_Satisfies_Testing_Requirements"
     ] = sat
     grn_sat_table.loc[grn_sat_table.gene_id == gene_id, "Rejection_Reason"] = reason
+    grn_sat_table.loc[grn_sat_table.gene_id == gene_id, "GRN_Class"] = (
+        "(" + classification[0] + ", " + classification[1] + ")"
+    )
+
+# for each GRN, count the number gained, shared, and lost loops and enhancers
+grn_cre_stats = pd.DataFrame(
+    {
+        "gene_id": list(G.keys()),
+        "loops_gained": [0] * len(G),
+        "loops_shared": [0] * len(G),
+        "loops_lost": [0] * len(G),
+        "enhancers_gained": [0] * len(G),
+        "enhancers_shared": [0] * len(G),
+        "enhancers_lost": [0] * len(G),
+    }
+)
+for gene_id in tqdm(G.keys(), total=len(G)):
+    grn_info = grn_stats(L[gene_id], E[gene_id])
+    for k in grn_info.keys():
+        grn_cre_stats.loc[grn_cre_stats.gene_id == gene_id, k] = grn_info[k]
 
 # ==============================================================================
 # Save data
@@ -325,3 +404,5 @@ pickle.dump(L, open(path.join("Graphs", "loops.p"), "wb"))
 # save the satisfiability table for future reference
 grn_sat_table.to_csv("Graphs/grn-satisfiability.tsv", sep="\t", index=False)
 
+# save count of loops and enhancers in each GRN
+grn_cre_stats.to_csv("Graphs/grn-stats.tsv", sep="\t", index=False)
