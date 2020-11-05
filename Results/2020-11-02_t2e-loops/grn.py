@@ -14,6 +14,7 @@ import negspy.coordinates as nc
 import logging
 import pickle
 from tqdm import tqdm
+from typing import Tuple
 
 from genomic_interval import GenomicInterval, overlapping, find_tad, Loop
 
@@ -33,7 +34,7 @@ CHROM_SIZES = hg38.chrom_lengths
 # ==============================================================================
 # Functions
 # ==============================================================================
-def sat_grn(grn: nx.Graph) -> bool:
+def sat_grn(grn: nx.Graph) -> Tuple[bool, str]:
     """
     Determine if a GRN for a specific gene is satisfactory for the analysis involving genes, enhancers, and expression
 
@@ -49,28 +50,24 @@ def sat_grn(grn: nx.Graph) -> bool:
     )
     # if no enhancers or loops, don't test
     if len(loop_conditions) == 0:
-        return False
+        return (False, "No loops")
     if len(enhn_conditions) == 0:
-        return False
+        return (False, "No enhancers")
     # if all the loops and enhancers are shared, don't test it
     all_shared_loops = loop_conditions == set(["shared"])
     all_shared_enhns = enhn_conditions == set(["shared"])
     if all_shared_loops and all_shared_enhns:
-        return False
+        return (False, "No differential loops or enhancers")
     elif all_shared_loops:
         if ("T2E-specific" in enhn_conditions) and (
             "nonT2E-specific" in enhn_conditions
         ):
-            return False
+            return (False, "No loop changes, multiple opposing enhancer changes")
     elif all_shared_enhns:
         if ("T2E-specific" in loop_conditions) and (
             "nonT2E-specific" in loop_conditions
         ):
-            return False
-        return False
-    # if there are multiple loops with different changes of direction (i.e. one TE2+ and one T2E- loop), skip
-    if ("T2E-specific" in loop_conditions) and ("nonT2E-specific" in loop_conditions):
-        return False
+            return (False, "No enhancer changes, multiple opposing loop changes")
     # if the direction of change in the loop and the enhancer are opposite, don't test
     for cre1, cre2, loop_data in grn.edges(data=True):
         if cre1.data["type"] == "enhancer":
@@ -80,8 +77,8 @@ def sat_grn(grn: nx.Graph) -> bool:
         if set([loop_data["condition"], enhn_cdn]) == set(
             ["T2E-specific", "nonT2E-specific"]
         ):
-            return False
-    return True
+            return (False, "Connected loop and enhancer change in opposing directions")
+    return (True, "Not rejected")
 
 
 # ==============================================================================
@@ -136,10 +133,10 @@ tads.sort_values(
     by=["chr", "start", "end", "SampleID"], inplace=True, ignore_index=True
 )
 
-# tads = tads.loc[tads.chr == "chr1", :]
-# promoters = promoters.loc[promoters.chr == "chr1", :]
-# loops = loops.loc[loops.chr_x == "chr1", :]
-# enhancers = enhancers.loc[enhancers.chr == "chr1", :]
+# tads = tads.loc[tads.chr == "chr19", :]
+# promoters = promoters.loc[promoters.chr == "chr19", :]
+# loops = loops.loc[loops.chr_x == "chr19", :]
+# enhancers = enhancers.loc[enhancers.chr == "chr19", :]
 
 # ==============================================================================
 # Analysis
@@ -193,21 +190,18 @@ for (gene_id, prom), (_, tad) in tqdm(
         & (loops["chr_y"] == tad.chr)
         & (loops["start_x"] <= tad.sup())
         & (loops["start_y"] <= tad.sup())
-        & (loops["end_x"] <= tad.inf())
-        & (loops["end_y"] <= tad.inf()),
+        & (loops["end_x"] >= tad.inf())
+        & (loops["end_y"] >= tad.inf()),
         :,
     ]
     # only include loops where one anchor overlaps the gene promoter
     tad_loops = tad_loops.loc[
         # x anchor overlaps the promoter
-        ((tad_loops["start_x"] <= prom.sup()) & (tad_loops["end_x"] <= prom.inf()))
+        ((tad_loops["start_x"] <= prom.sup()) & (tad_loops["end_x"] >= prom.inf()))
         # or y anchor overlaps promoter
-        | ((tad_loops["start_y"] <= prom.sup()) & (tad_loops["end_y"] <= prom.inf())),
+        | ((tad_loops["start_y"] <= prom.sup()) & (tad_loops["end_y"] >= prom.inf())),
         :,
     ]
-    # no loops connecting to gene, no GRNs to be made, so skip the rest
-    if len(tad_loops) == 0:
-        continue
     tad_loop_intvls = [
         Loop(
             l.chr_x,
@@ -224,22 +218,26 @@ for (gene_id, prom), (_, tad) in tqdm(
     ]
     L[gene_id] = tad_loop_intvls
 
+# count how many GRNs contained at least 1 loop
+genes_with_loops = set(
+    [gene_id for gene_id, grn_loops in L.items() if len(grn_loops) > 0]
+)
 
 E = {}  # Enhancers
 for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
     zip(P.items(), T.items(), L.items()), total=promoters.shape[0]
 ):
+    # don't bother constructing GRN if no loops
+    if len(tad_loops) == 0:
+        continue
     # find all H3K27ac peaks within the TAD, exlcuding promoter regions
     tad_enhancers = enhancers.loc[
         (enhancers.index != prom.data["row"])
         & (enhancers["chr"] == tad.chr)
         & (enhancers["start"] <= tad.sup())
-        & (enhancers["end"] <= tad.inf()),
+        & (enhancers["end"] >= tad.inf()),
         :,
     ]
-    # if no enhancers, no GRN to be made, so skip the rest
-    if len(tad_enhancers) == 0:
-        continue
     # calculate whether the enhancer is condition-specific or shared
     enhn_conditions = [""] * tad_enhancers.shape[0]
     for i, e in enumerate(tad_enhancers.itertuples()):
@@ -251,7 +249,7 @@ for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
         else:
             enhn_conditions[i] = "shared"
     # convert to GenomicInterval objects
-    tad_peak_intvls = [
+    tad_enhn_invls = [
         GenomicInterval(
             e.chr,
             e.start,
@@ -269,26 +267,25 @@ for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
         for p, cdn in zip(tad_enhancers.itertuples(), enhn_conditions)
     ]
     # only include enhancers that overlap a loop anchor
-    for e in tad_peak_intvls:
+    for e in tad_enhn_invls:
         # this may produce multiple edges between the enhancer and the promoters
         # (although biologically, this shouldn't happen at the enhancers, only the promoters)
         # I will need to check for this in future code
         for l in tad_loops:
+            # only add the enhancer to the GRN if it overlaps a loop anchor
             if overlapping(e, l.left) or overlapping(e, l.right):
                 G[gene_id].add_node(e)
                 # connect the enhancer to the gene promoter
                 G[gene_id].add_edge(prom, e, condition=l.data["condition"])
-    E[gene_id] = tad_peak_intvls
+    E[gene_id] = tad_enhn_invls
 
-
-logging.info("Checking GRN satisfiability")
-# only consider genes that have at least 1 loop and at least 1 enhancer
-genes_with_loops = set(
-    [gene_id for gene_id, grn_loops in L.items() if len(grn_loops) > 0]
-)
+# count how many GRNs contained at least 1 enhancer
 genes_with_enhancers = set(
     [gene_id for gene_id, grn_enhns in E.items() if len(grn_enhns) > 0]
 )
+
+logging.info("Checking GRN satisfiability")
+# only consider genes that have at least 1 loop and at least 1 enhancer
 genes_to_consider = genes_with_loops.intersection(genes_with_enhancers)
 # remove other genes from the dict of GRNs
 G = {gene_id: grn for gene_id, grn in G.items() if gene_id in genes_to_consider}
@@ -299,15 +296,19 @@ L = {gene_id: loop for gene_id, loop in L.items() if gene_id in genes_to_conside
 
 grn_sat_table = pd.DataFrame(
     {
-        "gene_id": [gene_id for gene_id in G.keys()],
+        "gene_id": list(G.keys()),
         "Satisfies_Testing_Requirements": [False] * len(G),
+        "Rejection_Reason": [""] * len(G),
     }
 )
 # check if each gene has a satisfactory GRN
-for gene in tqdm(grn_sat_table.itertuples(), total=grn_sat_table.shape[0]):
+for gene_id in tqdm(grn_sat_table["gene_id"], total=grn_sat_table.shape[0]):
     # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
-    if sat_grn(G[gene.gene_id]):
-        grn_sat_table.loc[gene.Index, "Satisfies_Testing_Requirements"] = True
+    sat, reason = sat_grn(G[gene_id])
+    grn_sat_table.loc[
+        grn_sat_table.gene_id == gene_id, "Satisfies_Testing_Requirements"
+    ] = sat
+    grn_sat_table.loc[grn_sat_table.gene_id == gene_id, "Rejection_Reason"] = reason
 
 # ==============================================================================
 # Save data
@@ -322,7 +323,5 @@ pickle.dump(E, open(path.join("Graphs", "enhancers.p"), "wb"))
 pickle.dump(L, open(path.join("Graphs", "loops.p"), "wb"))
 
 # save the satisfiability table for future reference
-grn_sat_table.to_csv(
-    "Graphs/grn-satisfiability.tsv", sep="\t",
-)
+grn_sat_table.to_csv("Graphs/grn-satisfiability.tsv", sep="\t", index=False)
 
