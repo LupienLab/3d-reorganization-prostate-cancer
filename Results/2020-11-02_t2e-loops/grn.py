@@ -34,89 +34,16 @@ CHROM_SIZES = hg38.chrom_lengths
 # ==============================================================================
 # Functions
 # ==============================================================================
-def sat_grn(grn: nx.Graph) -> Tuple[bool, str]:
-    """
-    Determine if a GRN for a specific gene is satisfactory for the analysis involving genes, enhancers, and expression
-
-    Parameters
-    ==========
-    grn: Gene regulatory network for a single gene
-    """
-    loop_conditions = set(
-        [loop_data["condition"] for _, _, loop_data in grn.edges(data=True)]
-    )
-    enhn_conditions = set(
-        [e.data["condition"] for e in grn if e.data["type"] == "enhancer"]
-    )
-    # if no enhancers or loops, don't test
-    if len(loop_conditions) == 0:
-        return (False, "No loops")
-    if len(enhn_conditions) == 0:
-        return (False, "No enhancers")
-    # if all the loops and enhancers are shared, don't test it
-    all_shared_loops = loop_conditions == set(["shared"])
-    all_shared_enhns = enhn_conditions == set(["shared"])
-    if all_shared_loops and all_shared_enhns:
-        return (False, "No differential loops or enhancers")
-    elif all_shared_loops:
-        if ("T2E-specific" in enhn_conditions) and (
-            "nonT2E-specific" in enhn_conditions
-        ):
-            return (False, "No loop changes, multiple opposing enhancer changes")
-    elif all_shared_enhns:
-        if ("T2E-specific" in loop_conditions) and (
-            "nonT2E-specific" in loop_conditions
-        ):
-            return (False, "No enhancer changes, multiple opposing loop changes")
-    # if the direction of change in the loop and the enhancer are opposite, don't test
-    for cre1, cre2, loop_data in grn.edges(data=True):
-        if cre1.data["type"] == "enhancer":
-            enhn_cdn = cre1.data["condition"]
-        else:
-            enhn_cdn = cre2.data["condition"]
-        if set([loop_data["condition"], enhn_cdn]) == set(
-            ["T2E-specific", "nonT2E-specific"]
-        ):
-            return (False, "Connected loop and enhancer change in opposing directions")
-    return (True, "Not rejected")
-
-
-def gain_of_reg_in_grn(grn: nx.Graph) -> Tuple[str, str]:
-    """
-    Determine if a GRN for a specific genehas a gain of regulatory elements in T2E+ samples or not
-
-    Parameters
-    ==========
-    grn: Gene regulatory network for a single gene
-    """
-    loop_conditions = set(
-        [loop_data["condition"] for _, _, loop_data in grn.edges(data=True)]
-    )
-    enhn_conditions = set(
-        [e.data["condition"] for e in grn if e.data["type"] == "enhancer"]
-    )
-    # check for loops
-    if len(loop_conditions) == 0:
-        loop_gain = "No loops"
-    elif "T2E-specific" in loop_conditions:
-        loop_gain = "Gained loop(s)"
-    elif "nonT2E-specific" in loop_conditions:
-        loop_gain = "Lost loop(s)"
-    else:
-        loop_gain = "Same loop(s)"
-    # check for enhancers
-    if len(enhn_conditions) == 0:
-        enhn_gain = "No enhancers"
-    elif "T2E-specific" in enhn_conditions:
-        enhn_gain = "Gained enhancer(s)"
-    elif "nonT2E-specific" in enhn_conditions:
-        enhn_gain = "Lost enhancer(s)"
-    else:
-        enhn_gain = "Same enhancer(s)"
-    return (loop_gain, enhn_gain)
-
-
 def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
+    """
+    Count the number of enhancers and loops in each GRN and how they are shared between T2E+/-
+
+    # Parameters
+    grn_loops: Dict[str, List[Loop]]
+        Loops in the GRN
+    grn_enhns: Dict[str, List[GenomicInterval]]
+        Enhancers in the GRN
+    """
     data = {
         "loops_gained": len(
             [1 for l in grn_loops if l.data["condition"] == "T2E-specific"]
@@ -144,16 +71,32 @@ def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
 logging.info("Loading data")
 
 # load pre-processed promoters
-promoters = pd.read_csv("overlapping.promoters.tsv", sep="\t", header=[0],)
+promoters = pd.read_csv(
+    "overlapping.promoters.tsv",
+    sep="\t",
+    header=[0],
+)
 
 # load catalogue of H3K27ac peaks and differential test results
-enhancers = pd.read_csv("overlapping.enhancers.tsv", sep="\t", header=[0],)
+enhancers = pd.read_csv(
+    "overlapping.enhancers.tsv",
+    sep="\t",
+    header=[0],
+)
 
 # load catalogue of loop calls from all 17 samples
-loops = pd.read_csv("overlapping.loops.tsv", sep="\t", header=[0],)
+loops = pd.read_csv(
+    "overlapping.loops.tsv",
+    sep="\t",
+    header=[0],
+)
 
 # load sample metadata
-metadata = pd.read_csv("config.tsv", sep="\t", header=[0],)
+metadata = pd.read_csv(
+    "config.tsv",
+    sep="\t",
+    header=[0],
+)
 SAMPLES = metadata.loc[metadata.Include == "Yes", "SampleID"].tolist()
 
 # load TAD calls
@@ -190,10 +133,6 @@ tads.sort_values(
     by=["chr", "start", "end", "SampleID"], inplace=True, ignore_index=True
 )
 
-# tads = tads.loc[tads.chr == "chr19", :]
-# promoters = promoters.loc[promoters.chr == "chr19", :]
-# loops = loops.loc[loops.chr_x == "chr19", :]
-# enhancers = enhancers.loc[enhancers.chr == "chr19", :]
 
 # ==============================================================================
 # Analysis
@@ -267,8 +206,14 @@ for (gene_id, prom), (_, tad) in tqdm(
             l.chr_y,
             l.start_y,
             l.end_y,
-            {"row": l.Index, "id": l.anchor_ID_x,},
-            {"row": l.Index, "id": l.anchor_ID_y,},
+            {
+                "row": l.Index,
+                "id": l.anchor_ID_x,
+            },
+            {
+                "row": l.Index,
+                "id": l.anchor_ID_y,
+            },
             {"row": l.Index, "id": l.loopID, "condition": l.loop_type},
         )
         for l in tad_loops.itertuples()
@@ -359,18 +304,6 @@ grn_sat_table = pd.DataFrame(
         "GRN_Class": [""] * len(G),
     }
 )
-# check if each gene has a satisfactory GRN
-for gene_id in tqdm(grn_sat_table["gene_id"], total=grn_sat_table.shape[0]):
-    # if the GRN is good for unambiguous relationships between genes, loops, and enhancers
-    sat, reason = sat_grn(G[gene_id])
-    classification = gain_of_reg_in_grn(G[gene_id])
-    grn_sat_table.loc[
-        grn_sat_table.gene_id == gene_id, "GRN_Satisfies_Testing_Requirements"
-    ] = sat
-    grn_sat_table.loc[grn_sat_table.gene_id == gene_id, "Rejection_Reason"] = reason
-    grn_sat_table.loc[grn_sat_table.gene_id == gene_id, "GRN_Class"] = (
-        "(" + classification[0] + ", " + classification[1] + ")"
-    )
 
 # for each GRN, count the number gained, shared, and lost loops and enhancers
 grn_cre_stats = pd.DataFrame(
@@ -400,9 +333,6 @@ pickle.dump(T, open(path.join("Graphs", "tads.p"), "wb"))
 pickle.dump(P, open(path.join("Graphs", "promoters.p"), "wb"))
 pickle.dump(E, open(path.join("Graphs", "enhancers.p"), "wb"))
 pickle.dump(L, open(path.join("Graphs", "loops.p"), "wb"))
-
-# save the satisfiability table for future reference
-grn_sat_table.to_csv("Graphs/grn-satisfiability.tsv", sep="\t", index=False)
 
 # save count of loops and enhancers in each GRN
 grn_cre_stats.to_csv("Graphs/grn-stats.tsv", sep="\t", index=False)
