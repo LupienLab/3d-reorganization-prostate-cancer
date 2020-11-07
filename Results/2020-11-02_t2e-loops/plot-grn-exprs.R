@@ -54,6 +54,7 @@ exprs_tx <- fread(
     sep="\t"
 )
 
+grn_stats <- fread("Graphs/grn-stats.tsv", sep = "\t")
 
 # ==============================================================================
 # Analysis
@@ -88,16 +89,71 @@ exprs <- exprs[Rejection_Reason %ni% c("No loops", "No enhancers")]
 fwrite(exprs, "Graphs/grn-exprs.tsv", sep = "\t")
 
 # hypothesis testing
+grns_only_gained_loops <- grn_stats[
+    loops_gained > 0 & loops_shared >= 0 & loops_lost == 0 & enhancers_gained == 0 & enhancers_shared > 0 & enhancers_lost == 0,
+    gene_id
+]
+grns_only_lost_loops <- grn_stats[
+    loops_gained == 0 & loops_shared >= 0 & loops_lost > 0 & enhancers_gained == 0 & enhancers_shared > 0 & enhancers_lost == 0,
+    gene_id
+]
+grns_only_gained_enhns <- grn_stats[
+    loops_gained == 0 & loops_shared > 0 & loops_lost == 0 & enhancers_gained > 0 & enhancers_shared >= 0 & enhancers_lost == 0,
+    gene_id
+]
+grns_only_lost_enhns <- grn_stats[
+    loops_gained == 0 & loops_shared > 0 & loops_lost == 0 & enhancers_gained == 0 & enhancers_shared >= 0 & enhancers_lost > 0,
+    gene_id
+]
+grns_no_changes <- grn_stats[
+    loops_gained == 0 & loops_shared > 0 & loops_lost == 0 & enhancers_gained == 0 & enhancers_shared > 0 & enhancers_lost == 0,
+    gene_id
+]
+
 t.test(
-    x = exprs[GRN_Class == "(Same loop(s), Lost enhancer(s))", Mean_log2FC],
-    y = exprs[GRN_Class == "(Same loop(s), Same enhancer(s))", Mean_log2FC],
+    x = grn_stats[gene_id %in% grns_only_gained_loops, Mean_log2FC],
+    y = grn_stats[gene_id %in% grns_no_changes, Mean_log2FC],
+    alternative = "greater"
+)
+t.test(
+    x = grn_stats[gene_id %in% grns_only_gained_enhns, Mean_log2FC],
+    y = grn_stats[gene_id %in% grns_no_changes, Mean_log2FC],
+    alternative = "greater"
+)
+t.test(
+    x = grn_stats[gene_id %in% grns_only_lost_loops, Mean_log2FC],
+    y = grn_stats[gene_id %in% grns_no_changes, Mean_log2FC],
     alternative = "less"
 )
 t.test(
-    x = exprs[GRN_Class == "(Same loop(s), Gained enhancer(s))", Mean_log2FC],
-    y = exprs[GRN_Class == "(Same loop(s), Same enhancer(s))", Mean_log2FC],
-    alternative = "greater"
+    x = grn_stats[gene_id %in% grns_only_lost_enhns, Mean_log2FC],
+    y = grn_stats[gene_id %in% grns_no_changes, Mean_log2FC],
+    alternative = "less"
 )
+
+# conert GRN stats to long format
+grn_stats_long <- melt(
+    grn_stats,
+    id.vars = "gene_id",
+    variable.name = "feature",
+    value.name = "N"
+)
+
+# add fold change in expression to GRN stats
+grn_stats <- merge(
+    x = grn_stats,
+    y = exprs[, .SD, .SDcols = c("gene_id", "Mean_log2FC")],
+    by = "gene_id",
+    all.x = TRUE
+)
+
+# grn_stats_model <- glm(
+#     # Mean_log2FC ~ log10(loops_gained + 1) + log10(loops_shared + 1) + log10(loops_lost + 1) + log10(enhancers_gained + 1) + log10(enhancers_shared + 1) + log10(enhancers_lost + 1),
+#     formula = Mean_log2FC ~ .,
+#     dat = grn_stats,
+#     family = "binomial"
+# )
+
 
 # ==============================================================================
 # Plots
@@ -146,3 +202,39 @@ gg <- (
     )
 )
 savefig(gg, "Plots/grn-exprs.mean")
+
+gg_grn_stats <- (
+    ggplot(data = grn_stats_long)
+    + geom_histogram(aes(x = N + 1), bins = sqrt(grn_stats[, .N]))
+    + labs(x = "Count + 1", y = "Density")
+    + facet_wrap(~ feature)
+    + scale_x_log10()
+    + theme_minimal()
+)
+savefig(gg_grn_stats, "Plots/grn-stats.dist")
+
+# gg_grn_stats_fit <- (
+#     ggplot()
+#     + geom_point(
+#         aes(
+#             x = grn_stats[!is.na(Mean_log2FC), Mean_log2FC],
+#             y = grn_stats_model$fitted.values
+#         )
+#     )
+#     + labs(x = bquote("Observed " * log[2] * "(FC)"), y = bquote("Predicted " * log[2] * "(FC)"))
+#     + theme_minimal()
+# )
+# savefig(gg_grn_stats_fit, "Plots/grn-stats.fit")
+
+# gg_grn_stats_residuals <- (
+#     ggplot()
+#     + geom_point(
+#         aes(
+#             x = grn_stats[!is.na(Mean_log2FC), Mean_log2FC],
+#             y = grn_stats_model$residuals
+#         )
+#     )
+#     + labs(x = bquote("Observed " * log[2] * "(FC)"), y = "Residuals")
+#     + theme_minimal()
+# )
+# savefig(gg_grn_stats_residuals, "Plots/grn-stats.fit.residuals")
