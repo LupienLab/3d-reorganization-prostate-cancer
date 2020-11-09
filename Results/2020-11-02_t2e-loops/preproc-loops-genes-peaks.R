@@ -62,7 +62,7 @@ loops <- rbindlist(lapply(
     c("nonT2E-specific", "T2E-specific", "shared"),
     function(loop_type) {
         dt <- fread(
-            file.path("..", "2020-10-23_t2e-loops", paste0("loops.", loop_type, ".tsv")),
+            paste0("loops.", loop_type, ".tsv"),
             sep = "\t",
             header = TRUE
         )

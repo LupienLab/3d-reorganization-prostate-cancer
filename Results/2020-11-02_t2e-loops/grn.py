@@ -65,38 +65,25 @@ def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
     return data
 
 
+def 
+
+
 # ==============================================================================
 # Data
 # ==============================================================================
 logging.info("Loading data")
 
 # load pre-processed promoters
-promoters = pd.read_csv(
-    "overlapping.promoters.tsv",
-    sep="\t",
-    header=[0],
-)
+promoters = pd.read_csv("overlapping.promoters.tsv", sep="\t", header=[0],)
 
 # load catalogue of H3K27ac peaks and differential test results
-enhancers = pd.read_csv(
-    "overlapping.enhancers.tsv",
-    sep="\t",
-    header=[0],
-)
+enhancers = pd.read_csv("overlapping.enhancers.tsv", sep="\t", header=[0],)
 
 # load catalogue of loop calls from all 17 samples
-loops = pd.read_csv(
-    "overlapping.loops.tsv",
-    sep="\t",
-    header=[0],
-)
+loops = pd.read_csv("overlapping.loops.tsv", sep="\t", header=[0],)
 
 # load sample metadata
-metadata = pd.read_csv(
-    "config.tsv",
-    sep="\t",
-    header=[0],
-)
+metadata = pd.read_csv("config.tsv", sep="\t", header=[0],)
 SAMPLES = metadata.loc[metadata.Include == "Yes", "SampleID"].tolist()
 
 # load TAD calls
@@ -177,25 +164,28 @@ for gene in tqdm(promoters.itertuples(), total=promoters.shape[0]):
 
 
 L = {}  # loops
-for (gene_id, prom), (_, tad) in tqdm(
-    zip(P.items(), T.items()), total=promoters.shape[0]
-):
+for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
     # find loops in this TAD
+    tad = T[gene_id]
     tad_loops = loops.loc[
-        (loops["chr_x"] == tad.chr)
-        & (loops["chr_y"] == tad.chr)
-        & (loops["start_x"] <= tad.sup())
-        & (loops["start_y"] <= tad.sup())
-        & (loops["end_x"] >= tad.inf())
-        & (loops["end_y"] >= tad.inf()),
+        (
+            (loops["chr_x"] == tad.chr)
+            & (loops["start_x"] <= tad.sup())
+            & (loops["end_x"] >= tad.inf())
+        )
+        | (
+            (loops["chr_y"] == tad.chr)
+            & (loops["start_y"] <= tad.sup())
+            & (loops["end_y"] >= tad.inf())
+        ),
         :,
     ]
     # only include loops where one anchor overlaps the gene promoter
     tad_loops = tad_loops.loc[
-        # x anchor overlaps the promoter
-        ((tad_loops["start_x"] <= prom.sup()) & (tad_loops["end_x"] >= prom.inf()))
+        # x anchor overlaps the promoter (extend to half of loop resolution on either side)
+        ((tad_loops["start_x"] - 5000 <= prom.sup()) & (tad_loops["end_x"] + 5000 >= prom.inf()))
         # or y anchor overlaps promoter
-        | ((tad_loops["start_y"] <= prom.sup()) & (tad_loops["end_y"] >= prom.inf())),
+        | ((tad_loops["start_y"] - 5000 <= prom.sup()) & (tad_loops["end_y"] + 5000 >= prom.inf())),
         :,
     ]
     tad_loop_intvls = [
@@ -206,24 +196,14 @@ for (gene_id, prom), (_, tad) in tqdm(
             l.chr_y,
             l.start_y,
             l.end_y,
-            {
-                "row": l.Index,
-                "id": l.anchor_ID_x,
-            },
-            {
-                "row": l.Index,
-                "id": l.anchor_ID_y,
-            },
+            {"row": l.Index, "id": l.anchor_ID_x,},
+            {"row": l.Index, "id": l.anchor_ID_y,},
             {"row": l.Index, "id": l.loopID, "condition": l.loop_type},
         )
         for l in tad_loops.itertuples()
     ]
     L[gene_id] = tad_loop_intvls
 
-# count how many GRNs contained at least 1 loop
-genes_with_loops = set(
-    [gene_id for gene_id, grn_loops in L.items() if len(grn_loops) > 0]
-)
 
 E = {}  # Enhancers
 for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
@@ -281,46 +261,26 @@ for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
                 G[gene_id].add_edge(prom, e, condition=l.data["condition"])
     E[gene_id] = tad_enhn_invls
 
-# count how many GRNs contained at least 1 enhancer
-genes_with_enhancers = set(
-    [gene_id for gene_id, grn_enhns in E.items() if len(grn_enhns) > 0]
-)
 
-logging.info("Checking GRN satisfiability")
-# only consider genes that have at least 1 loop and at least 1 enhancer
-genes_to_consider = genes_with_loops.intersection(genes_with_enhancers)
-# remove other genes from the dict of GRNs
-G = {gene_id: grn for gene_id, grn in G.items() if gene_id in genes_to_consider}
-T = {gene_id: tad for gene_id, tad in T.items() if gene_id in genes_to_consider}
-P = {gene_id: prom for gene_id, prom in P.items() if gene_id in genes_to_consider}
-E = {gene_id: enhn for gene_id, enhn in E.items() if gene_id in genes_to_consider}
-L = {gene_id: loop for gene_id, loop in L.items() if gene_id in genes_to_consider}
-
-grn_sat_table = pd.DataFrame(
-    {
-        "gene_id": list(G.keys()),
-        "GRN_Satisfies_Testing_Requirements": [False] * len(G),
-        "Rejection_Reason": [""] * len(G),
-        "GRN_Class": [""] * len(G),
-    }
-)
-
+logging.info("Calculating GRN Stats")
 # for each GRN, count the number gained, shared, and lost loops and enhancers
+grn_info = {
+    gene_id: grn_stats(L[gene_id], E[gene_id])
+    for gene_id in G.keys()
+}
+# need to ensure that the gene_ids are always listed in the same order
 grn_cre_stats = pd.DataFrame(
     {
-        "gene_id": list(G.keys()),
-        "loops_gained": [0] * len(G),
-        "loops_shared": [0] * len(G),
-        "loops_lost": [0] * len(G),
-        "enhancers_gained": [0] * len(G),
-        "enhancers_shared": [0] * len(G),
-        "enhancers_lost": [0] * len(G),
+        "gene_id": [gene_id for gene_id in promoters["gene_id"]],
+        "loops_gained": [grn_info[gene_id]["loops_gained"] for gene_id in promoters["gene_id"]],
+        "loops_shared": [grn_info[gene_id]["loops_shared"] for gene_id in promoters["gene_id"]],
+        "loops_lost": [grn_info[gene_id]["loops_lost"] for gene_id in promoters["gene_id"]],
+        "enhancers_gained": [grn_info[gene_id]["enhancers_gained"] for gene_id in promoters["gene_id"]],
+        "enhancers_shared": [grn_info[gene_id]["enhancers_shared"] for gene_id in promoters["gene_id"]],
+        "enhancers_lost": [grn_info[gene_id]["enhancers_lost"] for gene_id in promoters["gene_id"]],
     }
 )
-for gene_id in tqdm(G.keys(), total=len(G)):
-    grn_info = grn_stats(L[gene_id], E[gene_id])
-    for k in grn_info.keys():
-        grn_cre_stats.loc[grn_cre_stats.gene_id == gene_id, k] = grn_info[k]
+
 
 # ==============================================================================
 # Save data

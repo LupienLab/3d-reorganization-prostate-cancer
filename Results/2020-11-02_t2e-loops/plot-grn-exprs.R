@@ -42,7 +42,6 @@ savefig <- function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, 
 # Data
 # ==============================================================================
 loginfo("Loading data")
-grn_sat <- fread("Graphs/grn-satisfiability.tsv", sep="\t")
 
 # load expression data
 exprs_genes <- fread(
@@ -72,13 +71,15 @@ grn_stats <- merge(
     all.y = FALSE
 )
 
-grn_stats <- merge(
-    x = grn_stats,
-    y = grn_sat[, .SD, .SDcols = c("gene_id", "GRN_Class")],
-    by = "gene_id"
-)
-
 events <- list(
+    "changed exprs" = grn_stats[
+        !is.na(qval) & (qval < 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval),
+            .N
+        ]),
+        by = (qval < 0.05)
+    ],
     "changed loop given changed enhancer" = grn_stats[
         enhancers_gained + enhancers_lost > 0,
         .(prob = .N / grn_stats[
@@ -159,14 +160,6 @@ events <- list(
         ]),
         by = (enhancers_gained + enhancers_lost > 0)
     ],
-    "changed enhancer given changed exprs" = grn_stats[
-        !is.na(qval) & (qval < 0.05),
-        .(prob = .N / grn_stats[
-            !is.na(qval) & (qval < 0.05),
-            .N
-        ]),
-        by = (enhancers_gained + enhancers_lost > 0)
-    ],
     "changed enhancer and changed loop given changed exprs" = grn_stats[
         !is.na(qval) & (qval < 0.05),
         .(prob = .N / grn_stats[
@@ -216,6 +209,30 @@ grn_stats <- merge(
     all.y = FALSE
 )
 
+grn_stats[,
+    `:=`(
+        Loop_Changes = ifelse(
+            loops_gained > 0,
+            ifelse(loops_lost > 0, "Opposing loop changes", "Gained loop(s)"),
+            ifelse(loops_lost > 0, "Lost loop(s)", "Same loop(s)")
+        ),
+        Enhancer_Changes = ifelse(
+            enhancers_gained > 0,
+            ifelse(enhancers_lost > 0, "Opposing enhancer changes", "Gained enhancer(s)"),
+            ifelse(enhancers_lost > 0, "Lost enhancer(s)", "Same enhancer(s)")
+        )
+    )
+]
+grn_stats[, GRN_Class := paste(Loop_Changes, Enhancer_Changes, sep = "\n")]
+
+# conert GRN stats to long format
+grn_stats_long <- melt(
+    grn_stats,
+    id.vars = "gene_id",
+    variable.name = "feature",
+    value.name = "N"
+)
+
 fwrite(grn_stats, "Graphs/grn-exprs.tsv", sep = "\t")
 
 # # hypothesis testing
@@ -230,21 +247,6 @@ fwrite(grn_stats, "Graphs/grn-exprs.tsv", sep = "\t")
 #     alternative = "greater"
 # )
 
-# conert GRN stats to long format
-grn_stats_long <- melt(
-    grn_stats,
-    id.vars = "gene_id",
-    variable.name = "feature",
-    value.name = "N"
-)
-
-# add fold change in expression to GRN stats
-grn_stats <- merge(
-    x = grn_stats,
-    y = exprs[, .SD, .SDcols = c("gene_id", "Mean_log2FC")],
-    by = "gene_id",
-    all.x = TRUE
-)
 
 # grn_stats_model <- glm(
 #     # Mean_log2FC ~ log10(loops_gained + 1) + log10(loops_shared + 1) + log10(loops_lost + 1) + log10(enhancers_gained + 1) + log10(enhancers_shared + 1) + log10(enhancers_lost + 1),
@@ -259,10 +261,6 @@ grn_stats <- merge(
 # ==============================================================================
 loginfo("Plotting data")
 
-grn_stats[, GRN_Class := gsub("^\\(", "", GRN_Class)]
-grn_stats[, GRN_Class := gsub("\\)$", "", GRN_Class)]
-grn_stats[, GRN_Class := gsub(", ", "\n", GRN_Class)]
-
 text_y = 3.2
 
 gg <- (
@@ -274,13 +272,18 @@ gg <- (
             group = GRN_Class
         )
     )
+    + geom_violin(
+        aes(fill = GRN_Class)
+    )
     + geom_boxplot(
-        outlier.shape = NA, width=0.3, alpha = 0.1
+        outlier.shape = NA,
+        width = 0.3,
+        alpha = 0.1
     )
-    + geom_point(
-        aes(colour = GRN_Class),
-        alpha = 0.2, position = position_jitter(height = 0, width = 0.3)
-    )
+    # + geom_point(
+    #     aes(colour = GRN_Class),
+    #     alpha = 0.2, position = position_jitter(height = 0, width = 0.3)
+    # )
     + geom_text(
         data = grn_stats[,
             .N,
@@ -307,6 +310,52 @@ savefig(gg, "Plots/grn-exprs.mean")
 
 gg <- (
     ggplot(
+        data = grn_stats,
+        mapping = aes(
+            x = 1,
+            y = Mean_log2FC,
+            group = GRN_Class
+        )
+    )
+    + geom_violin(
+        aes(fill = GRN_Class)
+    )
+    + geom_boxplot(
+        outlier.shape = NA,
+        width = 0.3,
+        alpha = 0.1
+    )
+    # + geom_point(
+    #     # aes(colour = GRN_Class),
+    #     alpha = 0.2, position = position_jitter(height = 0, width = 0.3)
+    # )
+    # + geom_text(
+    #     data = grn_stats[,
+    #         .N,
+    #         by = GRN_Class
+    #     ],
+    #     mapping = aes(
+    #         x = GRN_Class,
+    #         y = text_y,
+    #         label = paste0("(", N, ")")
+    #     ),
+    #     vjust = -0.2
+    # )
+    + scale_x_discrete(
+        name = "GRN Alteration in T2E+"
+    )
+    + labs(y = bquote(log[2] * "(T2E+ / T2E-) expression"))
+    + guides(fill = FALSE, colour = FALSE)
+    + facet_grid(Loop_Changes ~ Enhancer_Changes)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
+    )
+)
+savefig(gg, "Plots/grn-exprs.mean.facetted")
+
+gg <- (
+    ggplot(
         data = grn_stats[!is.na(qval) & (qval < 0.05)],
         mapping = aes(
             x = GRN_Class,
@@ -314,13 +363,16 @@ gg <- (
             group = GRN_Class
         )
     )
+    + geom_violin(
+        aes(fill = GRN_Class)
+    )
     + geom_boxplot(
-        outlier.shape = NA, width=0.3, alpha = 0.1
+        outlier.shape = NA, width = 0.3, alpha = 0.1
     )
-    + geom_point(
-        aes(colour = GRN_Class),
-        alpha = 0.2, position = position_jitter(height = 0, width = 0.3)
-    )
+    # + geom_point(
+    #     aes(colour = GRN_Class),
+    #     alpha = 0.2, position = position_jitter(height = 0, width = 0.3)
+    # )
     + geom_text(
         data = grn_stats[
             !is.na(qval) & (qval < 0.05),
@@ -345,6 +397,50 @@ gg <- (
     )
 )
 savefig(gg, "Plots/grn-exprs.sig.mean")
+
+gg <- (
+    ggplot(
+        data = grn_stats[!is.na(qval) & (qval < 0.05)],
+        mapping = aes(
+            x = 1,
+            y = Mean_log2FC,
+            group = GRN_Class
+        )
+    )
+    + geom_violin(
+        aes(fill = GRN_Class)
+    )
+    + geom_boxplot(
+        outlier.shape = NA, width = 0.3, alpha = 0.1
+    )
+    + geom_point(
+        # aes(colour = GRN_Class),
+        alpha = 0.2, position = position_jitter(height = 0, width = 0.3)
+    )
+    # + geom_text(
+    #     data = grn_stats[,
+    #         .N,
+    #         by = GRN_Class
+    #     ],
+    #     mapping = aes(
+    #         x = GRN_Class,
+    #         y = text_y,
+    #         label = paste0("(", N, ")")
+    #     ),
+    #     vjust = -0.2
+    # )
+    + scale_x_discrete(
+        name = "GRN Alteration in T2E+"
+    )
+    + labs(y = bquote(log[2] * "(T2E+ / T2E-) expression"))
+    + guides(fill = FALSE, colour = FALSE)
+    + facet_grid(Loop_Changes ~ Enhancer_Changes)
+    + theme_minimal()
+    + theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
+    )
+)
+savefig(gg, "Plots/grn-exprs.sig.mean.facetted")
 
 gg_grn_stats <- (
     ggplot(data = grn_stats_long)
