@@ -225,35 +225,30 @@ grn_stats[,
 ]
 grn_stats[, GRN_Class := paste(Loop_Changes, Enhancer_Changes, sep = "\n")]
 
-# conert GRN stats to long format
-grn_stats_long <- melt(
-    grn_stats,
-    id.vars = "gene_id",
-    variable.name = "feature",
-    value.name = "N"
-)
-
 fwrite(grn_stats, "Graphs/grn-exprs.tsv", sep = "\t")
 
-# # hypothesis testing
-# t.test(
-#     x = exprs[GRN_Class == "(Same loop(s), Lost enhancer(s))", Mean_log2FC],
-#     y = exprs[GRN_Class == "(Same loop(s), Same enhancer(s))", Mean_log2FC],
-#     alternative = "less"
-# )
-# t.test(
-#     x = exprs[GRN_Class == "(Same loop(s), Gained enhancer(s))", Mean_log2FC],
-#     y = exprs[GRN_Class == "(Same loop(s), Same enhancer(s))", Mean_log2FC],
-#     alternative = "greater"
-# )
-
-
-# grn_stats_model <- glm(
-#     # Mean_log2FC ~ log10(loops_gained + 1) + log10(loops_shared + 1) + log10(loops_lost + 1) + log10(enhancers_gained + 1) + log10(enhancers_shared + 1) + log10(enhancers_lost + 1),
-#     formula = Mean_log2FC ~ .,
-#     dat = grn_stats,
-#     family = "binomial"
-# )
+# 3. Hypothesis testing for gene expression changes and GRN changes
+# --------------------------------------
+t.test(
+    x = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Gained enhancer(s)", Mean_log2FC],
+    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+    alternative = "greater"
+)
+t.test(
+    x = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Lost enhancer(s)", Mean_log2FC],
+    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+    alternative = "less"
+)
+t.test(
+    x = grn_stats[Loop_Changes == "Gained loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+    alternative = "greater"
+)
+t.test(
+    x = grn_stats[Loop_Changes == "Lost loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+    alternative = "less"
+)
 
 
 # ==============================================================================
@@ -442,12 +437,21 @@ gg <- (
 )
 savefig(gg, "Plots/grn-exprs.sig.mean.facetted")
 
+# conert GRN stats to long format
+grn_stats_long <- melt(
+    grn_stats,
+    id.vars = "gene_id",
+    measure.vars = c("loops_gained", "loops_shared", "loops_lost", "enhancers_gained", "enhancers_shared", "enhancers_lost"),
+    variable.name = "feature",
+    value.name = "N"
+)
+
 gg_grn_stats <- (
     ggplot(data = grn_stats_long)
-    + geom_histogram(aes(x = N + 1), bins = sqrt(grn_stats[, .N]))
+    + geom_histogram(aes(x = N), bins = sqrt(grn_stats[, .N]))
     + labs(x = "Count + 1", y = "Density")
     + facet_wrap(~ feature)
-    + scale_x_log10()
+    # + scale_x_log10()
     + theme_minimal()
 )
 savefig(gg_grn_stats, "Plots/grn-stats.dist")
