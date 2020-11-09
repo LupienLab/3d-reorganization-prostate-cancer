@@ -1,2 +1,3 @@
 *.obj
 hg38.bins.bed
+Loops/by-sample/

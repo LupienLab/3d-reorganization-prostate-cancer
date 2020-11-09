@@ -28,17 +28,17 @@ rule all:
 		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
 		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
 		path.join(PLOT_DIR, "loop-calls.by-type.png"),
+		expand(
+			path.join(PROC_DIR, "by-sample", "{sample}.flat-loops.bed"),
+			sample=SAMPLES,
+		),
 		path.join(TRACK_DIR, "merged-loops.sample-counts.bed2ddb"),
 		path.join(PROC_DIR, "loop-saturation.model-estimates.tsv"),
 		path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
-		path.join(PLOT_DIR, "loop-saturation.png"),
-		path.join(PROC_DIR, "stack.obj"),
-		expand(
-			path.join(PROC_DIR, "by-sample", "{sample}.flat-loops.bed"),
-			sample=SAMPLES,
-		)
+		path.join(PLOT_DIR, "loop-saturation.All.png"),
+		# path.join(PROC_DIR, "stack.obj"),
 
 
 # ==============================================================================
@@ -93,7 +93,7 @@ rule loop_saturation:
 		path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
-		path.join(PLOT_DIR, "loop-saturation.png"),
+		path.join(PLOT_DIR, "loop-saturation.All.png"),
 	shell:
 		"Rscript {input.script}"
 

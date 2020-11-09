@@ -218,7 +218,7 @@ loginfo("Generating bootstraps and fitting models")
 loops_per_sample <- lapply(
     SAMPLES$all,
     function(s) {
-        loops[SampleID == s, loopID]
+        loops[SampleID == s, loop_ID]
     }
 )
 names(loops_per_sample) <- SAMPLES$all
@@ -289,7 +289,7 @@ fwrite(
 )
 fwrite(
     bootstrap_summaries,
-    "Loops/loop-saturation.bootstrap_summary.tsv",
+    "Loops/loop-saturation.bootstrap-summary.tsv",
     sep = "\t",
     col.names = TRUE
 )
