@@ -28,15 +28,17 @@ rule all:
 		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
 		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
 		path.join(PLOT_DIR, "loop-calls.by-type.png"),
-		path.join(TRACK_DIR, "shared-loops.bed2ddb"),
-		path.join(TRACK_DIR, "benign-specific-loops.bed2ddb"),
-		path.join(TRACK_DIR, "tumour-specific-loops.bed2ddb"),
+		path.join(TRACK_DIR, "merged-loops.sample-counts.bed2ddb"),
 		path.join(PROC_DIR, "loop-saturation.model-estimates.tsv"),
 		path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
 		path.join(PLOT_DIR, "loop-saturation.png"),
 		path.join(PROC_DIR, "stack.obj"),
+		expand(
+			path.join(PROC_DIR, "by-sample", "{sample}.flat-loops.bed"),
+			sample=SAMPLES,
+		)
 
 
 # ==============================================================================
@@ -62,6 +64,26 @@ rule anchors:
 	shell:
 		"Rscript {input.script}"
 
+rule split_loops_by_sample:
+	input:
+		script = "split-loops.awk",
+		data = path.join(PROC_DIR, "merged-loops.tsv"),
+	output:
+		expand(
+			path.join(PROC_DIR, "by-sample", "{sample}.loops.bedpe"),
+			sample=SAMPLES,
+		),
+	shell:
+		"awk -f {input.script} {input.data}"
+
+rule flatten_split_loops:
+	input:
+		path.join(PROC_DIR, "by-sample", "{sample}.loops.bedpe"),
+	output:
+		path.join(PROC_DIR, "by-sample", "{sample}.flat-loops.bed"),
+	shell:
+		"awk '{{FS=OFS=\"\t\"}}{{ print $1, $2, $3, $7, $8, $10, $11; print $4, $5, $6, $7, $9, $10, $11; }}' {input} > {output}"
+
 rule loop_saturation:
 	input:
 		script = "loop-saturation.R",
@@ -77,9 +99,9 @@ rule loop_saturation:
 
 rule clodius_2d:
 	input:
-		path.join(PROC_DIR, "{loop_type}-loops.tsv"),
+		path.join(PROC_DIR, "{file}.tsv"),
 	output:
-		path.join(TRACK_DIR, "{loop_type}-loops.bed2ddb"),
+		path.join(TRACK_DIR, "{file}.bed2ddb"),
 	params:
 		"--assembly hg38 --has-header --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
 	shell:
@@ -117,12 +139,3 @@ rule plot_apa_by_sample:
 		path.join(PLOT_DIR, "apa.by-sample.png"),
 	shell:
 		"python {input.script}"
-
-
-rule makebins:
-	input:
-		chrs = "../../Data/Processed/2019-06-18_PCa-LowC-sequencing/hg38.sizes.txt"
-	output:
-		"hg38.bins.bed"
-	shell:
-		"cooler makebins -o {output} {input} 10000"

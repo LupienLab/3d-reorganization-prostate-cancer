@@ -82,7 +82,7 @@ loop_anchors <- reduce(
         )
     )
 )
-# add loopID as a metadata column
+# add loop_ID as a metadata column
 mcols(loop_anchors)$anchorID <- 1:length(loop_anchors)
 
 # map original loop anchors to reduced anchors
@@ -116,7 +116,7 @@ loops[, `:=`(
     anchorID_x = subjectHits(hits_x),
     anchorID_y = subjectHits(hits_y),
     # concatenate columns to create a unique loop ID
-    loopID = paste0(subjectHits(hits_x), "_", subjectHits(hits_y))
+    loop_ID = paste0(subjectHits(hits_x), "_", subjectHits(hits_y))
 )]
 
 # merge in tissue type information into the loops
@@ -141,7 +141,7 @@ merged_loops <- data.table(
     "end_y" = end(corrected_anchors_y),
     "anchor_ID_x" = loops[, anchorID_x],
     "anchor_ID_y" = loops[, anchorID_y],
-    "loopID" = loops[, loopID],
+    "loop_ID" = loops[, loop_ID],
     "detection_scale" = loops[, detection_scale],
     "fdr" = loops[, fdr]
 )
@@ -149,9 +149,9 @@ merged_loops <- data.table(
 # count the number of times a loop occurs
 loop_counts <- dcast(
     # count loops byt their occurrences in each tissue type
-    merged_loops[, .N, keyby = c("loopID", "Type")],
+    merged_loops[, .N, keyby = c("loop_ID", "Type")],
     # pivot the table to a wide format, rows are loops, columns are counts in benign and tumour
-    loopID ~ Type,
+    loop_ID ~ Type,
     value.var = "N",
     # fill any NAs as 0
     fill = 0
@@ -163,8 +163,22 @@ loop_counts[, Consistent_in_benign_or_tumour := ((Benign >= MIN_SAMPLES) | (Mali
 # merge back in position information for loops
 loop_counts_with_pos <- merge(
     x = loop_counts,
-    y = merged_loops[, unique(.SD), .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "anchor_ID_x", "anchor_ID_y", "loopID")],
-    by = "loopID",
+    y = merged_loops[,
+        .(
+            chr_x = unique(chr_x),
+            start_x = unique(start_x),
+            end_x = unique(end_x),
+            chr_y = unique(chr_y),
+            start_y = unique(start_y),
+            end_y = unique(end_y),
+            anchor_ID_x = unique(anchor_ID_x),
+            anchor_ID_y = unique(anchor_ID_y),
+            fdr = min(fdr),
+            detection_scale = max(detection_scale)
+        ),
+        keyby = "loop_ID"
+    ],
+    by = "loop_ID",
     all.x = TRUE,
     all.y = FALSE
 )
@@ -173,22 +187,22 @@ loop_counts_with_pos <- merge(
 merged_loops_with_consistency <- merge(
     x = merged_loops,
     y = loop_counts,
-    by = "loopID"
+    by = "loop_ID"
 )
 
 
-# collapse list of loopIDs by the sample
+# collapse list of loop_IDs by the sample
 collapsed_IDs_by_sample <- merged_loops_with_consistency[
     Consistent_in_benign_or_tumour == TRUE,
     .(SampleID = list(unique(SampleID))),
-    keyby = "loopID"
+    keyby = "loop_ID"
 ]
 
-# collapse list of loopIDs by the tissue type
+# collapse list of loop_IDs by the tissue type
 collapsed_IDs_by_type <- merged_loops_with_consistency[
     Consistent_in_benign_or_tumour == TRUE,
     .(Type = list(unique(Type))),
-    keyby = "loopID"
+    keyby = "loop_ID"
 ]
 
 # ==============================================================================
@@ -203,7 +217,13 @@ fwrite(
 )
 fwrite(
     # put the columns in an order compatible with BEDPE format
-    loop_counts_with_pos[, .SD, .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "anchor_ID_x", "anchor_ID_y", "loopID", "Benign", "Malignant", "Consistent_in_benign_or_tumour")],
+    loop_counts_with_pos[, .SD, .SDcols = c(
+        "chr_x", "start_x", "end_x",
+        "chr_y", "start_y", "end_y",
+        "anchor_ID_x", "anchor_ID_y", "loop_ID",
+        "fdr", "detection_scale",
+        "Benign", "Malignant", "Consistent_in_benign_or_tumour"
+    )],
     file.path("Loops", "merged-loops.sample-counts.tsv"),
     sep = "\t",
     col.names = TRUE
@@ -215,7 +235,12 @@ fwrite(
     loop_counts_with_pos[
         Consistent_in_benign_or_tumour == TRUE & Benign > MIN_SAMPLES & Malignant == 0,
         .SD,
-        .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")
+        .SDcols = c(
+            "chr_x", "start_x", "end_x",
+            "chr_y", "start_y", "end_y",
+            "anchor_ID_x", "anchor_ID_y", "loop_ID",
+            "fdr", "detection_scale"
+        )
     ],
     file.path("Loops", "benign-specific-loops.tsv"),
     sep = "\t",
@@ -228,7 +253,12 @@ fwrite(
     loop_counts_with_pos[
         Consistent_in_benign_or_tumour == TRUE & Benign == 0 & Malignant > MIN_SAMPLES,
         .SD,
-        .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID")
+        .SDcols = c(
+            "chr_x", "start_x", "end_x",
+            "chr_y", "start_y", "end_y",
+            "anchor_ID_x", "anchor_ID_y", "loop_ID",
+            "fdr", "detection_scale"
+        )
     ],
     file.path("Loops", "tumour-specific-loops.tsv"),
     sep = "\t",
@@ -241,7 +271,13 @@ fwrite(
     loop_counts_with_pos[
         Consistent_in_benign_or_tumour == TRUE & Benign > 0 & Malignant > 0,
         .SD,
-        .SDcols = c("chr_x", "start_x", "end_x", "chr_y", "start_y", "end_y", "loopID", "Benign", "Malignant")
+        .SDcols = c(
+            "chr_x", "start_x", "end_x",
+            "chr_y", "start_y", "end_y",
+            "anchor_ID_x", "anchor_ID_y", "loop_ID",
+            "fdr", "detection_scale",
+            "Benign", "Malignant"
+        )
     ],
     file.path("Loops", "shared-loops.tsv"),
     sep = "\t",
@@ -276,3 +312,20 @@ gg_sample <- (
     + theme_minimal()
 )
 savefig(gg_sample, file.path("Plots", "loop-calls.by-sample"), width = 40, height = 20)
+
+# distribution of detection_scale
+gg <- (
+    ggplot(data = loop_counts_with_pos)
+    + geom_density(aes(x = detection_scale))
+    + labs(x = "Detection Scale", y = "Density")
+    + theme_minimal()
+)
+savefig(gg, file.path("Plots", "loop-calls.detection"))
+
+gg <- (
+    ggplot(data = loop_counts_with_pos)
+    + geom_violin(aes(x = Consistent_in_benign_or_tumour, y = detection_scale))
+    + labs(y = "Detection Scale", x = "Consitently called")
+    + theme_minimal()
+)
+savefig(gg, file.path("Plots", "loop-calls.detection-consistency"))
