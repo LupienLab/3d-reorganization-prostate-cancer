@@ -116,6 +116,22 @@ events <- list(
             .N
         ]),
         by = (loops_gained + loops_lost > 0)
+    ],
+    "same loop given changed exprs" = grn_stats[
+        !is.na(qval) & (qval < 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval < 0.05),
+            .N
+        ]),
+        by = (loops_gained + loops_lost == 0)
+    ],
+    "same loop given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = (loops_gained + loops_lost == 0)
     ]
 )
 
@@ -163,6 +179,21 @@ t.test(
     x = grn_stats[Loop_Changes == "Lost loop(s)", Mean_log2FC],
     y = grn_stats[Loop_Changes == "Same loop(s)", Mean_log2FC],
     alternative = "less"
+)
+
+grn_associations <- data.table(
+    "Changed_Exprs" = rep(c(TRUE, FALSE), each = 2),
+    "Changed_GRN" = factor(
+        rep(c("Loop(s)", "No change"), 2),
+        ordered = TRUE,
+        levels = c("No change", "Loop(s)")
+    ),
+    "Proportion" = c(
+        events[["changed loop given changed exprs"]][loops_gained == TRUE, prob],
+        events[["same loop given changed exprs"]][loops_gained == TRUE, prob],
+        events[["changed loop given no changed exprs"]][loops_gained == TRUE, prob],
+        events[["same loop given no changed exprs"]][loops_gained == TRUE, prob]
+    )
 )
 
 
@@ -260,13 +291,13 @@ gg <- (
     ggplot(
         data = grn_stats[!is.na(qval) & (qval < 0.05)],
         mapping = aes(
-            x = Loops_Changed,
+            x = Loop_Changes,
             y = Mean_log2FC,
-            group = Loops_Changed
+            group = Loop_Changes
         )
     )
     + geom_violin(
-        aes(fill = Loops_Changed)
+        aes(fill = Loop_Changes)
     )
     + geom_boxplot(
         outlier.shape = NA, width = 0.3, alpha = 0.1
@@ -275,19 +306,19 @@ gg <- (
         data = grn_stats[
             !is.na(qval) & (qval < 0.05),
             .N,
-            by = Loops_Changed
+            by = Loop_Changes
         ],
         mapping = aes(
-            x = Loops_Changed,
+            x = Loop_Changes,
             y = text_y,
             label = paste0("(", N, ")")
         ),
         vjust = -0.2
     )
     + scale_x_discrete(
-        name = "GRN Alteration in T2E+"
+        name = "GRN Alteration in Tumour"
     )
-    + labs(y = bquote(log[2] * "(T2E+ / T2E-) expression"))
+    + labs(y = bquote(log[2] * "(Tumour / Benign) expression"))
     + guides(fill = FALSE, colour = FALSE)
     + theme_minimal()
     + theme(
@@ -302,11 +333,11 @@ gg <- (
         mapping = aes(
             x = 1,
             y = Mean_log2FC,
-            group = Loops_Changed
+            group = Loop_Changes
         )
     )
     + geom_violin(
-        aes(fill = Loops_Changed)
+        aes(fill = Loop_Changes)
     )
     + geom_boxplot(
         outlier.shape = NA, width = 0.3, alpha = 0.1
@@ -328,9 +359,9 @@ gg <- (
     #     vjust = -0.2
     # )
     + scale_x_discrete(
-        name = "GRN Alteration in T2E+"
+        name = "GRN Alteration in Tumour"
     )
-    + labs(y = bquote(log[2] * "(T2E+ / T2E-) expression"))
+    + labs(y = bquote(log[2] * "(Tumour / Benign) expression"))
     + guides(fill = FALSE, colour = FALSE)
     + facet_grid(~ Loop_Changes)
     + theme_minimal()
@@ -344,7 +375,7 @@ savefig(gg, "Plots/grn-exprs.sig.mean.facetted")
 grn_stats_long <- melt(
     grn_stats,
     id.vars = "gene_id",
-    measure.vars = c("loops_gained", "loops_shared", "loops_lost", "enhancers_gained", "enhancers_shared", "enhancers_lost"),
+    measure.vars = c("loops_gained", "loops_shared", "loops_lost"),
     variable.name = "feature",
     value.name = "N"
 )
@@ -384,3 +415,28 @@ savefig(gg_grn_stats, "Plots/grn-stats.dist")
 #     + theme_minimal()
 # )
 # savefig(gg_grn_stats_residuals, "Plots/grn-stats.fit.residuals")
+gg <- (
+    ggplot(data = grn_associations)
+    + geom_col(
+        aes(x = Changed_Exprs, y = Proportion, fill = Changed_GRN),
+        position = position_stack()
+    )
+    + labs(x = "Differential gene expression", y = "Proportion")
+    + scale_fill_manual(
+        name = "GRN Alteration in T2E+",
+        breaks = c(
+            "Loop(s)",
+            "Loop(s) and Enhancer(s)",
+            "Enhancer(s)",
+            "No change"
+        ),
+        values = c(
+            "#fa8072",
+            "#c67ca2",
+            "#1e90ff",
+            "#c0c0c0"
+        )
+    )
+    + theme_minimal()
+)
+savefig(gg, "Plots/grn-exprs.change-prop")
