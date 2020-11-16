@@ -64,12 +64,12 @@ loginfo("Loading data")
 # load Kallisto/Sleuth object
 so <- list(
     "altered" = readRDS(file.path("..", "2020-06-18_sv-disruption-expression", "sleuth", "test_44.sleuth-object.rds")),
-    "notaltered" = readRDS(file.path("..", "2020-06-18_sv-disruption-expression", "sleuth", "test_197.sleuth-object.rds"))
+    "notaltered" = readRDS(file.path("..", "2020-06-18_sv-disruption-expression", "sleuth", "test_311.sleuth-object.rds"))
 )
 
 mut_samples <- list(
     "altered" = "PCa13848",
-    "notaltered" = "PCa53687"
+    "notaltered" = "PCa58215"
 )
 
 # load GENCODE annotations
@@ -95,13 +95,12 @@ loginfo("Performing calculations")
 test_genes <- list(
     "altered" = c("INSM2", "NFKBIA", "RALGAPA1", "BRMS1L"),
     "notaltered" = c(
-        "SLC26A4",
-        "COG5",
-        "BCAP29",
-        "SLC26A3",
-        "DUS4L",
-        "CBLL1",
-        "WBP1LP2"
+        "LINC02418",
+        "FZD10-AS1",
+        "RIMBP2",
+        "LINC02419",
+        "FZD10",
+        "PIWIL1"
     )
 )
 
