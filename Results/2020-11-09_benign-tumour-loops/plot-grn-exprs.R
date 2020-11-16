@@ -423,7 +423,7 @@ gg <- (
     )
     + labs(x = "Differential gene expression", y = "Proportion")
     + scale_fill_manual(
-        name = "GRN Alteration in T2E+",
+        name = "GRN Alteration in Tumour",
         breaks = c(
             "Loop(s)",
             "Loop(s) and Enhancer(s)",
