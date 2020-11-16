@@ -15,6 +15,8 @@ suppressMessages(library("logging"))
 loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
+suppressMessages(library("pheatmap"))
+suppressMessages(library("Matrix"))
 
 # ==============================================================================
 # Functions
@@ -25,6 +27,18 @@ suppressMessages(library("ggplot2"))
 # ==============================================================================
 loginfo("Loading data")
 loops <- fread("Loops/merged-loops.sample-counts.tsv")
+
+loop_jaccard <- fread("Loops/by-sample/loop-multi-jaccard.csv", sep=",", drop = 1)
+colnames(loop_jaccard) <- gsub(
+    "^.\\\\",
+    "",
+    gsub(
+        ".flat-loops.bed$",
+        "",
+        colnames(loop_jaccard)
+    )
+)
+
 
 # ==============================================================================
 # Analysis
@@ -41,6 +55,13 @@ distance_stats <- data.table(
         loops[, as.numeric(names(which.max(table(Distance))))]
     )
 )
+
+# construct a symmetric jaccard matrix out of loop comparisons
+jaccard_mtx <- as.matrix(loop_jaccard)
+rownames(jaccard_mtx) <- colnames(jaccard_mtx)
+jaccard_mtx[is.na(jaccard_mtx)] <- 0
+jaccard_mtx <- jaccard_mtx + t(jaccard_mtx)
+diag(jaccard_mtx) <- diag(jaccard_mtx) / 2
 
 # ==============================================================================
 # Save data
@@ -82,3 +103,8 @@ gg <- (
     + theme_minimal()
 )
 ggsave("Plots/loop-calls.anchor-distance.png", gg, width = 12, height = 8, units = "cm")
+
+pheatmap(
+    mat=jaccard_mtx,
+    filename="Plots/loop-jaccard.png"
+)
