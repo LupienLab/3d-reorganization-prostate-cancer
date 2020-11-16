@@ -183,6 +183,62 @@ events <- list(
             .N
         ]),
         by = ((enhancers_gained + enhancers_lost == 0) & (loops_gained + loops_lost > 0))
+    ],
+    "same enhancer and same loop given changed exprs" = grn_stats[
+        !is.na(qval) & (qval < 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval < 0.05),
+            .N
+        ]),
+        by = ((enhancers_gained + enhancers_lost == 0) & (loops_gained + loops_lost == 0))
+    ],
+    "changed loop given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = (loops_gained + loops_lost > 0)
+    ],
+    "changed enhancer given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = (enhancers_gained + enhancers_lost > 0)
+    ],
+    "changed enhancer and changed loop given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = ((enhancers_gained + enhancers_lost > 0) & (loops_gained + loops_lost > 0))
+    ],
+    "changed enhancer and same loop given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = ((enhancers_gained + enhancers_lost > 0) & (loops_gained + loops_lost == 0))
+    ],
+    "same enhancer and changed loop given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = ((enhancers_gained + enhancers_lost == 0) & (loops_gained + loops_lost > 0))
+    ],
+    "same enhancer and same loop given no changed exprs" = grn_stats[
+        !is.na(qval) & (qval >= 0.05),
+        .(prob = .N / grn_stats[
+            !is.na(qval) & (qval >= 0.05),
+            .N
+        ]),
+        by = ((enhancers_gained + enhancers_lost == 0) & (loops_gained + loops_lost == 0))
     ]
 )
 
@@ -229,27 +285,68 @@ fwrite(grn_stats, "Graphs/grn-exprs.tsv", sep = "\t")
 
 # 3. Hypothesis testing for gene expression changes and GRN changes
 # --------------------------------------
-t.test(
-    x = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Gained enhancer(s)", Mean_log2FC],
-    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
-    alternative = "greater"
-)
-t.test(
-    x = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Lost enhancer(s)", Mean_log2FC],
-    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
-    alternative = "less"
-)
-t.test(
-    x = grn_stats[Loop_Changes == "Gained loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
-    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
-    alternative = "greater"
-)
-t.test(
-    x = grn_stats[Loop_Changes == "Lost loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
-    y = grn_stats[Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
-    alternative = "less"
+tests <- list(
+    "gained enhancer same loop" = t.test(
+        x = grn_stats[!is.na(qval) & Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Gained enhancer(s)", Mean_log2FC],
+        y = grn_stats[!is.na(qval) & Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+        alternative = "greater"
+    ),
+    "lost enhancer same loop" = t.test(
+        x = grn_stats[!is.na(qval) & Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Lost enhancer(s)", Mean_log2FC],
+        y = grn_stats[!is.na(qval) & Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+        alternative = "less"
+    ),
+    "same enhancer gained loop" = t.test(
+        x = grn_stats[!is.na(qval) & Loop_Changes == "Gained loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+        y = grn_stats[!is.na(qval) & Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+        alternative = "greater"
+    ),
+    "same enhancer lost loop" = t.test(
+        x = grn_stats[!is.na(qval) & Loop_Changes == "Lost loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+        y = grn_stats[!is.na(qval) & Loop_Changes == "Same loop(s)" & Enhancer_Changes == "Same enhancer(s)", Mean_log2FC],
+        alternative = "less"
+    )
 )
 
+multi_tests <- list(
+    "gained enhancer gained loop" = t.test(
+        x = grn_stats[!is.na(qval) & Loop_Changes == "Gained loop(s)" & Enhancer_Changes == "Gained enhancer(s)", Mean_log2FC],
+        y = grn_stats[!is.na(qval) & xor(Loop_Changes == "Gained loop(s)", Enhancer_Changes == "Gained enhancer(s)"), Mean_log2FC],
+        alternative = "greater"
+    ),
+    "lost enhancer lost loop" = t.test(
+        x = grn_stats[!is.na(qval) & Loop_Changes == "Lost loop(s)" & Enhancer_Changes == "Lost enhancer(s)", Mean_log2FC],
+        y = grn_stats[!is.na(qval) & xor(Loop_Changes == "Lost loop(s)", Enhancer_Changes == "Lost enhancer(s)"), Mean_log2FC],
+        alternative = "less"
+    )
+)
+
+grn_associations <- data.table(
+    "Changed_Exprs" = rep(c(TRUE, FALSE), each = 4),
+    "Changed_GRN" = factor(
+        rep(
+            c(
+                "Loop(s)",
+                "Loop(s) and Enhancer(s)",
+                "Enhancer(s)",
+                "No change"
+            ),
+            2
+        ),
+        ordered = TRUE,
+        levels = c("No change", "Loop(s)", "Loop(s) and Enhancer(s)", "Enhancer(s)")
+    ),
+    "Proportion" = c(
+        events[["same enhancer and changed loop given changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["changed enhancer and changed loop given changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["changed enhancer and same loop given changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["same enhancer and same loop given changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["same enhancer and changed loop given no changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["changed enhancer and changed loop given no changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["changed enhancer and same loop given no changed exprs"]][enhancers_gained == TRUE, prob],
+        events[["same enhancer and same loop given no changed exprs"]][enhancers_gained == TRUE, prob]
+    )
+)
 
 # ==============================================================================
 # Plots
@@ -481,3 +578,29 @@ savefig(gg_grn_stats, "Plots/grn-stats.dist")
 #     + theme_minimal()
 # )
 # savefig(gg_grn_stats_residuals, "Plots/grn-stats.fit.residuals")
+
+gg <- (
+    ggplot(data = grn_associations)
+    + geom_col(
+        aes(x = Changed_Exprs, y = Proportion, fill = Changed_GRN),
+        position = position_stack()
+    )
+    + labs(x = "Differential gene expression", y = "Proportion")
+    + scale_fill_manual(
+        name = "GRN Alteration in T2E+",
+        breaks = c(
+            "Loop(s)",
+            "Loop(s) and Enhancer(s)",
+            "Enhancer(s)",
+            "No change"
+        ),
+        values = c(
+            "#fa8072",
+            "#c67ca2",
+            "#1e90ff",
+            "#c0c0c0"
+        )
+    )
+    + theme_minimal()
+)
+savefig(gg, "Plots/grn-exprs.change-prop")
