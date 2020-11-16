@@ -30,24 +30,26 @@ rule tumour_dge:
 	shell:
 		"Rscript {input.script}"
 
-rule plot_erg:
+rule plot_dge:
 	input:
-		script = "plot-t2e.R",
+		script = "plot-dge.R",
 		sleuth = "sleuth-object.rds",
-		data = "t2e-comparison.transcripts.tsv"
+		genes = "results.genes.tsv",
+		tx = "results.transcripts.tsv",
 	output:
-		"outfile"
+		"results.genes.sig.bed",
+		path.join(PLOT_DIR, "volcano.transcripts.png"),
+		path.join(PLOT_DIR, "volcano.transcripts.pdf"),
 	shell:
-		"python {input.script} {input.data} -o {output}"
+		"Rscript {input.script}"
 
-rule sv_test_comp:
+rule overlap_tumour_loops_dge:
 	input:
-		script = "1sample-dge.sleuth.R",
+		promoter_script = "promoter.awk",
+		bedpe_script = "bedpe2bed.awk", 
+		sig_genes = "results.genes.sig.bed",
+		loops = path.join("..", "2020-10-06_loops", "Loops", "{loop_type}-loops.tsv"),
 	output:
-		path.join("sleuth", "test_{test_ID}.genes.all.tsv"),
-		path.join("sleuth", "test_{test_ID}.transcripts.all.tsv"),
-		path.join("sleuth", "test_{test_ID}.genes.tested.tsv"),
-		path.join("sleuth", "test_{test_ID}.transcripts.tested.tsv"),
-		path.join("sleuth", "test_{test_ID}.sleuth-object.rds"),
+		"overlap.{loop_type}.bed",
 	shell:
-		"Rscript {input.script} {wildcards.test_ID}"
+		"bedtools intersect -wa -wb -a <(awk -f {input.promoter_script} {input.sig_genes}) -b <(awk -f {input.bedpe_script} {input.loops}) > {output}"
