@@ -1,4 +1,4 @@
-SampleID	component_ID	n_loops	DGE
+SampleID	component_ID	n_loops	any_dge
 PCa13266	0	9	FALSE
 PCa13266	2	9	FALSE
 PCa13848	1	22	TRUE

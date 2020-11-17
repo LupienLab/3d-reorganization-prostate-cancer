@@ -92,53 +92,62 @@ svbp_gr <- GRanges(
     test_ID = sv_bp$test_ID
 )
 
-# find overlaps
+# find overlaps between anchors and SV breakpoints
 hits <- as.data.table(findOverlaps(anch_gr, svbp_gr))
 
-# calculate number of overlaps by SV
-sv_n_loops <- cbind(hits[, N], sv_bp[hits$subjectHits])
+# calculate number of overlaps by SV (i.e. component_ID)
+sv_n_loops <- cbind(1, sv_bp[hits$subjectHits])
 sv_n_loops <- sv_n_loops[,
     .(
         n_loops = sum(V1),
-        DGE = any(DGE)
+        any_dge = any(DGE)
     ),
     keyby = c("SampleID", "component_ID")
 ]
 
 obs_enrichment <- sv_n_loops[, .(Median_Loops = median(n_loops)), keyby = DGE]
-obs_fc <- obs_enrichment[DGE == TRUE, Median_Loops] / obs_enrichment[DGE == FALSE, Median_Loops]
+obs_log2fc <- (
+    obs_enrichment[DGE == TRUE, log2(Median_Loops)]
+    - obs_enrichment[DGE == FALSE, log2(Median_Loops)]
+)
 
 
 loginfo("Calculating permutations")
-perm_intersect <- copy(sv_n_loops)
-n_dge <- perm_intersect[DGE == TRUE, .N]
-n_total <- perm_intersect[, .N]
+n_dge <- sv_n_loops[any_dge == TRUE, .N]
+n_total <- sv_n_loops[, .N]
 
 set.seed(1111)
-n_perms <- 10000
-perm_fcs <- rbindlist(lapply(
-    1:n_perms,
-    function(i) {
-        # pick n_dge SVs to count as altering expression
-        idx <- sample.int(n = n_total, size = n_dge)
-        perm_intersect[idx, DGE := TRUE]
-        perm_intersect[-idx, DGE := FALSE]
-        perm_enrichment <- perm_intersect[, .(Median_Loops = median(n_loops)), keyby = DGE]
-        n_loops_dge <- perm_enrichment[DGE == TRUE, Median_Loops]
-        n_loops_nondge <- perm_enrichment[DGE == FALSE, Median_Loops]
-        return(data.table(
-            "Iteration" = i,
-            "Median_Loops_DGE" = n_loops_dge,
-            "Median_Loops_nonDGE" = n_loops_nondge
-        ))
+n_perms <- 100000
+perm_fcs <- data.table(
+    Iteration = 1:n_perms,
+    median_loops_dge = 0,
+    median_loops_nondge = 0
+)
+for (i in 1:n_perms) {
+    if (i %% 1000 == 0) {
+        cat(i, "\n")
     }
-))
+    perm_intersect <- copy(sv_n_loops)
+    # pick n_dge SVs to count as altering expression
+    idx <- sample.int(n = n_total, size = n_dge)
+    perm_intersect[idx, any_dge := TRUE]
+    perm_intersect[-idx, any_dge := FALSE]
+    perm_enrichment <- perm_intersect[,
+        .(Median_Loops = median(n_loops)),
+        keyby = any_dge
+    ]
+    n_loops_dge <- perm_enrichment[any_dge == TRUE, Median_Loops]
+    n_loops_nondge <- perm_enrichment[any_dge == FALSE, Median_Loops]
+    perm_fcs[i, median_loops_dge := n_loops_dge]
+    perm_fcs[i, median_loops_nondge := n_loops_nondge]
+}
+
 # calculate fold change for all permutations
-perm_fcs[, DGE_Fold := (Median_Loops_DGE / Median_Loops_nonDGE)]
+perm_fcs[, dge_log2Fold := log2(median_loops_dge / median_loops_nondge)]
 
 # calculate p-value from permutations
 # number of permutations with a median fold change in number of loops based on SVs affecting expression
-pval <- perm_fcs[DGE_Fold >= obs_fc, .N] / perm_fcs[, .N]
+pval <- perm_fcs[dge_log2Fold >= obs_log2fc, .N] / perm_fcs[, .N]
 cat("Permutation p-value: ", pval, "\n")
 
 # ==============================================================================
