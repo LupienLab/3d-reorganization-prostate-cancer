@@ -39,6 +39,12 @@ sv_tests$nonmut_samples <- split_comma_col(sv_tests$nonmut_samples)
 
 SAMPLES <- sv_tests[, sort(unique(unlist(mut_samples)))]
 
+sv_bp_pairs <- fread(
+    "../2020-02-19_chromoplexy/Graphs/sv-breakpoints.paired.tsv",
+    sep = "\t",
+    header = TRUE
+)
+
 # load TAD disruption test results
 tad_tests <- fread(
     file.path("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
@@ -80,18 +86,7 @@ tested_transcripts <- rbindlist(lapply(
     }
 ))
 
-transcript_table <- rbindlist(lapply(
-    SAMPLES,
-    function(s) {
-        dt <- fread(
-            paste0("../../Data/Processed/2020-06-17_PCa-RNA-seq/", s, "/abundance.tsv"),
-            sep = "\t",
-            header = TRUE
-        )
-        dt[, SampleID := s]
-        return(dt)
-    }
-))
+transcript_table <- fread("all-samples.abundance.tsv", sep = "\t")
 
 
 # ==============================================================================
@@ -107,7 +102,7 @@ gene_tpm <- rbindlist(apply(
         # get all transcripts associated with that gene
         transcript_ids <- gencode[gene_id == gene, target_id]
         # sum all TPM for all transcripts for that gene
-        gene_tpm <- transcript_table[target_id %in% transcript_ids, .(tpm = sum(tpm)), by = "SampleID"]
+        gene_tpm <- transcript_table[target_id %in% transcript_ids, .(tpm = sum(tpm)), by = "sample"]
         gene_tpm[, gene_id := gene]
         
         # get test_ID
@@ -117,8 +112,8 @@ gene_tpm <- rbindlist(apply(
         gene_tpm[, Mutated := ""]
         mut_samples <- sv_tests[test_ID == tid, unlist(mut_samples)]
         nonmut_samples <- sv_tests[test_ID == tid, unlist(nonmut_samples)]
-        gene_tpm[SampleID %in% mut_samples, Mutated := "Mutated"]
-        gene_tpm[SampleID %in% nonmut_samples, Mutated := "Nonmutated"]
+        gene_tpm[sample %in% mut_samples, Mutated := "Mutated"]
+        gene_tpm[sample %in% nonmut_samples, Mutated := "Nonmutated"]
 
         # remove NA samples that are excluded from each test
         gene_tpm <- gene_tpm[Mutated != ""]
@@ -137,6 +132,21 @@ merged_gene_tpm <- merge(
     by.x = c("test_ID", "target_id"),
     by.y = c("test_ID", "gene_id")
 )
+
+# link tests together by the SV they come from
+sv_events_tests <- sv_bp_pairs[,
+    .(test_ID = c(test_ID_x, test_ID_y)),
+    keyby = c("SampleID", "component_ID_x")
+]
+sv_events_tests[, event_ID := paste(SampleID, component_ID_x, sep = "_")]
+
+merged_gene_tpm_multi_IDs <- unique(merge(
+    x = merged_gene_tpm,
+    y = sv_events_tests[, .SD, .SDcols = c("event_ID", "test_ID")],
+    by = "test_ID",
+    allow.cartesian = TRUE
+))
+
 merged_gene_tpm[, altered_group := (qval < QVAL_THRESH & abs(log2fc) > log(2))]
 merged_gene_tpm[, test_ID := factor(test_ID)]
 
@@ -163,6 +173,36 @@ counted_gene_tpm_plot <- dcast(
     counted_gene_tpm,
     test_ID ~ Significant + LargeFold,
     value.var = "Frac"
+)
+
+# classify the events as "only increased expression", "only decreased expression", "no changes", and "increased and descreased expression"
+event_status <- rbindlist(lapply(
+    unique(merged_gene_tpm_multi_IDs$event_ID),
+    function(eid) {
+        diff_expr_genes <- merged_gene_tpm_multi_IDs[event_ID == eid & qval < QVAL_THRESH]
+        # fc_signs is then a vector with 0 (c()), 1 (c(1) or c(-1)), or 2 (c(-1, 1)) elements
+        fc_signs <- sort(unique(diff_expr_genes[, sign(log2fc)]))
+        status <- ifelse(
+            length(fc_signs) == 0,
+            "none",
+            ifelse(
+                length(fc_signs) == 2,
+                "up and down",
+                ifelse(fc_signs == -1, "down only", "up only")
+            )
+        )
+        return(data.table(
+            event_ID = eid,
+            status = factor(status, ordered = TRUE, levels = c("up only", "up and down", "down only", "none"))
+        ))
+    }
+))
+
+merged_gene_tpm_multi_IDs <- merge(
+    x = merged_gene_tpm_multi_IDs,
+    y = event_status,
+    by = "event_ID",
+    all.x = TRUE
 )
 
 # ==============================================================================
@@ -297,6 +337,76 @@ gg_fc <- grid.arrange(
     heights = panel_height_ratios / sum(panel_height_ratios)
 )
 savefig(gg_fc, file.path(PLOT_DIR, "expression"))
+
+
+# make two versions of this plot, one with labelled SVs and one without
+gg_event_changes <- (
+    ggplot(data = merged_gene_tpm_multi_IDs[status != "none"])
+    + geom_point(
+        aes(
+            x = sign(log2fc) * pmin(-log10(qval), 16),
+            y = event_ID,
+            fill = qval < QVAL_THRESH
+        ),
+        shape = 21,
+        size = 3
+    )
+    + geom_vline(
+        xintercept = c(log10(QVAL_THRESH), -log10(QVAL_THRESH)),
+        linetype = "dashed",
+        colour = "#ff6347"
+    )
+    + labs(y = "Structural Variants")
+    + coord_cartesian(
+        xlim = c(-16, 16),
+        expand = FALSE,
+        clip = "off"
+    )
+    + scale_x_continuous(
+        name = bquote(-log[10] * "(FDR) gene expression"),
+        breaks = c(
+            -16, -12, -8, -4,
+            0,
+            4, 8, 12, 16
+        ),
+        labels = c(
+            "> 16", "12", "8", "4", "0", "4", "8", "12", "> 16"
+        )
+    )
+    + scale_fill_manual(
+        breaks = c(FALSE, TRUE),
+        values = c("#bdbdbd", "#ff6347")
+    )
+    + facet_grid(status ~ ., scales = "free_y")
+    + guides(fill = FALSE)
+    + theme_minimal()
+    + theme(
+        panel.spacing = unit(2, "lines")
+    )
+)
+# adjust facet heights
+# adjusted from https://stackoverflow.com/questions/52341385/how-to-automatically-adjust-the-width-of-each-facet-for-facet-wrap
+gp <- ggplotGrob(gg_event_changes)
+facet_rows <- gp$layout$b[grepl("panel", gp$layout$name)]
+# get unique y-axis vales per facet
+y_events <- sapply(
+    ggplot_build(gg_event_changes)$layout$panel_scales_y,
+    function(l) length(l$range$range)
+)
+# change relative heights of facets
+gp$heights[facet_rows] <- gp$heights[facet_rows] * y_events
+savefig(gp, "Plots/event-changes.labelled")
+
+# make the second version
+gg_event_changes <- gg_event_changes + theme(axis.text.y = element_blank())
+gp <- ggplotGrob(gg_event_changes)
+facet_rows <- gp$layout$b[grepl("panel", gp$layout$name)]
+y_events <- sapply(
+    ggplot_build(gg_event_changes)$layout$panel_scales_y,
+    function(l) length(l$range$range)
+)
+gp$heights[facet_rows] <- gp$heights[facet_rows] * y_events
+savefig(gp, "Plots/event-changes")
 
 # ==============================================================================
 # Save tables
