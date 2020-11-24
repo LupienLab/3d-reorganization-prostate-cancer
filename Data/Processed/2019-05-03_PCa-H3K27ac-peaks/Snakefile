@@ -11,6 +11,7 @@ BAM_DIR = "Aligned"
 PEAK_DIR = "Peaks"
 CORE_DIR = "COREs"
 REPORT_DIR = "Reports"
+TRACK_DIR = "Tracks"
 
 SAMPLES = ["Pca" + str(i) for i in CONFIG["Sample ID"].tolist()]
 CHIPS = CONFIG["ChIP Type"].tolist()
@@ -26,9 +27,12 @@ CHR_REGEX = "^chr[0-9]{0,3}[XYM]?\\t"
 rule all:
     input:
         expand(
-            path.join(PEAK_DIR, "{sample}_peaks.filtered.{ext}"),
+            path.join(PEAK_DIR, "{sample}_peaks.filtered.sorted.merged.narrowPeak"),
             sample=UNIQ_SAMPLES,
-            ext=["narrowPeak", "bdg"],
+        ),
+        expand(
+            path.join(TRACK_DIR, "{sample}_peaks.beddb"),
+            sample=UNIQ_SAMPLES,
         ),
         path.join(PEAK_DIR, "catalogue-peaks.bed"),
         path.join(PEAK_DIR, "correlation.tsv"),
@@ -169,6 +173,17 @@ rule clodius_agg_1d_bdg:
         "-a hg38"
     shell:
         "clodius aggregate bedfile {params} -o {output} {input}"
+
+rule clodius_agg_1d_peaks:
+    input:
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.sorted.merged.narrowPeak"),
+    output:
+        path.join(TRACK_DIR, "{sample}_peaks.beddb"),
+    params:
+        "-a hg38"
+    shell:
+        "clodius aggregate bedfile {params} -o {output} {input}"
+
 
 rule clodius_agg_1d_core:
     input:
