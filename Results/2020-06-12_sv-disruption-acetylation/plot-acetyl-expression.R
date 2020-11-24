@@ -55,12 +55,18 @@ gg_cor <- (
     + geom_vline(aes(xintercept = -FC_THRESH), linetype = "dashed")
     + geom_point(
         data = delta[sig == FALSE],
-        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, colour = col),
+        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, fill = col),
+        shape = 21,
+        colour = "#000000",
+        size = 2,
         alpha = 0.5
     )
     + geom_point(
         data = delta[sig == TRUE],
-        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, colour = col),
+        mapping = aes(x = log2exprs_fc, y = log2acetyl_fc, fill = col),
+        shape = 21,
+        colour = "#000000",
+        size = 2,
         alpha = 1
     )
     + geom_label_repel(
@@ -73,7 +79,7 @@ gg_cor <- (
         y = -4,
         label = bquote(rho * " = " * .(round(h_cor$estimate, 4)))
     )
-    + scale_colour_manual(
+    + scale_fill_manual(
         breaks = c(
             "Down",
             "NS",
@@ -91,7 +97,10 @@ gg_cor <- (
         ),
         name = expression(FDR < 0.05)
     )
-    + labs(x = expression(log[2] * "(Expression mut fold change)"), y = expression(log[2] * "(H3K27ac mut fold change)"))
+    + labs(
+        x = expression(log[2] * "(Expression mut fold change)"),
+        y = expression(log[2] * "(H3K27ac mut fold change)")
+    )
     # + guides(colour = FALSE)
     # + xlim(-6, 6)
     # + ylim(-6, 6)
