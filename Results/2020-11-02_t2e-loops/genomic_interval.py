@@ -55,7 +55,7 @@ class GenomicInterval:
     def __le__(self, other) -> bool:
         if self.chr == other.chr:
             return self.inf() <= other.inf()
-        return self.chr < other.chr
+        return self.chr <= other.chr
 
     def __gt__(self, other) -> bool:
         if self.chr == other.chr:
@@ -65,22 +65,31 @@ class GenomicInterval:
     def __ge__(self, other) -> bool:
         if self.chr == other.chr:
             return self.sup() >= other.sup()
-        return self.chr > other.chr
+        return self.chr >= other.chr
 
-    def __ne__(self, other) -> bool:
-        if self.chr == other.chr:
-            return self.sup() >= other.sup()
+    def __eq__(self, other) -> bool:
         return (
-            (self.chr != other.chr)
-            and (self.inf() != other.inf())
-            and (self.sup() != other.sup())
+            (self.chr == other.chr)
+            and (self.inf() == other.inf())
+            and (self.sup() == other.sup())
         )
+
+    def __hash__(self):
+        return hash(tuple((self.chr, self.inf(), self.sup(), tuple(self.data.items()))))
 
 
 class TopologicalDomain(GenomicInterval):
     def __init__(self, chrom, start, end, persistence=(None, None)):
         self.persistence = persistence
         super().__init__(chrom, start, end)
+
+    def __eq__(self, other) -> bool:
+        return (
+            (self.chr == other.chr)
+            and (self.inf() == other.inf())
+            and (self.sup() == other.sup())
+            and (self.persistence == other.persistence)
+        )
 
 
 class Loop:
@@ -119,6 +128,23 @@ class Loop:
 
     def __repr__(self) -> str:
         return self.left.plot_str() + "--" + self.right.plot_str()
+
+    def __lt__(self, other) -> bool:
+        # use "less than" on the left anchor
+        return self.left < other.left
+
+    def __le__(self, other) -> bool:
+        return self.left <= other.left
+
+    def __gt__(self, other) -> bool:
+        # use "greater than" on the right anchor
+        return self.right > other.right
+
+    def __ge__(self, other) -> bool:
+        return self.right >= other.right
+
+    def __eq__(self, other) -> bool:
+        return (self.left == other.left) and (self.right == other.right)
 
 
 # ==============================================================================

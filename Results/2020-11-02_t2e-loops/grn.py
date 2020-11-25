@@ -42,7 +42,7 @@ def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
     grn_loops: Dict[str, List[Loop]]
         Loops in the GRN
     grn_enhns: Dict[str, List[GenomicInterval]]
-        Enhancers in the GRN
+        Subgraph of GRN with edges that directly connect to enhancers
     """
     data = {
         "loops_gained": len(
@@ -63,9 +63,6 @@ def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
         ),
     }
     return data
-
-
-def 
 
 
 # ==============================================================================
@@ -183,43 +180,47 @@ for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
     # only include loops where one anchor overlaps the gene promoter
     tad_loops = tad_loops.loc[
         # x anchor overlaps the promoter (extend to half of loop resolution on either side)
-        ((tad_loops["start_x"] - 5000 <= prom.sup()) & (tad_loops["end_x"] + 5000 >= prom.inf()))
+        (
+            (tad_loops["start_x"] - 5000 <= prom.sup())
+            & (tad_loops["end_x"] + 5000 >= prom.inf())
+        )
         # or y anchor overlaps promoter
-        | ((tad_loops["start_y"] - 5000 <= prom.sup()) & (tad_loops["end_y"] + 5000 >= prom.inf())),
+        | (
+            (tad_loops["start_y"] - 5000 <= prom.sup())
+            & (tad_loops["end_y"] + 5000 >= prom.inf())
+        ),
         :,
     ]
-    tad_loop_intvls = [
-        Loop(
-            l.chr_x,
-            l.start_x,
-            l.end_x,
-            l.chr_y,
-            l.start_y,
-            l.end_y,
-            {"row": l.Index, "id": l.anchor_ID_x,},
-            {"row": l.Index, "id": l.anchor_ID_y,},
-            {"row": l.Index, "id": l.loopID, "condition": l.loop_type},
-        )
-        for l in tad_loops.itertuples()
-    ]
-    L[gene_id] = tad_loop_intvls
+    tad_loop_intvls = np.unique(
+        [
+            Loop(
+                l.chr_x,
+                l.start_x,
+                l.end_x,
+                l.chr_y,
+                l.start_y,
+                l.end_y,
+                {"row": l.Index, "id": l.anchor_ID_x,},
+                {"row": l.Index, "id": l.anchor_ID_y,},
+                {"row": l.Index, "id": l.loopID, "condition": l.loop_type},
+            )
+            for l in tad_loops.itertuples()
+        ]
+    )
+    L[gene_id] = tad_loop_intvls.tolist()
 
 
 E = {}  # Enhancers
-for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
-    zip(P.items(), T.items(), L.items()), total=promoters.shape[0]
-):
-    # don't bother constructing GRN if no loops
-    if len(tad_loops) == 0:
-        continue
-    # find all H3K27ac peaks within the TAD, exlcuding promoter regions
+for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
+    tad = T[gene_id]
+    tad_loops = L[gene_id]
+    # find all H3K27ac peaks within the TAD
     tad_enhancers = enhancers.loc[
-        (enhancers.index != prom.data["row"])
-        & (enhancers["chr"] == tad.chr)
+        (enhancers["chr"] == tad.chr)
         & (enhancers["start"] <= tad.sup())
         & (enhancers["end"] >= tad.inf()),
         :,
-    ]
+    ].drop_duplicates()
     # calculate whether the enhancer is condition-specific or shared
     enhn_conditions = [""] * tad_enhancers.shape[0]
     for i, e in enumerate(tad_enhancers.itertuples()):
@@ -231,56 +232,101 @@ for (gene_id, prom), (_, tad), (_, tad_loops) in tqdm(
         else:
             enhn_conditions[i] = "shared"
     # convert to GenomicInterval objects
-    tad_enhn_invls = [
-        GenomicInterval(
-            e.chr,
-            e.start,
-            e.end,
-            {
-                "row": e.Index,
-                "id": e.Index,
-                "name": "",
-                "type": "enhancer",
-                "sig": e.FDR < 0.05,
-                "fc": e.Fold,
-                "condition": cdn,
-            },
-        )
-        for p, cdn in zip(tad_enhancers.itertuples(), enhn_conditions)
-    ]
+    tad_enhn_invls = np.unique(
+        [
+            GenomicInterval(
+                e.chr,
+                e.start,
+                e.end,
+                {
+                    "row": e.Index,
+                    "id": e.Index,
+                    "name": "",
+                    "type": "enhancer",
+                    "sig": e.FDR < 0.05,
+                    "fc": e.Fold,
+                    "condition": cdn,
+                },
+            )
+            for e, cdn in zip(tad_enhancers.itertuples(), enhn_conditions)
+        ]
+    )
     # only include enhancers that overlap a loop anchor
     for e in tad_enhn_invls:
-        # this may produce multiple edges between the enhancer and the promoters
-        # (although biologically, this shouldn't happen at the enhancers, only the promoters)
-        # I will need to check for this in future code
+        # add the enhancer to the GRN
+        G[gene_id].add_node(e)
         for l in tad_loops:
-            # only add the enhancer to the GRN if it overlaps a loop anchor
-            if overlapping(e, l.left) or overlapping(e, l.right):
-                G[gene_id].add_node(e)
-                # connect the enhancer to the gene promoter
+            # connect the enhancer to the gene promoter if there is a loop connecting them
+            # or if they are within the filtering distance from Mustache
+            # (the ignored diagonal is 2 x 10 kbp pixels, so 20 kbp)
+            if (
+                overlapping(e, l.left)
+                or overlapping(e, l.right)
+                or overlapping(prom, e, 10000)
+            ):
                 G[gene_id].add_edge(prom, e, condition=l.data["condition"])
-    E[gene_id] = tad_enhn_invls
+    E[gene_id] = tad_enhn_invls.tolist()
 
 
 logging.info("Calculating GRN Stats")
 # for each GRN, count the number gained, shared, and lost loops and enhancers
 grn_info = {
-    gene_id: grn_stats(L[gene_id], E[gene_id])
-    for gene_id in G.keys()
+    gene_id: grn_stats(L[gene_id], G[gene_id][P[gene_id]]) for gene_id in G.keys()
 }
 # need to ensure that the gene_ids are always listed in the same order
 grn_cre_stats = pd.DataFrame(
     {
         "gene_id": [gene_id for gene_id in promoters["gene_id"]],
-        "loops_gained": [grn_info[gene_id]["loops_gained"] for gene_id in promoters["gene_id"]],
-        "loops_shared": [grn_info[gene_id]["loops_shared"] for gene_id in promoters["gene_id"]],
-        "loops_lost": [grn_info[gene_id]["loops_lost"] for gene_id in promoters["gene_id"]],
-        "enhancers_gained": [grn_info[gene_id]["enhancers_gained"] for gene_id in promoters["gene_id"]],
-        "enhancers_shared": [grn_info[gene_id]["enhancers_shared"] for gene_id in promoters["gene_id"]],
-        "enhancers_lost": [grn_info[gene_id]["enhancers_lost"] for gene_id in promoters["gene_id"]],
+        "loops_gained": [
+            grn_info[gene_id]["loops_gained"] for gene_id in promoters["gene_id"]
+        ],
+        "loops_shared": [
+            grn_info[gene_id]["loops_shared"] for gene_id in promoters["gene_id"]
+        ],
+        "loops_lost": [
+            grn_info[gene_id]["loops_lost"] for gene_id in promoters["gene_id"]
+        ],
+        "enhancers_gained": [
+            grn_info[gene_id]["enhancers_gained"] for gene_id in promoters["gene_id"]
+        ],
+        "enhancers_shared": [
+            grn_info[gene_id]["enhancers_shared"] for gene_id in promoters["gene_id"]
+        ],
+        "enhancers_lost": [
+            grn_info[gene_id]["enhancers_lost"] for gene_id in promoters["gene_id"]
+        ],
     }
 )
+grn_cre_stats["total_loops"] = (
+    grn_cre_stats["loops_gained"]
+    + grn_cre_stats["loops_shared"]
+    + grn_cre_stats["loops_lost"]
+)
+grn_cre_stats["total_enhancers"] = (
+    grn_cre_stats["enhancers_gained"]
+    + grn_cre_stats["enhancers_shared"]
+    + grn_cre_stats["enhancers_lost"]
+)
+grn_cre_stats["gene_name"] = [
+    P[gene_id].data["name"] for gene_id in grn_cre_stats["gene_id"]
+]
 
+# reorder columns
+grn_cre_stats = grn_cre_stats.loc[
+    :,
+    [
+        "gene_id",
+        "gene_name",
+        "total_loops",
+        "total_enhancers",
+        "loops_gained",
+        "loops_shared",
+        "loops_lost",
+        "enhancers_gained",
+        "enhancers_shared",
+        "enhancers_lost",
+    ],
+]
 
 # ==============================================================================
 # Save data
