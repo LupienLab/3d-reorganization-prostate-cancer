@@ -44,24 +44,6 @@ PLOT_DIR = "Plots"
 # ==============================================================================
 # Functions
 # ==============================================================================
-def locus_to_plotpos(bp: GenomicInterval) -> Tuple[float, float]:
-    """
-    Convert genomic locus to a position in the breakpoint graphs.
-    The chromosomes are laid out in a 4 rows x 6 cols pattern (chr1-22, X, Y)
-    
-    Parameters
-    ==========
-    bp: GenomicInterval
-        A breakpoint to be plotted
-    Returns: (float, float)
-    """
-    # find row and column for this breakpoint
-    i = chroms.index(bp.chr)
-    y = 4 - i // 6
-    x = i % 6
-    return (x, y)
-
-
 def savefig(fig, prefix="figure", exts=["png", "pdf"], dpi=400, **kwargs):
     for ext in exts:
         fig.savefig(prefix + "." + ext, dpi=dpi, **kwargs)
@@ -157,16 +139,3 @@ for gid in ARGS.gene_id:
         dpi=96,
         bbox_inches="tight",
     )
-
-# # figure for chromosome colour legend
-# fig_leg, ax_leg = plt.subplots()
-# cols = [locus_to_plotpos(GenomicInterval(c, 0, 1)) for c in chroms]
-# ax_leg.scatter(
-#     x=[a for (a, b) in cols], y=[b for (a, b) in cols], s=2000, c=chrom_colours,
-# )
-# ax_leg.set_ylim([0, 5])
-# for i, c in enumerate(chroms):
-#     ax_leg.annotate(c, cols[i], ha="center", va="center")
-
-# plt.axis("off")
-# savefig(fig_leg, path.join("Plots", "chrom-colour-map"), bbox_inches="tight")
