@@ -14,7 +14,8 @@ suppressMessages(library("logging"))
 
 loginfo("Loading packages")
 suppressMessages(library("data.table"))
-suppressMessages(library("regioneR"))
+suppressMessages(library("GenomicRanges"))
+
 
 # ==============================================================================
 # Functions
@@ -26,9 +27,13 @@ suppressMessages(library("regioneR"))
 #' @param enhns GRanges of enhancers
 #' @return returns
 reduce_elements <- function(gnbds, anchs, enhns) {
-    # only consider loops where an anchor overlaps a gene body and an enhancer
-    anch_gnbd_hits <- findOverlaps(anchs, gnbds)
-    anch_enhn_hits <- findOverlaps(anchs, enhns)
+    # offset distance for detecting overlaps with loop calls
+    LOOP_OFFSET <- 5000
+    # offset distance of detecting loops in the first place (Mustache doesn't call loops < 20 kbp, by default)
+    LOOP_DISTANCE_THRESH <- 20000
+    # only consider loops where an anchor overlaps a gene body or an enhancer
+    anch_gnbd_hits <- findOverlaps(anchs, gnbds + LOOP_OFFSET)
+    anch_enhn_hits <- findOverlaps(anchs, enhns + LOOP_OFFSET)
     reduced_loop_IDs <- union(
         anchs[queryHits(anch_gnbd_hits)]$loop_ID,
         anchs[queryHits(anch_enhn_hits)]$loop_ID
@@ -36,10 +41,15 @@ reduce_elements <- function(gnbds, anchs, enhns) {
     reduced_anch <- anchs[anchs$loop_ID %in% reduced_loop_IDs]
     
     # only consider genes that overlap a loop anchor
-    reduced_gnbd <- subsetByOverlaps(gnbds, reduced_anch)
+    reduced_gnbd <- subsetByOverlaps(gnbds, reduced_anch + LOOP_OFFSET)
     
-    # only consider enhancers that overlap a loop anchor
-    reduced_enhn <- subsetByOverlaps(enhns, reduced_anch)
+    # only consider enhancers that overlap a loop anchor or are within the 20 kbp
+    # filtering distance of a gene
+    valid_enhn_locations <- reduce(c(
+        reduced_anch + LOOP_OFFSET,
+        reduced_gnbd + LOOP_DISTANCE_THRESH
+    ))
+    reduced_enhn <- subsetByOverlaps(enhns, reduced_anch + LOOP_OFFSET)
     return(list(
         "gnbd" = reduced_gnbd,
         "enhn" = reduced_enhn,
@@ -101,13 +111,47 @@ peaks[, peak_ID := .I]
 loginfo("Intersecting regions")
 
 # coerce to GRanges for intersection calculations
-gene_gr <- toGRanges(genes)
-anch_gr <- toGRanges(anchors)
-peak_gr <- toGRanges(peaks)
+gene_gr <- genes[,
+    GRanges(
+        seqnames = chr,
+        ranges = IRanges(
+            start = start,
+            end = end
+        ),
+        strand = strand,
+        gene_id = gene_id,
+        gene_name = gene_name
+    )
+]
 
-# exclude H3K27ac peaks that overlap genes
-enh_prom_hits <- findOverlaps(peak_gr, gene_gr)
-enhn_gr <- peak_gr[-queryHits(enh_prom_hits)]
+enhn_gr <- peaks[,
+    GRanges(
+        seqnames = chr,
+        ranges = IRanges(
+            start = start,
+            end = end
+        ),
+        Conc = Conc,
+        Conc_T2E = Conc_T2E,
+        Conc_NonT2E = Conc_NonT2E,
+        Fold = Fold,
+        pval = p.value,
+        qval = FDR,
+        peak_ID = peak_ID
+    )
+]
+
+anch_gr <- anchors[,
+    GRanges(
+        seqnames = chr,
+        ranges = IRanges(
+            start = start,
+            end = end
+        ),
+        anchor_ID = anchor_ID,
+        loop_ID = loop_ID
+    )
+]
 
 # repeat reduction process until no changes to loops, genes, and enhancers occurs
 counter <- 0
