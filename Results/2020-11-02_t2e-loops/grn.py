@@ -27,6 +27,9 @@ logging.getLogger().setLevel(logging.INFO)
 # offset distance for detecting overlaps with loop calls
 LOOP_OFFSET = 5000
 
+# offset distance of detecting loops in the first place (Mustache doesn't call loops < 20 kbp, by default)
+LOOP_DISTANCE_THRESH = 20000
+
 # get chromosome sizes
 hg38 = nc.get_chrominfo("hg38")
 CHROM_SIZES = hg38.chrom_lengths
@@ -248,9 +251,9 @@ for (gene_id, gene) in tqdm(P.items(), total=genes.shape[0]):
             # or if they are within the filtering distance from Mustache
             # (the ignored diagonal is 2 x 10 kbp pixels, so 20 kbp)
             if (
-                overlapping(e, l.left)
-                or overlapping(e, l.right)
-                or overlapping(gene, e, 10000)
+                overlapping(e, l.left, LOOP_OFFSET)
+                or overlapping(e, l.right, LOOP_OFFSET)
+                or overlapping(gene, e, LOOP_DISTANCE_THRESH)
             ):
                 G[gene_id].add_edge(gene, e, condition=l.data["condition"])
     E[gene_id] = tad_enhn_invls.tolist()
