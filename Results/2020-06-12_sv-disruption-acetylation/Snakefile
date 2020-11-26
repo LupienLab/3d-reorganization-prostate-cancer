@@ -12,8 +12,9 @@ CONFIG = pd.read_csv(
 SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
 
 ACETYL_DIR = "Acetylation"
-GRAPH_DIR = path.join("..", "2020-02-19_chromoplexy", "Graphs")
+TRACK_DIR = "Tracks"
 PLOT_DIR = "Plots"
+GRAPH_DIR = path.join("..", "2020-02-19_chromoplexy", "Graphs")
 TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
 CHIP_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
 
@@ -55,7 +56,8 @@ rule all:
             path.join(PLOT_DIR, "Distribution", "acetylation.{plot}.{ext}"),
             plot=["p-values", "p-values.all-tests", "qq-plot", "volcano"],
             ext=PLOT_EXTS,
-        )
+        ),
+        path.join(TRACK_DIR, "peaks-catalogue.beddb"),
 
 # ==============================================================================
 # Rules
@@ -165,3 +167,13 @@ rule plot_exprs_acetyl:
         ),
     shell:
         "Rscript {input.script}"
+
+rule clodius_peak_catalogue:
+    input:
+        path.join(ACETYL_DIR, "T2E", "t2e.all.tsv"),
+    output:
+        path.join(TRACK_DIR, "peaks-catalogue.beddb"),
+    params:
+        "-a hg38 --has-header"
+    shell:
+        "clodius aggregate bedfile {params} -o {output} {input}"
