@@ -3,7 +3,7 @@
 # ==============================================================================
 # preprocess-loops
 # --------------------------------------
-# Description: Produce a subset of loops that overlap gene promoters
+# Description: Produce a subset of loops that overlap genes
 # Author: James Hawley
 
 
@@ -21,27 +21,27 @@ suppressMessages(library("regioneR"))
 # ==============================================================================
 #' Reduce the number of genes, loops, and enhancers being considered
 #'
-#' @param proms GRanges of promoters
+#' @param gnbds GRanges of gene bodies
 #' @param anchs GRanges of loop anchors
 #' @param enhns GRanges of enhancers
 #' @return returns
-reduce_elements <- function(proms, anchs, enhns) {
-    # only consider loops where an anchor overlaps a promoter and an enhancer
-    anch_prom_hits <- findOverlaps(anchs, proms)
+reduce_elements <- function(gnbds, anchs, enhns) {
+    # only consider loops where an anchor overlaps a gene body and an enhancer
+    anch_gnbd_hits <- findOverlaps(anchs, gnbds)
     anch_enhn_hits <- findOverlaps(anchs, enhns)
-    reduced_loop_IDs <- intersect(
-        anchs[queryHits(anch_prom_hits)]$loop_ID,
+    reduced_loop_IDs <- union(
+        anchs[queryHits(anch_gnbd_hits)]$loop_ID,
         anchs[queryHits(anch_enhn_hits)]$loop_ID
     )
     reduced_anch <- anchs[anchs$loop_ID %in% reduced_loop_IDs]
     
-    # only consider promoters that overlap a loop anchor
-    reduced_prom <- subsetByOverlaps(proms, reduced_anch)
+    # only consider genes that overlap a loop anchor
+    reduced_gnbd <- subsetByOverlaps(gnbds, reduced_anch)
     
     # only consider enhancers that overlap a loop anchor
     reduced_enhn <- subsetByOverlaps(enhns, reduced_anch)
     return(list(
-        "prom" = reduced_prom,
+        "gnbd" = reduced_gnbd,
         "enhn" = reduced_enhn,
         "anch" = reduced_anch
     ))
@@ -51,8 +51,8 @@ reduce_elements <- function(proms, anchs, enhns) {
 # Data
 # ==============================================================================
 loginfo("Loading data")
-promoters <- fread(
-    "../../Data/External/GENCODE/gencode.v33.all-genes.promoters.bed",
+genes <- fread(
+    "../../Data/External/GENCODE/gencode.v33.all-genes.bed",
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "gene_id", "gene_name")
@@ -101,12 +101,12 @@ peaks[, peak_ID := .I]
 loginfo("Intersecting regions")
 
 # coerce to GRanges for intersection calculations
-prom_gr <- toGRanges(promoters)
+gene_gr <- toGRanges(genes)
 anch_gr <- toGRanges(anchors)
 peak_gr <- toGRanges(peaks)
 
-# exclude H3K27ac peaks that overlap promoters
-enh_prom_hits <- findOverlaps(peak_gr, prom_gr)
+# exclude H3K27ac peaks that overlap genes
+enh_prom_hits <- findOverlaps(peak_gr, gene_gr)
 enhn_gr <- peak_gr[-queryHits(enh_prom_hits)]
 
 # repeat reduction process until no changes to loops, genes, and enhancers occurs
@@ -114,21 +114,22 @@ counter <- 0
 while (TRUE) {
     counter <- counter + 1
     print(counter)
-    reduction <- reduce_elements(prom_gr, anch_gr, enhn_gr)
-    reduced_prom <- reduction$prom
+    reduction <- reduce_elements(gene_gr, anch_gr, enhn_gr)
+    reduced_gnbd <- reduction$gnbd
     reduced_anch <- reduction$anch
     reduced_enhn <- reduction$enhn
-    if (all(identical(reduced_prom, prom_gr), identical(reduced_anch, anch_gr), identical(reduced_enhn, enhn_gr))) {
+    print(reduced_gnbd[reduced_gnbd$gene_name %in% c("AR", "BRAF")])
+    if (all(identical(reduced_gnbd, gene_gr), identical(reduced_anch, anch_gr), identical(reduced_enhn, enhn_gr))) {
         break
     } else {
-        prom_gr <- reduced_prom
+        gene_gr <- reduced_gnbd
         anch_gr <- reduced_anch
         enhn_gr <- reduced_enhn
     }
 }
 
 ov_loops_dt <- loops[loopID %in% reduced_anch$loop_ID]
-ov_genes_dt <- promoters[gene_id %in% reduced_prom$gene_id]
+ov_genes_dt <- genes[gene_id %in% reduced_gnbd$gene_id]
 ov_enhns_dt <- peaks[peak_ID %in% reduced_enhn$peak_ID]
 
 # ==============================================================================
@@ -144,7 +145,7 @@ fwrite(
 )
 fwrite(
     ov_genes_dt,
-    "overlapping.promoters.tsv",
+    "overlapping.genes.tsv",
     sep = "\t",
     col.names = TRUE
 )
