@@ -24,8 +24,8 @@ from genomic_interval import GenomicInterval, overlapping, find_tad, Loop
 # set logging parameters
 logging.getLogger().setLevel(logging.INFO)
 
-# promoter region offset (upstream, downstream)
-PROM_OFFSET = (1500, 500)
+# offset distance for detecting overlaps with loop calls
+LOOP_OFFSET = 5000
 
 # get chromosome sizes
 hg38 = nc.get_chrominfo("hg38")
@@ -70,8 +70,8 @@ def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
 # ==============================================================================
 logging.info("Loading data")
 
-# load pre-processed promoters
-promoters = pd.read_csv("overlapping.promoters.tsv", sep="\t", header=[0],)
+# load pre-processed genes
+genes = pd.read_csv("overlapping.genes.tsv", sep="\t", header=[0],)
 
 # load catalogue of H3K27ac peaks and differential test results
 enhancers = pd.read_csv("overlapping.enhancers.tsv", sep="\t", header=[0],)
@@ -124,44 +124,32 @@ tads.sort_values(
 logging.info("Creating GRN")
 
 # create placeholder for the GRN
-G = {gid: nx.Graph() for gid in promoters["gene_id"]}
+G = {gid: nx.Graph() for gid in genes["gene_id"]}
 
 T = {}  # TADs
-P = {}  # Promoters
-for gene in tqdm(promoters.itertuples(), total=promoters.shape[0]):
-    gi = GenomicInterval(gene.chr, gene.start, gene.end)
+P = {}  # Genes
+for gene in tqdm(genes.itertuples(), total=genes.shape[0]):
+    # use the entire gene for the GRN
+    gi = GenomicInterval(
+        gene.chr,
+        gene.start,
+        gene.end,
+        {
+            "id": gene.gene_id,
+            "strand": gene.strand,
+            "row": gene.Index,
+            "name": gene.gene_name,
+            "type": "gene",
+        },
+    )
     T[gene.gene_id] = find_tad(gi, tads)
-    if gene.strand == "+":
-        prom = GenomicInterval(
-            gene.chr,
-            max(0, gene.start - PROM_OFFSET[0]),
-            min(CHROM_SIZES[gene.chr], gene.start + PROM_OFFSET[1]),
-            {
-                "row": gene.Index,
-                "id": gene.gene_id,
-                "name": gene.gene_name,
-                "type": "promoter",
-            },
-        )
-    else:
-        prom = GenomicInterval(
-            gene.chr,
-            max(0, gene.end - PROM_OFFSET[1]),
-            min(CHROM_SIZES[gene.chr], gene.end + PROM_OFFSET[0]),
-            {
-                "row": gene.Index,
-                "id": gene.gene_id,
-                "name": gene.gene_name,
-                "type": "promoter",
-            },
-        )
-    P[gene.gene_id] = prom
-    # add the promoter to the GRN for this gene
-    G[gene.gene_id].add_node(prom)
+    P[gene.gene_id] = gi
+    # add the gene to the GRN for this gene
+    G[gene.gene_id].add_node(gi)
 
 
 L = {}  # loops
-for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
+for (gene_id, gene) in tqdm(P.items(), total=genes.shape[0]):
     # find loops in this TAD
     tad = T[gene_id]
     tad_loops = loops.loc[
@@ -177,17 +165,17 @@ for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
         ),
         :,
     ]
-    # only include loops where one anchor overlaps the gene promoter
+    # only include loops where one anchor overlaps the gene gene
     tad_loops = tad_loops.loc[
-        # x anchor overlaps the promoter (extend to half of loop resolution on either side)
+        # x anchor overlaps the gene (extend to half of loop resolution on either side)
         (
-            (tad_loops["start_x"] - 5000 <= prom.sup())
-            & (tad_loops["end_x"] + 5000 >= prom.inf())
+            (tad_loops["start_x"] - LOOP_OFFSET <= gene.sup())
+            & (tad_loops["end_x"] + LOOP_OFFSET >= gene.inf())
         )
-        # or y anchor overlaps promoter
+        # or y anchor overlaps gene
         | (
-            (tad_loops["start_y"] - 5000 <= prom.sup())
-            & (tad_loops["end_y"] + 5000 >= prom.inf())
+            (tad_loops["start_y"] - LOOP_OFFSET <= gene.sup())
+            & (tad_loops["end_y"] + LOOP_OFFSET >= gene.inf())
         ),
         :,
     ]
@@ -211,7 +199,7 @@ for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
 
 
 E = {}  # Enhancers
-for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
+for (gene_id, gene) in tqdm(P.items(), total=genes.shape[0]):
     tad = T[gene_id]
     tad_loops = L[gene_id]
     # find all H3K27ac peaks within the TAD
@@ -256,15 +244,15 @@ for (gene_id, prom) in tqdm(P.items(), total=promoters.shape[0]):
         # add the enhancer to the GRN
         G[gene_id].add_node(e)
         for l in tad_loops:
-            # connect the enhancer to the gene promoter if there is a loop connecting them
+            # connect the enhancer to the gene if there is a loop connecting them
             # or if they are within the filtering distance from Mustache
             # (the ignored diagonal is 2 x 10 kbp pixels, so 20 kbp)
             if (
                 overlapping(e, l.left)
                 or overlapping(e, l.right)
-                or overlapping(prom, e, 10000)
+                or overlapping(gene, e, 10000)
             ):
-                G[gene_id].add_edge(prom, e, condition=l.data["condition"])
+                G[gene_id].add_edge(gene, e, condition=l.data["condition"])
     E[gene_id] = tad_enhn_invls.tolist()
 
 
@@ -276,24 +264,22 @@ grn_info = {
 # need to ensure that the gene_ids are always listed in the same order
 grn_cre_stats = pd.DataFrame(
     {
-        "gene_id": [gene_id for gene_id in promoters["gene_id"]],
+        "gene_id": [gene_id for gene_id in genes["gene_id"]],
         "loops_gained": [
-            grn_info[gene_id]["loops_gained"] for gene_id in promoters["gene_id"]
+            grn_info[gene_id]["loops_gained"] for gene_id in genes["gene_id"]
         ],
         "loops_shared": [
-            grn_info[gene_id]["loops_shared"] for gene_id in promoters["gene_id"]
+            grn_info[gene_id]["loops_shared"] for gene_id in genes["gene_id"]
         ],
-        "loops_lost": [
-            grn_info[gene_id]["loops_lost"] for gene_id in promoters["gene_id"]
-        ],
+        "loops_lost": [grn_info[gene_id]["loops_lost"] for gene_id in genes["gene_id"]],
         "enhancers_gained": [
-            grn_info[gene_id]["enhancers_gained"] for gene_id in promoters["gene_id"]
+            grn_info[gene_id]["enhancers_gained"] for gene_id in genes["gene_id"]
         ],
         "enhancers_shared": [
-            grn_info[gene_id]["enhancers_shared"] for gene_id in promoters["gene_id"]
+            grn_info[gene_id]["enhancers_shared"] for gene_id in genes["gene_id"]
         ],
         "enhancers_lost": [
-            grn_info[gene_id]["enhancers_lost"] for gene_id in promoters["gene_id"]
+            grn_info[gene_id]["enhancers_lost"] for gene_id in genes["gene_id"]
         ],
     }
 )
@@ -336,7 +322,7 @@ logging.info("Exporting GRN")
 # save GRNs with pickle
 pickle.dump(G, open(path.join("Graphs", "grns.p"), "wb"))
 pickle.dump(T, open(path.join("Graphs", "tads.p"), "wb"))
-pickle.dump(P, open(path.join("Graphs", "promoters.p"), "wb"))
+pickle.dump(P, open(path.join("Graphs", "genes.p"), "wb"))
 pickle.dump(E, open(path.join("Graphs", "enhancers.p"), "wb"))
 pickle.dump(L, open(path.join("Graphs", "loops.p"), "wb"))
 
