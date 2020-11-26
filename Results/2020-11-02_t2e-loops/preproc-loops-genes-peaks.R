@@ -118,7 +118,6 @@ while (TRUE) {
     reduced_gnbd <- reduction$gnbd
     reduced_anch <- reduction$anch
     reduced_enhn <- reduction$enhn
-    print(reduced_gnbd[reduced_gnbd$gene_name %in% c("AR", "BRAF")])
     if (all(identical(reduced_gnbd, gene_gr), identical(reduced_anch, anch_gr), identical(reduced_enhn, enhn_gr))) {
         break
     } else {
