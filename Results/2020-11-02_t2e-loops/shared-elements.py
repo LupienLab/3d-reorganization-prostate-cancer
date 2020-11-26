@@ -12,25 +12,24 @@ import pandas as pd
 import pickle
 import networkx as nx
 from tqdm import tqdm
-from typing import Dict, List, Tuple
 
 from genomic_interval import GenomicInterval, overlapping
 
 # ==============================================================================
 # Functions
 # ==============================================================================
-def count_shared_enhancers(gene1, gene2):
-    # get the enhancers for the two genes that connect to the gene
-    g1_enhns = E[gene1]
-    g2_enhns = E[gene2]
-    # count how many are shared                                                         # This method isn't working, recount
-    shared_enhns = 0
-    for e1 in g1_enhns:
-        for e2 in g2_enhns:
-            if e1.inf() == e2.inf() and e1.sup() == e2.sup():
-                shared_enhns += 1
-                continue
-    return shared_enhns
+def count_shared_enhancers(gene_id_1, gene_id_2):
+    # get the nodes in the GRNs that are the genes themselves, not the enhancers
+    gene_1_body = [el for el in G[gene_id_1].nodes() if el.data["type"] == "gene"][0]
+    gene_2_body = [el for el in G[gene_id_2].nodes() if el.data["type"] == "gene"][0]
+    # get the enhancers for the two genes that connect directly to the gene
+    g1_enhns = G[gene_id_1][gene_1_body]
+    g2_enhns = G[gene_id_2][gene_2_body]
+    # count how many are shared
+    # it is sufficient to count the intersection of the enhancer IDs for the two genes
+    g1_enhns_ids = set([e.data["id"] for e in g1_enhns])
+    g2_enhns_ids = set([e.data["id"] for e in g2_enhns])
+    return len(g1_enhns_ids.intersection(g2_enhns_ids))
 
 
 # ==============================================================================
@@ -41,7 +40,6 @@ sv_exprs = pd.read_csv(
 )
 G = pickle.load(open("Graphs/grns.p", "rb"))
 T = pickle.load(open("Graphs/tads.p", "rb"))
-E = pickle.load(open("Graphs/enhancers.p", "rb"))
 
 gene_ids = list(G.keys())
 gene_names = {event.target_id: event.gene_name for event in sv_exprs.itertuples()}
@@ -82,6 +80,7 @@ for eid in tqdm(event_IDs):
         # add this number to the edge in the graph
         linked_sv_genes[eid][gene1][gene2]["shared_enhancers"] = shared_enhns
 
+
 # 3. Calculate the mean number of shared enhancers between two genes that are both differentially expressed or not
 # ----------------------------------------------------------------------------------------------------------------
 obs_shared_enhancers = pd.DataFrame(
@@ -112,6 +111,7 @@ for eid in tqdm(event_IDs):
             ignore_index=True,
         )
 
+
 # 4. Calculate median of shared enhancers between the gene pairs
 # --------------------------------------------------------------
 shared_enhn_count = obs_shared_enhancers["N_shared_enhancers"].tolist()
@@ -120,12 +120,12 @@ n_both_dge_comps = obs_shared_enhancers.loc[
 ].shape[0]
 
 obs_log2fc = np.log2(
-    np.median(
+    np.mean(
         obs_shared_enhancers.loc[
             obs_shared_enhancers["both_DGE"] == True, "N_shared_enhancers"
         ]
     )
-    / np.median(
+    / np.mean(
         obs_shared_enhancers.loc[
             obs_shared_enhancers["both_DGE"] == False, "N_shared_enhancers"
         ]
@@ -134,20 +134,20 @@ obs_log2fc = np.log2(
 
 n_perms = 10000
 perms = pd.DataFrame(
-    {"Median_Both_DGE_Enhns": [0] * n_perms, "Median_Some_NonDGE_Enhns": [0] * n_perms,}
+    {"Mean_Both_DGE_Enhns": [0] * n_perms, "Mean_Some_NonDGE_Enhns": [0] * n_perms,}
 )
 # perform permutation
 for i in tqdm(range(n_perms)):
     np.random.shuffle(shared_enhn_count)
-    perms.iloc[i]["Median_Both_DGE_Enhns"] = np.median(
+    perms.iloc[i]["Mean_Both_DGE_Enhns"] = np.median(
         shared_enhn_count[0:n_both_dge_comps]
     )
-    perms.iloc[i]["Median_Some_NonDGE_Enhns"] = np.median(
+    perms.iloc[i]["Mean_Some_NonDGE_Enhns"] = np.median(
         shared_enhn_count[n_both_dge_comps:]
     )
 
 perms["log2FC"] = np.log2(
-    perms["Median_Both_DGE_Enhns"] / perms["Median_Some_NonDGE_Enhns"]
+    perms["Mean_Both_DGE_Enhns"] / perms["Mean_Some_NonDGE_Enhns"]
 )
 
 pval = perms.loc[perms["log2FC"] > obs_log2fc].shape[0] / n_perms
