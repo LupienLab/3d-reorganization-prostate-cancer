@@ -205,6 +205,8 @@ merged_gene_tpm_multi_IDs <- merge(
     all.x = TRUE
 )
 
+fwrite(merged_gene_tpm_multi_IDs, "summary-sv-disruption.tsv", sep = "\t")
+
 # ==============================================================================
 # Plots
 # ==============================================================================
