@@ -248,6 +248,7 @@ for s in tqdm(SAMPLES, unit="sample"):
         # link these two nodes since they are linked breakpoints
         G_sample[s].add_edge(intvls[0], intvls[1], annotation=bp.annotation)
 
+
 # 2. Merge redundant breakpoints
 # --------------------------------------
 # hic_breakfinder identifies breakpoint pairs, so the same breakpoint can be called multiple times
@@ -281,6 +282,7 @@ for s in tqdm(SAMPLES):
                         if m in stm:
                             stm.add(m)
 
+
 # 2. a) manually inspect breakpoints that are in proximity, to see which calls truly need to be merged
 # --------------------------------------
 
@@ -309,6 +311,7 @@ for s in tqdm(SAMPLES):
 #                 set([stm_list[j] for j in selection_ints])
 #             )
 #             break
+# 
 # pickle.dump(
 #     [G_sample, confirmed_bp_sets_to_merge],
 #     open(path.join(GRAPH_DIR, "breakpoints.per-sample.with-multiplicity.p"), "wb")
@@ -615,10 +618,11 @@ print("Exporting graphs to GraphML")
 nx.write_graphml(G_all, "Graphs/breakpoints.all-samples.xml")
 for s in SAMPLES:
     nx.write_graphml(G_sample[s], "Graphs/breakpoints." + s + ".xml")
-print("Done")
 
 component_counts.to_csv(
     path.join("Statistics", "breakpoint-components.tsv"),
     sep="\t",
     index=False
 )
+
+print("Done")
