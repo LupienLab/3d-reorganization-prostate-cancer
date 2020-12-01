@@ -21,19 +21,47 @@ suppressMessages(library("sleuth"))
 # ==============================================================================
 # Functions
 # ==============================================================================
-#' Aggregate estimated transcript counts into an estimated gene count
-# 
-#' Description
-#'
-#' @param x Estimated transcript counts
-#' @param x Estimated transcript lengths
-#' @param sf Sample scaling factor
-#' @param offset Logarithm offset
-agg_tx <- function(x, lens, sf, offset = 0.5, base = exp(1)) {
-    med_length <- median(lens)
-    # if sf is a vector, only take the first element
-    sf <- sf[1]
-    return(log(med_length / sf * sum(x / lens) + offset, base = base))
+get_important_sleuth_info <- function(path, alt_gene, offset = 0.5, base = exp(1)) {
+    print(alt_gene)
+    # extract annotations for these genes
+    gene <- gencode_genes[gene_name == alt_gene]
+    gene_tx <- gencode_tx[gene_name == alt_gene]
+
+    # get kallisto/sleuth normalized counts
+    sleuth_obj <- readRDS(path)
+    norm_counts <- as.data.table(sleuth_obj$obs_norm)
+    # keep only the counts related to this gene and its transcripts
+    tx_counts <- norm_counts[target_id %in% gene_tx$ens_transcript]
+    # merge annotation with count information
+    tx_counts <- merge(
+        x = gene_tx,
+        y = tx_counts,
+        by.x = "ens_transcript",
+        by.y = "target_id"
+    )
+    # get scaling factors for each sample and merge into the table
+    sf <- data.table(
+        "sample" = names(sleuth_obj$est_counts_sf),
+        "sf" = sleuth_obj$est_counts_sf
+    )
+    tx_counts <- merge(
+        x = tx_counts,
+        y = sf,
+        by = "sample"
+    )
+    gene_counts <- tx_counts[,
+        .(
+            est_counts = log(
+                median(eff_len) / sf * sum(est_counts / eff_len) + offset,
+                base = base
+            )
+        ),
+        keyby = c("sample", "ens_gene", "gene_name")
+    ]
+    return(list(
+        "tx" = tx_counts,
+        "gene" = gene_counts
+    ))
 }
 
 #' Save figures in multiple formats
@@ -62,12 +90,12 @@ loginfo("Loading data")
 
 # load Kallisto/Sleuth object
 so <- list(
-    "ERG" = readRDS(file.path("sleuth", "test_46.sleuth-object.rds")),
-    "TMPRSS2" = readRDS(file.path("sleuth", "test_45.sleuth-object.rds")),
-    "ZNF516" = readRDS(file.path("sleuth", "test_42.sleuth-object.rds")),
-    "PMEPA1" = readRDS(file.path("sleuth", "test_43.sleuth-object.rds")),
-    "BRAF" = readRDS(file.path("sleuth", "test_201.sleuth-object.rds")),
-    "DENND2A" = readRDS(file.path("sleuth", "test_201.sleuth-object.rds")),
+    "ERG" = file.path("sleuth", "test_46.sleuth-object.rds"),
+    "TMPRSS2" = file.path("sleuth", "test_45.sleuth-object.rds"),
+    "ZNF516" = file.path("sleuth", "test_42.sleuth-object.rds"),
+    "PMEPA1" = file.path("sleuth", "test_43.sleuth-object.rds"),
+    "BRAF" = file.path("sleuth", "test_201.sleuth-object.rds"),
+    "DENND2A" = file.path("sleuth", "test_201.sleuth-object.rds")
 )
 
 mut_samples <- list(
@@ -113,81 +141,14 @@ loginfo("Performing calculations")
 
 ALT_GENES <- names(so)
 
-# extract annotations for these genes
-these_genes <- gencode_genes[gene_name %in% ALT_GENES]
-these_tx <- lapply(
-    ALT_GENES,
-    function(alt_gene) {
-        gencode_tx[gene_name == alt_gene]
-    }
-)
-names(these_tx) <- ALT_GENES
-
-# get kallisto/sleuth normalized counts
-so_counts <- lapply(
-    ALT_GENES,
-    function(alt_gene) {
-        as.data.table(so[[alt_gene]]$obs_norm)
-    }
-)
-names(so_counts) <- ALT_GENES
-
-so_counts <- lapply(
-    ALT_GENES,
-    function(alt_gene) {
-        so_counts[[alt_gene]][target_id %in% these_tx[[alt_gene]]$ens_transcript]
-    }
-)
-names(so_counts) <- ALT_GENES
-so_counts <- lapply(
-    ALT_GENES,
-    function(alt_gene) {
-        merge(
-            x = these_tx[[alt_gene]],
-            y = so_counts[[alt_gene]],
-            by.x = "ens_transcript",
-            by.y = "target_id"
-        )
-    }
-)
-names(so_counts) <- ALT_GENES
-
-# get scaling factors for each sample and merge into the table
-sf <- lapply(
-    ALT_GENES,
-    function(alt_gene) {
-        data.table(
-            "SampleID" = names(so[[alt_gene]]$est_counts_sf),
-            "Scale" = so[[alt_gene]]$est_counts_sf
-        )
-    }
-)
-names(sf) <- ALT_GENES
-
-so_counts <- lapply(
-    ALT_GENES,
-    function(alt_gene) {
-        merge(
-            x = sf[[alt_gene]],
-            y = so_counts[[alt_gene]],
-            by.x = "SampleID",
-            by.y = "sample"
-        )
-    }
-)
-names(so_counts) <- ALT_GENES
-
 # calculate aggregated gene count
-so_gene_counts <- lapply(
+so_counts <- lapply(
     ALT_GENES,
     function(alt_gene) {
-        so_counts[[alt_gene]][,
-            lapply(.SD, function(row) agg_tx(est_counts, eff_len, Scale, 2)),
-            keyby = c("SampleID", "gene_name", "ens_gene")
-        ][, .SD, .SDcols = c("SampleID", "gene_name", "ens_gene", "est_counts")]
+        get_important_sleuth_info(so[[alt_gene]], alt_gene)
     }
 )
-names(so_gene_counts) <- ALT_GENES
+names(so_counts) <- ALT_GENES
 
 # ==============================================================================
 # Plots
@@ -195,31 +156,31 @@ names(so_gene_counts) <- ALT_GENES
 loginfo("Plotting data")
 
 gene_pairs <- list(
-    c("ERG", "TMPRSS2")
-    #c("ZNF516", "PMEPA1"),
-    #c("BRAF", "DENND2A")
+    c("ERG", "TMPRSS2"),
+    c("ZNF516", "PMEPA1"),
+    c("BRAF", "DENND2A")
 )
 
 for (gp in gene_pairs) {
-    dt <- rbindlist(so_gene_counts[gp])
+    dt <- unique(rbindlist(lapply(gp, function(alt_gene) so_counts[[alt_gene]]$gene)))
     # combined mut samples
     ms <- unique(unlist(mut_samples[gp]))
     nms <- unique(unlist(nonmut_samples[gp]))
     gg <- (
         ggplot()
         + geom_boxplot(
-            data = dt[SampleID %in% nms],
+            data = dt[sample %in% nms],
             mapping = aes(x = gene_name, y = est_counts),
             outlier.shape = NA
         )
         + geom_point(
-            data = dt[SampleID %in% nms],
+            data = dt[sample %in% nms],
             mapping = aes(x = gene_name, y = est_counts),
             colour = "#BDBDBD",
             position = position_jitter(height = 0, width = 0.3)
         )
         + geom_point(
-            data = dt[SampleID %in% ms],
+            data = dt[sample %in% ms],
             mapping = aes(x = gene_name, y = est_counts),
             colour = "#ff6347",
             position = position_jitter(height = 0, width = 0.3)
