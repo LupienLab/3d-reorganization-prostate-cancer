@@ -7,23 +7,22 @@
 <node id="chr7:138.2Mb-139.2Mb"/>
 <node id="chr7:106.5Mb-108.0Mb"/>
 <node id="chr12:106.1Mb-106.3Mb"/>
-<node id="chr12:130.0Mb-130.5Mb"/>
 <node id="chr13:30.1Mb-30.6Mb"/>
 <node id="chr13:73.7Mb-75.3Mb"/>
-<node id="chr12:128.1Mb-130.4Mb"/>
+<node id="chr12:128.1Mb-130.5Mb"/>
 <edge source="chr4:26.4Mb-27.5Mb" target="chr3:77.4Mb-79.1Mb">
   <data key="d0">BND</data>
 </edge>
 <edge source="chr12:108.1Mb-108.6Mb" target="chr7:113.7Mb-116.1Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr7:138.2Mb-139.2Mb" target="chr12:128.1Mb-130.4Mb">
+<edge source="chr7:138.2Mb-139.2Mb" target="chr12:128.1Mb-130.5Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr7:106.5Mb-108.0Mb" target="chr12:128.1Mb-130.4Mb">
+<edge source="chr7:106.5Mb-108.0Mb" target="chr12:128.1Mb-130.5Mb">
   <data key="d0">BND</data>
 </edge>
-<edge source="chr12:106.1Mb-106.3Mb" target="chr12:130.0Mb-130.5Mb">
+<edge source="chr12:106.1Mb-106.3Mb" target="chr12:128.1Mb-130.5Mb">
   <data key="d0">UNKNOWN</data>
 </edge>
 <edge source="chr13:30.1Mb-30.6Mb" target="chr13:73.7Mb-75.3Mb">
