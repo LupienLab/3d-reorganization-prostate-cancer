@@ -37,6 +37,13 @@ Filters 3 and 4 are to reduce the ambiguous effects of multiple simultaneous epi
 
 The construction of these GRNs can be found in `grn.py`.
 
+An example of a fully constructured GRN for _FOXA1_ can be found below.
+Blue denotes a feature (i.e. loop or H3K27ac peak) that is present (in the case of a loop) or significantly up (in the case of a peak) in the T2E+ patients.
+Orange is absent/down in the T2E+ patients.
+Green is shared between both tumour types.
+
+![GRN for FOXA1](Plots/FOXA1.labelled.png)
+
 ### Hypothesis testing
 
 We can look at the effect of each activating epigenetic change by comparing the expression in
