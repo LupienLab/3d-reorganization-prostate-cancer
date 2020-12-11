@@ -2,17 +2,30 @@ from os import path
 
 rule all:
 	input:
-		path.join("Overlaps", "permutations.tsv"),
-		path.join("Overlaps", "permutation-tests.rds"),
-		path.join("Overlaps", "local-dependency.rds"),
+		expand(
+			path.join("Overlaps", "{dmrs}.local-dependency.tsv"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+		expand(
+			path.join("Overlaps", "{dmrs}.local-dependency.rds"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+		expand(
+			path.join("Overlaps", "{dmrs}.permutations.tsv"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+		expand(
+			path.join("Overlaps", "{dmrs}.permutation-tests.rds"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
 
-rule test_enrichment_ctcf:
+rule dmr_enrichment_ctcf:
 	input:
-		script = "enrichment.R",
+		script = "enrichment.{dmr}.R",
 	output:
-		path.join("Overlaps", "permutations.tsv"),
-		path.join("Overlaps", "permutation-tests.rds"),
-		path.join("Overlaps", "local-dependency.rds"),
+		path.join("Overlaps", "{dmr}.permutation-tests.rds"),
+		path.join("Overlaps", "{dmr}.permutations.tsv"),
+		path.join("Overlaps", "{dmr}.local-dependency.rds"),
+		path.join("Overlaps", "{dmr}.local-dependency.tsv"),
 	shell:
 		"Rscript {input.script}"
-

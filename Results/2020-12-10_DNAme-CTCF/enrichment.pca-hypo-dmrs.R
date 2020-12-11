@@ -51,6 +51,8 @@ names(ctcf) <- CELL_LINES
 
 # load DMRs
 pca_dmrs <- fread("../../Data/External/Zhao_DNAme/TableS8_DMRs_PCa-vs-benign.tsv", sep = "\t", header = TRUE)
+# only look at DMRs that are hypomethylated in prostate cancer, compared to benigns
+pca_dmrs <- pca_dmrs[get("difference in methylation") < 0]
 dmrs <- GRanges(
     seqnames = pca_dmrs$chr,
     ranges = IRanges(
@@ -104,13 +106,24 @@ lz <- lapply(
             A = dmrs,
             B = ctcf[[cl]],
             ntimes = N_PERMS,
-            window = 100000,
-            step = 10000
+            window = 5000,
+            step = 10
         )
     }
 )
 names(lz) <- CELL_LINES
 
+# local enrichment sensitivity data
+lz_dt <- rbindlist(lapply(
+    CELL_LINES,
+    function(cl) {
+        data.table(
+            Cell_Line = cl,
+            Shift = lz[[cl]]$numOverlaps$shifts,
+            z = lz[[cl]]$numOverlaps$shifted.z.scores
+        )
+    }
+))
 
 # ==============================================================================
 # Save data
@@ -119,11 +132,17 @@ loginfo("Saving permutation data")
 
 fwrite(
     perm_test_data,
-    "Overlaps/permutations.tsv",
+    "Overlaps/pca-hypo-dmrs.permutations.tsv",
     sep = "\t",
     col.names = TRUE
 )
 
-saveRDS(perm_test, "Overlaps/permutation-tests.rds")
-saveRDS(lz, "Overlaps/local-dependency.rds")
+fwrite(
+    lz_dt,
+    "Overlaps/pca-hypo-dmrs.local-dependency.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
 
+saveRDS(perm_test, "Overlaps/pca-hypo-dmrs.permutation-tests.rds")
+saveRDS(lz, "Overlaps/pca-hypo-dmrs.local-dependency.rds")
