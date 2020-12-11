@@ -1,16 +1,23 @@
 # ==============================================================================
 # Environment
 # ==============================================================================
+suppressMessages(library("logging"))
+
+loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("regioneR"))
 suppressMessages(library("BSgenome.Hsapiens.UCSC.hg38.masked"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
 
+N_PERMS <- 1000
+
 
 # ==============================================================================
 # Data
 # ==============================================================================
+loginfo("Loading info")
+
 # load CTCF binding sites in prostate cancer cell lines
 CELL_LINES <- c("22Rv1", "LNCaP", "C4-2B", "LNCaP", "VCaP")
 pca_ctcf <- rbindlist(lapply(
@@ -58,11 +65,14 @@ dmrs <- GRanges(
 # ==============================================================================
 # Analysis
 # ==============================================================================
+loginfo("Loading genome annotation")
+
 # get mask of regions to exclude from permutations
 hg38 <- getGenomeAndMask("hg38")
 hg38_canonical <- filterChromosomes(hg38$genome, organism="hg", chr.type = "canonical")
 hg38_mask <- filterChromosomes(hg38$mask, organism="hg", chr.type = "canonical")
 
+loginfo("Performing permutation tests")
 # permutation test for number of overlaps
 perm_test <- lapply(
     CELL_LINES,
@@ -71,7 +81,7 @@ perm_test <- lapply(
             A = dmrs,
             B = ctcf[[cl]],
             genome = hg38_canonical,
-            ntimes = 10,
+            ntimes = N_PERMS,
             alternative = "greater",
             mask = hg38_mask
         )
@@ -84,6 +94,7 @@ perm_test_data[, observed := apply(.SD, 1, function(r) perm_test[[r["Cell_Line"]
 perm_test_data[, p := apply(.SD, 1, function(r) perm_test[[r["Cell_Line"]]]$numOverlaps$pval)]
 perm_test_data[, FDR := p.adjust(p, method = "fdr")]
 
+loginfo("Local adjustment for sensitivity")
 # local positioning adjustment to assess sensitivity to exact placement
 lz <- lapply(
     CELL_LINES,
@@ -92,7 +103,7 @@ lz <- lapply(
             pt = perm_test[[cl]],
             A = dmrs,
             B = ctcf[[cl]],
-            ntimes = 100,
+            ntimes = N_PERMS,
             window = 100000,
             step = 10000
         )
@@ -104,6 +115,8 @@ names(lz) <- CELL_LINES
 # ==============================================================================
 # Save data
 # ==============================================================================
+loginfo("Saving permutation data")
+
 fwrite(
     perm_test_data,
     "Overlaps/permutations.tsv",
@@ -113,3 +126,4 @@ fwrite(
 
 saveRDS(perm_test, "Overlaps/permutation-tests.rds")
 saveRDS(lz, "Overlaps/local-dependency.rds")
+

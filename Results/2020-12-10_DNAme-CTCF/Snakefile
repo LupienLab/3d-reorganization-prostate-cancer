@@ -1,0 +1,18 @@
+from os import path
+
+rule all:
+	input:
+		path.join("Overlaps", "permutations.tsv"),
+		path.join("Overlaps", "permutation-tests.rds"),
+		path.join("Overlaps", "local-dependency.rds"),
+
+rule test_enrichment_ctcf:
+	input:
+		script = "enrichment.R",
+	output:
+		path.join("Overlaps", "permutations.tsv"),
+		path.join("Overlaps", "permutation-tests.rds"),
+		path.join("Overlaps", "local-dependency.rds"),
+	shell:
+		"Rscript {input.script}"
+
