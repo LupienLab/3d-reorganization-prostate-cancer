@@ -1,0 +1,48 @@
+rule all:
+    input:
+        "T2E-contact.pdf",
+        "ZNF516-PMEPA1-contact.pdf",
+        "BRAF-DENND2A-contact.pdf",
+
+
+rule t2e_contact:
+    input:
+        "../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa13848.mcool",
+    output:
+        "T2E-contact.pdf",
+    params:
+        x = "chr21:38000000-39000000",
+        y = "chr21:41082474-41917525",
+        res = 10000,
+        zmin = -4,
+        zmax = -2,
+    shell:
+        "cooler show -b --cmap bwr --zmin {params.zmin} --zmax {params.zmax} -r2 {params.x} -o {output} {input}::/resolutions/{params.res} {params.y}"
+
+rule znf516_pmepa1_contact:
+    input:
+        "../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa13848.mcool",
+    output:
+        "ZNF516-PMEPA1-contact.pdf",
+    params:
+        x = "chr18:76200000-76600000",
+        y = "chr20:57532989-57867010",
+        res = 10000,
+        zmin = -4,
+        zmax = -2,
+    shell:
+        "cooler show -b --cmap bwr --zmin {params.zmin} --zmax {params.zmax} -r2 {params.x} -o {output} {input}::/resolutions/{params.res} {params.y}"
+
+rule braf_dennd2a_contact:
+    input:
+        "../../Data/Processed/2019-06-18_PCa-LowC-sequencing/Contacts/PCa53687.mcool",
+    output:
+        "BRAF-DENND2A-contact.pdf",
+    params:
+        x = "chr7:140275699-141295700",
+        y = "chr19:15452114-16303867",
+        res = 10000,
+        zmin = -4.5,
+        zmax = -2.7,
+    shell:
+        "cooler show -b --cmap bwr --zmin {params.zmin} --zmax {params.zmax} -r2 {params.x} -o {output} {input}::/resolutions/{params.res} {params.y}"
