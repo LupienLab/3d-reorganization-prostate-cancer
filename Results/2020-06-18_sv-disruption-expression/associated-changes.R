@@ -41,8 +41,62 @@ svtype_alteration_contingency_mat <- dcast(
     fill = 0
 )
 
+# combine all SVs that have some BND to compare inter-chromosomal events to strictly intra-chromosomal events
+svtype_alteration_contingency_mat[, any_BND := BND + get("BND,DEL") + get("BND,DUP") + get("BND,UNKNOWN")]
+svtype_alteration_contingency_mat[, only_same := DEL + DUP + INV + UNKNOWN]
+
+svtype_alteration_contingency_mat <- svtype_alteration_contingency_mat[, .SD, .SDcols = c("altered_Exprs", "any_BND", "only_same")]
+
 # perform goodness of fit tests
-chisq.test(svtype_alteration_contingency_mat[, 2:9])
+chisq.test(svtype_alteration_contingency_mat[, 2:3])
+
+# ==============================================================================
+# Plots
+# ==============================================================================
+# convert newly summed contingency table back to long form for plotting
+svtype_alteration_contingency <- melt(
+    svtype_alteration_contingency_mat,
+    id.vars = "altered_Exprs",
+    variable.name = "SV_Type",
+    value.name = "N"
+)
+gg <- (
+    ggplot(data = svtype_alteration_contingency)
+    + geom_col(
+        aes(x = SV_Type, y = N, fill = altered_Exprs),
+        position = position_dodge()
+    )
+    + labs(x = "SV Type", y = "Count")
+    + scale_x_discrete(
+        breaks = c("only_same", "any_BND"),
+        labels = c("Intra-chromosomal", "Inter-chromosomal")
+    )
+    + scale_fill_manual(
+        name = "Altered Expression",
+        breaks = c(FALSE, TRUE),
+        labels = c("No", "Yes"),
+        values = c("#AEA28E", "#FF6347")
+    )
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom",
+        panel.grid.minor.x = NULL,
+        panel.grid.major.x = NULL
+    )
+)
+ggsave(
+    "Plots/sv-disruption-chromosomal.png",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+ggsave(
+    "Plots/sv-disruption-chromosomal.pdf",
+    height = 12,
+    width = 20,
+    units = "cm"
+)
+
 
 # ==============================================================================
 # Save data
