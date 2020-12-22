@@ -27,6 +27,7 @@ loginfo("Loading data")
 
 # load SVs and impact on expression
 sv_disruption <- fread("summary-sv-disruption-impact.tsv")
+
 # ==============================================================================
 # Analysis
 # ==============================================================================
@@ -49,6 +50,19 @@ svtype_alteration_contingency_mat <- svtype_alteration_contingency_mat[, .SD, .S
 
 # perform goodness of fit tests
 chisq.test(svtype_alteration_contingency_mat[, 2:3])
+
+# contengency table for altered TAD and altered expression
+tad_exprs_contingency <- sv_disruption[, .N, by = c("altered_TAD", "altered_Exprs")]
+tad_exprs_contingency_mat <- dcast(
+    tad_exprs_contingency,
+    altered_TAD ~ altered_Exprs,
+    value.var = "N",
+    fill = 0
+)
+
+# perform independence test
+chisq.test(tad_exprs_contingency_mat[, 2:3])
+
 
 # ==============================================================================
 # Plots
@@ -105,5 +119,11 @@ loginfo("Saving data")
 fwrite(
     svtype_alteration_contingency_mat,
     "sv-disruption-tests.exprs.sv-type.tsv",
+    sep = "\t"
+)
+
+fwrite(
+    tad_exprs_contingency_mat,
+    "sv-disruption-tests.exprs-TADs.tsv",
     sep = "\t"
 )
