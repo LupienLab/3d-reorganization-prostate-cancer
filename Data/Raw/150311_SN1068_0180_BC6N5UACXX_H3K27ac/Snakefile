@@ -35,10 +35,6 @@ rule all:
             path.join(ALIGN_DIR, 'hg38', 'Pca{sample}_input.sorted.dedup.bam'),
             sample=SAMPLES
         ),
-        # expand(
-        #     path.join(ALIGN_DIR, 'hg19', 'Pca{sample}_input.sorted.dedup.bam'),
-        #     sample=SAMPLES
-        # ),
 
 # ==============================================================================
 # Rules
@@ -52,8 +48,6 @@ rule fastqc:
             REPORT_DIR, 'Pca{sample}_input_R1_fastqc.html')
     params:
         '-o {}'.format(REPORT_DIR)
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'fastqc {params} {input}'
 
@@ -69,8 +63,6 @@ rule align_hg38:
             REPORT_DIR, 'hg38', 'Pca{sample}_input.alignment_report.txt')
     params:
         '-x {}'.format(BWT2_IDX['hg38'])
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'bowtie2 {params} -U {input} 2> {output.rpt} | samtools view -u > {output.bam}'
 
@@ -84,8 +76,6 @@ rule align_hg19:
             REPORT_DIR, 'hg19', 'Pca{sample}_input.alignment_report.txt')
     params:
         '-x {}'.format(BWT2_IDX['hg19'])
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'bowtie2 {params} -U {input} 2> {output.rpt} | samtools view -u > {output.bam}'
 
@@ -110,7 +100,5 @@ rule sort:
     output:
         '{file}.sorted.bam',
         '{file}.sorted.bam.bai'
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'sambamba sort {input}'
