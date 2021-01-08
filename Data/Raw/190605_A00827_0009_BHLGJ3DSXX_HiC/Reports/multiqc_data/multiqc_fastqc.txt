@@ -1,0 +1,27 @@
+Sample	Filename	File type	Encoding	Total Sequences	Sequences flagged as poor quality	Sequence length	%GC	total_deduplicated_percentage	avg_sequence_length	basic_statistics	per_base_sequence_quality	per_tile_sequence_quality	per_sequence_quality_scores	per_base_sequence_content	per_sequence_gc_content	per_base_n_content	sequence_length_distribution	sequence_duplication_levels	overrepresented_sequences	adapter_content
+PCa13266_R1	PCa13266_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	1104252525.0	0.0	151.0	42.0	65.06559574074147	151.0	pass	pass	pass	pass	warn	warn	pass	pass	warn	pass	pass
+PCa13266_R2	PCa13266_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	1104252525.0	0.0	151.0	42.0	70.35413806170374	151.0	pass	pass	pass	pass	warn	warn	pass	pass	pass	pass	pass
+PCa13848_R1	PCa13848_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	628554502.0	0.0	151.0	42.0	67.70857330893537	151.0	pass	pass	pass	pass	fail	warn	pass	pass	warn	pass	pass
+PCa13848_R2	PCa13848_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	628554502.0	0.0	151.0	42.0	70.68172086872407	151.0	pass	pass	pass	pass	fail	warn	pass	pass	pass	pass	pass
+PCa14121_R1	PCa14121_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	992077850.0	0.0	151.0	42.0	64.70904060048774	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa14121_R2	PCa14121_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	992077850.0	0.0	151.0	42.0	67.552356313357	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa19121_R1	PCa19121_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	724091431.0	0.0	151.0	42.0	70.67625224066018	151.0	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass	pass
+PCa19121_R2	PCa19121_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	724091431.0	0.0	151.0	42.0	72.89637698920369	151.0	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass	pass
+PCa3023_R1	PCa3023_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	722717229.0	0.0	151.0	42.0	69.92373250798215	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa3023_R2	PCa3023_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	722717229.0	0.0	151.0	42.0	72.8545764491453	151.0	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass	pass
+PCa33173_R1	PCa33173_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	999093410.0	0.0	151.0	42.0	64.874289595577	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa33173_R2	PCa33173_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	999093410.0	0.0	151.0	42.0	68.60845624618048	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa40507_R1	PCa40507_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	923299841.0	0.0	151.0	42.0	65.9737059040577	151.0	pass	pass	pass	pass	warn	warn	pass	pass	warn	pass	pass
+PCa40507_R2	PCa40507_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	923299841.0	0.0	151.0	42.0	69.3219022668737	151.0	pass	pass	pass	pass	warn	warn	pass	pass	warn	pass	pass
+PCa51852_R1	PCa51852_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	1210658005.0	0.0	151.0	42.0	64.81751839549317	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa51852_R2	PCa51852_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	1210658005.0	0.0	151.0	42.0	69.1280489431859	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa53687_R1	PCa53687_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	828724018.0	0.0	151.0	41.0	69.33417314273616	151.0	pass	pass	pass	pass	warn	warn	pass	pass	warn	pass	pass
+PCa53687_R2	PCa53687_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	828724018.0	0.0	151.0	41.0	71.68842300980626	151.0	pass	pass	pass	pass	warn	warn	pass	pass	pass	pass	pass
+PCa56413_R1	PCa56413_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	809091191.0	0.0	151.0	42.0	65.3441323452404	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa56413_R2	PCa56413_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	809091191.0	0.0	151.0	42.0	68.15598351689529	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa57054_R1	PCa57054_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	1220967122.0	0.0	151.0	42.0	54.23910000986797	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa57054_R2	PCa57054_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	1220967122.0	0.0	151.0	42.0	59.82146730347271	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa57294_R1	PCa57294_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	962820214.0	0.0	151.0	42.0	64.28967287054944	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa57294_R2	PCa57294_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	962820214.0	0.0	151.0	42.0	67.94474782789808	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa58215_R1	PCa58215_R1.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	782995578.0	0.0	151.0	42.0	68.46461821301583	151.0	pass	pass	pass	pass	warn	pass	pass	pass	warn	pass	pass
+PCa58215_R2	PCa58215_R2.fastq.gz	Conventional base calls	Sanger / Illumina 1.9	782995578.0	0.0	151.0	42.0	71.69588750159946	151.0	pass	pass	pass	pass	warn	pass	pass	pass	pass	pass	pass
