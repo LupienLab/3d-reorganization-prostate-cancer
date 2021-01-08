@@ -6,7 +6,6 @@
                 "Pca57294_H3K27ac.alignment_report": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150210_SN1080_0197_BC68WLACXX_H3K27ac/Reports/hg38/Pca57294_H3K27ac.alignment_report.txt",
                 "Pca13266_H3K27ac.alignment_report": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150210_SN1080_0197_BC68WLACXX_H3K27ac/Reports/hg38/Pca13266_H3K27ac.alignment_report.txt",
                 "Pca53687_H3K27ac.alignment_report": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150210_SN1080_0197_BC68WLACXX_H3K27ac/Reports/hg38/Pca53687_H3K27ac.alignment_report.txt",
-                "Pca57054_H3K27ac.alignment_report": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150210_SN1080_0197_BC68WLACXX_H3K27ac/Reports/hg38/Pca57054_H3K27ac.alignment_report.txt",
                 "Pca14121_H3K27ac.alignment_report": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150210_SN1080_0197_BC68WLACXX_H3K27ac/Reports/hg38/Pca14121_H3K27ac.alignment_report.txt",
                 "Pca40507_H3K27ac.alignment_report": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/150210_SN1080_0197_BC68WLACXX_H3K27ac/Reports/hg38/Pca40507_H3K27ac.alignment_report.txt"
             }
@@ -55,14 +54,6 @@
                 "unpaired_aligned_one": 65628677,
                 "unpaired_aligned_multi": 13971791,
                 "overall_alignment_rate": 99.43
-            },
-            "Pca57054_H3K27ac.alignment_report": {
-                "total_reads": 65016909,
-                "unpaired_total": 65016909,
-                "unpaired_aligned_none": 297674,
-                "unpaired_aligned_one": 54101580,
-                "unpaired_aligned_multi": 10617655,
-                "overall_alignment_rate": 99.54
             },
             "Pca14121_H3K27ac.alignment_report": {
                 "total_reads": 73638857,
@@ -268,7 +259,6 @@
                     "Pca40507_H3K27ac.alignment_report",
                     "Pca51852_H3K27ac.alignment_report",
                     "Pca53687_H3K27ac.alignment_report",
-                    "Pca57054_H3K27ac.alignment_report",
                     "Pca57294_H3K27ac.alignment_report"
                 ]
             ],
@@ -282,7 +272,6 @@
                             111623300.0,
                             55573534.0,
                             65628677.0,
-                            54101580.0,
                             40788585.0
                         ],
                         "color": "#20568f"
@@ -295,7 +284,6 @@
                             24781883.0,
                             11758067.0,
                             13971791.0,
-                            10617655.0,
                             9002020.0
                         ],
                         "color": "#f7a35c"
@@ -308,7 +296,6 @@
                             2657994.0,
                             559563.0,
                             460162.0,
-                            297674.0,
                             361643.0
                         ],
                         "color": "#981919"
@@ -10613,14 +10600,6 @@
                 "unpaired_aligned_multi": 13971791,
                 "overall_alignment_rate": 99.43
             },
-            "Pca57054_H3K27ac.alignment_report": {
-                "total_reads": 65016909,
-                "unpaired_total": 65016909,
-                "unpaired_aligned_none": 297674,
-                "unpaired_aligned_one": 54101580,
-                "unpaired_aligned_multi": 10617655,
-                "overall_alignment_rate": 99.54
-            },
             "Pca14121_H3K27ac.alignment_report": {
                 "total_reads": 73638857,
                 "unpaired_total": 73638857,
@@ -10785,9 +10764,6 @@
             "Pca53687_H3K27ac.alignment_report": {
                 "Bowtie 2_mqc-generalstats-bowtie_2-overall_alignment_rate": 99.43
             },
-            "Pca57054_H3K27ac.alignment_report": {
-                "Bowtie 2_mqc-generalstats-bowtie_2-overall_alignment_rate": 99.54
-            },
             "Pca14121_H3K27ac.alignment_report": {
                 "Bowtie 2_mqc-generalstats-bowtie_2-overall_alignment_rate": 99.07
             },
@@ -10844,7 +10820,7 @@
     "config_analysis_dir": [
         "."
     ],
-    "config_creation_date": "2021-01-08, 16:22",
+    "config_creation_date": "2021-01-08, 17:07",
     "config_git_hash": null,
     "config_intro_text": null,
     "config_report_comment": null,
