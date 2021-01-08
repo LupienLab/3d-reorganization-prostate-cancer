@@ -56,7 +56,6 @@ FastQC	all_sections	PCa51852_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davo
 FastQC	all_sections	PCa40507_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa40507_R2_fastqc.zip
 FastQC	all_sections	PCa53687_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa53687_R1_fastqc.zip
 FastQC	all_sections	PCa19121_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa19121_R2_fastqc.zip
-FastQC	all_sections	PCa57054_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa57054_R2_fastqc.zip
 FastQC	all_sections	PCa13848_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa13848_R2_fastqc.zip
 FastQC	all_sections	PCa3023_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa3023_R1_fastqc.zip
 FastQC	all_sections	PCa19121_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa19121_R1_fastqc.zip
@@ -72,4 +71,3 @@ FastQC	all_sections	PCa51852_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davo
 FastQC	all_sections	PCa56413_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa56413_R1_fastqc.zip
 FastQC	all_sections	PCa58215_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa58215_R1_fastqc.zip
 FastQC	all_sections	PCa13266_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa13266_R1_fastqc.zip
-FastQC	all_sections	PCa57054_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/190605_A00827_0009_BHLGJ3DSXX_HiC/Reports/PCa57054_R1_fastqc.zip
