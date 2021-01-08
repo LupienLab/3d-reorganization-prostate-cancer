@@ -34,10 +34,6 @@ rule all:
             path.join(ALIGN_DIR, 'hg38', 'Pca{sample}_H3K27ac.sorted.dedup.bam'),
             sample=SAMPLES
         ),
-        # expand(
-        #     path.join(ALIGN_DIR, 'hg19', 'Pca{sample}_H3K27ac.sorted.dedup.bam'),
-        #     sample=SAMPLES
-        # ),
 
 # ==============================================================================
 # Rules
@@ -51,8 +47,6 @@ rule fastqc:
         path.join(REPORT_DIR, 'Pca{sample}_H3K27ac_R1_fastqc.zip')
     params:
         '-o {}'.format(REPORT_DIR)
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'fastqc {params} {input}'
 
@@ -70,8 +64,6 @@ rule align_hg38:
         # have to trim these reads to 52 bp to match the inputs on the other flow cell
         # only doing single-end alignment to match other flow cell, not paired-end
         '-x {} -3 50'.format(BWT2_IDX['hg38'])
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'bowtie2 {params} -U {input} 2> {output.rpt} | samtools view -u > {output.bam}'
 
@@ -87,8 +79,6 @@ rule align_hg19:
         # have to trim these reads to 52 bp to match the inputs on the other flow cell
         # only doing single-end alignment to match other flow cell, not paired-end
         '-x {} -3 50'.format(BWT2_IDX['hg19'])
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'bowtie2 {params} -U {input} 2> {output.rpt} | samtools view -u > {output.bam}'
 
@@ -100,8 +90,6 @@ rule dedup:
         '{file}.bam'
     output:
         '{file}.dedup.bam'
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'sambamba markdup -r -p {input} {output}'
 
@@ -113,7 +101,5 @@ rule sort:
     output:
         '{file}.sorted.bam',
         '{file}.sorted.bam.bai'
-    conda:
-        '/mnt/work1/users/home2/hawleyj/Source/Terminal/Anaconda/ChIPseq.yaml'
     shell:
         'sambamba sort {input}'
