@@ -1,6 +1,6 @@
 # Summary
 
-This folder contains the first sequencing batch of the 13 CPC-GENE prostate cancer samples' Low-C data.
+This folder contains the first sequencing batch of the 12 CPC-GENE prostate cancer samples' Low-C data.
 
 ## Meta
 
