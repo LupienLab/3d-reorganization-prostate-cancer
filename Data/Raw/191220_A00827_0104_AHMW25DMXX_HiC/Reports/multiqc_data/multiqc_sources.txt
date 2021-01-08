@@ -1,6 +1,5 @@
 Module	Section	Sample Name	Source
 HiCUP	all_sections	Benign-Prostate-3320942	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-3320942.txt
-HiCUP	all_sections	a13848	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_PCa13848.txt
 HiCUP	all_sections	Benign-Prostate-1664855	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1664855.txt
 HiCUP	all_sections	Benign-Prostate-1595983	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1595983.txt
 HiCUP	all_sections	Benign-Prostate-1648133	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1648133.txt

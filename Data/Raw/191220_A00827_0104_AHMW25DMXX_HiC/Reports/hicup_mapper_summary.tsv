@@ -1,6 +1,4 @@
 File	Total_reads_processed	Reads_too_short_to_map	%Reads_too_short_to_map	Unique_alignments	%Unique_alignments	Multiple_alignments	%Multiple_alignments	Failed_to_align	%failed_to_align	Paired	%Paired
-PCa13848_R1.trunc.fastq.gz	195335357	6843161	3.5	156780977	80.3	26994510	13.8	4716709	2.4	127605782	65.3
-PCa13848_R2.trunc.fastq.gz	195335357	6576024	3.4	154440868	79.1	28083919	14.4	6234546	3.2	127605782	65.3
 Benign-Prostate-1648133_R1.trunc.fastq.gz	315596443	8029518	2.5	260588669	82.6	42051510	13.3	4926746	1.6	216902132	68.7
 Benign-Prostate-1648133_R2.trunc.fastq.gz	315596443	7781795	2.5	256244083	81.2	43933502	13.9	7637063	2.4	216902132	68.7
 Benign-Prostate-1664855_R1.trunc.fastq.gz	274577339	7517110	2.7	224302869	81.7	38220184	13.9	4537176	1.7	185988477	67.7

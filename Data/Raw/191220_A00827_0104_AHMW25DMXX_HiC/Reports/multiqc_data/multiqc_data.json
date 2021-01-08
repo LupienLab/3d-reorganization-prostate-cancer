@@ -3,7 +3,6 @@
         "HiCUP": {
             "all_sections": {
                 "Benign-Prostate-3320942": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-3320942.txt",
-                "a13848": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_PCa13848.txt",
                 "Benign-Prostate-1664855": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1664855.txt",
                 "Benign-Prostate-1595983": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1595983.txt",
                 "Benign-Prostate-1648133": "/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1648133.txt",
@@ -64,44 +63,6 @@
                 "Percentage_Unique_Trans": 45.79,
                 "Percentage_Ditags_Passed_Through_HiCUP": 54.44,
                 "Duplicate_Read_Pairs": 39130647.0
-            },
-            "a13848": {
-                "Total_Reads_1": 195335357.0,
-                "Total_Reads_2": 195335357.0,
-                "Not_Truncated_Reads_1": 97576848.0,
-                "Not_Truncated_Reads_2": 99096411.0,
-                "Truncated_Read_1": 97758509.0,
-                "Truncated_Read_2": 96238946.0,
-                "Average_Length_Truncated_1": 74.57,
-                "Average_Length_Truncated_2": 74.93,
-                "Too_Short_To_Map_Read_1": 6843161.0,
-                "Too_Short_To_Map_Read_2": 6576024.0,
-                "Unique_Alignments_Read_1": 156780977.0,
-                "Unique_Alignments_Read_2": 154440868.0,
-                "Multiple_Alignments_Read_1": 26994510.0,
-                "Multiple_Alignments_Read_2": 28083919.0,
-                "Failed_To_Align_Read_1": 4716709.0,
-                "Failed_To_Align_Read_2": 6234546.0,
-                "Paired_Read_1": 127605782.0,
-                "Paired_Read_2": 127605782.0,
-                "Valid_Pairs": 122031345.0,
-                "Invalid_Pairs": 5574437.0,
-                "Same_Circularised": 251760.0,
-                "Same_Dangling_Ends": 2134971.0,
-                "Same_Fragment_Internal": 1825617.0,
-                "Re_Ligation": 1362089.0,
-                "Contiguous_Sequence": 0.0,
-                "Wrong_Size": 0.0,
-                "Deduplication_Read_Pairs_Uniques": 110489034.0,
-                "Deduplication_Cis_Close_Uniques": 4834296.0,
-                "Deduplication_Cis_Far_Uniques": 55900047.0,
-                "Deduplication_Trans_Uniques": 49754691.0,
-                "Percentage_Mapped": 65.33,
-                "Percentage_Valid": 95.63,
-                "Percentage_Uniques": 90.54,
-                "Percentage_Unique_Trans": 45.03,
-                "Percentage_Ditags_Passed_Through_HiCUP": 56.56,
-                "Duplicate_Read_Pairs": 11542311.0
             },
             "Benign-Prostate-1664855": {
                 "Total_Reads_1": 274577339.0,
@@ -598,9 +559,7 @@
                     "Benign-Prostate-3320942 Read 1",
                     "Benign-Prostate-3320942 Read 2",
                     "Benign-Prostate-3330581 Read 1",
-                    "Benign-Prostate-3330581 Read 2",
-                    "a13848 Read 1",
-                    "a13848 Read 2"
+                    "Benign-Prostate-3330581 Read 2"
                 ]
             ],
             "datasets": [
@@ -617,9 +576,7 @@
                             166496965.0,
                             167968863.0,
                             137654606.0,
-                            139779466.0,
-                            97576848.0,
-                            99096411.0
+                            139779466.0
                         ],
                         "color": "#2f7ed8"
                     },
@@ -635,9 +592,7 @@
                             170784771.0,
                             169312873.0,
                             143205048.0,
-                            141080188.0,
-                            97758509.0,
-                            96238946.0
+                            141080188.0
                         ],
                         "color": "#0d233a"
                     }
@@ -663,9 +618,7 @@
                     "Benign-Prostate-3320942 Read 1",
                     "Benign-Prostate-3320942 Read 2",
                     "Benign-Prostate-3330581 Read 1",
-                    "Benign-Prostate-3330581 Read 2",
-                    "a13848 Read 1",
-                    "a13848 Read 2"
+                    "Benign-Prostate-3330581 Read 2"
                 ]
             ],
             "datasets": [
@@ -682,9 +635,7 @@
                             275344114.0,
                             272542968.0,
                             230383222.0,
-                            226644651.0,
-                            156780977.0,
-                            154440868.0
+                            226644651.0
                         ],
                         "color": "#2f7ed8"
                     },
@@ -700,9 +651,7 @@
                             46174411.0,
                             47500908.0,
                             38096153.0,
-                            39578738.0,
-                            26994510.0,
-                            28083919.0
+                            39578738.0
                         ],
                         "color": "#492970"
                     },
@@ -718,9 +667,7 @@
                             6866174.0,
                             8557147.0,
                             5748581.0,
-                            8203294.0,
-                            4716709.0,
-                            6234546.0
+                            8203294.0
                         ],
                         "color": "#0d233a"
                     },
@@ -736,9 +683,7 @@
                             8897037.0,
                             8680713.0,
                             6631698.0,
-                            6432971.0,
-                            6843161.0,
-                            6576024.0
+                            6432971.0
                         ],
                         "color": "#f28f43"
                     }
@@ -759,8 +704,7 @@
                     "Benign-Prostate-1648133",
                     "Benign-Prostate-1664855",
                     "Benign-Prostate-3320942",
-                    "Benign-Prostate-3330581",
-                    "a13848"
+                    "Benign-Prostate-3330581"
                 ]
             ],
             "datasets": [
@@ -772,8 +716,7 @@
                             215005098.0,
                             184509896.0,
                             222756580.0,
-                            187712173.0,
-                            122031345.0
+                            187712173.0
                         ],
                         "color": "#2f7ed8"
                     },
@@ -784,8 +727,7 @@
                             470557.0,
                             359562.0,
                             1994485.0,
-                            1378816.0,
-                            1825617.0
+                            1378816.0
                         ],
                         "color": "#0d233a"
                     },
@@ -796,8 +738,7 @@
                             132076.0,
                             168049.0,
                             253300.0,
-                            164567.0,
-                            251760.0
+                            164567.0
                         ],
                         "color": "#910000"
                     },
@@ -808,8 +749,7 @@
                             423689.0,
                             241048.0,
                             2135413.0,
-                            1215175.0,
-                            2134971.0
+                            1215175.0
                         ],
                         "color": "#8bbc21"
                     },
@@ -820,8 +760,7 @@
                             870712.0,
                             709922.0,
                             1504868.0,
-                            1330239.0,
-                            1362089.0
+                            1330239.0
                         ],
                         "color": "#1aadce"
                     }
@@ -844,8 +783,7 @@
                     "Benign-Prostate-1648133",
                     "Benign-Prostate-1664855",
                     "Benign-Prostate-3320942",
-                    "Benign-Prostate-3330581",
-                    "a13848"
+                    "Benign-Prostate-3330581"
                 ]
             ],
             "datasets": [
@@ -857,8 +795,7 @@
                             7446013.0,
                             7166856.0,
                             6215565.0,
-                            6009997.0,
-                            4834296.0
+                            6009997.0
                         ],
                         "color": "#2f7ed8"
                     },
@@ -869,8 +806,7 @@
                             96470510.0,
                             83542856.0,
                             93324878.0,
-                            90310163.0,
-                            55900047.0
+                            90310163.0
                         ],
                         "color": "#0d233a"
                     },
@@ -881,8 +817,7 @@
                             80471085.0,
                             57867704.0,
                             84085490.0,
-                            57820475.0,
-                            49754691.0
+                            57820475.0
                         ],
                         "color": "#492970"
                     },
@@ -893,8 +828,7 @@
                             30617490.0,
                             35932480.0,
                             39130647.0,
-                            33571538.0,
-                            11542311.0
+                            33571538.0
                         ],
                         "color": "#f28f43"
                     }
@@ -15514,44 +15448,6 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 54.44,
                 "Duplicate_Read_Pairs": 39130647.0
             },
-            "a13848": {
-                "Total_Reads_1": 195335357.0,
-                "Total_Reads_2": 195335357.0,
-                "Not_Truncated_Reads_1": 97576848.0,
-                "Not_Truncated_Reads_2": 99096411.0,
-                "Truncated_Read_1": 97758509.0,
-                "Truncated_Read_2": 96238946.0,
-                "Average_Length_Truncated_1": 74.57,
-                "Average_Length_Truncated_2": 74.93,
-                "Too_Short_To_Map_Read_1": 6843161.0,
-                "Too_Short_To_Map_Read_2": 6576024.0,
-                "Unique_Alignments_Read_1": 156780977.0,
-                "Unique_Alignments_Read_2": 154440868.0,
-                "Multiple_Alignments_Read_1": 26994510.0,
-                "Multiple_Alignments_Read_2": 28083919.0,
-                "Failed_To_Align_Read_1": 4716709.0,
-                "Failed_To_Align_Read_2": 6234546.0,
-                "Paired_Read_1": 127605782.0,
-                "Paired_Read_2": 127605782.0,
-                "Valid_Pairs": 122031345.0,
-                "Invalid_Pairs": 5574437.0,
-                "Same_Circularised": 251760.0,
-                "Same_Dangling_Ends": 2134971.0,
-                "Same_Fragment_Internal": 1825617.0,
-                "Re_Ligation": 1362089.0,
-                "Contiguous_Sequence": 0.0,
-                "Wrong_Size": 0.0,
-                "Deduplication_Read_Pairs_Uniques": 110489034.0,
-                "Deduplication_Cis_Close_Uniques": 4834296.0,
-                "Deduplication_Cis_Far_Uniques": 55900047.0,
-                "Deduplication_Trans_Uniques": 49754691.0,
-                "Percentage_Mapped": 65.33,
-                "Percentage_Valid": 95.63,
-                "Percentage_Uniques": 90.54,
-                "Percentage_Unique_Trans": 45.03,
-                "Percentage_Ditags_Passed_Through_HiCUP": 56.56,
-                "Duplicate_Read_Pairs": 11542311.0
-            },
             "Benign-Prostate-1664855": {
                 "Total_Reads_1": 274577339.0,
                 "Total_Reads_2": 274577339.0,
@@ -15937,15 +15833,6 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 228644646.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 67.79
             },
-            "a13848": {
-                "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 56.56,
-                "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 110489034.0,
-                "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 90.54,
-                "HiCUP_mqc-generalstats-hicup-Valid_Pairs": 122031345.0,
-                "HiCUP_mqc-generalstats-hicup-Percentage_Valid": 95.63,
-                "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 127605782.0,
-                "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 65.33
-            },
             "Benign-Prostate-1664855": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 54.11,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 148577416.0,
@@ -16060,7 +15947,7 @@
     "config_analysis_dir": [
         "."
     ],
-    "config_creation_date": "2021-01-08, 18:00",
+    "config_creation_date": "2021-01-08, 18:14",
     "config_git_hash": null,
     "config_intro_text": null,
     "config_report_comment": null,
