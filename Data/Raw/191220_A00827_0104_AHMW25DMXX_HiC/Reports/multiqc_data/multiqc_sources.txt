@@ -1,0 +1,17 @@
+Module	Section	Sample Name	Source
+HiCUP	all_sections	Benign-Prostate-3320942	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-3320942.txt
+HiCUP	all_sections	a13848	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_PCa13848.txt
+HiCUP	all_sections	Benign-Prostate-1664855	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1664855.txt
+HiCUP	all_sections	Benign-Prostate-1595983	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1595983.txt
+HiCUP	all_sections	Benign-Prostate-1648133	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-1648133.txt
+HiCUP	all_sections	Benign-Prostate-3330581	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/HiCUP_summary_report_Benign-Prostate-3330581.txt
+FastQC	all_sections	Benign-Prostate-3320942_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-3320942_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1648133_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-1648133_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1595983_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-1595983_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1595983_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-1595983_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-3330581_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-3330581_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1648133_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-1648133_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-3330581_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-3330581_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-3320942_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-3320942_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1664855_R2	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-1664855_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1664855_R1	/mnt/work1/users/lupiengroup/People/hawleyj/Davos/Data/Raw/191220_A00827_0104_AHMW25DMXX_HiC/Reports/Benign-Prostate-1664855_R1_fastqc.zip

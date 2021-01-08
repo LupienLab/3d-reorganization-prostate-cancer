@@ -1,0 +1,17 @@
+Sample	HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP	HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques	HiCUP_mqc-generalstats-hicup-Percentage_Uniques	HiCUP_mqc-generalstats-hicup-Valid_Pairs	HiCUP_mqc-generalstats-hicup-Percentage_Valid	HiCUP_mqc-generalstats-hicup-Paired_Read_1	HiCUP_mqc-generalstats-hicup-Percentage_Mapped	FastQC_mqc-generalstats-fastqc-percent_duplicates	FastQC_mqc-generalstats-fastqc-percent_gc	FastQC_mqc-generalstats-fastqc-avg_sequence_length	FastQC_mqc-generalstats-fastqc-percent_fails	FastQC_mqc-generalstats-fastqc-total_sequences
+Benign-Prostate-1595983	56.29	187665237.0	84.72	221515944.0	98.79	224224383.0	67.26					
+Benign-Prostate-1595983_R1								27.33904595553787	43.0	151.0	9.090909090909092	333386019.0
+Benign-Prostate-1595983_R2								26.789250901811556	43.0	151.0	9.090909090909092	333386019.0
+Benign-Prostate-1648133	58.43	184387608.0	85.76	215005098.0	99.13	216902132.0	68.73					
+Benign-Prostate-1648133_R1								28.38338339744655	42.0	151.0	9.090909090909092	315596443.0
+Benign-Prostate-1648133_R2								26.99313109370081	42.0	151.0	9.090909090909092	315596443.0
+Benign-Prostate-1664855	54.11	148577416.0	80.53	184509896.0	99.21	185988477.0	67.74					
+Benign-Prostate-1664855_R1								29.200931922261475	42.0	151.0	9.090909090909092	274577339.0
+Benign-Prostate-1664855_R2								28.58157507928189	42.0	151.0	9.090909090909092	274577339.0
+Benign-Prostate-3320942	54.44	183625933.0	82.43	222756580.0	97.42	228644646.0	67.79					
+Benign-Prostate-3320942_R1								28.970727780562683	42.0	151.0	9.090909090909092	337281736.0
+Benign-Prostate-3320942_R2								28.455265468874174	42.0	151.0	9.090909090909092	337281736.0
+Benign-Prostate-3330581	54.88	154140635.0	82.12	187712173.0	97.87	191800970.0	68.29					
+Benign-Prostate-3330581_R1								31.979248927278533	41.0	151.0	9.090909090909092	280859654.0
+Benign-Prostate-3330581_R2								30.62033716960056	41.0	151.0	9.090909090909092	280859654.0
+a13848	56.56	110489034.0	90.54	122031345.0	95.63	127605782.0	65.33					
