@@ -10,8 +10,9 @@ suppressMessages(library("pheatmap"))
 # ==============================================================================
 # load metadata
 metadata <- fread("../../External/LowC_Samples_Data_Available.tsv", sep = "\t")
-SAMPLES = paste0("PCa", metadata[, get("Sample ID")])
-n = length(SAMPLES)
+metadata <- metadata[Include == "Yes"]
+SAMPLES <- paste0("PCa", metadata[, get("Sample ID")])
+n <- length(SAMPLES)
 
 batches <- fread("config.tsv", sep = "\t", header = TRUE)
 
