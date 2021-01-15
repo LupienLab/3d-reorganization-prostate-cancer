@@ -1,6 +1,6 @@
 # Summary
 
-This folder contains the aggregated data from both sequencing batches on the 13 CPC-GENE prostate cancer samples.
+This folder contains the aggregated data from both sequencing batches on the 12 CPC-GENE prostate cancer samples.
 The preprocessing steps for this raw data can be found in `../../Raw/190509_A00827_0007_AHKYH3DSXX/` and `../../Raw/190605_A00827_0009_BHLGJ3DSXX/`.
 
 This folder aggregates the BAMs, then uses `pairtools` and `cooler` to create multi-resolution cooler files for future analysis.
@@ -27,7 +27,7 @@ This was due to optimizing the library adapter kit, and shows the complexity of 
 ### These data have high percentages of valid read pairs
 
 High quality Hi-C libraries have most of their read pairs classified as `Valid` by HiCUP.
-Across all 13 samples, the smallest `% Valid` value is 8.24% (in `PCa40507`), with 11/13 above 94% valid.
+Across all 12 samples, the smallest `% Valid` value is 8.24% (in `PCa40507`), with 11/12 above 94% valid.
 
 ### These data have _cis_/_trans_ percentages comparable to other Low-C libraries
 
