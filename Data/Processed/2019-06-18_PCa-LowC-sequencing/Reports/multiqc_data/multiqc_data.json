@@ -2,24 +2,23 @@
     "report_data_sources": {
         "HiCUP": {
             "all_sections": {
-                "Benign-Prostate-1595983": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_Benign-Prostate-1595983.txt",
-                "Benign-Prostate-1648133": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_Benign-Prostate-1648133.txt",
-                "Benign-Prostate-1664855": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_Benign-Prostate-1664855.txt",
-                "Benign-Prostate-3320942": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_Benign-Prostate-3320942.txt",
-                "Benign-Prostate-3330581": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_Benign-Prostate-3330581.txt",
-                "a13266": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa13266.txt",
-                "a13848": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa13848.txt",
-                "a14121": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa14121.txt",
-                "a19121": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa19121.txt",
-                "a3023": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa3023.txt",
-                "a33173": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa33173.txt",
-                "a40507": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa40507.txt",
-                "a51852": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa51852.txt",
-                "a53687": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa53687.txt",
-                "a56413": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa56413.txt",
-                "a57054": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa57054.txt",
-                "a57294": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa57294.txt",
-                "a58215": "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports/HiCUP_summary_report_PCa58215.txt"
+                "Benign-Prostate-1595983": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_Benign-Prostate-1595983.txt",
+                "Benign-Prostate-1648133": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_Benign-Prostate-1648133.txt",
+                "Benign-Prostate-1664855": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_Benign-Prostate-1664855.txt",
+                "Benign-Prostate-3320942": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_Benign-Prostate-3320942.txt",
+                "Benign-Prostate-3330581": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_Benign-Prostate-3330581.txt",
+                "PCa13266": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa13266.txt",
+                "PCa13848": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa13848.txt",
+                "PCa14121": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa14121.txt",
+                "PCa19121": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa19121.txt",
+                "PCa3023": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa3023.txt",
+                "PCa33173": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa33173.txt",
+                "PCa40507": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa40507.txt",
+                "PCa51852": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa51852.txt",
+                "PCa53687": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa53687.txt",
+                "PCa56413": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa56413.txt",
+                "PCa57294": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa57294.txt",
+                "PCa58215": "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports\\HiCUP_summary_report_PCa58215.txt"
             }
         }
     },
@@ -205,7 +204,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 53.84,
                 "Duplicate_Read_Pairs": 84703509.0
             },
-            "a13266": {
+            "PCa13266": {
                 "Total_Reads_1": 1389535976.0,
                 "Total_Reads_2": 1389535976.0,
                 "Not_Truncated_Reads_1": 607182043.0,
@@ -241,7 +240,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 53.42,
                 "Duplicate_Read_Pairs": 114508473.0
             },
-            "a13848": {
+            "PCa13848": {
                 "Total_Reads_1": 800792402.0,
                 "Total_Reads_2": 800792402.0,
                 "Not_Truncated_Reads_1": 409434336.0,
@@ -277,7 +276,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 56.66,
                 "Duplicate_Read_Pairs": 53662547.0
             },
-            "a14121": {
+            "PCa14121": {
                 "Total_Reads_1": 1286763805.0,
                 "Total_Reads_2": 1286763805.0,
                 "Not_Truncated_Reads_1": 509276651.0,
@@ -313,7 +312,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 54.62,
                 "Duplicate_Read_Pairs": 117311782.0
             },
-            "a19121": {
+            "PCa19121": {
                 "Total_Reads_1": 975568062.0,
                 "Total_Reads_2": 975568062.0,
                 "Not_Truncated_Reads_1": 398073355.0,
@@ -349,7 +348,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 56.53,
                 "Duplicate_Read_Pairs": 75087674.0
             },
-            "a3023": {
+            "PCa3023": {
                 "Total_Reads_1": 910246351.0,
                 "Total_Reads_2": 910246351.0,
                 "Not_Truncated_Reads_1": 417561618.0,
@@ -385,7 +384,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 57.25,
                 "Duplicate_Read_Pairs": 69561104.0
             },
-            "a33173": {
+            "PCa33173": {
                 "Total_Reads_1": 1205322147.0,
                 "Total_Reads_2": 1205322147.0,
                 "Not_Truncated_Reads_1": 511489151.0,
@@ -421,7 +420,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 57.39,
                 "Duplicate_Read_Pairs": 101903861.0
             },
-            "a40507": {
+            "PCa40507": {
                 "Total_Reads_1": 1178798192.0,
                 "Total_Reads_2": 1178798192.0,
                 "Not_Truncated_Reads_1": 643569742.0,
@@ -457,7 +456,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 43.05,
                 "Duplicate_Read_Pairs": 86019563.0
             },
-            "a51852": {
+            "PCa51852": {
                 "Total_Reads_1": 1493767986.0,
                 "Total_Reads_2": 1493767986.0,
                 "Not_Truncated_Reads_1": 645090013.0,
@@ -493,7 +492,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 52.39,
                 "Duplicate_Read_Pairs": 118562999.0
             },
-            "a53687": {
+            "PCa53687": {
                 "Total_Reads_1": 1085407955.0,
                 "Total_Reads_2": 1085407955.0,
                 "Not_Truncated_Reads_1": 599683413.0,
@@ -529,7 +528,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 47.06,
                 "Duplicate_Read_Pairs": 71748720.0
             },
-            "a56413": {
+            "PCa56413": {
                 "Total_Reads_1": 991964391.0,
                 "Total_Reads_2": 991964391.0,
                 "Not_Truncated_Reads_1": 425717167.0,
@@ -565,43 +564,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 56.32,
                 "Duplicate_Read_Pairs": 91472567.0
             },
-            "a57054": {
-                "Total_Reads_1": 1520264893.0,
-                "Total_Reads_2": 1520264893.0,
-                "Not_Truncated_Reads_1": 643251363.0,
-                "Not_Truncated_Reads_2": 652168580.0,
-                "Truncated_Read_1": 877013530.0,
-                "Truncated_Read_2": 868096313.0,
-                "Too_Short_To_Map_Read_1": 39868618.0,
-                "Too_Short_To_Map_Read_2": 38619136.0,
-                "Unique_Alignments_Read_1": 1241176366.0,
-                "Unique_Alignments_Read_2": 1228691297.0,
-                "Multiple_Alignments_Read_1": 206655843.0,
-                "Multiple_Alignments_Read_2": 214115405.0,
-                "Failed_To_Align_Read_1": 32564066.0,
-                "Failed_To_Align_Read_2": 38839055.0,
-                "Paired_Read_1": 1025142790.0,
-                "Paired_Read_2": 1025142790.0,
-                "Valid_Pairs": 994706510.0,
-                "Invalid_Pairs": 30436280.0,
-                "Same_Circularised": 2014388.0,
-                "Same_Dangling_Ends": 11123475.0,
-                "Same_Fragment_Internal": 11543166.0,
-                "Re_Ligation": 5755251.0,
-                "Contiguous_Sequence": 0.0,
-                "Wrong_Size": 0.0,
-                "Deduplication_Read_Pairs_Uniques": 819572526.0,
-                "Deduplication_Cis_Close_Uniques": 16765629.0,
-                "Deduplication_Cis_Far_Uniques": 324907563.0,
-                "Deduplication_Trans_Uniques": 477899334.0,
-                "Percentage_Mapped": 67.43,
-                "Percentage_Valid": 97.03,
-                "Percentage_Uniques": 82.39,
-                "Percentage_Unique_Trans": 58.31,
-                "Percentage_Ditags_Passed_Through_HiCUP": 53.91,
-                "Duplicate_Read_Pairs": 175133984.0
-            },
-            "a57294": {
+            "PCa57294": {
                 "Total_Reads_1": 1201129218.0,
                 "Total_Reads_2": 1201129218.0,
                 "Not_Truncated_Reads_1": 508228265.0,
@@ -637,7 +600,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 55.39,
                 "Duplicate_Read_Pairs": 117282205.0
             },
-            "a58215": {
+            "PCa58215": {
                 "Total_Reads_1": 985944750.0,
                 "Total_Reads_2": 985944750.0,
                 "Not_Truncated_Reads_1": 434267779.0,
@@ -715,7 +678,7 @@
                 "floor": null,
                 "minRange": null,
                 "placement": 1000.0,
-                "dmax": 1025.1427899999999,
+                "dmax": 958.1349439999999,
                 "dmin": 0.0
             },
             "Percentage_Uniques": {
@@ -756,7 +719,7 @@
                 "floor": null,
                 "minRange": null,
                 "placement": 1000.0,
-                "dmax": 1025.1427899999999,
+                "dmax": 958.1349439999999,
                 "dmin": 0.0
             },
             "Percentage_Valid": {
@@ -797,7 +760,7 @@
                 "floor": null,
                 "minRange": null,
                 "placement": 1000.0,
-                "dmax": 1025.1427899999999,
+                "dmax": 958.1349439999999,
                 "dmin": 0.0
             },
             "Percentage_Mapped": {
@@ -823,7 +786,7 @@
             }
         }
     ],
-    "report_multiqc_command": "/home/james/miniconda3/envs/Davos/bin/multiqc -f .",
+    "report_multiqc_command": "D:\\Scoop\\apps\\miniconda3\\current\\Scripts\\multiqc-script.py -f -c .\\Reports\\multiqc_config.yaml -o .\\Reports\\ --sample-names .\\Reports\\sample-names.tsv .\\Reports\\",
     "report_plot_data": {
         "hicup_truncated_reads_plot": {
             "plot_type": "bar_graph",
@@ -839,32 +802,30 @@
                     "Benign-Prostate-3320942 Read 2",
                     "Benign-Prostate-3330581 Read 1",
                     "Benign-Prostate-3330581 Read 2",
-                    "a13266 Read 1",
-                    "a13266 Read 2",
-                    "a13848 Read 1",
-                    "a13848 Read 2",
-                    "a14121 Read 1",
-                    "a14121 Read 2",
-                    "a19121 Read 1",
-                    "a19121 Read 2",
-                    "a3023 Read 1",
-                    "a3023 Read 2",
-                    "a33173 Read 1",
-                    "a33173 Read 2",
-                    "a40507 Read 1",
-                    "a40507 Read 2",
-                    "a51852 Read 1",
-                    "a51852 Read 2",
-                    "a53687 Read 1",
-                    "a53687 Read 2",
-                    "a56413 Read 1",
-                    "a56413 Read 2",
-                    "a57054 Read 1",
-                    "a57054 Read 2",
-                    "a57294 Read 1",
-                    "a57294 Read 2",
-                    "a58215 Read 1",
-                    "a58215 Read 2"
+                    "PCa13266 Read 1",
+                    "PCa13266 Read 2",
+                    "PCa13848 Read 1",
+                    "PCa13848 Read 2",
+                    "PCa14121 Read 1",
+                    "PCa14121 Read 2",
+                    "PCa19121 Read 1",
+                    "PCa19121 Read 2",
+                    "PCa3023 Read 1",
+                    "PCa3023 Read 2",
+                    "PCa33173 Read 1",
+                    "PCa33173 Read 2",
+                    "PCa40507 Read 1",
+                    "PCa40507 Read 2",
+                    "PCa51852 Read 1",
+                    "PCa51852 Read 2",
+                    "PCa53687 Read 1",
+                    "PCa53687 Read 2",
+                    "PCa56413 Read 1",
+                    "PCa56413 Read 2",
+                    "PCa57294 Read 1",
+                    "PCa57294 Read 2",
+                    "PCa58215 Read 1",
+                    "PCa58215 Read 2"
                 ]
             ],
             "datasets": [
@@ -902,8 +863,6 @@
                             603856168.0,
                             425717167.0,
                             430593710.0,
-                            643251363.0,
-                            652168580.0,
                             508228265.0,
                             515954406.0,
                             434267779.0,
@@ -944,8 +903,6 @@
                             481551787.0,
                             566247224.0,
                             561370681.0,
-                            877013530.0,
-                            868096313.0,
                             692900953.0,
                             685174812.0,
                             551676971.0,
@@ -976,32 +933,30 @@
                     "Benign-Prostate-3320942 Read 2",
                     "Benign-Prostate-3330581 Read 1",
                     "Benign-Prostate-3330581 Read 2",
-                    "a13266 Read 1",
-                    "a13266 Read 2",
-                    "a13848 Read 1",
-                    "a13848 Read 2",
-                    "a14121 Read 1",
-                    "a14121 Read 2",
-                    "a19121 Read 1",
-                    "a19121 Read 2",
-                    "a3023 Read 1",
-                    "a3023 Read 2",
-                    "a33173 Read 1",
-                    "a33173 Read 2",
-                    "a40507 Read 1",
-                    "a40507 Read 2",
-                    "a51852 Read 1",
-                    "a51852 Read 2",
-                    "a53687 Read 1",
-                    "a53687 Read 2",
-                    "a56413 Read 1",
-                    "a56413 Read 2",
-                    "a57054 Read 1",
-                    "a57054 Read 2",
-                    "a57294 Read 1",
-                    "a57294 Read 2",
-                    "a58215 Read 1",
-                    "a58215 Read 2"
+                    "PCa13266 Read 1",
+                    "PCa13266 Read 2",
+                    "PCa13848 Read 1",
+                    "PCa13848 Read 2",
+                    "PCa14121 Read 1",
+                    "PCa14121 Read 2",
+                    "PCa19121 Read 1",
+                    "PCa19121 Read 2",
+                    "PCa3023 Read 1",
+                    "PCa3023 Read 2",
+                    "PCa33173 Read 1",
+                    "PCa33173 Read 2",
+                    "PCa40507 Read 1",
+                    "PCa40507 Read 2",
+                    "PCa51852 Read 1",
+                    "PCa51852 Read 2",
+                    "PCa53687 Read 1",
+                    "PCa53687 Read 2",
+                    "PCa56413 Read 1",
+                    "PCa56413 Read 2",
+                    "PCa57294 Read 1",
+                    "PCa57294 Read 2",
+                    "PCa58215 Read 1",
+                    "PCa58215 Read 2"
                 ]
             ],
             "datasets": [
@@ -1039,8 +994,6 @@
                             852089734.0,
                             803091974.0,
                             796362761.0,
-                            1241176366.0,
-                            1228691297.0,
                             971708786.0,
                             962863959.0,
                             795624384.0,
@@ -1081,8 +1034,6 @@
                             150188021.0,
                             141152411.0,
                             145428168.0,
-                            206655843.0,
-                            214115405.0,
                             168727409.0,
                             173953044.0,
                             140185042.0,
@@ -1123,8 +1074,6 @@
                             56755366.0,
                             15668942.0,
                             19189119.0,
-                            32564066.0,
-                            38839055.0,
                             21786781.0,
                             26858412.0,
                             17846790.0,
@@ -1165,8 +1114,6 @@
                             26374834.0,
                             32051064.0,
                             30984343.0,
-                            39868618.0,
-                            38619136.0,
                             38906242.0,
                             37453803.0,
                             32288534.0,
@@ -1192,19 +1139,18 @@
                     "Benign-Prostate-1664855",
                     "Benign-Prostate-3320942",
                     "Benign-Prostate-3330581",
-                    "a13266",
-                    "a13848",
-                    "a14121",
-                    "a19121",
-                    "a3023",
-                    "a33173",
-                    "a40507",
-                    "a51852",
-                    "a53687",
-                    "a56413",
-                    "a57054",
-                    "a57294",
-                    "a58215"
+                    "PCa13266",
+                    "PCa13848",
+                    "PCa14121",
+                    "PCa19121",
+                    "PCa3023",
+                    "PCa33173",
+                    "PCa40507",
+                    "PCa51852",
+                    "PCa53687",
+                    "PCa56413",
+                    "PCa57294",
+                    "PCa58215"
                 ]
             ],
             "datasets": [
@@ -1227,7 +1173,6 @@
                             901184935.0,
                             582591565.0,
                             650112326.0,
-                            994706510.0,
                             782616675.0,
                             637619169.0
                         ],
@@ -1251,7 +1196,6 @@
                             28087536.0,
                             64312081.0,
                             3229125.0,
-                            11543166.0,
                             4650071.0,
                             4975789.0
                         ],
@@ -1275,7 +1219,6 @@
                             3554074.0,
                             4407511.0,
                             763645.0,
-                            2014388.0,
                             1458046.0,
                             797289.0
                         ],
@@ -1299,7 +1242,6 @@
                             14946778.0,
                             35160797.0,
                             2029725.0,
-                            11123475.0,
                             2407267.0,
                             2900548.0
                         ],
@@ -1323,7 +1265,6 @@
                             10361621.0,
                             17755204.0,
                             2510869.0,
-                            5755251.0,
                             2991034.0,
                             2952563.0
                         ],
@@ -1349,19 +1290,18 @@
                     "Benign-Prostate-1664855",
                     "Benign-Prostate-3320942",
                     "Benign-Prostate-3330581",
-                    "a13266",
-                    "a13848",
-                    "a14121",
-                    "a19121",
-                    "a3023",
-                    "a33173",
-                    "a40507",
-                    "a51852",
-                    "a53687",
-                    "a56413",
-                    "a57054",
-                    "a57294",
-                    "a58215"
+                    "PCa13266",
+                    "PCa13848",
+                    "PCa14121",
+                    "PCa19121",
+                    "PCa3023",
+                    "PCa33173",
+                    "PCa40507",
+                    "PCa51852",
+                    "PCa53687",
+                    "PCa56413",
+                    "PCa57294",
+                    "PCa58215"
                 ]
             ],
             "datasets": [
@@ -1384,7 +1324,6 @@
                             10126539.0,
                             12376639.0,
                             12988610.0,
-                            16765629.0,
                             10770222.0,
                             13563279.0
                         ],
@@ -1408,7 +1347,6 @@
                             253879329.0,
                             206039523.0,
                             246423906.0,
-                            324907563.0,
                             273846946.0,
                             244950554.0
                         ],
@@ -1432,7 +1370,6 @@
                             518616068.0,
                             292426683.0,
                             299227243.0,
-                            477899334.0,
                             380717302.0,
                             297015132.0
                         ],
@@ -1456,7 +1393,6 @@
                             118562999.0,
                             71748720.0,
                             91472567.0,
-                            175133984.0,
                             117282205.0,
                             82090204.0
                         ],
@@ -1656,7 +1592,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 53.84,
                 "Duplicate_Read_Pairs": 84703509.0
             },
-            "a13266": {
+            "PCa13266": {
                 "Total_Reads_1": 1389535976.0,
                 "Total_Reads_2": 1389535976.0,
                 "Not_Truncated_Reads_1": 607182043.0,
@@ -1692,7 +1628,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 53.42,
                 "Duplicate_Read_Pairs": 114508473.0
             },
-            "a13848": {
+            "PCa13848": {
                 "Total_Reads_1": 800792402.0,
                 "Total_Reads_2": 800792402.0,
                 "Not_Truncated_Reads_1": 409434336.0,
@@ -1728,7 +1664,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 56.66,
                 "Duplicate_Read_Pairs": 53662547.0
             },
-            "a14121": {
+            "PCa14121": {
                 "Total_Reads_1": 1286763805.0,
                 "Total_Reads_2": 1286763805.0,
                 "Not_Truncated_Reads_1": 509276651.0,
@@ -1764,7 +1700,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 54.62,
                 "Duplicate_Read_Pairs": 117311782.0
             },
-            "a19121": {
+            "PCa19121": {
                 "Total_Reads_1": 975568062.0,
                 "Total_Reads_2": 975568062.0,
                 "Not_Truncated_Reads_1": 398073355.0,
@@ -1800,7 +1736,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 56.53,
                 "Duplicate_Read_Pairs": 75087674.0
             },
-            "a3023": {
+            "PCa3023": {
                 "Total_Reads_1": 910246351.0,
                 "Total_Reads_2": 910246351.0,
                 "Not_Truncated_Reads_1": 417561618.0,
@@ -1836,7 +1772,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 57.25,
                 "Duplicate_Read_Pairs": 69561104.0
             },
-            "a33173": {
+            "PCa33173": {
                 "Total_Reads_1": 1205322147.0,
                 "Total_Reads_2": 1205322147.0,
                 "Not_Truncated_Reads_1": 511489151.0,
@@ -1872,7 +1808,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 57.39,
                 "Duplicate_Read_Pairs": 101903861.0
             },
-            "a40507": {
+            "PCa40507": {
                 "Total_Reads_1": 1178798192.0,
                 "Total_Reads_2": 1178798192.0,
                 "Not_Truncated_Reads_1": 643569742.0,
@@ -1908,7 +1844,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 43.05,
                 "Duplicate_Read_Pairs": 86019563.0
             },
-            "a51852": {
+            "PCa51852": {
                 "Total_Reads_1": 1493767986.0,
                 "Total_Reads_2": 1493767986.0,
                 "Not_Truncated_Reads_1": 645090013.0,
@@ -1944,7 +1880,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 52.39,
                 "Duplicate_Read_Pairs": 118562999.0
             },
-            "a53687": {
+            "PCa53687": {
                 "Total_Reads_1": 1085407955.0,
                 "Total_Reads_2": 1085407955.0,
                 "Not_Truncated_Reads_1": 599683413.0,
@@ -1980,7 +1916,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 47.06,
                 "Duplicate_Read_Pairs": 71748720.0
             },
-            "a56413": {
+            "PCa56413": {
                 "Total_Reads_1": 991964391.0,
                 "Total_Reads_2": 991964391.0,
                 "Not_Truncated_Reads_1": 425717167.0,
@@ -2016,43 +1952,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 56.32,
                 "Duplicate_Read_Pairs": 91472567.0
             },
-            "a57054": {
-                "Total_Reads_1": 1520264893.0,
-                "Total_Reads_2": 1520264893.0,
-                "Not_Truncated_Reads_1": 643251363.0,
-                "Not_Truncated_Reads_2": 652168580.0,
-                "Truncated_Read_1": 877013530.0,
-                "Truncated_Read_2": 868096313.0,
-                "Too_Short_To_Map_Read_1": 39868618.0,
-                "Too_Short_To_Map_Read_2": 38619136.0,
-                "Unique_Alignments_Read_1": 1241176366.0,
-                "Unique_Alignments_Read_2": 1228691297.0,
-                "Multiple_Alignments_Read_1": 206655843.0,
-                "Multiple_Alignments_Read_2": 214115405.0,
-                "Failed_To_Align_Read_1": 32564066.0,
-                "Failed_To_Align_Read_2": 38839055.0,
-                "Paired_Read_1": 1025142790.0,
-                "Paired_Read_2": 1025142790.0,
-                "Valid_Pairs": 994706510.0,
-                "Invalid_Pairs": 30436280.0,
-                "Same_Circularised": 2014388.0,
-                "Same_Dangling_Ends": 11123475.0,
-                "Same_Fragment_Internal": 11543166.0,
-                "Re_Ligation": 5755251.0,
-                "Contiguous_Sequence": 0.0,
-                "Wrong_Size": 0.0,
-                "Deduplication_Read_Pairs_Uniques": 819572526.0,
-                "Deduplication_Cis_Close_Uniques": 16765629.0,
-                "Deduplication_Cis_Far_Uniques": 324907563.0,
-                "Deduplication_Trans_Uniques": 477899334.0,
-                "Percentage_Mapped": 67.43,
-                "Percentage_Valid": 97.03,
-                "Percentage_Uniques": 82.39,
-                "Percentage_Unique_Trans": 58.31,
-                "Percentage_Ditags_Passed_Through_HiCUP": 53.91,
-                "Duplicate_Read_Pairs": 175133984.0
-            },
-            "a57294": {
+            "PCa57294": {
                 "Total_Reads_1": 1201129218.0,
                 "Total_Reads_2": 1201129218.0,
                 "Not_Truncated_Reads_1": 508228265.0,
@@ -2088,7 +1988,7 @@
                 "Percentage_Ditags_Passed_Through_HiCUP": 55.39,
                 "Duplicate_Read_Pairs": 117282205.0
             },
-            "a58215": {
+            "PCa58215": {
                 "Total_Reads_1": 985944750.0,
                 "Total_Reads_2": 985944750.0,
                 "Not_Truncated_Reads_1": 434267779.0,
@@ -2171,7 +2071,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 429859994.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 68.88
             },
-            "a13266": {
+            "PCa13266": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 53.42,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 742238536.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 86.63,
@@ -2180,7 +2080,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 882549501.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 63.51
             },
-            "a13848": {
+            "PCa13848": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 56.66,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 453760108.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 89.42,
@@ -2189,7 +2089,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 529352596.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 66.1
             },
-            "a14121": {
+            "PCa14121": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 54.62,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 702775038.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 85.7,
@@ -2198,7 +2098,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 832340036.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 64.68
             },
-            "a19121": {
+            "PCa19121": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 56.53,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 551512856.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 88.02,
@@ -2207,7 +2107,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 635464202.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 65.14
             },
-            "a3023": {
+            "PCa3023": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 57.25,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 521149327.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 88.22,
@@ -2216,7 +2116,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 601570087.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 66.09
             },
-            "a33173": {
+            "PCa33173": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 57.39,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 691754110.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 87.16,
@@ -2225,7 +2125,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 803839467.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 66.69
             },
-            "a40507": {
+            "PCa40507": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 43.05,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 507435577.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 85.51,
@@ -2234,7 +2134,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 720006498.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 61.08
             },
-            "a51852": {
+            "PCa51852": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 52.39,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 782621936.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 86.84,
@@ -2243,7 +2143,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 958134944.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 64.14
             },
-            "a53687": {
+            "PCa53687": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 47.06,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 510842845.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 87.68,
@@ -2252,7 +2152,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 704227158.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 64.88
             },
-            "a56413": {
+            "PCa56413": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 56.32,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 558639759.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 85.93,
@@ -2261,16 +2161,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 658645690.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 66.4
             },
-            "a57054": {
-                "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 53.91,
-                "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 819572526.0,
-                "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 82.39,
-                "HiCUP_mqc-generalstats-hicup-Valid_Pairs": 994706510.0,
-                "HiCUP_mqc-generalstats-hicup-Percentage_Valid": 97.03,
-                "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 1025142790.0,
-                "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 67.43
-            },
-            "a57294": {
+            "PCa57294": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 55.39,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 665334470.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 85.01,
@@ -2279,7 +2170,7 @@
                 "HiCUP_mqc-generalstats-hicup-Paired_Read_1": 794123093.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Mapped": 66.11
             },
-            "a58215": {
+            "PCa58215": {
                 "HiCUP_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP": 56.34,
                 "HiCUP_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques": 555528965.0,
                 "HiCUP_mqc-generalstats-hicup-Percentage_Uniques": 87.13,
@@ -2291,19 +2182,19 @@
         }
     },
     "config_analysis_dir_abs": [
-        "/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports"
+        "C:\\Users\\james\\Documents\\Davos\\Data\\Processed\\2019-06-18_PCa-LowC-sequencing\\Reports"
     ],
     "config_analysis_dir": [
-        "."
+        ".\\Reports\\"
     ],
-    "config_creation_date": "2020-08-26, 17:12",
+    "config_creation_date": "2021-01-15, 16:26",
     "config_git_hash": null,
     "config_intro_text": null,
     "config_report_comment": null,
     "config_report_header_info": null,
-    "config_script_path": "/home/james/miniconda3/envs/Davos/lib/python3.6/site-packages/multiqc/utils",
-    "config_short_version": "1.6",
+    "config_script_path": "D:\\Scoop\\apps\\miniconda3\\4.9.2\\Lib\\site-packages\\multiqc\\utils",
+    "config_short_version": "1.9",
     "config_subtitle": null,
     "config_title": null,
-    "config_version": "1.6"
+    "config_version": "1.9"
 }

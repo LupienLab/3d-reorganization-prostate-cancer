@@ -46,6 +46,7 @@ rule all:
             path.join(CONTACT_DIR, "{sample}.mcool"),
             sample=SAMPLES
         ),
+        path.join(REPORT_DIR, "hicup_class.png"),
         expand(
             path.join(CONTACT_DIR, "{sample}.compartments.cis.{ext}"),
             sample=SAMPLES,
@@ -61,6 +62,7 @@ rule all:
 			sample=SAMPLES,
 			res=[10000],
         ),
+        path.join(REPORT_DIR, "multiqc_report.html"),
 
 # =============================================================================
 # Rules
@@ -187,11 +189,12 @@ rule multiqc:
             path.join(
                 REPORT_DIR, 'HiCUP_summary_report_{sample}.txt'),
             sample=SAMPLES
-        )
+        ),
+        labels = path.join(REPORT_DIR, "sample-names.tsv"),
     output:
         path.join(REPORT_DIR, 'multiqc_report.html')
     shell:
-        'multiqc -f -c {input.cfg} -o {REPORT_DIR} {REPORT_DIR}'
+        'multiqc -f -c {input.cfg} -o {REPORT_DIR} --sample-names {input.labels} {REPORT_DIR}'
 
 rule plot_contact_class:
     input:
@@ -201,4 +204,3 @@ rule plot_contact_class:
         path.join(REPORT_DIR, "hicup_class.png")
     shell:
         "Rscript {input.script}"
-

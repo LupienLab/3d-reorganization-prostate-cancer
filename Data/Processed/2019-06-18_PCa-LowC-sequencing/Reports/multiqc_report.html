@@ -23,11 +23,22 @@ http://multiqc.info
 <title>MultiQC Report</title>
 
 <!-- JSON plot data -->
+<script type="text/plain" id="mqc_compressed_plotdata">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</script>
+
+<script type="application/json" id="mqc_config">{"decimalPoint_format": ".", "num_datasets_plot_limit": 50, "sample_names_rename": [["PCa13266", "CPCG0268"], ["PCa13848", "CPCG0366"], ["PCa14121", "CPCG0255"], ["PCa19121", "CPCG0258"], ["PCa3023", "CPCG0324"], ["PCa33173", "CPCG0246"], ["PCa40507", "CPCG0342"], ["PCa51852", "CPCG0336"], ["PCa53687", "CPCG0339"], ["PCa56413", "CPCG0331"], ["PCa57294", "CPCG0365"], ["PCa58215", "CPCG0345"], ["Benign-Prostate-1648133", "BP1648133"], ["Benign-Prostate-1595983", "BP1595983"], ["Benign-Prostate-3330581", "BP3330581"], ["Benign-Prostate-1664855", "BP1664855"], ["Benign-Prostate-3320942", "BP3320942"]], "show_hide_mode": [], "show_hide_patterns": [], "thousandsSep_format": " "}</script>
+
+<!-- Instead of saving data directly into variables in a normal <script>, data is separated into
+     above non-executed script blocks. This way, potential Content Security Policy restrictions
+     only apply to static script blocks, which can be added as sha256 exceptions.
+
+     As a precaution the script is wrapped in raw block to remind developers that data should
+     not be injected directly into it. -->
+
 <script type="text/javascript">
-mqc_compressed_plotdata = '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';
-num_datasets_plot_limit = 50;
-mqc_sample_names_rename = [];
+mqc_compressed_plotdata = document.getElementById('mqc_compressed_plotdata').innerHTML;
+mqc_config = JSON.parse(document.getElementById('mqc_config').innerHTML);
 </script>
+
 
   
 
@@ -885,9 +896,14 @@ tbody .sorthandle {
   background-color: #ededed;
 }
 
+.mqc-custom-content-image img {
+    max-width: 100%;
+}
+
     .jq-toast-wrap,.jq-toast-wrap *{margin:0;padding:0}.jq-toast-wrap{display:block;position:fixed;width:250px;pointer-events:none!important;letter-spacing:normal;z-index:9000!important}.jq-toast-wrap.bottom-left{bottom:20px;left:20px}.jq-toast-wrap.bottom-right{bottom:20px;right:40px}.jq-toast-wrap.top-left{top:20px;left:20px}.jq-toast-wrap.top-right{top:20px;right:40px}.jq-toast-single{display:block;width:100%;padding:10px;margin:0 0 5px;border-radius:4px;font-size:12px;font-family:arial,sans-serif;line-height:17px;position:relative;pointer-events:all!important;background-color:#444;color:#fff}.jq-toast-single h2{font-family:arial,sans-serif;font-size:14px;margin:0 0 7px;background:0 0;color:inherit;line-height:inherit;letter-spacing:normal}.jq-toast-single a{color:#eee;text-decoration:none;font-weight:700;border-bottom:1px solid #fff;padding-bottom:3px;font-size:12px}.jq-toast-single ul{margin:0 0 0 15px;background:0 0;padding:0}.jq-toast-single ul li{list-style-type:disc!important;line-height:17px;background:0 0;margin:0;padding:0;letter-spacing:normal}.close-jq-toast-single{position:absolute;top:3px;right:7px;font-size:14px;cursor:pointer}.jq-toast-loader{display:block;position:absolute;top:-2px;height:5px;width:0;left:0;border-radius:5px;background:red}.jq-toast-loaded{width:100%}.jq-has-icon{padding:10px 10px 10px 50px;background-repeat:no-repeat;background-position:10px}.jq-icon-info{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVEhLtZa9SgNBEMc9sUxxRcoUKSzSWIhXpFMhhYWFhaBg4yPYiWCXZxBLERsLRS3EQkEfwCKdjWJAwSKCgoKCcudv4O5YLrt7EzgXhiU3/4+b2ckmwVjJSpKkQ6wAi4gwhT+z3wRBcEz0yjSseUTrcRyfsHsXmD0AmbHOC9Ii8VImnuXBPglHpQ5wwSVM7sNnTG7Za4JwDdCjxyAiH3nyA2mtaTJufiDZ5dCaqlItILh1NHatfN5skvjx9Z38m69CgzuXmZgVrPIGE763Jx9qKsRozWYw6xOHdER+nn2KkO+Bb+UV5CBN6WC6QtBgbRVozrahAbmm6HtUsgtPC19tFdxXZYBOfkbmFJ1VaHA1VAHjd0pp70oTZzvR+EVrx2Ygfdsq6eu55BHYR8hlcki+n+kERUFG8BrA0BwjeAv2M8WLQBtcy+SD6fNsmnB3AlBLrgTtVW1c2QN4bVWLATaIS60J2Du5y1TiJgjSBvFVZgTmwCU+dAZFoPxGEEs8nyHC9Bwe2GvEJv2WXZb0vjdyFT4Cxk3e/kIqlOGoVLwwPevpYHT+00T+hWwXDf4AJAOUqWcDhbwAAAAASUVORK5CYII=);background-color:#31708f;color:#d9edf7;border-color:#bce8f1}.jq-icon-warning{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGYSURBVEhL5ZSvTsNQFMbXZGICMYGYmJhAQIJAICYQPAACiSDB8AiICQQJT4CqQEwgJvYASAQCiZiYmJhAIBATCARJy+9rTsldd8sKu1M0+dLb057v6/lbq/2rK0mS/TRNj9cWNAKPYIJII7gIxCcQ51cvqID+GIEX8ASG4B1bK5gIZFeQfoJdEXOfgX4QAQg7kH2A65yQ87lyxb27sggkAzAuFhbbg1K2kgCkB1bVwyIR9m2L7PRPIhDUIXgGtyKw575yz3lTNs6X4JXnjV+LKM/m3MydnTbtOKIjtz6VhCBq4vSm3ncdrD2lk0VgUXSVKjVDJXJzijW1RQdsU7F77He8u68koNZTz8Oz5yGa6J3H3lZ0xYgXBK2QymlWWA+RWnYhskLBv2vmE+hBMCtbA7KX5drWyRT/2JsqZ2IvfB9Y4bWDNMFbJRFmC9E74SoS0CqulwjkC0+5bpcV1CZ8NMej4pjy0U+doDQsGyo1hzVJttIjhQ7GnBtRFN1UarUlH8F3xict+HY07rEzoUGPlWcjRFRr4/gChZgc3ZL2d8oAAAAASUVORK5CYII=);background-color:#8a6d3b;color:#fcf8e3;border-color:#faebcc}.jq-icon-error{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHOSURBVEhLrZa/SgNBEMZzh0WKCClSCKaIYOED+AAKeQQLG8HWztLCImBrYadgIdY+gIKNYkBFSwu7CAoqCgkkoGBI/E28PdbLZmeDLgzZzcx83/zZ2SSXC1j9fr+I1Hq93g2yxH4iwM1vkoBWAdxCmpzTxfkN2RcyZNaHFIkSo10+8kgxkXIURV5HGxTmFuc75B2RfQkpxHG8aAgaAFa0tAHqYFfQ7Iwe2yhODk8+J4C7yAoRTWI3w/4klGRgR4lO7Rpn9+gvMyWp+uxFh8+H+ARlgN1nJuJuQAYvNkEnwGFck18Er4q3egEc/oO+mhLdKgRyhdNFiacC0rlOCbhNVz4H9FnAYgDBvU3QIioZlJFLJtsoHYRDfiZoUyIxqCtRpVlANq0EU4dApjrtgezPFad5S19Wgjkc0hNVnuF4HjVA6C7QrSIbylB+oZe3aHgBsqlNqKYH48jXyJKMuAbiyVJ8KzaB3eRc0pg9VwQ4niFryI68qiOi3AbjwdsfnAtk0bCjTLJKr6mrD9g8iq/S/B81hguOMlQTnVyG40wAcjnmgsCNESDrjme7wfftP4P7SP4N3CJZdvzoNyGq2c/HWOXJGsvVg+RA/k2MC/wN6I2YA2Pt8GkAAAAASUVORK5CYII=);background-color:#a94442;color:#f2dede;border-color:#ebccd1}.jq-icon-success{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADsSURBVEhLY2AYBfQMgf///3P8+/evAIgvA/FsIF+BavYDDWMBGroaSMMBiE8VC7AZDrIFaMFnii3AZTjUgsUUWUDA8OdAH6iQbQEhw4HyGsPEcKBXBIC4ARhex4G4BsjmweU1soIFaGg/WtoFZRIZdEvIMhxkCCjXIVsATV6gFGACs4Rsw0EGgIIH3QJYJgHSARQZDrWAB+jawzgs+Q2UO49D7jnRSRGoEFRILcdmEMWGI0cm0JJ2QpYA1RDvcmzJEWhABhD/pqrL0S0CWuABKgnRki9lLseS7g2AlqwHWQSKH4oKLrILpRGhEQCw2LiRUIa4lwAAAABJRU5ErkJggg==);color:#dff0d8;background-color:#3c763d;border-color:#d6e9c6}
 
 </style>
+
 
 <!-- Include javascript files -->
 <script type="text/javascript">/*! jQuery v3.1.1 | (c) jQuery Foundation | jquery.org/license */
@@ -1551,7 +1567,7 @@ $(function () {
     $('.mqc_configModal_table').on('sortstop', function(e, ui){
       change_mqc_table_col_order( $(this) );
     });
-    $('.mqc_configModal_table').bind('sortEnd',function() { 
+    $('.mqc_configModal_table').bind('sortEnd',function() {
       change_mqc_table_col_order( $(this) );
     });
 
@@ -1598,7 +1614,7 @@ $(function () {
     // Rename samples
     $(document).on('mqc_renamesamples', function(e, f_texts, t_texts, regex_mode){
       $(".mqc_table tbody th").each(function(){
-        var s_name = $(this).data('original-sn');
+        var s_name = String($(this).data('original-sn'));
         $.each(f_texts, function(idx, f_text){
           if(regex_mode){
             var re = new RegExp(f_text,"g");
@@ -1856,7 +1872,7 @@ $(function () {
   $('.hc-plot.not_rendered:visible:not(.gt_max_num_ds)').each(function(){
     var target = $(this).attr('id');
     // Only one point per dataset, so multiply limit by arbitrary number.
-    var max_num = num_datasets_plot_limit * 50;
+    var max_num = mqc_config['num_datasets_plot_limit'] * 50;
     // Deferring each plot call prevents browser from locking up
     setTimeout(function(){
         plot_graph(target, undefined, max_num);
@@ -1909,6 +1925,15 @@ $(function () {
       var stack_type = (action == 'set_percent') ? 'percent' : 'normal';
       mqc_plots[target]['config']['stacking'] = stack_type;
       mqc_plots[target]['config']['ytype'] = 'linear';
+      // Workaround for manually set y-axis maximums on the % stacked plot
+      if (action == 'set_percent'){
+        mqc_plots[target]['config']['old_ymax'] = mqc_plots[target]['config']['ymax'];
+        delete mqc_plots[target]['config']['ymax'];
+      } else {
+        if('old_ymax' in mqc_plots[target]['config']){
+          mqc_plots[target]['config']['ymax'] = mqc_plots[target]['config']['old_ymax'];
+        }
+      }
       plot_graph(target);
       var ylab = $(this).data('ylab');
       if(ylab != undefined){
@@ -2015,55 +2040,75 @@ $(function () {
 // Call to render any plot
 function plot_graph(target, ds, max_num){
   if(mqc_plots[target] === undefined){ return false; }
-  else {
-    // XY Line charts
-    if(mqc_plots[target]['plot_type'] == 'xy_line'){
-      if(max_num === undefined || mqc_plots[target]['datasets'][0].length < max_num){
-        plot_xy_line_graph(target, ds);
-        $('#'+target).removeClass('not_rendered');
-      } else {
-        $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
-      }
+
+  // If no dataset specified, check if there is an active button and set automatically
+  if(ds === undefined){
+    var ds_btns = $('.hc_switch_group button[data-action="set_data"][data-target="'+target+'"]');
+    if(ds_btns.length){
+      ds = ds_btns.filter('.active').data('newdata');
     }
-    // Bar graphs
-    else if(mqc_plots[target]['plot_type'] == 'bar_graph'){
-      if(max_num === undefined || mqc_plots[target]['samples'][0].length < max_num){
-        plot_stacked_bar_graph(target, ds);
-        $('#'+target).removeClass('not_rendered');
-      } else {
-        $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
-      }
-    }
-    // Scatter plots
-    else if(mqc_plots[target]['plot_type'] == 'scatter'){
-      if(max_num === undefined || Object.keys(mqc_plots[target]['datasets'][0]).length < max_num){
-        plot_scatter_plot(target, ds);
-        $('#'+target).removeClass('not_rendered');
-      } else {
-        $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
-      }
-    }
-    // Beeswarm graphs
-    else if(mqc_plots[target]['plot_type'] == 'beeswarm'){
-      if(max_num === undefined || mqc_plots[target]['samples'][0].length < max_num){
-        plot_beeswarm_graph(target, ds);
-        $('#'+target).removeClass('not_rendered');
-      } else {
-        $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
-      }
-    }
-    // Heatmap plots
-    else if(mqc_plots[target]['plot_type'] == 'heatmap'){
-      if(max_num === undefined || mqc_plots[target]['xcats'][0].length < max_num){
-        plot_heatmap(target, ds);
-        $('#'+target).removeClass('not_rendered');
-      } else {
-        $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
-      }
-    }
-    // Not recognised
-    else { console.log('Did not recognise plot type: '+mqc_plots[target]['plot_type']); }
   }
+
+  // If log status is not set and button is there, check whether it's active by default
+  var config = mqc_plots[target]['config'];
+  if(config === undefined){
+    mqc_plots[target]['config'] = {};
+    config = {};
+  }
+  if (config['ytype'] === undefined){
+    var log_btn = $('.hc_switch_group button[data-action="set_log"][data-target="'+target+'"]');
+    if(log_btn.length && log_btn.hasClass('active')){
+      config['ytype'] = 'logarithmic';
+    }
+  }
+
+  // XY Line charts
+  if(mqc_plots[target]['plot_type'] == 'xy_line'){
+    if(max_num === undefined || mqc_plots[target]['datasets'][0].length < max_num){
+      plot_xy_line_graph(target, ds);
+      $('#'+target).removeClass('not_rendered');
+    } else {
+      $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
+    }
+  }
+  // Bar graphs
+  else if(mqc_plots[target]['plot_type'] == 'bar_graph'){
+    if(max_num === undefined || mqc_plots[target]['samples'][0].length < max_num){
+      plot_stacked_bar_graph(target, ds);
+      $('#'+target).removeClass('not_rendered');
+    } else {
+      $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
+    }
+  }
+  // Scatter plots
+  else if(mqc_plots[target]['plot_type'] == 'scatter'){
+    if(max_num === undefined || Object.keys(mqc_plots[target]['datasets'][0]).length < max_num){
+      plot_scatter_plot(target, ds);
+      $('#'+target).removeClass('not_rendered');
+    } else {
+      $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
+    }
+  }
+  // Beeswarm graphs
+  else if(mqc_plots[target]['plot_type'] == 'beeswarm'){
+    if(max_num === undefined || mqc_plots[target]['samples'][0].length < max_num){
+      plot_beeswarm_graph(target, ds);
+      $('#'+target).removeClass('not_rendered');
+    } else {
+      $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
+    }
+  }
+  // Heatmap plots
+  else if(mqc_plots[target]['plot_type'] == 'heatmap'){
+    if(max_num === undefined || mqc_plots[target]['xcats'][0].length < max_num){
+      plot_heatmap(target, ds);
+      $('#'+target).removeClass('not_rendered');
+    } else {
+      $('#'+target).addClass('not_rendered gt_max_num_ds').html('<button class="btn btn-default btn-lg render_plot">Show plot</button>');
+    }
+  }
+  // Not recognised
+  else { console.log('Did not recognise plot type: '+mqc_plots[target]['plot_type']); }
 }
 
 // Basic Line Graph
@@ -2075,7 +2120,15 @@ function plot_xy_line_graph(target, ds){
   var data = mqc_plots[target]['datasets'];
   if(ds === undefined){ ds = 0; }
 
-  if(config['tt_label'] === undefined){ config['tt_label'] = '{point.x}: {point.y:.2f}'; }
+  if(config['tt_label'] === undefined){
+    config['tt_label'] = '{point.x}: {point.y:.2f}';
+    if(config['categories']){
+      config['tt_formatter'] = function(){
+        yval = Highcharts.numberFormat(this.y, (config['tt_decimals'] == undefined ? 0 : config['tt_decimals'])) + ( config['tt_suffix'] || '');
+        return '<div style="background-color:'+this.series.color+'; display:inline-block; height: 10px; width: 10px; border:1px solid #333;"></div> <span style="text-decoration:underline; font-weight:bold;">'+this.series.name+'</span><br><strong>'+this.key+':</strong> '+yval;
+      }
+    }
+  }
   if(config['click_func'] === undefined){ config['click_func'] = function(){}; }
   else {
     config['click_func'] = eval("("+config['click_func']+")");
@@ -2085,6 +2138,17 @@ function plot_xy_line_graph(target, ds){
   if (config['yDecimals'] === undefined){ config['yDecimals'] = true; }
   if (config['pointFormat'] === undefined){
     config['pointFormat'] = '<div style="background-color:{series.color}; display:inline-block; height: 10px; width: 10px; border:1px solid #333;"></div> <span style="text-decoration:underline; font-weight:bold;">{series.name}</span><br>'+config['tt_label'];
+  }
+  if (config['ytype'] === undefined){
+    config['ytype'] = config['yLog'] ? 'logarithmic' : 'linear';
+  }
+  if (config['ytype'] == 'logarithmic'){
+    if(config['ymin'] == 0){
+      config['ymin'] = undefined;
+    }
+    var minTickInt = 'auto';
+  } else {
+    var minTickInt = undefined;
   }
 
   // Make a clone of the data, so that we can mess with it,
@@ -2193,7 +2257,7 @@ function plot_xy_line_graph(target, ds){
         text: config['ylab']
       },
       labels: { format: config['yLabelFormat'] ? config['yLabelFormat'] : '{value}' },
-      type: config['yLog'] ? 'logarithmic' : 'linear',
+      type: config['ytype'],
       ceiling: config['yCeiling'],
       floor: config['yFloor'],
       max: config['ymax'],
@@ -2219,8 +2283,9 @@ function plot_xy_line_graph(target, ds){
     },
     tooltip: {
       headerFormat: '',
-			pointFormat: config['pointFormat'],
-			useHTML: true
+      pointFormat: config['pointFormat'],
+      formatter: config['tt_formatter'],
+      useHTML: true
     },
     series: data
   });
@@ -2240,6 +2305,8 @@ function plot_stacked_bar_graph(target, ds){
   var config = JSON.parse(JSON.stringify(mqc_plots[target]['config']));
 
   if (config['stacking'] === undefined){ config['stacking'] = 'normal'; }
+  if (config['stacking'] === 'normal'){ config['groupPadding'] = '0.02'; config['pointPadding'] = '0.1'; }
+  else { config['groupPadding'] = '0.1'; config['pointPadding'] = 0 }
   if (config['ytype'] === undefined){ config['ytype'] = 'linear'; }
   if (config['reversedStacks'] === undefined){ config['reversedStacks'] = false; }
   if (config['use_legend'] === undefined){ config['use_legend'] = true; }
@@ -2370,7 +2437,8 @@ function plot_stacked_bar_graph(target, ds){
     plotOptions: {
       series: {
         stacking: config['stacking'],
-        groupPadding: 0.02,
+        pointPadding: config['pointPadding'],
+        groupPadding: config['groupPadding'],
         borderWidth: config['borderWidth']
       },
       cursor: config['cursor'],
@@ -2583,8 +2651,8 @@ function plot_scatter_plot (target, ds){
     },
     tooltip: {
       headerFormat: '',
-			pointFormat: config['pointFormat'],
-			useHTML: true,
+      pointFormat: config['pointFormat'],
+      useHTML: true,
       formatter: (function() {
         if(!this.point.noTooltip) {
           // Formatter function doesn't do name for some reason
@@ -2751,7 +2819,7 @@ function plot_beeswarm_graph(target, ds){
 
     // Size and spacing options
     var markerRadius = 2.5
-  	var yspace = 70;
+    var yspace = 70;
     var ysep = 10;
     if(data.length > 50){
       markerRadius = 1.8
@@ -2765,10 +2833,10 @@ function plot_beeswarm_graph(target, ds){
     }
 
     if (maxx == undefined){
-    	maxx = Math.max.apply(null, data);
+      maxx = Math.max.apply(null, data);
     }
     if (minx == undefined){
-    	minx = Math.max.apply(null, data);
+      minx = Math.max.apply(null, data);
     }
     var range = maxx-minx;
     var sep = range/yspace;
@@ -2819,7 +2887,7 @@ function plot_beeswarm_graph(target, ds){
         'height': (100/categories.length)+'%'
       })
       .highcharts({
-  			chart: {
+        chart: {
             type: 'scatter',
             spacingTop: 0,
             marginBottom: 0,
@@ -2856,7 +2924,7 @@ function plot_beeswarm_graph(target, ds){
             lineWidth: 0
         },
         xAxis: {
-        	lineWidth: 0,
+          lineWidth: 0,
           tickWidth: 0,
           tickPixelInterval: 200,
           labels: {
@@ -2945,34 +3013,42 @@ function plot_heatmap(target, ds){
   var config = mqc_plots[target]['config'];
 
   if(config['square'] === undefined){ config['square'] = true; }
+  if(config['xcats_samples'] === undefined){ config['xcats_samples'] = true; }
+  if(config['ycats_samples'] === undefined){ config['ycats_samples'] = true; }
 
   // Make a clone of the data, so that we can mess with it,
   // while keeping the original data in tact
   var data = JSON.parse(JSON.stringify(mqc_plots[target]['data']));
   var xcats = JSON.parse(JSON.stringify(mqc_plots[target]['xcats']));
   var ycats = JSON.parse(JSON.stringify(mqc_plots[target]['ycats']));
+  // "xcats" and "ycats" are labels of columns and rows respectively
+  // data[n] has form of [x,y,value], x/y are indices of columns/rows
 
   // Rename samples
   if(window.mqc_rename_f_texts.length > 0){
-    for (i=0; i < xcats.length; i++) {
-      $.each(window.mqc_rename_f_texts, function(idx, f_text){
-        if(window.mqc_rename_regex_mode){
-          var re = new RegExp(f_text,"g");
-          xcats[i] = xcats[i].replace(re, window.mqc_rename_t_texts[idx]);
-        } else {
-          xcats[i] = xcats[i].replace(f_text, window.mqc_rename_t_texts[idx]);
-        }
-      });
+    if(config['xcats_samples']){
+      for (i=0; i < xcats.length; i++) {
+        $.each(window.mqc_rename_f_texts, function(idx, f_text){
+          if(window.mqc_rename_regex_mode){
+            var re = new RegExp(f_text,"g");
+            xcats[i] = xcats[i].replace(re, window.mqc_rename_t_texts[idx]);
+          } else {
+            xcats[i] = xcats[i].replace(f_text, window.mqc_rename_t_texts[idx]);
+          }
+        });
+      }
     }
-    for (i=0; i < ycats.length; i++) {
-      $.each(window.mqc_rename_f_texts, function(idx, f_text){
-        if(window.mqc_rename_regex_mode){
-          var re = new RegExp(f_text,"g");
-          ycats[i] = ycats[i].replace(re, window.mqc_rename_t_texts[idx]);
-        } else {
-          ycats[i] = ycats[i].replace(f_text, window.mqc_rename_t_texts[idx]);
-        }
-      });
+    if(config['ycats_samples']){
+      for (i=0; i < ycats.length; i++) {
+        $.each(window.mqc_rename_f_texts, function(idx, f_text){
+          if(window.mqc_rename_regex_mode){
+            var re = new RegExp(f_text,"g");
+            ycats[i] = ycats[i].replace(re, window.mqc_rename_t_texts[idx]);
+          } else {
+            ycats[i] = ycats[i].replace(f_text, window.mqc_rename_t_texts[idx]);
+          }
+        });
+      }
     }
   }
 
@@ -3004,28 +3080,34 @@ function plot_heatmap(target, ds){
       var new_xcats = [], new_ycats = [];
       var xidx = 0, yidx = 0;
       for (hl = window.mqc_highlight_f_texts.length; hl >= 0; hl--){
-        for (i=0; i < xcats.length; i++) {
-          if(xcat_hl[i] == hl){
-            new_xcats.push(xcats[i])
-            for (j=0; j < data.length; j++) {
-              if(data[j][0] == i){ newdata[j][0] = xidx; }
+        if(config['xcats_samples']){
+          for (i=0; i < xcats.length; i++) {
+            if(xcat_hl[i] == hl){
+              new_xcats.push(xcats[i])
+              for (j=0; j < data.length; j++) {
+                // data[j] element is [x,y,val], get "x"
+                if(data[j][0] == i){ newdata[j][0] = xidx; }
+              }
+              xidx += 1;
             }
-            xidx += 1;
           }
         }
-        for (i=0; i < ycats.length; i++) {
-          if(ycat_hl[i] == hl){
-            new_ycats.push(ycats[i])
-            for (j=0; j < data.length; j++) {
-              if(data[j][1] == i){ newdata[j][1] = yidx; }
+        if(config['ycats_samples']){
+          for (i=0; i < ycats.length; i++) {
+            if(ycat_hl[i] == hl){
+              new_ycats.push(ycats[i])
+              for (j=0; j < data.length; j++) {
+                // data[j] element is [x,y,val], get "y"
+                if(data[j][1] == i){ newdata[j][1] = yidx; }
+              }
+              yidx += 1;
             }
-            yidx += 1;
           }
         }
       }
       data = newdata;
-      xcats = new_xcats;
-      ycats = new_ycats;
+      if(config['xcats_samples']){ xcats = new_xcats; }
+      if(config['ycats_samples']){ ycats = new_ycats; }
     }
   }
 
@@ -3035,55 +3117,69 @@ function plot_heatmap(target, ds){
   $('#'+target).closest('.hc-plot-wrapper').show();
   if(window.mqc_hide_f_texts.length > 0){
     var remove = Array();
-    var i = xcats.length;
-    var xhidden = 0;
-    while (i--) {
-      var match = false;
-      for (j = 0; j < window.mqc_hide_f_texts.length; j++) {
-        var f_text = window.mqc_hide_f_texts[j];
-        if(window.mqc_hide_regex_mode){
-          if(xcats[i].match(f_text)){ match = true; }
-        } else {
-          if(xcats[i].indexOf(f_text) > -1){ match = true; }
+    if(config['xcats_samples']){
+      var i = xcats.length;
+      var xhidden = 0;
+      // iterate over x-categories (columns)
+      while (i--) {
+        var match = false;
+        for (j = 0; j < window.mqc_hide_f_texts.length; j++) {
+          var f_text = window.mqc_hide_f_texts[j];
+          if(window.mqc_hide_regex_mode){
+            if(xcats[i].match(f_text)){ match = true; }
+          } else {
+            if(xcats[i].indexOf(f_text) > -1){ match = true; }
+          }
         }
-      }
-      if(window.mqc_hide_mode == 'show'){
-        match = !match;
-      }
-      if(match){
-        xcats.splice(i, 1);
-        for (n=0; n < data.length; n++) {
-          var x = data[n][1];
-          if (x == i){ remove.push(n); }
-          else if(x > i){ data[n][1] -= 1; }
+        if(window.mqc_hide_mode == 'show'){
+          match = !match;
         }
-        xhidden += 1;
+        // modify data if "i" is match for "hiding":
+        // mark elements from "i"-th column (x) for removal,
+        // shift "x" of elements from "i+" columns to the left
+        if(match){
+          xcats.splice(i, 1);
+          for (n=0; n < data.length; n++) {
+            // data[n] element is [x,y,val], get "x"
+            let x = data[n][0];
+            if (x == i){ remove.push(n); }
+            else if(x > i){ data[n][0]  = x - 1; }
+          }
+          xhidden += 1;
+        }
       }
     }
-    var i = ycats.length;
-    var yhidden = 0;
-    while (i--) {
-      var match = false;
-      for (j = 0; j < window.mqc_hide_f_texts.length; j++) {
-        var f_text = window.mqc_hide_f_texts[j];
-        if(window.mqc_hide_regex_mode){
-          if(ycats[i].match(f_text)){ match = true; }
-        } else {
-          if(ycats[i].indexOf(f_text) > -1){ match = true; }
+    if(config['ycats_samples']){
+      var i = ycats.length;
+      var yhidden = 0;
+      // iterate over y-categories (rows)
+      while (i--) {
+        var match = false;
+        for (j = 0; j < window.mqc_hide_f_texts.length; j++) {
+          var f_text = window.mqc_hide_f_texts[j];
+          if(window.mqc_hide_regex_mode){
+            if(ycats[i].match(f_text)){ match = true; }
+          } else {
+            if(ycats[i].indexOf(f_text) > -1){ match = true; }
+          }
         }
-      }
-      if(window.mqc_hide_mode == 'show'){
-        match = !match;
-      }
-      if(match){
-        ycats.splice(i, 1);
-        for (n=0; n < data.length; n++) {
-          var y = data[n][0];
-          if (y == i){
-            if(remove.indexOf(n) < 0){ remove.push(n); }
-          } else if(y > i){ data[n][0] -= 1; }
+        if(window.mqc_hide_mode == 'show'){
+          match = !match;
         }
-        yhidden += 1;
+        // modify data if "i" is match for "hiding"
+        // mark elements from "i"-th row (y) for removal,
+        // shift "y" of elements from "i+" rows up
+        if(match){
+          ycats.splice(i, 1);
+          for (n=0; n < data.length; n++) {
+            // data[n] element is [x,y,val], get "y"
+            let y = data[n][1];
+            if (y == i){
+              if(remove.indexOf(n) < 0){ remove.push(n); }
+            } else if(y > i){ data[n][1] = y - 1; }
+          }
+          yhidden += 1;
+        }
       }
     }
     // Remove the data values that matched
@@ -3110,29 +3206,35 @@ function plot_heatmap(target, ds){
   if(window.mqc_highlight_f_texts.length > 0){
     $('.mqc_heatmap_sortHighlight').attr('disabled', false);
     var highlight_cells = Array();
-    for (i=0; i < xcats.length; i++) {
-      $.each(window.mqc_highlight_f_texts, function(idx, f_text){
-        if(f_text == ''){ return true; }
-        if((window.mqc_highlight_regex_mode && xcats[i].match(f_text)) || (!window.mqc_highlight_regex_mode && xcats[i].indexOf(f_text) > -1)){
-          for (n=0; n < data.length; n++) {
-            highlight_cells[idx] = ( typeof highlight_cells[idx] != 'undefined' && highlight_cells[idx] instanceof Array ) ? highlight_cells[idx] : [];
-            if (data[n][1] == i){ highlight_cells[idx].push(n); }
-          }
-        }
-      });
-    }
-    for (i=0; i < ycats.length; i++) {
-      $.each(window.mqc_highlight_f_texts, function(idx, f_text){
-        if(f_text == ''){ return true; }
-        if((window.mqc_highlight_regex_mode && ycats[i].match(f_text)) || (!window.mqc_highlight_regex_mode && ycats[i].indexOf(f_text) > -1)){
-          for (n=0; n < data.length; n++) {
-            if (data[n][0] == i){
+    if(config['ycats_samples']){
+      for (i=0; i < xcats.length; i++) {
+        $.each(window.mqc_highlight_f_texts, function(idx, f_text){
+          if(f_text == ''){ return true; }
+          if((window.mqc_highlight_regex_mode && xcats[i].match(f_text)) || (!window.mqc_highlight_regex_mode && xcats[i].indexOf(f_text) > -1)){
+            for (n=0; n < data.length; n++) {
               highlight_cells[idx] = ( typeof highlight_cells[idx] != 'undefined' && highlight_cells[idx] instanceof Array ) ? highlight_cells[idx] : [];
-              if(highlight_cells[idx].indexOf(n) < 0){ highlight_cells[idx].push(n); }
+              // data[n] element is [x,y,val], get "x"
+              if (data[n][0] == i){ highlight_cells[idx].push(n); }
             }
           }
-        }
-      });
+        });
+      }
+    }
+    if(config['ycats_samples']){
+      for (i=0; i < ycats.length; i++) {
+        $.each(window.mqc_highlight_f_texts, function(idx, f_text){
+          if(f_text == ''){ return true; }
+          if((window.mqc_highlight_regex_mode && ycats[i].match(f_text)) || (!window.mqc_highlight_regex_mode && ycats[i].indexOf(f_text) > -1)){
+            for (n=0; n < data.length; n++) {
+              // data[n] element is [x,y,val], get "y"
+              if (data[n][1] == i){
+                highlight_cells[idx] = ( typeof highlight_cells[idx] != 'undefined' && highlight_cells[idx] instanceof Array ) ? highlight_cells[idx] : [];
+                if(highlight_cells[idx].indexOf(n) < 0){ highlight_cells[idx].push(n); }
+              }
+            }
+          }
+        });
+      }
     }
     // Give highlighted cells a border
     for (var idx in highlight_cells){
@@ -3142,8 +3244,9 @@ function plot_heatmap(target, ds){
       while(h--){
         var i = hl[h];
         data[i] = {
-          x: data[i][1] === undefined ? data[i]['x'] : data[i][1],
-          y: data[i][0] === undefined ? data[i]['y'] : data[i][0],
+          // data[i] element is [x,y,val]
+          x: data[i][0] === undefined ? data[i]['x'] : data[i][0],
+          y: data[i][1] === undefined ? data[i]['y'] : data[i][1],
           value:data[i][2] === undefined ? data[i]['value'] : data[i][2],
           borderWidth:2,
           borderColor: window.mqc_highlight_f_cols[idx]
@@ -3210,14 +3313,6 @@ function plot_heatmap(target, ds){
     },
     plotOptions: {
       series: {
-        point: {
-          events: {
-            mouseOver: function() {
-              // Stop highcharts making squares blue on hover
-              this.pointAttr.hover.fill = this.color;
-            }
-          }
-        },
         states: {
           hover: {
             borderWidth: 2,
@@ -3346,7 +3441,8 @@ function highlight_fade_text(obj){
       'transition'       : 'background-color 0.5s, color 0.5s'
     });
   }, 500);
-}</script>
+}
+</script>
 <script type="text/javascript">////////////////////////////////////////////////
 // Static MatPlotLib Plots Javascript Code
 ////////////////////////////////////////////////
@@ -3416,9 +3512,9 @@ $(function () {
     if(j == 0){
       apply_mqc_renamesamples();
     } else {
-      for(i=0; i<mqc_sample_names_rename.length; i++){
-        var ft = mqc_sample_names_rename[i][0];
-        var tt = mqc_sample_names_rename[i][j];
+      for(i=0; i<mqc_config['sample_names_rename'].length; i++){
+        var ft = mqc_config['sample_names_rename'][i][0];
+        var tt = mqc_config['sample_names_rename'][i][j];
         $('#mqc_renamesamples_filters').append('<li class="mqc_sname_switches_li"> \
           <input class="f_text from_text" value="'+ft+'" /><small class="glyphicon glyphicon-chevron-right"></small><input class="f_text to_text" value="'+tt+'" /> \
           <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
@@ -3426,6 +3522,37 @@ $(function () {
       }
       apply_mqc_renamesamples();
     }
+  });
+
+  // Show/hide buttons
+  $('.mqc_hide_switches').click(function(e){
+    e.preventDefault();
+    if($(this).hasClass('active')){
+      return false;
+    }
+    $('#mqc_hide_switches button').removeClass('active');
+    $(this).addClass('active');
+
+    // Clear previous show/hide group
+    $('#mqc_hidesamples_filters').empty();
+
+    // Get requested pattern and whether to show or hide the pattern
+    var j = $(this).data('index');
+    var pattern = mqc_config['show_hide_patterns'][j];
+    var show_hide_mode = mqc_config['show_hide_mode'][j];
+    if(!Array.isArray(pattern)){
+      pattern = [pattern];
+    }
+    if(show_hide_mode === undefined){
+      show_hide_mode = 'show';
+    }
+
+    // Apply the changes
+    $('.mqc_hidesamples_showhide[value='+show_hide_mode+']').prop('checked', true);
+    $(pattern).each(function(idx, val){
+      $('#mqc_hidesamples_filters').append('<li><input class="f_text" value="'+val+'" /><button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>');
+    });
+    apply_mqc_hidesamples(show_hide_mode);
   });
 
   // Hide toolbox when clicking outside
@@ -3448,7 +3575,7 @@ $(function () {
   $(document).on('mqc_config_loaded', function(e){
     $('.hc-plot').each(function(){
       var target = $(this).attr('id');
-      plot_graph(target, undefined, num_datasets_plot_limit);
+      plot_graph(target, undefined, mqc_config['num_datasets_plot_limit']);
     });
   });
 
@@ -4047,9 +4174,11 @@ function apply_mqc_renamesamples () {
 //////////////////////////////////////////////////////
 // HIDE SAMPLES
 //////////////////////////////////////////////////////
-function apply_mqc_hidesamples(){
+function apply_mqc_hidesamples(mode){
   // Collect the filters into an array
-  var mode = $('.mqc_hidesamples_showhide:checked').val() == 'show' ? 'show' : 'hide';
+  if (mode === undefined) {
+    mode = $('.mqc_hidesamples_showhide:checked').val() == 'show' ? 'show' : 'hide';
+  }
   var regex_mode = $('#mqc_hidesamples .mqc_regex_mode .re_mode').hasClass('on');
   var f_texts = [];
   var num_errors = 0;
@@ -4322,11 +4451,7 @@ function load_mqc_config(name){
 
 }
 </script>
-<script type="text/javascript">
-mqc_config = {}
-mqc_config['decimalPoint_format'] = '.'; 
-mqc_config['thousandsSep_format'] = ' '; 
-</script>
+
 
 </head>
 <body>
@@ -4345,7 +4470,7 @@ mqc_config['thousandsSep_format'] = ' ';
       <a href="#">
         <img src="data:image/png;base64,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" title="MultiQC">
         <br class="hidden-xs">
-        <small class="hidden-xs">v1.6</small>
+        <small class="hidden-xs">v1.9</small>
       </a>
     </h1>
     
@@ -4609,7 +4734,7 @@ mqc_config['thousandsSep_format'] = ' ';
     <!-- Help / About -->
     <div id="mqc_about" class="mqc_filter_section">
       <h4>About MultiQC</h4>
-      <p>This report was generated using MultiQC, version 1.6</p>
+      <p>This report was generated using MultiQC, version 1.9</p>
       <p>You can see a YouTube video describing how to use MultiQC reports here:
         <a href="https://youtu.be/qPbIlO_KWN0?list=PLIA2-lqNuhvFGAsB92N0v7Qi5xCxCNsYM" target="_blank">https://youtu.be/qPbIlO_KWN0</a></p>
       <p>For more information about MultiQC, including other videos and
@@ -4664,11 +4789,31 @@ mqc_config['thousandsSep_format'] = ' ';
 
 <div class="alert alert-warning mqc_loading_warning" style="display:none;"><span class="glyphicon glyphicon-time"></span> &nbsp;Loading report..</div>
 
+
 <div id="analysis_dirs_wrapper">
-  <p>Report generated on 2020-08-26, 17:12 based on data in:
-  <code class="mqc_analysis_path">/mnt/c/Users/james/Documents/Davos/Data/Processed/2019-06-18_PCa-LowC-sequencing/Reports</code>
+  <p>Report
+  
+    generated on 2021-01-15, 16:26
+  
+  
+    based on data in:
+    
+      <code class="mqc_analysis_path">C:\Users\james\Documents\Davos\Data\Processed\2019-06-18_PCa-LowC-sequencing\Reports</code></p>
+    
   
 </div>
+
+
+
+<p id="mqc_sname_switches_txt">Change sample names:
+  <span class="btn-group btn-group-sm" role="group" id="mqc_sname_switches">
+    
+      <button type="button" class="btn btn-primary mqc_sname_switches active" data-index="0">MultiQC Names</button>
+      <button type="button" class="btn btn-primary mqc_sname_switches " data-index="1">CPCGENE IDs</button>
+  </span>
+</p>
+
+
 
 
 
@@ -4707,12 +4852,12 @@ mqc_config['thousandsSep_format'] = ' ';
                 <span class="glyphicon glyphicon glyphicon-stats"></span> Plot
             </button>
             
-        <small id="general_stats_table_numrows_text" class="mqc_table_numrows_text">Showing <sup id="general_stats_table_numrows" class="mqc_table_numrows">18</sup>/<sub>18</sub> rows and <sup id="general_stats_table_numcols" class="mqc_table_numcols">7</sup>/<sub>7</sub> columns.</small>
+        <small id="general_stats_table_numrows_text" class="mqc_table_numrows_text">Showing <sup id="general_stats_table_numrows" class="mqc_table_numrows">17</sup>/<sub>17</sub> rows and <sup id="general_stats_table_numcols" class="mqc_table_numcols">7</sup>/<sub>7</sub> columns.</small>
         
         <div id="general_stats_table_container" class="mqc_table_container">
             <div class="table-responsive mqc-table-responsive mqc-table-collapse">
                 <table id="general_stats_table" class="table table-condensed mqc_table" data-title="General Statistics">
-        <thead><tr><th class="rowheader">Sample Name</th><th id="header_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP" class="mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percentage Di-Tags Passed Through HiCUP">% Passed</span></th><th id="header_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques" class="mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques " data-dmax="1025.1427899999999" data-dmin="0.0" data-namespace="HiCUP"  data-shared-key=read_count><span class="mqc_table_tooltip" title="HiCUP: Unique Di-Tags (millions)">M Unique</span></th><th id="header_mqc-generalstats-hicup-Percentage_Uniques" class="mqc-generalstats-hicup-Percentage_Uniques " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percent Duplicate Di-Tags">% Duplicates</span></th><th id="header_mqc-generalstats-hicup-Valid_Pairs" class="mqc-generalstats-hicup-Valid_Pairs " data-dmax="1025.1427899999999" data-dmin="0.0" data-namespace="HiCUP"  data-shared-key=read_count><span class="mqc_table_tooltip" title="HiCUP: Valid Pairs (millions)">M Valid</span></th><th id="header_mqc-generalstats-hicup-Percentage_Valid" class="mqc-generalstats-hicup-Percentage_Valid " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percent Valid Pairs">% Valid</span></th><th id="header_mqc-generalstats-hicup-Paired_Read_1" class="mqc-generalstats-hicup-Paired_Read_1 " data-dmax="1025.1427899999999" data-dmin="0.0" data-namespace="HiCUP"  data-shared-key=read_count><span class="mqc_table_tooltip" title="HiCUP: Paired Alignments (millions)">M Pairs Aligned</span></th><th id="header_mqc-generalstats-hicup-Percentage_Mapped" class="mqc-generalstats-hicup-Percentage_Mapped " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percentage of Paired Alignments">% Aligned</span></th></tr></thead><tbody><tr><th class="rowheader" data-original-sn="Benign-Prostate-1595983">Benign-Prostate-1595983</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:55.83%; background-color:#cfead3;"></span><span class="val">55.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:38.84622365631621%; background-color:#f0dded;"></span><span class="val">398.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:16.519999999999996%; background-color:#b6d4c4;"></span><span class="val">16.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:46.53202701645105%; background-color:#f4d5e9;"></span><span class="val">477.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.81%; background-color:#b3c8bf;"></span><span class="val">98.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:47.096560372823774%; background-color:#f4d4e9;"></span><span class="val">482.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:67.69%; background-color:#c2e1cb;"></span><span class="val">67.7%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-1648133">Benign-Prostate-1648133</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:57.86%; background-color:#cce9d2;"></span><span class="val">57.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:38.79504815129218%; background-color:#efdded;"></span><span class="val">397.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:15.719999999999997%; background-color:#b5d4c4;"></span><span class="val">15.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:46.03087058730619%; background-color:#f3d5e9;"></span><span class="val">471.9</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:99.14%; background-color:#b3c8bf;"></span><span class="val">99.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:46.43181190397876%; background-color:#f4d5e9;"></span><span class="val">476.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:69.25%; background-color:#c1dfca;"></span><span class="val">69.2%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-1664855">Benign-Prostate-1664855</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.620000000000005%; background-color:#d2ecd4;"></span><span class="val">53.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:30.52259139431689%; background-color:#f1e5f1;"></span><span class="val">312.9</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:20.819999999999993%; background-color:#b9d7c5;"></span><span class="val">20.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:38.55014363413706%; background-color:#efdeee;"></span><span class="val">395.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:99.22%; background-color:#b3c8bf;"></span><span class="val">99.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:38.85395155537309%; background-color:#f0dded;"></span><span class="val">398.3</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:68.25%; background-color:#c2e0cb;"></span><span class="val">68.2%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-3320942">Benign-Prostate-3320942</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.82%; background-color:#d1ebd4;"></span><span class="val">53.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:37.95168953975671%; background-color:#efdeee;"></span><span class="val">389.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:18.959999999999994%; background-color:#b8d6c5;"></span><span class="val">19.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:46.83221505171977%; background-color:#f4d4e9;"></span><span class="val">480.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.43%; background-color:#b3c9c0;"></span><span class="val">97.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:48.07001276378289%; background-color:#f4d3e8;"></span><span class="val">492.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:68.17%; background-color:#c2e0cb;"></span><span class="val">68.2%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-3330581">Benign-Prostate-3330581</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.839999999999996%; background-color:#d1ebd4;"></span><span class="val">53.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:32.779327746137696%; background-color:#f0e3f0;"></span><span class="val">336.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:20.129999999999995%; background-color:#b9d7c5;"></span><span class="val">20.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:41.04193368028273%; background-color:#f1dbec;"></span><span class="val">420.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.88%; background-color:#b3c9c0;"></span><span class="val">97.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:41.93171899497045%; background-color:#f1daec;"></span><span class="val">429.9</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:68.88%; background-color:#c1e0ca;"></span><span class="val">68.9%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a13266">a13266</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.42%; background-color:#d2ecd5;"></span><span class="val">53.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:72.40342937982328%; background-color:#f2b9d0;"></span><span class="val">742.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:13.370000000000005%; background-color:#b3d2c3;"></span><span class="val">13.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:83.57343165823758%; background-color:#e5b4c8;"></span><span class="val">856.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.08%; background-color:#b3cac0;"></span><span class="val">97.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:86.09039731918712%; background-color:#e2b3c7;"></span><span class="val">882.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:63.51%; background-color:#c5e5ce;"></span><span class="val">63.5%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a13848">a13848</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.66%; background-color:#ceead2;"></span><span class="val">56.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:44.26311265379919%; background-color:#f2d7ea;"></span><span class="val">453.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:10.579999999999998%; background-color:#b3d0c2;"></span><span class="val">10.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:49.49775386900004%; background-color:#f5d1e8;"></span><span class="val">507.4</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:95.86%; background-color:#b3cbc0;"></span><span class="val">95.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:51.636962300637165%; background-color:#f6cee6;"></span><span class="val">529.4</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.1%; background-color:#c3e2cc;"></span><span class="val">66.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a14121">a14121</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:54.620000000000005%; background-color:#d0ebd4;"></span><span class="val">54.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:68.55386828599751%; background-color:#f4bbd4;"></span><span class="val">702.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.299999999999995%; background-color:#b4d3c4;"></span><span class="val">14.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:79.99732603104005%; background-color:#eab6ca;"></span><span class="val">820.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.53%; background-color:#b3c8bf;"></span><span class="val">98.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:81.192595228612%; background-color:#e8b5c9;"></span><span class="val">832.3</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:64.68%; background-color:#c4e4cd;"></span><span class="val">64.7%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a19121">a19121</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.53%; background-color:#ceead2;"></span><span class="val">56.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:53.798637748795954%; background-color:#f6cbe4;"></span><span class="val">551.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:11.980000000000004%; background-color:#b3d1c3;"></span><span class="val">12.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:61.12324410924258%; background-color:#f8c1dd;"></span><span class="val">626.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.61%; background-color:#b3c8bf;"></span><span class="val">98.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:61.987872148035116%; background-color:#f8c0dc;"></span><span class="val">635.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:65.14%; background-color:#c4e3cd;"></span><span class="val">65.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a3023">a3023</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:57.25%; background-color:#cde9d2;"></span><span class="val">57.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:50.83675484856115%; background-color:#f6d0e7;"></span><span class="val">521.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:11.780000000000001%; background-color:#b3d1c3;"></span><span class="val">11.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:57.622258748949506%; background-color:#f7c6e0;"></span><span class="val">590.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.19%; background-color:#b3c9bf;"></span><span class="val">98.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:58.68158981052777%; background-color:#f7c4df;"></span><span class="val">601.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.09%; background-color:#c3e2cc;"></span><span class="val">66.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a33173">a33173</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:57.38999999999999%; background-color:#cde9d2;"></span><span class="val">57.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:67.47880556229634%; background-color:#f5bcd6;"></span><span class="val">691.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:12.840000000000003%; background-color:#b3d2c3;"></span><span class="val">12.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:77.4192608816963%; background-color:#edb7cb;"></span><span class="val">793.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.73%; background-color:#b3c8bf;"></span><span class="val">98.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:78.41243920761518%; background-color:#ecb6cb;"></span><span class="val">803.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.69%; background-color:#c3e2cc;"></span><span class="val">66.7%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a40507">a40507</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:43.05%; background-color:#dff2da;"></span><span class="val">43.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:49.49901437632898%; background-color:#f5d1e8;"></span><span class="val">507.4</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.489999999999995%; background-color:#b4d3c4;"></span><span class="val">14.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:57.88999793872619%; background-color:#f7c5e0;"></span><span class="val">593.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:82.42%; background-color:#b7d5c4;"></span><span class="val">82.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:70.23475217535305%; background-color:#f3bbd2;"></span><span class="val">720.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:61.08%; background-color:#c8e7cf;"></span><span class="val">61.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a51852">a51852</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:52.39%; background-color:#d3ecd5;"></span><span class="val">52.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:76.34272450962662%; background-color:#efb7cc;"></span><span class="val">782.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:13.159999999999997%; background-color:#b3d2c3;"></span><span class="val">13.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:87.90823520301987%; background-color:#e0b3c6;"></span><span class="val">901.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:94.06%; background-color:#b3ccc1;"></span><span class="val">94.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:93.46355974468689%; background-color:#d9b3c1;"></span><span class="val">958.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:64.14%; background-color:#c5e4cd;"></span><span class="val">64.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a53687">a53687</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:47.06%; background-color:#daf0d8;"></span><span class="val">47.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:49.83138446498756%; background-color:#f5d1e7;"></span><span class="val">510.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:12.319999999999993%; background-color:#b3d2c3;"></span><span class="val">12.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:56.83028458894005%; background-color:#f7c7e1;"></span><span class="val">582.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:82.73%; background-color:#b7d5c4;"></span><span class="val">82.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:68.6955187969473%; background-color:#f4bbd4;"></span><span class="val">704.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:64.88%; background-color:#c4e4cd;"></span><span class="val">64.9%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a56413">a56413</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.32%; background-color:#ceead3;"></span><span class="val">56.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:54.49384851060602%; background-color:#f6cae3;"></span><span class="val">558.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.069999999999993%; background-color:#b4d3c3;"></span><span class="val">14.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:63.41675836202292%; background-color:#f7bedb;"></span><span class="val">650.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.7%; background-color:#b3c8bf;"></span><span class="val">98.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:64.24916571866052%; background-color:#f7beda;"></span><span class="val">658.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.4%; background-color:#c3e2cc;"></span><span class="val">66.4%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a57054">a57054</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.90999999999999%; background-color:#d1ebd4;"></span><span class="val">53.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:79.94715799542423%; background-color:#eab6ca;"></span><span class="val">819.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:17.61%; background-color:#b7d5c4;"></span><span class="val">17.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:97.03102042984668%; background-color:#d5b3be;"></span><span class="val">994.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.03%; background-color:#b3cac0;"></span><span class="val">97.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:100.0%; background-color:#d1b3bc;"></span><span class="val">1 025.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:67.43%; background-color:#c2e1cb;"></span><span class="val">67.4%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a57294">a57294</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:55.39000000000001%; background-color:#cfead3;"></span><span class="val">55.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:64.90163872683532%; background-color:#f6bdd9;"></span><span class="val">665.3</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.989999999999995%; background-color:#b5d3c4;"></span><span class="val">15.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:76.34221131282601%; background-color:#efb7cc;"></span><span class="val">782.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.55%; background-color:#b3c8bf;"></span><span class="val">98.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:77.4646323172209%; background-color:#edb7cb;"></span><span class="val">794.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.11%; background-color:#c3e2cc;"></span><span class="val">66.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="a58215">a58215</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.34%; background-color:#ceead3;"></span><span class="val">56.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:54.190398685826004%; background-color:#f6cbe3;"></span><span class="val">555.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:12.870000000000005%; background-color:#b3d2c3;"></span><span class="val">12.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:62.19808354697594%; background-color:#f8bfdc;"></span><span class="val">637.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.21%; background-color:#b3c9bf;"></span><span class="val">98.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:63.33218789940474%; background-color:#f7bedb;"></span><span class="val">649.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:65.85%; background-color:#c4e3cc;"></span><span class="val">65.8%</span></div></td></tr></tbody></table></div><div class="mqc-table-expand"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></div></div>
+        <thead><tr><th class="rowheader">Sample Name</th><th id="header_mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP" class="mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percentage Di-Tags Passed Through HiCUP">% Passed</span></th><th id="header_mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques" class="mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques " data-dmax="958.1349439999999" data-dmin="0.0" data-namespace="HiCUP"  data-shared-key=read_count><span class="mqc_table_tooltip" title="HiCUP: Unique Di-Tags (millions)">M Unique</span></th><th id="header_mqc-generalstats-hicup-Percentage_Uniques" class="mqc-generalstats-hicup-Percentage_Uniques " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percent Duplicate Di-Tags">% Duplicates</span></th><th id="header_mqc-generalstats-hicup-Valid_Pairs" class="mqc-generalstats-hicup-Valid_Pairs " data-dmax="958.1349439999999" data-dmin="0.0" data-namespace="HiCUP"  data-shared-key=read_count><span class="mqc_table_tooltip" title="HiCUP: Valid Pairs (millions)">M Valid</span></th><th id="header_mqc-generalstats-hicup-Percentage_Valid" class="mqc-generalstats-hicup-Percentage_Valid " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percent Valid Pairs">% Valid</span></th><th id="header_mqc-generalstats-hicup-Paired_Read_1" class="mqc-generalstats-hicup-Paired_Read_1 " data-dmax="958.1349439999999" data-dmin="0.0" data-namespace="HiCUP"  data-shared-key=read_count><span class="mqc_table_tooltip" title="HiCUP: Paired Alignments (millions)">M Pairs Aligned</span></th><th id="header_mqc-generalstats-hicup-Percentage_Mapped" class="mqc-generalstats-hicup-Percentage_Mapped " data-dmax="100.0" data-dmin="0.0" data-namespace="HiCUP" ><span class="mqc_table_tooltip" title="HiCUP: Percentage of Paired Alignments">% Aligned</span></th></tr></thead><tbody><tr><th class="rowheader" data-original-sn="Benign-Prostate-1595983">Benign-Prostate-1595983</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:55.83%; background-color:#cfead3;"></span><span class="val">55.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:41.562961824300196%; background-color:#f1daec;"></span><span class="val">398.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:16.519999999999996%; background-color:#b6d4c4;"></span><span class="val">16.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:49.78627728663657%; background-color:#f5d1e7;"></span><span class="val">477.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.81%; background-color:#b3c8bf;"></span><span class="val">98.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:50.39029168317235%; background-color:#f5d0e7;"></span><span class="val">482.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:67.69%; background-color:#c2e1cb;"></span><span class="val">67.7%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-1648133">Benign-Prostate-1648133</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:57.86%; background-color:#cce9d2;"></span><span class="val">57.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:41.50820732408232%; background-color:#f1daec;"></span><span class="val">397.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:15.719999999999997%; background-color:#b5d4c4;"></span><span class="val">15.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:49.250072127627156%; background-color:#f5d2e8;"></span><span class="val">471.9</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:99.14%; background-color:#b3c8bf;"></span><span class="val">99.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:49.67905355928654%; background-color:#f5d1e7;"></span><span class="val">476.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:69.25%; background-color:#c1dfca;"></span><span class="val">69.2%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-1664855">Benign-Prostate-1664855</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.620000000000005%; background-color:#d2ecd4;"></span><span class="val">53.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:32.65721044404368%; background-color:#f0e3f0;"></span><span class="val">312.9</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:20.819999999999993%; background-color:#b9d7c5;"></span><span class="val">20.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:41.246175236042745%; background-color:#f1dbec;"></span><span class="val">395.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:99.22%; background-color:#b3c8bf;"></span><span class="val">99.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:41.57123017945163%; background-color:#f1daec;"></span><span class="val">398.3</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:68.25%; background-color:#c2e0cb;"></span><span class="val">68.2%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-3320942">Benign-Prostate-3320942</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.82%; background-color:#d1ebd4;"></span><span class="val">53.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:40.60586783065915%; background-color:#f0dbec;"></span><span class="val">389.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:18.959999999999994%; background-color:#b8d6c5;"></span><span class="val">19.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:50.10745918478891%; background-color:#f5d1e7;"></span><span class="val">480.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.43%; background-color:#b3c9c0;"></span><span class="val">97.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:51.431823156634614%; background-color:#f6cfe6;"></span><span class="val">492.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:68.17%; background-color:#c2e0cb;"></span><span class="val">68.2%</span></div></td></tr><tr><th class="rowheader" data-original-sn="Benign-Prostate-3330581">Benign-Prostate-3330581</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.839999999999996%; background-color:#d1ebd4;"></span><span class="val">53.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:35.071773251179955%; background-color:#efe1ef;"></span><span class="val">336.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:20.129999999999995%; background-color:#b9d7c5;"></span><span class="val">20.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:43.91223038411592%; background-color:#f2d8eb;"></span><span class="val">420.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.88%; background-color:#b3c9c0;"></span><span class="val">97.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:44.86424346506247%; background-color:#f3d7ea;"></span><span class="val">429.9</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:68.88%; background-color:#c1e0ca;"></span><span class="val">68.9%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa13266">PCa13266</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:53.42%; background-color:#d2ecd5;"></span><span class="val">53.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:77.46701450020385%; background-color:#edb7cb;"></span><span class="val">742.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:13.370000000000005%; background-color:#b3d2c3;"></span><span class="val">13.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:89.41819880018905%; background-color:#deb3c5;"></span><span class="val">856.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:97.08%; background-color:#b3cac0;"></span><span class="val">97.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:92.11119023752046%; background-color:#dbb3c3;"></span><span class="val">882.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:63.51%; background-color:#c5e5ce;"></span><span class="val">63.5%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa13848">PCa13848</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.66%; background-color:#ceead2;"></span><span class="val">56.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:47.35868479085552%; background-color:#f4d4e9;"></span><span class="val">453.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:10.579999999999998%; background-color:#b3d0c2;"></span><span class="val">10.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:52.95941434738028%; background-color:#f6cde5;"></span><span class="val">507.4</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:95.86%; background-color:#b3cbc0;"></span><span class="val">95.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:55.248229835984354%; background-color:#f6c9e3;"></span><span class="val">529.4</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.1%; background-color:#c3e2cc;"></span><span class="val">66.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa14121">PCa14121</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:54.620000000000005%; background-color:#d0ebd4;"></span><span class="val">54.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:73.34823162445895%; background-color:#f1b9ce;"></span><span class="val">702.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.299999999999995%; background-color:#b4d3c4;"></span><span class="val">14.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:85.59199569283219%; background-color:#e3b3c7;"></span><span class="val">820.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.53%; background-color:#b3c8bf;"></span><span class="val">98.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:86.8708568884009%; background-color:#e1b3c7;"></span><span class="val">832.3</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:64.68%; background-color:#c4e4cd;"></span><span class="val">64.7%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa19121">PCa19121</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.53%; background-color:#ceead2;"></span><span class="val">56.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:57.56108358782497%; background-color:#f7c6e0;"></span><span class="val">551.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:11.980000000000004%; background-color:#b3d1c3;"></span><span class="val">12.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:65.39794148244738%; background-color:#f6bdd8;"></span><span class="val">626.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.61%; background-color:#b3c8bf;"></span><span class="val">98.6%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:66.32303789558897%; background-color:#f6bdd7;"></span><span class="val">635.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:65.14%; background-color:#c4e3cd;"></span><span class="val">65.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa3023">PCa3023</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:57.25%; background-color:#cde9d2;"></span><span class="val">57.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:54.3920593089234%; background-color:#f6cae3;"></span><span class="val">521.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:11.780000000000001%; background-color:#b3d1c3;"></span><span class="val">11.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:61.652112231072124%; background-color:#f8c0dd;"></span><span class="val">590.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.19%; background-color:#b3c9bf;"></span><span class="val">98.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:62.785528360815114%; background-color:#f8bfdc;"></span><span class="val">601.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.09%; background-color:#c3e2cc;"></span><span class="val">66.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa33173">PCa33173</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:57.38999999999999%; background-color:#cde9d2;"></span><span class="val">57.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:72.19798362765903%; background-color:#f2b9d0;"></span><span class="val">691.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:12.840000000000003%; background-color:#b3d2c3;"></span><span class="val">12.8%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:82.83363173110614%; background-color:#e6b5c9;"></span><span class="val">793.7</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.73%; background-color:#b3c8bf;"></span><span class="val">98.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:83.89626868676237%; background-color:#e5b4c8;"></span><span class="val">803.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.69%; background-color:#c3e2cc;"></span><span class="val">66.7%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa40507">PCa40507</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:43.05%; background-color:#dff2da;"></span><span class="val">43.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:52.960763009182145%; background-color:#f6cde5;"></span><span class="val">507.4</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.489999999999995%; background-color:#b4d3c4;"></span><span class="val">14.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:61.938575950737906%; background-color:#f8c0dc;"></span><span class="val">593.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:82.42%; background-color:#b7d5c4;"></span><span class="val">82.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:75.14666931926449%; background-color:#f0b8cc;"></span><span class="val">720.0</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:61.08%; background-color:#c8e7cf;"></span><span class="val">61.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa51852">PCa51852</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:52.39%; background-color:#d3ecd5;"></span><span class="val">52.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:81.68180702529519%; background-color:#e8b5c9;"></span><span class="val">782.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:13.159999999999997%; background-color:#b3d2c3;"></span><span class="val">13.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:94.05615990141783%; background-color:#d8b3c1;"></span><span class="val">901.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:94.06%; background-color:#b3ccc1;"></span><span class="val">94.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:100.0%; background-color:#d1b3bc;"></span><span class="val">958.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:64.14%; background-color:#c5e4cd;"></span><span class="val">64.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa53687">PCa53687</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:47.06%; background-color:#daf0d8;"></span><span class="val">47.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:53.31637763542418%; background-color:#f6cce4;"></span><span class="val">510.8</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:12.319999999999993%; background-color:#b3d2c3;"></span><span class="val">12.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:60.80475079719042%; background-color:#f7c1dd;"></span><span class="val">582.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:82.73%; background-color:#b7d5c4;"></span><span class="val">82.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:73.49978856422963%; background-color:#f1b9ce;"></span><span class="val">704.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:64.88%; background-color:#c4e4cd;"></span><span class="val">64.9%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa56413">PCa56413</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.32%; background-color:#ceead3;"></span><span class="val">56.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:58.30491440671223%; background-color:#f7c5e0;"></span><span class="val">558.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.069999999999993%; background-color:#b4d3c3;"></span><span class="val">14.1%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:67.85185427909829%; background-color:#f5bcd5;"></span><span class="val">650.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.7%; background-color:#b3c8bf;"></span><span class="val">98.7%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:68.74247663385503%; background-color:#f4bbd4;"></span><span class="val">658.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.4%; background-color:#c3e2cc;"></span><span class="val">66.4%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa57294">PCa57294</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:55.39000000000001%; background-color:#cfead3;"></span><span class="val">55.4%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:69.44058080403339%; background-color:#f4bbd3;"></span><span class="val">665.3</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:14.989999999999995%; background-color:#b5d3c4;"></span><span class="val">15.0%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:81.68125793771279%; background-color:#e8b5c9;"></span><span class="val">782.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.55%; background-color:#b3c8bf;"></span><span class="val">98.5%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:82.88217625011285%; background-color:#e6b4c9;"></span><span class="val">794.1</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:66.11%; background-color:#c3e2cc;"></span><span class="val">66.1%</span></div></td></tr><tr><th class="rowheader" data-original-sn="PCa58215">PCa58215</th><td class="data-coloured mqc-generalstats-hicup-Percentage_Ditags_Passed_Through_HiCUP "><div class="wrapper"><span class="bar" style="width:56.34%; background-color:#ceead3;"></span><span class="val">56.3%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Deduplication_Read_Pairs_Uniques "><div class="wrapper"><span class="bar" style="width:57.98024260348864%; background-color:#f7c5e0;"></span><span class="val">555.5</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Uniques "><div class="wrapper"><span class="bar" style="width:12.870000000000005%; background-color:#b3d2c3;"></span><span class="val">12.9%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Valid_Pairs "><div class="wrapper"><span class="bar" style="width:66.54795057761717%; background-color:#f5bdd7;"></span><span class="val">637.6</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Valid "><div class="wrapper"><span class="bar" style="width:98.21%; background-color:#b3c9bf;"></span><span class="val">98.2%</span></div></td><td class="data-coloured mqc-generalstats-hicup-Paired_Read_1 "><div class="wrapper"><span class="bar" style="width:67.76136932127173%; background-color:#f5bcd5;"></span><span class="val">649.2</span></div></td><td class="data-coloured mqc-generalstats-hicup-Percentage_Mapped "><div class="wrapper"><span class="bar" style="width:65.85%; background-color:#c4e3cc;"></span><span class="val">65.8%</span></div></td></tr></tbody></table></div><div class="mqc-table-expand"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></div></div>
     <!-- MultiQC Table Columns Modal -->
     <div class="modal fade" id="general_stats_table_configModal" tabindex="-1">
       <div class="modal-dialog modal-lg">
@@ -4943,7 +5088,7 @@ mqc_config['thousandsSep_format'] = ' ';
         <img src="data:image/png;base64,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" style="height:41px;">
     </a>
     <strong>
-        <a href="http://multiqc.info" target="_blank">MultiQC v1.6</a>
+        <a href="http://multiqc.info" target="_blank">MultiQC v1.9</a>
     </strong>
     - Written by <a href="http://phil.ewels.co.uk" target="_blank">Phil Ewels</a>,
     available on <a href="https://github.com/ewels/MultiQC" target="_blank">GitHub</a>.
