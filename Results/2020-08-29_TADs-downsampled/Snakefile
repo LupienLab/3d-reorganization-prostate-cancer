@@ -35,35 +35,35 @@ wildcard_constraints:
 # ==============================================================================
 rule all:
     input:
-        # expand(
-        #     path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
-        #     sample=SAMPLES,
-        #     count=120000000,
-        #     res=RESOLUTIONS,
-        # ),
-        # expand(
-        #     path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
-        #     sample=PRIMARY_SAMPLES,
-        #     count=300000000,
-        #     res=RESOLUTIONS,
-        # ),
-        # expand(path.join("Statistics", "tad-similarity-deltas.{count}.tsv"), count=COUNTS),
-        # expand(path.join("Statistics", "tad-similarity-supremum.{count}.tsv"), count=COUNTS),
-        # expand(
-        #     path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
-        #     sample=SAMPLES,
-        #     count=120000000,
-        #     w=list(range(3, 33)),
-        #     res=RESOLUTIONS,
-        # ),
-        # expand(
-        #     path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
-        #     sample=PRIMARY_SAMPLES,
-        #     count=300000000,
-        #     w=list(range(3, 21)),
-        #     res=RESOLUTIONS,
-        # ),
-        # expand(path.join("Statistics", "tad-distances.{count}.tsv"), count=COUNTS),
+        expand(
+            path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+            sample=SAMPLES,
+            count=120000000,
+            res=RESOLUTIONS,
+        ),
+        expand(
+            path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+            sample=PRIMARY_SAMPLES,
+            count=300000000,
+            res=RESOLUTIONS,
+        ),
+        expand(path.join("Statistics", "tad-similarity-deltas.{count}.tsv"), count=COUNTS),
+        expand(path.join("Statistics", "tad-similarity-supremum.{count}.tsv"), count=COUNTS),
+        expand(
+            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+            sample=SAMPLES,
+            count=120000000,
+            w=list(range(3, 33)),
+            res=RESOLUTIONS,
+        ),
+        expand(
+            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+            sample=PRIMARY_SAMPLES,
+            count=300000000,
+            w=list(range(3, 21)),
+            res=RESOLUTIONS,
+        ),
+        expand(path.join("Statistics", "tad-distances.{count}.tsv"), count=COUNTS),
         expand(
             path.join("Insulation", "{sample}.{count}.insulation.tsv"),
             sample=PRIMARY_SAMPLES,
