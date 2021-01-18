@@ -10,6 +10,9 @@
 # ==============================================================================
 # Environment
 # ==============================================================================
+suppressMessages(library("logging"))
+
+loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("argparse"))
@@ -62,7 +65,7 @@ savefig <- function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, 
 # ==============================================================================
 # Data
 # ==============================================================================
-cat("Loading data\n")
+loginfo("Loading data")
 # load metadata
 metadata <- fread("config.tsv", sep = "\t", header = TRUE)
 metadata <- metadata[Include == "Yes"]
@@ -73,7 +76,7 @@ LINE_SAMPLES <- metadata[grepl(ARGS$cell, Label), SampleID]
 
 # load CTCF distances
 ctcf_pairs <- fread(
-    file.path("..", "2020-01-15_TAD-aggregation", "CTCF", paste0("TAD-boundary.", ARGS$cell, "-CTCF-peaks.distances.tsv")),
+    file.path("CTCF", "Distances", paste0(ARGS$cell, "-CTCF-peaks.distances.tsv")),
     sep = "\t",
     header = TRUE
 )
@@ -83,7 +86,8 @@ ctcf_pairs <- merge(ctcf_pairs, metadata[, .(SampleID, Source, Type)])
 # ==============================================================================
 # Analysis
 # ==============================================================================
-cat("Calculating enrichment\n")
+loginfo("Calculating enrichment")
+
 # calculate frequency at boundary (bin distance from boundary)
 ctcf_fc <- ctcf_pairs[Bin_Mid == 0, .(Peak = Freq), keyby = c("SampleID", "Source")]
 
@@ -103,57 +107,71 @@ fwrite(
 # ==============================================================================
 # Plots
 # ==============================================================================
-cat("Plotting\n")
+loginfo("Plotting")
 # CTCF binding site proximity to boundaries
 gg_bounds_ctcf <- (
     ggplot(data = ctcf_pairs[SampleID %in% c(TUMOUR_SAMPLES, BENIGN_SAMPLES, LINE_SAMPLES)])
-    + geom_path(aes(
-        x = Bin_Mid / 1e3,
-        y = Freq,
-        colour = paste(Source, Type, sep="_"),
-        group = SampleID
-    ))
-    + scale_x_continuous(
-        name = "Distance from TAD boundary (kbp)",
-        breaks = seq(-150, 150, 50),
-        labels = seq(-150, 150, 50),
-    )
-    + scale_y_continuous(
-        name = paste0("Mean CTCF Peaks / 5 kbp\n(", ARGS$cell, ")"),
-        limits = c(0, 0.03)
-    )
-    + scale_colour_manual(
-        limits = c("Primary_Malignant", "Primary_Benign", "Cell Line_Malignant"),
-        labels = c("Primary Tumour", "Primary Benign", "Cell Line"),
-        values = c("#1F77B4", "#AEC7E8", "#FF7F0D"),
-        name = "Source"
-    )
-    + coord_cartesian(xlim = c(-150, 150))
-    + theme_minimal()
-    + theme(
-        legend.position = "bottom"
-    )
+    +
+        geom_path(aes(
+            x = Bin_Mid / 1e3,
+            y = Freq,
+            colour = paste(Source, Type, sep = "_"),
+            group = SampleID
+        ))
+        +
+        scale_x_continuous(
+            name = "Distance from TAD boundary (kbp)",
+            breaks = seq(-150, 150, 50),
+            labels = seq(-150, 150, 50),
+        )
+        +
+        scale_y_continuous(
+            name = paste0("Mean CTCF Peaks / 5 kbp\n(", ARGS$cell, ")"),
+            limits = c(0, 0.03)
+        )
+        +
+        scale_colour_manual(
+            limits = c("Primary_Malignant", "Primary_Benign", "Cell Line_Malignant"),
+            labels = c("Primary Tumour", "Primary Benign", "Cell Line"),
+            values = c("#1F77B4", "#AEC7E8", "#FF7F0D"),
+            name = "Source"
+        )
+        +
+        coord_cartesian(xlim = c(-150, 150))
+        +
+        theme_minimal()
+        +
+        theme(
+            legend.position = "bottom"
+        )
 )
 savefig(gg_bounds_ctcf, file.path(PLOT_DIR, paste0("boundary-counts.ctcf-proximity.", ARGS$cell)))
 
 gg_bounds_ctcf_fc <- (
     ggplot(data = ctcf_fc[SampleID %in% TUMOUR_SAMPLES | grepl("SRR", SampleID)])
-    + geom_col(aes(x = SampleID, y = Fold, fill = SampleID))
-    + labs(x = NULL, y = "Fold change (peak vs background)")
-    + scale_x_discrete(
-        breaks = metadata[, SampleID],
-        labels = metadata[, Label]
-    )
-    + scale_fill_manual(
-        limits = metadata[, SampleID],
-        labels = metadata[, Label],
-        values = metadata[, Type_Colour],
-        name = "Patient"
-    )
-    + guides(fill = FALSE)
-    + theme_minimal()
-    + theme(
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
-    )
+    +
+        geom_col(aes(x = SampleID, y = Fold, fill = SampleID))
+        +
+        labs(x = NULL, y = "Fold change (peak vs background)")
+        +
+        scale_x_discrete(
+            breaks = metadata[, SampleID],
+            labels = metadata[, Label]
+        )
+        +
+        scale_fill_manual(
+            limits = metadata[, SampleID],
+            labels = metadata[, Label],
+            values = metadata[, Type_Colour],
+            name = "Patient"
+        )
+        +
+        guides(fill = FALSE)
+        +
+        theme_minimal()
+        +
+        theme(
+            axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
+        )
 )
 savefig(gg_bounds_ctcf_fc, file.path(PLOT_DIR, paste0("boundary-counts.ctcf-proximity.", ARGS$cell, ".fold")))

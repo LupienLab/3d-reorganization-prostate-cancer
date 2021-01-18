@@ -1,4 +1,4 @@
-# Topologicall associated domains
+# Topologically associated domains
 
 This folder contains the hierarchical domains called by TopDom for all 17 prostate samples and other cell lines.
 
@@ -22,17 +22,17 @@ Using a contact matrix at a resolution of 40 kbp, we use a set of values for the
 The number of contacts in each cooler file is as follows:
 
 | Sample Group           | Min       | Median    | Max        |
-| ------------           | ---       | ------    | ---        |
-| Primary benign         | 310397759 | 385398277 |  394684060 |
-| Primary tumour         | 448523558 | 552585964 |  773031656 |
-| Cell line benign       | 207550760 | 220931955 |  234313150 |
-| Cell line tumour       | 124416168 | 170310595 |  302403032 |
+| ---------------------- | --------- | --------- | ---------- |
+| Primary benign         | 310397759 | 385398277 | 394684060  |
+| Primary tumour         | 448523558 | 552585964 | 773031656  |
+| Cell line benign       | 207550760 | 220931955 | 234313150  |
+| Cell line tumour       | 124416168 | 170310595 | 302403032  |
 | Cell line non-prostate | 228756741 | 422540930 | 2525323776 |
 
 The comparisons we're interested in are:
 
 | Comparison                                   | Shared min contacts (x10^6) |
-| ----------                                   | --------------------------- |
+| -------------------------------------------- | --------------------------- |
 | primary benign vs primary tumour             | 300                         |
 | primary tumour vs cell line tumour           | 120                         |
 | primary benign vs cell line benign           | 200                         |
@@ -47,7 +47,7 @@ The number of TADs and boundaries identified across the tumour and benign sample
 
 ![TAD boundary persistence similarity across primary samples](Plots/boundary-counts.by-persistence.png)
 
-But, intriguingly, the TADs show global differences in aggregate, which are based on their positioning.
+Intriguingly, the TADs show global differences in aggregate, which are based on their positioning.
 
 ![TAD similarity of primary samples](Plots/bp-score.cluster.png)
 

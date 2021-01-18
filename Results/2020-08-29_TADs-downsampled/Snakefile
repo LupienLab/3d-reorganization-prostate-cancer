@@ -19,6 +19,7 @@ PLOT_DIR = "Plots"
 # variables for controlling file generation
 SAMPLES = CONFIG.SampleID.tolist()
 PRIMARY_SAMPLES = CONFIG.loc[CONFIG.Source == "Primary", "SampleID"].tolist()
+ALL_SAMPLES = CONFIG.loc[:, "SampleID"].tolist()
 COUNTS = [120000000, 300000000]
 RESOLUTIONS = [40000]
 WINDOWS = list(range(2, 41))
@@ -74,6 +75,9 @@ rule all:
 # ==============================================================================
 # Rules
 # ==============================================================================
+
+# Miscellaneous
+# ------------------------------------------------
 rule link:
     input:
         "config.tsv",
@@ -102,6 +106,8 @@ rule dump_mat:
     shell:
         "cooler dump {params} -r {wildcards.chrom} -o {output} {input}"
 
+# TAD identification and aggregation
+# ------------------------------------------------
 rule call_chr_tads:
     input:
         script = "calc-tads.R",
@@ -141,7 +147,6 @@ rule stopping_window_primary:
         sample_ids=" ".join(PRIMARY_SAMPLES),
     shell:
         "python {input.script} -c 300000000 -r 40000 -s {params.sample_ids}"
-
 
 rule stopping_window_all:
     input:
@@ -214,6 +219,8 @@ rule separate_by_window_size_all:
         # using +0 to cast the w as an integer (there are some issues with \r and \n, depending on the system)
         "awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $4, $5, $6 > \"{AGGTAD_DIR}/separated-TADs/{wildcards.sample}.120000000.res_{wildcards.res}bp.window_\"$7+0\".domains.tsv\"}}' {input}"
 
+# BPscore and TAD similarity
+# ------------------------------------------------
 rule bpscore_primary:
     input:
         script = "calc-tad-similarity.py",
@@ -270,6 +277,85 @@ rule plot_sim_primary:
     shell:
         "Rscript {input.script}"
 
+rule plot_sim_all:
+    input:
+        script = "plot-bpscore.all.R",
+        data = path.join("Statistics", "tad-distances.120000000.tsv"),
+    output:
+        path.join(PLOT_DIR, "all", "bp-score.cluster.png"),
+        path.join(PLOT_DIR, "all", "bp-score.cluster.pdf"),
+        path.join(PLOT_DIR, "all", "bp-score.benign.png"),
+        path.join(PLOT_DIR, "all", "bp-score.benign.pdf"),
+        path.join(PLOT_DIR, "all", "bp-score.tumour.png"),
+        path.join(PLOT_DIR, "all", "bp-score.tumour.pdf"),
+        path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.png"),
+        path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.pdf"),
+        path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.stdev.png"),
+        path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.stdev.pdf"),
+    shell:
+        "Rscript {input.script}"
+
+# TAD insulation
+# ------------------------------------------------
+rule insulation:
+    input:
+        path.join(CONTACT_DIR, "{sample}.{count}.40000bp.cool"),
+    output:
+        path.join("Insulation", "{sample}.{count}.insulation.tsv"),
+    params:
+        "--window-pixels --ignore-diags 1"
+    shell:
+        "cooltools diamond-insulation {params} {input} 10 > {output}"
+
+# CTCF enrichment
+# ------------------------------------------------
+rule extend_boundaries:
+    input:
+        script = "extend-boundaries.R",
+        data = path.join("Aggregated-TADs", "{sample}.{count}.res_40000bp.agg-boundaries.tsv"),
+    output:
+        temp(path.join("CTCF", "Extended", "{sample}.{count}.res_40000bp.agg-boundaries.extended-{dist}bp.bed")),
+    wildcard_constraints:
+        dist = "\d+"
+    shell:
+        "Rscript {input.script} {input.data} -e {wildcards.dist} -o {output}"
+
+rule boundary_prostateline_ctcf_intersection:
+    input:
+        line_ctcf = path.join("../../Data/External/ENCODE_ChIP/{line}_CTCF_Conservative.canonical.sorted.bed"),
+        bounds = path.join("CTCF", "Extended", "{sample}.120000000.res_40000bp.agg-boundaries.extended-200000bp.bed"),
+    output:
+        path.join("CTCF", "Intersection", "{sample}.{line}.CTCF-peaks.bed"),
+    shell:
+        "bedtools intersect -wa -wb -a {input.bounds} -b {input.line_ctcf} > {output}"
+
+rule boundary_prostateline_ctcf_proximity:
+    input:
+        script = "boundary-ctcf-proximity.R",
+        pairs = expand(
+            path.join("CTCF", "Intersection", "{sample}.{{line}}.CTCF-peaks.bed"),
+            sample=ALL_SAMPLES,
+        ),
+    output:
+        path.join("CTCF", "Distances", "{line}.CTCF-peaks.distances.tsv"),
+    shell:
+        "Rscript {input.script} {wildcards.line}"
+
+rule ctcf_enrichment:
+    input:
+        script = "ctcf-enrichment.R",
+        data = path.join("CTCF", "Distances", "{line}.CTCF-peaks.distances.tsv"),
+    output:
+        path.join("Statistics", "tad-boundary-enrichment.{line}-CTCF.tsv"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.pdf"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.png"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.fold.pdf"),
+        path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.fold.png"),
+    shell:
+        "Rscript {input.script}"
+
+# Plots
+# ------------------------------------------------
 rule plot_tads:
     input:
         script = "plot-TADs.R",
@@ -307,14 +393,3 @@ rule plot_boundaries:
         path.join(PLOT_DIR, "boundary-counts.by-persistence.pdf"),
     shell:
         "Rscript {input.script}"
-
-rule insulation:
-    input:
-        path.join(CONTACT_DIR, "{sample}.{count}.40000bp.cool"),
-    output:
-        path.join("Insulation", "{sample}.{count}.insulation.tsv"),
-    params:
-        "--window-pixels --ignore-diags 1"
-    shell:
-        "cooltools diamond-insulation {params} {input} 10 > {output}"
-
