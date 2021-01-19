@@ -57,6 +57,12 @@ SAMPLES = {
     "benign": metadata.loc[metadata.Type == "Benign", "SampleID"].tolist(),
 }
 
+# load loop calls
+loops = pd.read_csv("Loops/merged-loops.sample-counts.tsv", sep="\t")
+tumour_loop_idx = loops[(loops.Consistent_in_benign_or_tumour == True) & (loops.Benign == 0)].index
+benign_loop_idx = loops[(loops.Consistent_in_benign_or_tumour == True) & (loops.Malignant == 0)].index
+shared_loop_idx = loops[(loops.Consistent_in_benign_or_tumour == True) & (loops.Malignant > 0) & (loops.Benign > 0)].index
+
 pileup = pickle.load(open(path.join(LOOP_DIR, "pileup.obj"), "rb"))
 conditional_stack = pickle.load(
     open(path.join(LOOP_DIR, "stack.conditional.obj"), "rb")
@@ -100,6 +106,20 @@ top_loops_idx = list(
     chain(loop_ordering[0 : (n_top_loops // 2)], loop_ordering[-(n_top_loops // 2) :],)
 )
 
+
+# calculate APA for "tumour-specific" and "benign-specific" loops
+specific_apa = {
+    "tumour": {
+        "tumour-specific": np.nanmean(conditional_stack["tumour"][tumour_loop_idx, :, :], axis=0),
+        "benign-specific": np.nanmean(conditional_stack["tumour"][benign_loop_idx, :, :], axis=0),
+        "shared": np.nanmean(conditional_stack["tumour"][shared_loop_idx, :, :], axis=0),
+    },
+    "benign": {
+        "tumour-specific": np.nanmean(conditional_stack["benign"][tumour_loop_idx, :, :], axis=0),
+        "benign-specific": np.nanmean(conditional_stack["benign"][benign_loop_idx, :, :], axis=0),
+        "shared": np.nanmean(conditional_stack["benign"][shared_loop_idx, :, :], axis=0),
+    },
+}
 
 # ==============================================================================
 # Plots
@@ -290,4 +310,38 @@ if i == nrows - 1:
 
 
 plt.savefig("Plots/apa.differential.ranked.png")
+plt.close()
+
+
+# create heatmap for benign-/tumour-specific loops
+ncols = 3 + 1
+nrows = 2
+# create grid specification
+gs = GridSpec(nrows=nrows, ncols=ncols, width_ratios=[20] * (ncols - 1) + [1],)
+# plotting options
+plt.figure(figsize=(4 * (ncols - 1), 4 * nrows))
+opts = dict(extent=[-10, 10, -10, 10], cmap="coolwarm",)  # vmin=-2, vmax=2,)
+# make component plots
+for i, sample_type in enumerate(["tumour", "benign"]):
+    for j, loop_type in enumerate(["tumour-specific", "shared", "benign-specific"]):
+        ax = plt.subplot(gs[i, j])
+        img = ax.matshow(np.log2(specific_apa[sample_type][loop_type]), **opts)
+        # add x axis labels to bottom-most subplots
+        ax.yaxis.tick_left()
+        ax.xaxis.tick_bottom()
+        if j == 0:
+            ax.set_ylabel(sample_type)
+            ax.yaxis.set_visible(True)
+        if i == nrows - 1:
+            ax.set_xlabel(loop_type)
+            ax.xaxis.set_visible(True)
+
+
+# add colourbar
+ax = plt.subplot(gs[:, ncols - 1])
+ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
+ax.yaxis.tick_right()
+plt.colorbar(img, cax=ax)
+plt.savefig("Plots/apa.specific-loops.png")
+plt.savefig("Plots/apa.specific-loops.pdf")
 plt.close()

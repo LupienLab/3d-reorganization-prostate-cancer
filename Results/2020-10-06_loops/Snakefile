@@ -49,7 +49,12 @@ rule all:
 		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
 		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
 		path.join(PLOT_DIR, "loop-saturation.All.png"),
-		# path.join(PROC_DIR, "stack.obj"),
+		path.join(PLOT_DIR, "apa.pileup.samples.png"),
+		path.join(PLOT_DIR, "apa.pileup.conditional.png"),
+		path.join(PLOT_DIR, "apa.differential.png"),
+		path.join(PLOT_DIR, "apa.differential.ranked.png"),
+		path.join(PLOT_DIR, "apa.specific-loops.png"),
+		path.join(PLOT_DIR, "apa.specific-loops.pdf"),
 
 
 # ==============================================================================
@@ -155,18 +160,11 @@ rule plot_apa:
 			loop_type=["shared", "benign", "tumour"],
 		),
 	output:
-		path.join(PLOT_DIR, "apa.png"),
-	shell:
-		"python {input.script}"
-
-rule plot_apa_by_sample:
-	input:
-		script = "plot-sample-apa.py",
-		data = expand(
-			path.join(PROC_DIR, "pile.{loop_type}.obj"),
-			loop_type=["shared", "benign", "tumour"],
-		),
-	output:
-		path.join(PLOT_DIR, "apa.by-sample.png"),
+		path.join(PLOT_DIR, "apa.pileup.samples.png"),
+		path.join(PLOT_DIR, "apa.pileup.conditional.png"),
+		path.join(PLOT_DIR, "apa.differential.png"),
+		path.join(PLOT_DIR, "apa.differential.ranked.png"),
+		path.join(PLOT_DIR, "apa.specific-loops.png"),
+		path.join(PLOT_DIR, "apa.specific-loops.pdf"),
 	shell:
 		"python {input.script}"
