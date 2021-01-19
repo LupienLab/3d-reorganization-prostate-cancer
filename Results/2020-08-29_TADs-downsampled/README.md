@@ -15,6 +15,11 @@ To compare these cases in a way that removes this confounding variable, we downs
 We still use TopDom to identify TADs, but first we downsample cooler files first.
 Using a contact matrix at a resolution of 40 kbp, we use a set of values for the window parameter ($w \in [3, 30]$) to detect TADs across a variety of length scales.
 
+We split data into chromosomes to make this more efficient.
+The general workflow looks like so.
+
+![Workflow](rulegraph.png)
+
 ## Results
 
 ### Finding downsampling parameters
