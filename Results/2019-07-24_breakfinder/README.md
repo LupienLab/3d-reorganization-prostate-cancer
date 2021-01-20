@@ -15,11 +15,8 @@ This folder contains the breakpoints for structural variants (SVs) called by `hi
 `hic_breakfinder` identified between 6 and 78 SVs across all 13 samples, using default parameters.
 The breakpoint calls can be found in `Breakpoints/Default/`.
 
-![Detected SVs](Plots/counted-breakpoints.png)
-
-Notably, the number of SVs correspond to ERG over-expression.
-The 7 ERG over-expressing samples are listed within the top 8 positions ($\mathbb{P}[\text{ERG+ in top 8}] = \frac{\binom{6}{1}}{\binom{13}{6}} = 0.0035$).[^1]
-
+Notably, the number of breakpoint pairs correspond to ERG over-expression.
+The 7 ERG over-expressing samples are listed within the top 8 positions.
 It is also notable that in only 1 sample (`PCa51852`) was the T2E fusion detected, despite the fusion being visible in the contact matrices of all 6 samples with that fusion.
 
 ### Differences in structural variant detection is not due to differences in sequencing depth
@@ -27,7 +24,6 @@ It is also notable that in only 1 sample (`PCa51852`) was the T2E fusion detecte
 We hypothesized that the T2E fusion was not being detected in the remaining 5 samples due to differences in read depths, given that `PCa51852` happens to be the sample with the T2E fusion with the most filtered read pairs.
 
 After downsampling `PCa51852` and re-running `hic_breakfinder` with default parameters, the T2E fusion was still detected, suggesting this was not an issue of sequencing depth.
-For details, see [`../2019-08-29_breakfinder-subsample/`](../2019-08-29_breakfinder-subsample/).
 
 ### Differences in structural variant detection likely stems from detection thresholds
 
@@ -43,7 +39,6 @@ Due to the size of the deleted region leading to the fusion, and the increased d
 ### Refined structural variant calls do not identify new variants
 
 To refine the detected SVs for accurate location, we re-ran `hic_breakfinder` with the `--min-1kb` option.
-Breakpoints can be found in [`Breakpoints/Min_1kbp/`](Breakpoints/Min_1kbp/).
 
 These detected breakpoints are all the same as the default parameters, with some of the SVs having their resolution reduced from 10 kbp to 1 kbp, except in 1 case in `PCa56413` where two SVs on chr14 were combined into a single event at 1 kbp resolution.
 
@@ -51,13 +46,13 @@ Overall, this refinement of SVs may provide a more accurate location for each de
 
 ### Detected structural variants still need to be manually annotated
 
-`hic_breakfinder` \Cref{Dixon2018} finds a submatrix that has a local maximum in signal, and returns the row and column coordinates for this submatrix.
+`hic_breakfinder` finds a submatrix that has a local maximum in signal, and returns the row and column coordinates for this submatrix.
 It does not indicate what type of structural variant it has detected, however.
 While \Cref{Dix2018} provide heuristics for determining what a given SV will appear like in the contact matrix (see Supplementary Figure X), this is not incorporated into their statistical model.
 
 To address this limitation, we manually curated each SV called by `hic_breakfinder` in each sample to resolve what type of SV each event was and its locus(i) to within 100 kbp.
 
-| Structural variant type | Abbreviation[^2] |
+| Structural variant type | Abbreviation[^1] |
 | ----------------------- | ---------------- |
 | Inversion               | `INV`            |
 | Duplication             | `DUP`            |
@@ -78,46 +73,18 @@ chr21 is along the x-axis, and chr14 along the y-axis.
 The insertion of this fragment from chr21 occurs near `chr14:35000000`.
 The downstream end of the chr21 segment is inserted at the upstream end of the insertion site leading to _TMPRSS2_ being located next to _INSM2_ and _ERG_ being located next to _BRMS1L_.
 
-Previously, this event was only detected as a deletion on chr21 using whole genome sequencing (see Supplementary Table S16 from \Cref{Fraser2017}).
+Previously, this event was only detected as a deletion on chr21 using whole genome sequencing (see Supplementary Table S16 from Fraser et al., 2017.
 Moreover, not only can this SV be reclassified from a deletion to a translocation, this event also affects the local chromatin topology at the insertion site.
 
-![T2E translocation insertion site topology](../2019-10-24_higlass/Plots/T2E-translocation.insertion.png)
-
 The TAD in `PCa3023` at `chr14:35040000-35840000` is split into two TADs in `PCa13848` (`chr14:35040000-35720000` and `chr14:35720000-35840000`).
-This corroborates evidence in previous literature demonstrating SVs can lead to the formation of "neo-TADs" \Cref{Dixon2018}.
-We can plot the reconstructed genome for this translocation.
 
-![Reconstructing genome at local insertion site for the T2E translocation in PCa13848](Plots/translocation-matrix.png)
+## Conclusions
 
-This translocation is possibly similar to the "LOUD" mutations related to _FOXA1_, as described in \Cref{Parolia2019}.
-The large TAD in samples without this translocation spans from `chr14:34560000-35840000` and contains the genes listed in [`translocation-disrupted-genes.tsv`](translocation-disrupted-genes.tsv).
-The insertion site of this translocation disrupts the local chromatin topology and changes mean expression for the set of genes (two-sided t-test, _t_ = 3.1408, _n_ = 47, _p_ = 0.002943, 95% confidence interval [0.3654967, 1.670024]).
+We can robustly identify SV breakpoints from the Hi-C data using `hic_breakfinder`.
+The breakpoints come in pairs and still need to be manually annotated, or combined into larger, complex events.
+We see a difference in SV breakpoint pairs between T2E+ and T2E- patients.
+Once complex SVs are constructed, we can return to this question.
 
-![Two-sided t-test for changes in gene expression for genes within the TAD disrupted by the T2E translocation](Plots/translocation-disrupted-genes.nhst.png)
+## Footnotes
 
-This is in accordance with recent work consider the impact of structural variants in a pan-cancer study showing that these variants affecting TAD structures can affect expression of the neighbouring genes, but only in a minority of cases \Cref{Akdemir2020}.
-
-Notably, only 25% (12/47) genes involved in this translocation have largely altered RNA abundances ($|\log_2(\text{fold change})| \ge 1$), compared to the 12 other samples.
-
-### Hi-C tends to detect more inter-chromosomal translocations than whole genome sequencing
-
-Using the previously-published SVs from [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788), we compared the SVs called from each sequencing method on the same samples.
-
-One possible source for the difference in SV detection is the different prostate tumour section being sequenced.
-[Boutros _et al_, Nature Genetics, 2015](https://doi.org/10.1038/ng.3315) showed that prostate tumours display spatial intra-tumour genomic heterogeneity.
-While our samples come from the same patients in [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788), the section of the tumour that was sequenced is different.
-This may lead to differences in SV detection due to true differences in SVs in each section of the same tumour.
-
-[^1]: This is not a hypothesis we were explicitly looking for, in the first place. We have yet to find other independent evidence that suggests ERG over-expression leads to chromosomal instability. We wouldn't have tested for this if this result didn't return anything interesting, so in reality this _p_-value is a likelihood and should include a prior on "how likely we were to test this result".
-
-[^2]: These abbreviations are consistent with Delly, a commonly-used tool for detecting SVs from whole genome sequencing data.
-
-## References
-
-\Cref{Dixon2018} [Dixon _et al._, Nature Genetics, 2018](https://doi.org/10.1038/s41588-018-0195-8)
-
-\Cref{Fraser2017} [Fraser _et al._, Nature, 2017](https://doi.org/10.1038/nature20788)
-
-\Cref{Parolia2019} [Parolia _et al._, Nature, 2019](https://doi.org/10.1038/s41586-019-1347-4)
-
-\Cref{Akdemir2020} [Akdemir _et al._, Nature Genetics, 2020](https://doi.org/10.1038/s41588-019-0564-y)
+[^1]: These abbreviations are consistent with Delly, a commonly-used tool for detecting SVs from whole genome sequencing data.
