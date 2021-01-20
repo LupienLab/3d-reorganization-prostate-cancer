@@ -5,14 +5,15 @@ import os.path as path
 # Configuration
 # ==============================================================================
 CONFIG = pd.read_csv(
-    path.join('..', '..', 'Data', 'External', 'LowC_Samples_Data_Available.tsv'),
+    path.join('..', '..', 'data', 'External', 'LowC_Samples_Data_Available.tsv'),
     sep='\t',
     index_col=False
 )
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
 SAMPLES = ['PCa' + str(i) for i in CONFIG['Sample ID']]
 
 BAM_DIR = path.join(
-    '..', '..', 'Data', 'Processed', '2019-06-18_PCa-LowC-sequencing', 'Aligned'
+    '..', '..', 'data', 'Processed', '2019-06-18_PCa-LowC-sequencing', 'Aligned'
 )
 BREAK_DIR = 'Breakpoints'
 PLOT_DIR = 'Plots'
@@ -26,7 +27,7 @@ rule all:
         expand(
             path.join(BREAK_DIR, '{param}', '{sample}.breaks.sorted.bedpe'),
             sample=SAMPLES,
-            param=['Default', 'Min_1kbp', 'Low_Thresh_30']
+            param=['Default',]
         ),
         expand(
             path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.sorted.bed"),
@@ -38,8 +39,6 @@ rule all:
             ext=["beddb", "bed2ddb"],
         ),
         path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.tsv"),
-        "translocation-disrupted-genes.tsv",
-        path.join(PLOT_DIR, "translocation-disrupted-genes.png"),
 
 # ==============================================================================
 # Rules
@@ -74,34 +73,6 @@ rule breakfinder_default:
     shell:
         'pushd {BREAK_DIR}/Default; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample}; popd;'
 
-rule breakfinder_1kb:
-    input:
-        bam = path.join(BAM_DIR, '{sample}.agg.hicup.sorted.bam'),
-        inter = 'inter_expect_1Mb.hg38.txt',
-        intra = 'intra_expect_100kb.hg38.txt'
-    output:
-        path.join(BREAK_DIR, 'Min_1kb', '{sample}.breaks.txt'),
-    shell:
-        'pushd {BREAK_DIR}/Min_1kbp; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample} --min-1kb; popd;'
-
-rule breakfinder_low_thresh:
-    input:
-        bam = path.join(BAM_DIR, '{sample}.agg.hicup.sorted.bam'),
-        inter = 'inter_expect_1Mb.hg38.txt',
-        intra = 'intra_expect_100kb.hg38.txt'
-    output:
-        path.join(BREAK_DIR, 'Low_Thresh_{thresh}', '{sample}.breaks.txt'),
-    params:
-        threshold = lambda wildcards: '--thresh {}'.format(wildcards.thresh)
-    run:
-        commands = [
-            'pushd {BREAK_DIR}/Low_Thresh_{wildcards.thresh}',
-            '../../hic_breakfinder/bin/hic_breakfinder --name {wildcards.sample} {params.threshold} --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra}',
-            'popd'
-        ]
-        command_str = '; '.join(commands)
-        shell(command_str)
-
 rule sort_breaks:
     input:
         path.join(BREAK_DIR, "{prefix}", "{sample}.breaks.txt")
@@ -109,16 +80,6 @@ rule sort_breaks:
         path.join(BREAK_DIR, "{prefix}", "{sample}.breaks.sorted.bedpe")
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{print $2, $3, $4, $6, $7, $8, \".\", $1, $5, $9, $10}}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n > {output}"
-
-rule plot_breakpoints:
-    input:
-        wrapper = 'plot-breakpoint-matrices.sh',
-        script = path.join('..', '2019-07-08_TADs', 'plot-tads.py'),
-        data = path.join(BREAK_DIR, 'Default', '{sample}.breakspoints.bedpe')
-    output:
-        path.join(REPORT_DIR, 'breakpoint-plots.txt')
-    shell:
-        'bash {input.wrapper} -i {input.data} -p {PLOT_DIR}/Breakpoints/{wildcards.sample} > {output}'
 
 rule sort_bed:
     input:
@@ -137,24 +98,6 @@ rule bf2bed:
         '-v FS="\t" -v OFS="\t"'
     shell:
         'awk {params} \'{{if ($12 != \"ARTEFACT\") print $1, $2, $3, "SV"NR, "\\n"$4, $5, $6, "SV"NR}}\' {input} > {output}'
-
-rule t2e_translocation_genes:
-    input:
-        gencode = path.join("..", "..", "Data", "External", "GENCODE", "gencode.v33.genes.sorted.bed"),
-        genome = path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
-    output:
-        "translocation-disrupted-genes.tsv"
-    shell:
-        "bedtools intersect -sorted -g {input.genome} -a {input.gencode} -b <(echo -e \"chr14\\t34560000\\t35840000\nchr21\\t35440000\\t41500000\") > {output}"
-
-rule plot_t2e_translocation_genes:
-    input:
-        script = "plot-translocation-disrupted-genes.R",
-        data = "translocation-disrupted-genes.tsv",
-    output:
-        path.join(PLOT_DIR, "translocation-disrupted-genes.png"),
-    shell:
-        "Rscript {input.script}"
 
 rule clodius_2d:
     input:
@@ -177,4 +120,3 @@ rule clodius_1d:
     shell:
         # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
         "clodius aggregate bedfile {params} -o {output} {input}"
-
