@@ -1,0 +1,23 @@
+event_ID	status	direct_contact	opposite_end_of_break
+PCa13848_1	up and down	no	yes
+PCa13848_11	down only	no	no
+PCa13848_17	up and down	yes	yes
+PCa13848_18	up and down	yes	yes
+PCa13848_6	up and down	yes	yes
+PCa13848_7	up and down	no	no
+PCa13848_8	up only	no	no
+PCa19121_8	up and down	yes	yes
+PCa3023_14	up and down	yes	yes
+PCa40507_18	up and down	yes	yes
+PCa40507_4	down only	no	no
+PCa51852_2	up and down	no	yes
+PCa51852_3	up and down	yes	yes
+PCa51852_4	up and down	no	yes
+PCa51852_5	up and down	no	yes
+PCa53687_6	down only	no	no
+PCa53687_8	up and down	no	no
+PCa56413_27	up only	no	no
+PCa56413_34	up and down	yes	yes
+PCa56413_4	up only	no	no
+PCa57294_0	up only	no	no
+PCa58215_2	up and down	no	no
