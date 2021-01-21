@@ -1,6 +1,9 @@
 # ==============================================================================
 # Environment
 # ==============================================================================
+suppressMessages(library("logging"))
+
+loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
@@ -16,11 +19,15 @@ PLOT_DIR <- "Plots"
 # ==============================================================================
 # Functions
 # ==============================================================================
-split_comma_col <- function(v, f=identity) {
+split_comma_col <- function(v, f = identity) {
     # split into list
-    splitv <- lapply(v, function(x) {strsplit(x, ",")[[1]]})
+    splitv <- lapply(v, function(x) {
+        strsplit(x, ",")[[1]]
+    })
     # remove various non-informative characters (spaces, braces)
-    splitv <- lapply(splitv, function(x) {gsub("[][ ]", "", x)})
+    splitv <- lapply(splitv, function(x) {
+        gsub("[][ ]", "", x)
+    })
     return(lapply(splitv, f))
 }
 
@@ -28,6 +35,8 @@ split_comma_col <- function(v, f=identity) {
 # ==============================================================================
 # Data
 # ==============================================================================
+loginfo("Loading data")
+
 # load tests
 sv_tests <- fread(
     "../2020-02-19_chromoplexy/Graphs/sv-disruption-tests.tsv",
@@ -66,7 +75,8 @@ tested_genes <- rbindlist(lapply(
         dt <- fread(
             paste0("sleuth/test_", tid, ".genes.tested.tsv"),
             sep = "\t",
-            header = TRUE
+            header = TRUE,
+            fill = TRUE
         )
         dt[, test_ID := tid]
         return(dt)
@@ -92,6 +102,8 @@ transcript_table <- fread("all-samples.abundance.tsv", sep = "\t")
 # ==============================================================================
 # Analysis
 # ==============================================================================
+loginfo("Combining gene and transcript counts")
+
 # combine transcripts for gene counts
 gene_tpm <- rbindlist(apply(
     tested_genes,
@@ -104,7 +116,7 @@ gene_tpm <- rbindlist(apply(
         # sum all TPM for all transcripts for that gene
         gene_tpm <- transcript_table[target_id %in% transcript_ids, .(tpm = sum(tpm)), by = "sample"]
         gene_tpm[, gene_id := gene]
-        
+
         # get test_ID
         tid <- as.integer(r["test_ID"])
         # add Mutated column for each patient involved in a test
@@ -138,6 +150,11 @@ sv_events_tests <- sv_bp_pairs[,
     .(test_ID = c(test_ID_x, test_ID_y)),
     keyby = c("SampleID", "component_ID_x")
 ]
+
+# PCa58215_3 and PCa58215_2 are actually part of the same event, so link them
+# I'm changing this manually here as to not mess up the test_IDs from before.
+# it was tough to get them in the first place and will cause a lot of headaches to reconstruct everything
+sv_events_tests[(SampleID == "PCa58215") & (component_ID_x == 3), component_ID_x := 2]
 sv_events_tests[, event_ID := paste(SampleID, component_ID_x, sep = "_")]
 
 merged_gene_tpm_multi_IDs <- unique(merge(
@@ -210,43 +227,7 @@ fwrite(merged_gene_tpm_multi_IDs, "summary-sv-disruption.tsv", sep = "\t")
 # ==============================================================================
 # Plots
 # ==============================================================================
-gg_volcano_transcripts <- (
-    ggplot(data = tested_transcripts)
-    + geom_point(aes(x = b * log2(exp(1)), y = -log10(qval), colour = (qval < QVAL_THRESH & abs(b) >= log(2))))
-    + geom_vline(aes(xintercept = -1), linetype = "dashed")
-    + geom_vline(aes(xintercept = 1), linetype = "dashed")
-    + geom_hline(aes(yintercept = -log10(QVAL_THRESH)), linetype = "dashed")
-    + labs(x = expression(log[2] * "(Fold change)"), y = expression(-log[10] * "(FDR)"))
-    + scale_colour_manual(
-        breaks = c(FALSE, TRUE),
-        values = c("#BDBDBD", "#000000")
-    )
-    + theme_minimal()
-)
-savefig(gg_volcano_transcripts, "Plots/volcano.transcripts")
-
-gg_volcano_genes <- (
-    ggplot(data = merged_gene_tpm)
-    + geom_point(aes(
-        x = log2fc,
-        y = -log10(qval),
-        colour = ((qval < QVAL_THRESH) & (abs(log2fc) >= 1))
-    ))
-    + geom_vline(aes(xintercept = -1), linetype = "dashed")
-    + geom_vline(aes(xintercept = 1), linetype = "dashed")
-    + geom_hline(aes(yintercept = -log10(QVAL_THRESH)), linetype = "dashed")
-    + labs(x = expression(log[2] * "(Fold change)"), y = expression(-log[10] * "(FDR)"))
-    + scale_colour_manual(
-        breaks = c(FALSE, TRUE),
-        values = c("#BDBDBD", "#000000")
-    )
-    + coord_cartesian(
-        xlim = c(-7, 7),
-        ylim = c(0, 20)
-    )
-    + theme_minimal()
-)
-savefig(gg_volcano_genes, "Plots/volcano.genes")
+loginfo("Plotting figures")
 
 panel_height_ratios <- c(9, 1, 1)
 gg_fc_bars <- ggplotGrob(
