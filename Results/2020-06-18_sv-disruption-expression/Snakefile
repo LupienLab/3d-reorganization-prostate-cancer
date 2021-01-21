@@ -157,7 +157,7 @@ rule plot_braf:
     shell:
         "Rscript {input.script}"
 
-plot sv_annotation:
+rule sv_annotation:
     input:
         script = "plot-sv-changes.R",
         data = "summary-sv-disruption-annotation.tsv",
