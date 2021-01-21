@@ -35,6 +35,19 @@ rule all:
                 "sleuth-object.rds"
             ],
         ),
+        path.join(PLOT_DIR, "expression.png"),
+        path.join(PLOT_DIR, "expression.pdf"),
+        path.join(PLOT_DIR, "event-changes.png"),
+        path.join(PLOT_DIR, "event-changes.pdf"),
+        path.join(PLOT_DIR, "event-changes.labelled.png"),
+        path.join(PLOT_DIR, "event-changes.labelled.pdf"),
+        "1sample-results.tsv",
+        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.png"),
+        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.pdf"),
+        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.png"),
+        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.pdf"),
+        path.join(PLOT_DIR, "tx-exprs.BRAF.png"),
+        path.join(PLOT_DIR, "tx-exprs.BRAF.pdf"),
 
 # ==============================================================================
 # Rules
@@ -72,3 +85,70 @@ rule sv_test_comp:
         path.join("sleuth", "test_{test_ID}.sleuth-object.rds"),
     shell:
         "Rscript {input.script} {wildcards.test_ID}"
+
+rule plot_dge_1samp:
+    input:
+        script = "plot-1sample-dge.sleuth.R",
+        data = expand(
+            path.join("sleuth", "test_{test_ID}.{ext}"),
+            test_ID=TEST_IDS,
+            ext=[
+                "genes.all.tsv",
+                "transcripts.all.tsv",
+                "genes.tested.tsv",
+                "transcripts.tested.tsv",
+                "sleuth-object.rds"
+            ],
+        ),
+    output:
+        path.join(PLOT_DIR, "expression.png"),
+        path.join(PLOT_DIR, "expression.pdf"),
+        path.join(PLOT_DIR, "event-changes.png"),
+        path.join(PLOT_DIR, "event-changes.pdf"),
+        path.join(PLOT_DIR, "event-changes.labelled.png"),
+        path.join(PLOT_DIR, "event-changes.labelled.pdf"),
+        "1sample-results.tsv",
+    shell:
+        "Rscript {input.script}"
+
+rule plot_znf516_pmepa1_t2e:
+    input:
+        script = "plot-gene-exprs.R",
+        data = expand(
+            path.join("sleuth", "test_{test_ID}.{ext}"),
+            test_ID=[42, 43, 45, 46],
+            ext=[
+                "genes.all.tsv",
+                "transcripts.all.tsv",
+                "genes.tested.tsv",
+                "transcripts.tested.tsv",
+                "sleuth-object.rds"
+            ],
+        ),
+    output:
+        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.png"),
+        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.pdf"),
+        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.png"),
+        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.pdf"),
+    shell:
+        "Rscript {input.script}"
+
+rule plot_braf:
+    input:
+        script = "plot-tx-exprs.R",
+        data = expand(
+            path.join("sleuth", "test_{test_ID}.{ext}"),
+            test_ID=[201],
+            ext=[
+                "genes.all.tsv",
+                "transcripts.all.tsv",
+                "genes.tested.tsv",
+                "transcripts.tested.tsv",
+                "sleuth-object.rds"
+            ],
+        ),
+    output:
+        path.join(PLOT_DIR, "tx-exprs.BRAF.png"),
+        path.join(PLOT_DIR, "tx-exprs.BRAF.pdf"),
+    shell:
+        "Rscript {input.script}"
