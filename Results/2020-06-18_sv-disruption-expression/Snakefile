@@ -48,6 +48,10 @@ rule all:
         path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.pdf"),
         path.join(PLOT_DIR, "tx-exprs.BRAF.png"),
         path.join(PLOT_DIR, "tx-exprs.BRAF.pdf"),
+        path.join(PLOT_DIR, "event-changes.summary.png"),
+        path.join(PLOT_DIR, "event-changes.summary.pdf"),
+        path.join(PLOT_DIR, "event-changes.contact.png"),
+        path.join(PLOT_DIR, "event-changes.contact.pdf"),
 
 # ==============================================================================
 # Rules
@@ -150,5 +154,17 @@ rule plot_braf:
     output:
         path.join(PLOT_DIR, "tx-exprs.BRAF.png"),
         path.join(PLOT_DIR, "tx-exprs.BRAF.pdf"),
+    shell:
+        "Rscript {input.script}"
+
+plot sv_annotation:
+    input:
+        script = "plot-sv-changes.R",
+        data = "summary-sv-disruption-annotation.tsv",
+    output:
+        path.join(PLOT_DIR, "event-changes.summary.png"),
+        path.join(PLOT_DIR, "event-changes.summary.pdf"),
+        path.join(PLOT_DIR, "event-changes.contact.png"),
+        path.join(PLOT_DIR, "event-changes.contact.pdf"),
     shell:
         "Rscript {input.script}"
