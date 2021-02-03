@@ -36,22 +36,7 @@ rule all:
         path.join(PLOT_DIR, "T2E", "position.png"),
         path.join(PLOT_DIR, "T2E", "position.ERG.png"),
         path.join(PLOT_DIR, "T2E", "position.TMPRSS2.png"),
-        "exprs-acetyl.tsv",
-        expand(
-            path.join(PLOT_DIR, "exprs-acetyl", "genes.{ext}"),
-            ext=PLOT_EXTS,
-        ),
-        "TAD-induced-regions.bed",
-        expand(
-            path.join(ACETYL_DIR, "Peaks", "PCa{sampleid}_{type}.induced-region-counts.bed"),
-            sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
-            type=["input", "H3K27ac"],
-        ),
-        expand(
-            path.join(ACETYL_DIR, "Breakpoints", "PCa{sampleid}_{type}.breakpoint-counts.bed"),
-            sampleid=CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"].tolist(),
-            type=["input", "H3K27ac"],
-        ),
+        path.join(ACETYL_DIR, "Tests", "test_6.local.tsv"),
         expand(
             path.join(PLOT_DIR, "Distribution", "acetylation.{plot}.{ext}"),
             plot=["p-values", "p-values.all-tests", "qq-plot", "volcano"],
@@ -87,50 +72,13 @@ rule plot_t2e_diffbind:
     shell:
         "Rscript {input.script}"
 
-rule induced_boundaries:
-    input:
-        script = "create-induced-regions.py",
-        bounds = expand(
-            path.join(TAD_DIR, "{sample}.40000bp.aggregated-boundaries.tsv"),
-            sample=SAMPLES
-        ),
-    output:
-        "TAD-induced-regions.bed",
-    shell:
-        "python {input.script}"
-
-rule count_chip_breaks:
-    input:
-        chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
-        bed = path.join("..", "2020-02-19_chromoplexy", "Graphs", "sv-breakpoints.tsv"),
-    output:
-        path.join(ACETYL_DIR, "Breakpoints", "PCa{sampleid}_{type}.breakpoint-counts.bed")
-    wildcard_constraints:
-        sampleid = "\d+",
-        type = "(H3K27ac|input)",
-    shell:
-        # skip header in input.bed
-        "bedtools coverage -abam {input.chip} -b <(awk '{{if (NR > 1) print }}' {input.bed}) | sort -k1,1 -V -k2,2n > {output}"
-
-rule count_chip_peaks:
-    input:
-        chip = path.join(CHIP_DIR, "Pca{sampleid}_{type}.sorted.dedup.bam"),
-        bed = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "catalogue-peaks.bed"),
-    output:
-        path.join(ACETYL_DIR, "Peaks", "PCa{sampleid}_{type}.induced-region-counts.bed")
-    wildcard_constraints:
-        sampleid = "\d+",
-        type = "(H3K27ac|input)",
-    shell:
-        "bedtools coverage -abam {input.chip} -b {input.bed} | sort -k1,1 -V -k2,2n > {output}"
-
 rule diffbind:
     input:
         script = "diffbind.R",
         tests = path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
         tads = path.join("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
+        path.join(ACETYL_DIR, "Tests", "test_6.local.tsv"),
     output:
-        path.join("Acetylation", "Tests", "test_6.local.tsv"),
     shell:
         "Rscript {input.script}"
 
@@ -144,27 +92,6 @@ rule plot_diffbind:
             plot=["p-values", "p-values.all-tests", "qq-plot", "volcano"],
             ext=PLOT_EXTS,
         )
-    shell:
-        "Rscript {input.script}"
-
-rule compare_exprs_acetyl:
-    input:
-        script = "compare-acetyl-expression.R",
-        data = path.join("Acetylation", "Tests", "test_6.local.tsv"),
-    output:
-        "exprs-acetyl.tsv",
-    shell:
-        "Rscript {input.script}"
-
-rule plot_exprs_acetyl:
-    input:
-        script = "plot-acetyl-expression.R",
-        data = "exprs-acetyl.tsv",
-    output:
-        expand(
-            path.join(PLOT_DIR, "exprs-acetyl", "genes.{ext}"),
-            ext=PLOT_EXTS,
-        ),
     shell:
         "Rscript {input.script}"
 

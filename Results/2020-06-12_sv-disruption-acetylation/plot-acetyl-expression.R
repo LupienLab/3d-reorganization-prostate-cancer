@@ -49,8 +49,6 @@ h_cor <- cor.test(
 # ==============================================================================
 gg_cor <- (
     ggplot()
-    #+ geom_hline(aes(yintercept = FC_THRESH), linetype = "dashed")
-    #+ geom_hline(aes(yintercept = -FC_THRESH), linetype = "dashed")
     + geom_vline(aes(xintercept = FC_THRESH), linetype = "dashed")
     + geom_vline(aes(xintercept = -FC_THRESH), linetype = "dashed")
     + geom_point(
@@ -101,9 +99,6 @@ gg_cor <- (
         x = expression(log[2] * "(Expression mut fold change)"),
         y = expression(log[2] * "(H3K27ac mut fold change)")
     )
-    # + guides(colour = FALSE)
-    # + xlim(-6, 6)
-    # + ylim(-6, 6)
     + theme_minimal()
     + theme(legend.position = "bottom")
 )

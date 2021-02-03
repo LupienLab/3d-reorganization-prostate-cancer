@@ -8,7 +8,6 @@ suppressMessages(library("GenomicRanges"))
 
 BAM_DIR <- file.path("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
 PEAK_DIR <- file.path("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks")
-ACETYL_DIR <- file.path("Acetylation", "Peaks")
 TEST_DIR <- file.path("Acetylation", "Tests")
 
 

@@ -50,20 +50,6 @@ acetyl[, col := paste(
 )]
 
 
-# all_acetyl <- rbindlist(lapply(
-#     test_IDs,
-#     function(tid) {
-#         dt <- fread(
-#             paste0("Acetylation/Tests/test_", tid, ".all.tsv"),
-#             sep = "\t",
-#             header = TRUE
-#         )
-#         dt[, test_ID := tid]
-#         return(dt)
-#     }
-# ))
-
-
 # ==============================================================================
 # Plots
 # ==============================================================================
