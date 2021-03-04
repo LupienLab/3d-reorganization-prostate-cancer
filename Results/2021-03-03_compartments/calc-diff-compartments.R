@@ -181,6 +181,18 @@ wide_e1 <- merge(
     all = TRUE
 )
 
+wide_e1[, `:=`(
+    Diff = Malignant_Mean - Benign_Mean,
+    Abs_Diff = abs(Malignant_Mean - Benign_Mean)
+)]
+
+s <- wide_e1[!is.na(Abs_Diff) & (All_N > 15), .SD, keyby = -Abs_Diff]
+s_sorted <- wide_e1[
+    !(chrom %in% c("chr3", "chr8", "chr13", "chr19", "chrY")) & abs(Abs_Diff) > 0.5,
+    .SD,
+    keyby = "bin_ID"
+]
+
 # ==============================================================================
 # Save Data
 # ==============================================================================
