@@ -141,16 +141,29 @@ wide_e1 <- merge(
 )
 
 loginfo("Calculating linear models")
+# check which bins have enough samples to calculate a contrast
+design <- dcast(
+    eigs[, .N, by = c("Type", "bin_ID")],
+    bin_ID ~ Type,
+    value.var = "N",
+    fill = 0
+)
+# only keep bins with values from >= 1 benign and >= 1 malignant samples
+design <- design[(Benign > 0) & (Malignant > 0), .SD]
+max_bin_ID <- design[, max(as.integer(bin_ID))]
+
 # calculating linear models for compartment differences
 model <- rbindlist(lapply(
-    eigs[, unique(bin_ID)],
+    design[, bin_ID],
     function(b) {
+        cat(paste(as.integer(b), "of", max_bin_ID, "\r"))
         mod <- lm(E1 ~ Type, data = eigs[bin_ID == b])
         dt <- lm2dt(mod)
         dt[, bin_ID := b]
         return(dt)
     }
 ))
+cat("\n")
 model[, q := p.adjust(p, method = "fdr")]
 
 # map back to genomic coordinates before saving
@@ -158,13 +171,14 @@ model <- merge(
     x = genomic_bins,
     y = model,
     by = "bin_ID",
-    all.x = FALSE
+    # keep all bins, just enforce NAs if the bin has been filtered out for any reason
+    all = TRUE
 )
 wide_e1 <- merge(
     x = genomic_bins,
     y = wide_e1,
     by = "bin_ID",
-    all.x = FALSE
+    all = TRUE
 )
 
 # ==============================================================================
