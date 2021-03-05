@@ -62,6 +62,14 @@ rule all:
 			sample=SAMPLES,
 			res=[10000],
 		),
+		expand(
+			path.join("CNV", "segmentation", "{sample}_CNV_segments.txt"),
+			sample=SAMPLES,
+		),
+		expand(
+			path.join("Tracks", "{sample}.cnv.bw"),
+			sample=SAMPLES,
+		),
 		path.join(REPORT_DIR, "multiqc_report.html"),
 
 # =============================================================================
@@ -173,6 +181,51 @@ rule merge_loops:
 	shell:
 		"echo -e 'chr_x\tstart_x\tend_x\tchr_y\tstart_y\tend_y\tfdr\tdetection_scale' > {output}; awk '{{FS=OFS=\"\\t\"}}{{if ($1 != \"BIN1_CHR\") print}}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n >> {output}"
 
+rule call_cnv:
+	input:
+		path.join(CONTACT_DIR, "{sample}.mcool")
+	output:
+		path.join("CNV", "segmentation", "{sample}_CNV_segments.txt"),
+		path.join("CNV", "segmentation", "{sample}_CNV_segments.l2r.pdf"),
+	params:
+		" ".join([
+			"-f cooler",
+			"-r {}".format(10), # resolution in kbp
+			"--refdir {}".format(path.join("..", "HiNT-references")),
+			"--bicseq {}".format(path.join("..", "BICseq2-seg_v0.7.3")),
+			"-o CNV",
+			"-g hg38",
+			"-e MboI",
+		])
+	shell:
+		"hint cnv -m {input}::/resolutions/10000 {params} -n {wildcards.sample}"
+
+rule correct_hint_pos:
+	input:
+		script = "fix-cnv-coords.R",
+		sizes = "hg38.sizes.txt",
+		cnv = path.join("CNV", "segmentation", "{sample}_CNV_segments.txt"),
+	output:
+		path.join("CNV", "segmentation", "{sample}_CNV_segments.corrected.txt"),
+	shell:
+		"Rscript {input.script} {input.cnv} {input.sizes} -o {output}"
+
+rule cnv2bdg:
+	input:
+		path.join("CNV", "segmentation", "{sample}_CNV_segments.corrected.txt"),
+	output:
+		path.join("Tracks", "{sample}.cnv.bdg"),
+	shell:
+		"awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $7}}' {input} | LC_COLLATE=C sort -k1,1 -k2,2n > {output}"
+
+rule bdg2bw:
+	input:
+		bdg = "{file}.bdg",
+		sizes = "hg38.sizes.txt",
+	output:
+		"{file}.bw",
+	shell:
+		"bedGraphToBigWig {input.bdg} {input.sizes} {output}"
 
 # Summaries
 # ------------------------------------------------------------------------------

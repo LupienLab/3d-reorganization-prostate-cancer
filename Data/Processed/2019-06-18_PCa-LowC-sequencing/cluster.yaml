@@ -22,3 +22,6 @@ expected_cis:
 expected_trans:
     params: "--export=ALL -p all --mem=16G -t 1-00:00:00"
 
+call_cnv:
+    params: "--export=ALL -p all --mem=16G -t 1-00:00:00"
+

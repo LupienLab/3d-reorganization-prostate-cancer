@@ -1,0 +1,4 @@
+*_dataForRegression/
+segmentation/tmp/
+segmentation/b10000/
+segmentation/*.l2r.pdf
