@@ -1,0 +1,32 @@
+Sample_ID	Label	Include	Source	Type	Sample_Colour	Type_Colour	Tissue	T2E
+PCa13266	CPCG0268	Yes	Primary	Malignant	#7F3C8D	#1F77B4	Prostate	No
+PCa13848	CPCG0366	Yes	Primary	Malignant	#11A579	#1F77B4	Prostate	Yes
+PCa14121	CPCG0255	Yes	Primary	Malignant	#3969AC	#1F77B4	Prostate	No
+PCa19121	CPCG0258	Yes	Primary	Malignant	#F2B701	#1F77B4	Prostate	Yes
+PCa3023	CPCG0324	Yes	Primary	Malignant	#E73F74	#1F77B4	Prostate	Yes
+PCa33173	CPCG0246	Yes	Primary	Malignant	#80BA5A	#1F77B4	Prostate	No
+PCa40507	CPCG0342	Yes	Primary	Malignant	#E68310	#1F77B4	Prostate	Yes
+PCa51852	CPCG0336	Yes	Primary	Malignant	#008695	#1F77B4	Prostate	Yes
+PCa53687	CPCG0339	Yes	Primary	Malignant	#CF1C90	#1F77B4	Prostate	No
+PCa56413	CPCG0331	Yes	Primary	Malignant	#F97B72	#1F77B4	Prostate	Yes
+PCa57294	CPCG0365	Yes	Primary	Malignant	#4B4B8F	#1F77B4	Prostate	No
+PCa58215	CPCG0345	Yes	Primary	Malignant	#A5AA99	#1F77B4	Prostate	No
+Benign-Prostate-1648133	BP1648133	Yes	Primary	Benign	#000000	#AEC7E8	Prostate	No
+Benign-Prostate-1595983	BP1595983	Yes	Primary	Benign	#000000	#AEC7E8	Prostate	No
+Benign-Prostate-1664855	BP1664855	Yes	Primary	Benign	#000000	#AEC7E8	Prostate	No
+Benign-Prostate-3320942	BP3320942	Yes	Primary	Benign	#000000	#AEC7E8	Prostate	No
+Benign-Prostate-3330581	BP3330581	Yes	Primary	Benign	#000000	#AEC7E8	Prostate	No
+SRR7702334	22Rv1 Rep 1	Yes	Cell Line	Malignant	#000000	#FF7F0D	Prostate	No
+SRR7702335	22Rv1 Rep 2	Yes	Cell Line	Malignant	#000000	#FF7F0D	Prostate	No
+SRR8446383	RWPE1 Rep 1	Yes	Cell Line	Benign	#000000	#FFBB78	Prostate	No
+SRR8446384	RWPE1 Rep 2	Yes	Cell Line	Benign	#000000	#FFBB78	Prostate	No
+SRR8446385	C4-2B Rep 1	Yes	Cell Line	Malignant	#000000	#FF7F0D	Prostate	No
+SRR8446386	C4-2B Rep 2	Yes	Cell Line	Malignant	#000000	#FF7F0D	Prostate	No
+SRR8446387	C4-2B Rep 3	Yes	Cell Line	Malignant	#000000	#FF7F0D	Prostate	No
+4DNFI6HDY7WZ	H1-hESC Rep 1	Yes	Cell Line	Other	#000000	#000000	Embryonic Stem Cell	No
+4DNFITH978XV	H1-hESC Rep 2	Yes	Cell Line	Other	#000000	#000000	Embryonic Stem Cell	No
+4DNFIT64Q7A3	HAP-1 Rep 1	Yes	Cell Line	Other	#000000	#000000	Bone Marrow	No
+4DNFINSKEZND	HAP-1 Rep 2	Yes	Cell Line	Other	#000000	#000000	Bone Marrow	No
+4DNFIIV4M7TF	GM12878 Rep 1	Yes	Cell Line	Other	#000000	#000000	Peripheral Blood	No
+4DNFIXVAKX9Q	GM12878 Rep 2	Yes	Cell Line	Other	#000000	#000000	Peripheral Blood	No
+								
