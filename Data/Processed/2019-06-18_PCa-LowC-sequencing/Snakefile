@@ -48,11 +48,6 @@ rule all:
 		),
 		path.join(REPORT_DIR, "hicup_class.png"),
 		expand(
-			path.join(CONTACT_DIR, "{sample}.compartments.cis.{ext}"),
-			sample=SAMPLES,
-			ext=["bw", "lam.txt", ".vecs.tsv"],
-		),
-		expand(
 			path.join(CONTACT_DIR, "{sample}.res_{res}bp.exp.cis.tsv"),
 			sample=SAMPLES,
 			res=[10000],
@@ -116,28 +111,6 @@ rule adjust_res:
 		"--balance -p 8 -r {}".format(",".join([str(r) for r in RESOLUTIONS]))
 	shell:
 		"cooler zoomify {params} -o {output} {input}"
-
-rule gc_a_phase:
-	input:
-		"get_a_phase.py",
-	output:
-		"gc-content-phase.bedGraph",
-	shell:
-		"python {input}"
-
-rule compartments:
-	input:
-		cool = path.join(CONTACT_DIR, "{sample}.mcool"),
-		phase = "gc-content-phase.bedGraph",
-	output:
-		path.join(CONTACT_DIR, "{sample}.compartments.cis.bw"),
-		path.join(CONTACT_DIR, "{sample}.compartments.cis.lam.txt"),
-		path.join(CONTACT_DIR, "{sample}.compartments.cis.vecs.tsv"),
-	params:
-		options = "--bigwig",
-		res = 40000
-	shell:
-		"cooltools call-compartments {params.options} --reference-track {input.phase} -o {CONTACT_DIR}/{wildcards.sample}.compartments {input.cool}::/resolutions/{params.res}"
 
 rule expected_cis:
 	input:

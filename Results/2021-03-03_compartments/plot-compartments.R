@@ -26,7 +26,7 @@ suppressWarnings(library("ggplot2"))
 # Data
 # ==============================================================================
 loginfo("Loading data")
-
+wide_e1 <- fread("compartments.stats.tsv", sep = "\t")
 
 # ==============================================================================
 # Plots
@@ -56,7 +56,7 @@ ggsave(
 )
 
 gg <- (
-    ggplot(data = wide_e1)
+    ggplot(data = wide_e1[chrom == "chr3"])
     + geom_point(
         mapping = aes(
             x = (Benign_Mean + Malignant_Mean) / 2,
@@ -65,15 +65,17 @@ gg <- (
         alpha = 0.01
     )
     + scale_x_continuous(
-        name = "Mean"
+        name = "(Benign + Tumour) / 2",
+        limits = c(-2, 2)
     )
     + scale_y_continuous(
-        name = "Difference"
+        name = "Benign - Tumour",
+        limits = c(-2, 1)
     )
     + theme_minimal()
 )
 ggsave(
-    "e1-mean-diff.png",
+    "e1-mean-diff.chr3.png",
     gg,
     width = 8,
     height = 8,
@@ -102,11 +104,3 @@ ggsave(
     height = 12,
     units = "cm"
 )
-
-
-
-# ==============================================================================
-# Save Data
-# ==============================================================================
-loginfo("Saving data")
-

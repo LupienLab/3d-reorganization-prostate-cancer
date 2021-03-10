@@ -153,27 +153,27 @@ design <- design[(Benign > 0) & (Malignant > 0), .SD]
 max_bin_ID <- design[, max(as.integer(bin_ID))]
 
 # calculating linear models for compartment differences
-model <- rbindlist(lapply(
-    design[, bin_ID],
-    function(b) {
-        cat(paste(as.integer(b), "of", max_bin_ID, "\r"))
-        mod <- lm(E1 ~ Type, data = eigs[bin_ID == b])
-        dt <- lm2dt(mod)
-        dt[, bin_ID := b]
-        return(dt)
-    }
-))
-cat("\n")
-model[, q := p.adjust(p, method = "fdr")]
-
-# map back to genomic coordinates before saving
-model <- merge(
-    x = genomic_bins,
-    y = model,
-    by = "bin_ID",
-    # keep all bins, just enforce NAs if the bin has been filtered out for any reason
-    all = TRUE
-)
+# model <- rbindlist(lapply(
+#     design[, bin_ID],
+#     function(b) {
+#         cat(paste(as.integer(b), "of", max_bin_ID, "\r"))
+#         mod <- lm(E1 ~ Type, data = eigs[bin_ID == b])
+#         dt <- lm2dt(mod)
+#         dt[, bin_ID := b]
+#         return(dt)
+#     }
+# ))
+# cat("\n")
+# model[, q := p.adjust(p, method = "fdr")]
+# 
+# # map back to genomic coordinates before saving
+# model <- merge(
+#     x = genomic_bins,
+#     y = model,
+#     by = "bin_ID",
+#     # keep all bins, just enforce NAs if the bin has been filtered out for any reason
+#     all = TRUE
+# )
 wide_e1 <- merge(
     x = genomic_bins,
     y = wide_e1,
@@ -198,12 +198,12 @@ s_sorted <- wide_e1[
 # ==============================================================================
 loginfo("Saving data")
 # save model outputs without the bin_ID
-fwrite(
-    model[, .SD, .SDcols = -"bin_ID"],
-    "compartments.results.tsv",
-    sep = "\t",
-    col.names = TRUE
-)
+# fwrite(
+#     model[, .SD, .SDcols = -"bin_ID"],
+#     "compartments.results.tsv",
+#     sep = "\t",
+#     col.names = TRUE
+# )
 
 # save wide compartment data for other plotting purposes
 fwrite(
