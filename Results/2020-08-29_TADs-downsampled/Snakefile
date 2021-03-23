@@ -71,6 +71,18 @@ rule all:
 			sample=PRIMARY_SAMPLES,
 			count=300000000,
 		),
+		expand(
+			path.join(TRACK_DIR, "{sample}.{depth}.res_{res}bp.domains.all.bed2ddb"),
+			sample=PRIMARY_SAMPLES,
+			depth=300000000,
+			res=RESOLUTIONS,
+		),
+		expand(
+			path.join(TRACK_DIR, "{sample}.{depth}.res_{res}bp.domains.all.bed2ddb"),
+			sample=SAMPLES,
+			depth=120000000,
+			res=RESOLUTIONS,
+		),
 
 
 # ==============================================================================
