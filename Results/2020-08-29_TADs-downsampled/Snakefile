@@ -27,50 +27,50 @@ WINDOWS = list(range(2, 41))
 CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
 
 wildcard_constraints:
-    w = "\d+",
-    chrom = "chr[X]?[0-9]{0,2}",
-    res = "\d+"
+	w = "\d+",
+	chrom = "chr[X]?[0-9]{0,2}",
+	res = "\d+"
 
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
 rule all:
-    input:
-        expand(
-            path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
-            sample=SAMPLES,
-            count=120000000,
-            res=RESOLUTIONS,
-        ),
-        expand(
-            path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
-            sample=PRIMARY_SAMPLES,
-            count=300000000,
-            res=RESOLUTIONS,
-        ),
-        expand(path.join("Statistics", "tad-similarity-deltas.{count}.tsv"), count=COUNTS),
-        expand(path.join("Statistics", "tad-similarity-supremum.{count}.tsv"), count=COUNTS),
-        expand(
-            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
-            sample=SAMPLES,
-            count=120000000,
-            w=list(range(3, 33)),
-            res=RESOLUTIONS,
-        ),
-        expand(
-            path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
-            sample=PRIMARY_SAMPLES,
-            count=300000000,
-            w=list(range(3, 21)),
-            res=RESOLUTIONS,
-        ),
-        expand(path.join("Statistics", "tad-distances.{count}.tsv"), count=COUNTS),
-        expand(
-            path.join("Insulation", "{sample}.{count}.insulation.tsv"),
-            sample=PRIMARY_SAMPLES,
-            count=300000000,
-        ),
+	input:
+		expand(
+			path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+			sample=SAMPLES,
+			count=120000000,
+			res=RESOLUTIONS,
+		),
+		expand(
+			path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+			sample=PRIMARY_SAMPLES,
+			count=300000000,
+			res=RESOLUTIONS,
+		),
+		expand(path.join("Statistics", "tad-similarity-deltas.{count}.tsv"), count=COUNTS),
+		expand(path.join("Statistics", "tad-similarity-supremum.{count}.tsv"), count=COUNTS),
+		expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+			sample=SAMPLES,
+			count=120000000,
+			w=list(range(3, 33)),
+			res=RESOLUTIONS,
+		),
+		expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+			sample=PRIMARY_SAMPLES,
+			count=300000000,
+			w=list(range(3, 21)),
+			res=RESOLUTIONS,
+		),
+		expand(path.join("Statistics", "tad-distances.{count}.tsv"), count=COUNTS),
+		expand(
+			path.join("Insulation", "{sample}.{count}.insulation.tsv"),
+			sample=PRIMARY_SAMPLES,
+			count=300000000,
+		),
 
 
 # ==============================================================================
