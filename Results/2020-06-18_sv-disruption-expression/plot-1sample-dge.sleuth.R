@@ -182,15 +182,23 @@ counted_gene_tpm <- rbindlist(lapply(
             Total = rep(merged_gene_tpm[test_ID == tid, .N], 3)
         )
         dt[, Frac := N / Total]
+        dt[, Group := paste(Significant, LargeFold, sep = "_")]
         return(dt)
     }
 ))
 
-counted_gene_tpm_plot <- dcast(
+plot_frac_gene_fc <- dcast(
     counted_gene_tpm,
-    test_ID ~ Significant + LargeFold,
+    test_ID ~ Group,
     value.var = "Frac"
 )
+
+plot_n_gene_fc <- dcast(
+    counted_gene_tpm,
+    test_ID ~ Group,
+    value.var = "N"
+)
+plot_n_gene_fc[, Total := FALSE_NA + TRUE_FALSE + TRUE_TRUE]
 
 # classify the events as "only increased expression", "only decreased expression", "no changes", and "increased and descreased expression"
 event_status <- rbindlist(lapply(
@@ -229,61 +237,75 @@ fwrite(merged_gene_tpm_multi_IDs, "summary-sv-disruption.tsv", sep = "\t")
 # ==============================================================================
 loginfo("Plotting figures")
 
-panel_height_ratios <- c(9, 1, 1)
-gg_fc_bars <- ggplotGrob(
-    ggplot(data = counted_gene_tpm)
-    + geom_col(
-        aes(
-            x = factor(test_ID, levels = counted_gene_tpm_plot[order(FALSE_NA, TRUE_FALSE, TRUE_TRUE), test_ID], ordered = TRUE),
-            y = Frac,
-            fill = paste(Significant, LargeFold, sep = "_"),
-        ),
-        position = "stack"
+counted_gene_tpm_long <- rbindlist(list(
+    counted_gene_tpm[, .(test_ID, N, Group)],
+    unique(counted_gene_tpm[, .(test_ID, N = Total, Group = "Total")])
+))
+
+# order groups for clean plotting
+counted_gene_tpm_long[, Group := factor(
+    Group,
+    levels = c("TRUE_TRUE", "TRUE_FALSE", "FALSE_NA", "Total"),
+    ordered = TRUE
+)]
+# order test_IDs by the number of differentially expressed genes
+counted_gene_tpm_long[, test_ID := factor(
+    test_ID,
+    levels = rev(
+        plot_n_gene_fc[,
+            .SD,
+            keyby = c("TRUE_TRUE", "TRUE_FALSE", "FALSE_NA", "Total")
+        ]$test_ID
+    ),
+    ordered = TRUE
+)]
+
+gg_svs_n <- ggplotGrob(
+    ggplot(
+        data = counted_gene_tpm_long,
+        mapping = aes(
+            x = test_ID,
+            y = N,
+            fill = Group
+        )
     )
-    + labs(x = NULL, y = "Genes in TAD around breakpoint (%)")
-    + scale_fill_manual(
-        breaks = c("FALSE_NA", "TRUE_FALSE", "TRUE_TRUE"),
-        labels = c(
-            "N.S.",
-            expression("|" * log[2] * "(Fold Change)| < 1"),
-            expression("|" * log[2] * "(Fold Change)| >= 1")
-        ),
-        values = c("#BDBDBD", "#DCA395", "#FF6347"),
-        name = "Gene expression change"
+    + geom_col()
+    + scale_x_discrete(
+        name = "Breakpoints",
+        labels = NULL
     )
-    + theme_minimal()
-    + theme(
-        axis.text.x = element_blank(),
-        legend.position = "top",
-        panel.grid.major.x = element_blank()
-    )
-)
-gg_fc_ngenes <- ggplotGrob(
-    ggplot(data = counted_gene_tpm[Significant == FALSE])
-    + geom_col(aes(
-        x = factor(test_ID, levels = counted_gene_tpm_plot[order(FALSE_NA, TRUE_FALSE, TRUE_TRUE), test_ID], ordered = TRUE),
-        y = Total
-    ))
-    + labs(x = NULL)
     + scale_y_continuous(
-        name = "Genes",
-        limits = c(0, counted_gene_tpm[, max(Total)]),
-        breaks = c(0, counted_gene_tpm[, max(Total)])
+        name = "Frequency",
     )
+    + scale_fill_manual(
+        breaks = c("TRUE_TRUE", "TRUE_FALSE", "FALSE_NA", "Total"),
+        values = c("#FC6347", "#DDA395", "#CCC5B9", "#000000")
+    )
+    + facet_wrap(~ Group, ncol = 1, scales = "free_y")
+    + guides(fill = FALSE)
     + theme_minimal()
     + theme(
-        strip.text.x = element_blank(),
-        axis.text.x = element_blank(),
-        panel.grid.major.x = element_blank()
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()
     )
 )
-gg_fc_affecting_tad <- ggplotGrob(
-    ggplot(data = tad_tests)
-    + geom_col(aes(
-        x = factor(test_ID, levels = counted_gene_tpm_plot[order(FALSE_NA, TRUE_FALSE, TRUE_TRUE), test_ID], ordered = TRUE),
-        y = 1,
-        fill = altered_TAD
-    ))
+gg_svs_tad <- ggplotGrob(
+    ggplot(
+        data = tad_tests,
+        mapping = aes(
+            x = factor(
+                test_ID,
+                levels = plot_n_gene_fc[,
+                    .SD,
+                    keyby = c("TRUE_TRUE", "TRUE_FALSE", "FALSE_NA", "Total")
+                ]$test_ID
+            ),
+            y = 1,
+            fill = altered_TAD
+        )
+    )
+    + geom_col()
     + labs(x = NULL)
     + scale_y_continuous(
         limits = c(0, 1),
@@ -293,7 +315,7 @@ gg_fc_affecting_tad <- ggplotGrob(
     + scale_fill_manual(
         limits = c(TRUE, FALSE),
         labels = c("Yes", "No"),
-        values = c("#000000", "#BDBDBD"),
+        values = c("#000000", "#FFA500"),
         name = "SV affects TAD boundaries"
     )
     + guides(fill = FALSE)
@@ -305,21 +327,23 @@ gg_fc_affecting_tad <- ggplotGrob(
     )
 )
 maxWidth <- grid::unit.pmax(
-    gg_fc_bars$widths[2:5],
-    gg_fc_ngenes$widths[2:5],
-    gg_fc_affecting_tad$widths[2:5]
+    gg_svs_n$widths[2:5],
+    gg_svs_tad$widths[2:5]
 )
-gg_fc_bars$widths[2:5] <- as.list(maxWidth)
-gg_fc_ngenes$widths[2:5] <- as.list(maxWidth)
-gg_fc_affecting_tad$widths[2:5] <- as.list(maxWidth)
-gg_fc <- grid.arrange(
-    gg_fc_bars,
-    gg_fc_affecting_tad,
-    gg_fc_ngenes,
-    nrow = 3,
-    heights = panel_height_ratios / sum(panel_height_ratios)
+gg_svs_n$widths[2:5] <- as.list(maxWidth)
+gg_svs_tad$widths[2:5] <- as.list(maxWidth)
+gg_svs <- grid.arrange(
+    gg_svs_n,
+    gg_svs_tad,
+    nrow = 2,
+    heights = c(9, 1)
 )
-savefig(gg_fc, file.path(PLOT_DIR, "expression"))
+savefig(
+    gg_svs,
+    file.path(PLOT_DIR, "expression"),
+    width = 17,
+    height = 8
+)
 
 
 # make two versions of this plot, one with labelled SVs and one without
