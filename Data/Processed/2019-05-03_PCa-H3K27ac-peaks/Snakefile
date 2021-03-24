@@ -6,6 +6,7 @@ import os.path as path
 import numpy as np
 
 CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
 
 BAM_DIR = "Aligned"
 PEAK_DIR = "Peaks"
@@ -37,14 +38,12 @@ rule all:
         path.join(PEAK_DIR, "catalogue-peaks.bed"),
         path.join(PEAK_DIR, "correlation.tsv"),
         expand(
-            path.join(PEAK_DIR, "{sample}_FE.sorted.filtered.{ext}"),
+            path.join(TRACK_DIR, "{sample}_FE.sorted.filtered.bw"),
             sample=UNIQ_SAMPLES,
-            ext=["bdg", "bw"],
         ),
         expand(
-            path.join(CORE_DIR, "{sample}.cores.{ext}"),
+            path.join(TRACK_DIR, "{sample}.cores.beddb"),
             sample=UNIQ_CAP_SAMPLES,
-            ext=["bed", "beddb"],
         ),
 
 # ==============================================================================
@@ -89,9 +88,9 @@ rule filter_blacklist_noncanonical:
 
 rule narrowPeak2bedGraph:
     input:
-        path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak")
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak"),
     output:
-        path.join(PEAK_DIR, "{sample}_peaks.filtered.bdg")
+        path.join(PEAK_DIR, "{sample}_peaks.filtered.bdg"),
     shell:
         "awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $5}}' {input} > {output}"
 
@@ -105,7 +104,10 @@ rule merge_peaks:
 
 rule catalogue_peaks:
     input:
-        expand(path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak"), sample=UNIQ_SAMPLES)
+        expand(
+            path.join(PEAK_DIR, "{sample}_peaks.filtered.narrowPeak"),
+            sample=UNIQ_SAMPLES
+        ),
     output:
         path.join(PEAK_DIR, "catalogue-peaks.bed")
     params:
@@ -118,13 +120,16 @@ rule bdg_to_bigwig:
         bed = path.join(PEAK_DIR, "{sample}_{type}.bdg"),
         genome = path.join("..", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
     output:
-        path.join(PEAK_DIR, "{sample}_{type}.bw")
+        path.join(TRACK_DIR, "{sample}_{type}.bw")
     shell:
         "bedGraphToBigWig {input.bed} {input.genome} {output}"
 
 rule correlate:
     input:
-        expand(path.join(PEAK_DIR, "{sample}_treat_pileup.filtered.bw"), sample=UNIQ_SAMPLES)
+        expand(
+            path.join(TRACK_DIR, "{sample}_treat_pileup.filtered.bw"),
+            sample=UNIQ_SAMPLES,
+        ),
     output:
         path.join(PEAK_DIR, "correlation.tsv"),
     run:
@@ -168,7 +173,7 @@ rule clodius_agg_1d_bdg:
     input:
         path.join(PEAK_DIR, "{sample}_FE.sorted.filtered.bdg"),
     output:
-        path.join(PEAK_DIR, "{sample}_FE.sorted.filtered.beddb"),
+        path.join(TRACK_DIR, "{sample}_FE.sorted.filtered.beddb"),
     params:
         "-a hg38"
     shell:
@@ -189,7 +194,7 @@ rule clodius_agg_1d_core:
     input:
         path.join(CORE_DIR, "{sample}.cores.bed"),
     output:
-        path.join(CORE_DIR, "{sample}.cores.beddb"),
+        path.join(TRACK_DIR, "{sample}.cores.beddb"),
     params:
         "-a hg38"
     shell:
