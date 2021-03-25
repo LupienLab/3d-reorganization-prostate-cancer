@@ -45,39 +45,6 @@ TAD_DIR = path.join(
     "separated-TADs",
 )
 
-# ==============================================================================
-# Functions
-# ==============================================================================
-def grn_stats(grn_loops, grn_enhns) -> Dict[str, int]:
-    """
-    Count the number of enhancers and loops in each GRN and how they are shared between T2E+/-
-
-    # Parameters
-    grn_loops: Dict[str, List[Loop]]
-        Loops in the GRN
-    grn_enhns: Dict[str, List[GenomicInterval]]
-        Subgraph of GRN with edges that directly connect to enhancers
-    """
-    data = {
-        "loops_gained": len(
-            [1 for l in grn_loops if l.data["condition"] == "T2E-specific"]
-        ),
-        "loops_shared": len([1 for l in grn_loops if l.data["condition"] == "shared"]),
-        "loops_lost": len(
-            [1 for l in grn_loops if l.data["condition"] == "nonT2E-specific"]
-        ),
-        "enhancers_gained": len(
-            [1 for e in grn_enhns if e.data["condition"] == "T2E-specific"]
-        ),
-        "enhancers_shared": len(
-            [1 for e in grn_enhns if e.data["condition"] == "shared"]
-        ),
-        "enhancers_lost": len(
-            [1 for e in grn_enhns if e.data["condition"] == "nonT2E-specific"]
-        ),
-    }
-    return data
-
 
 # ==============================================================================
 # Data
