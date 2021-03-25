@@ -1,0 +1,81 @@
+# ==============================================================================
+# Environment
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+RESULT_DIR = path.join("..", "..", "Results", "generate-grns")
+
+# ==============================================================================
+# Meta rules
+# ==============================================================================
+rule all:
+    input:
+        path.join(RESULT_DIR, "overlapping.loops.tsv"),
+        path.join(RESULT_DIR, "overlapping.genes.tsv"),
+        path.join(RESULT_DIR, "overlapping.enhancers.tsv"),
+        expand(
+            path.join(RESULT_DIR, "{name}.tsv"),
+            name=[
+                "promoters",
+                "tads",
+                "loops",
+                "putative-enhancers",
+                "putative-grns",
+                "grn-stats",
+            ],
+        ),
+        expand(
+            path.join(RESULT_DIR, "Graphs", "{name}.p"),
+            name=[
+                "genes",
+                "tads",
+                "loops",
+                "enhancers",
+                "grns",
+            ],
+        ),
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule preprocess_elements:
+    input:
+        script = "preproc-loops-genes-peaks.R",
+    output:
+        path.join(RESULT_DIR, "overlapping.loops.tsv"),
+        path.join(RESULT_DIR, "overlapping.genes.tsv"),
+        path.join(RESULT_DIR, "overlapping.enhancers.tsv"),
+    script:
+        "Rscript {input.script}"
+
+rule generate_grns:
+    input:
+        script = "grn.py",
+        loops = path.join(RESULT_DIR, "overlapping.loops.tsv"),
+        genes = path.join(RESULT_DIR, "overlapping.genes.tsv"),
+        enhs = path.join(RESULT_DIR, "overlapping.enhancers.tsv"),
+    output:
+        expand(
+            path.join(RESULT_DIR, "{name}.tsv"),
+            name=[
+                "promoters",
+                "tads",
+                "loops",
+                "putative-enhancers",
+                "putative-grns",
+                "grn-stats",
+            ],
+        ),
+        expand(
+            path.join(RESULT_DIR, "Graphs", "{name}.p"),
+            name=[
+                "genes",
+                "tads",
+                "loops",
+                "enhancers",
+                "grns",
+            ],
+        ),
+    shell:
+        "python {input.script}"
