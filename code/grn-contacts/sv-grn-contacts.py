@@ -134,3 +134,17 @@ contacts_all = (
 # extract mutation status for this sample from the event_IDs
 mut_sample = contacts_all["event_ID"].str.extract("(PCa\d+)")[0]
 contacts_all["Mutation_Status"] = contacts_all["Sample_ID"] == mut_sample
+
+# ==============================================================================
+# Save data
+# ==============================================================================
+contacts.to_csv(
+    path.join(RESULT_DIR, "contacts.tsv"),
+    sep="\t",
+    index=False,
+)
+contacts_all.to_csv(
+    path.join(RESULT_DIR, "contacts-extracted.tsv"),
+    sep="\t",
+    index=False,
+)
