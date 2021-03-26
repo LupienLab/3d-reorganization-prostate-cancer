@@ -115,7 +115,7 @@ tads.sort_values(
 # ==============================================================================
 # Analysis
 # ==============================================================================
-logging.info("Creating GRN")
+logging.info("Creating initial GRNs")
 
 # create placeholder for the GRN
 G = {gid: nx.Graph() for gid in genes["gene_id"]}
@@ -123,11 +123,11 @@ G = {gid: nx.Graph() for gid in genes["gene_id"]}
 T = {}  # TADs
 P = {}  # Genes
 for gene in tqdm(genes.itertuples(), total=genes.shape[0]):
-    # use the entire gene for the GRN
+    # restrict to just the promoter for the GRN
     gi = GenomicInterval(
         gene.chr,
-        gene.start,
-        gene.end,
+        gene.start - 1500 if gene.strand == "+" else gene.end + 1500,
+        gene.start + 500 if gene.strand == "+" else gene.end - 500,
         {
             "id": gene.gene_id,
             "strand": gene.strand,
@@ -171,6 +171,7 @@ T_df.to_csv(
     index=False,
 )
 
+logging.info("Adding loops")
 L = {}  # loops
 for (gene_id, gene) in tqdm(P.items(), total=genes.shape[0]):
     # find loops in this TAD
@@ -257,6 +258,7 @@ L_df.to_csv(
     index=False,
 )
 
+logging.info("Linking enhancers to target genes")
 E = {}  # Enhancers
 for (gene_id, gene) in tqdm(P.items(), total=genes.shape[0]):
     tad = T[gene_id]
@@ -331,6 +333,7 @@ E_df.to_csv(
     index=False,
 )
 
+logging.info("Saving graphs as tables")
 # convert putative GRNs into a table
 # each row is a an edge in the GRN graphs
 G_df = genes.merge(right=P_df, on=["gene_id", "chr"], suffixes=["_gene", "_prom"])
@@ -383,22 +386,13 @@ logging.info("Calculating GRN Stats")
 # for each GRN, count the number gained, shared, and lost loops and enhancers
 grn_info = G_df.groupby(["gene_id", "gene_name"]).size().reset_index(name="n_enhancers")
 
-# reorder columns
-grn_cre_stats = grn_cre_stats.loc[
-    :,
-    [
-        "gene_id",
-        "gene_name",
-        "total_loops",
-        "total_enhancers",
-        "loops_gained",
-        "loops_shared",
-        "loops_lost",
-        "enhancers_gained",
-        "enhancers_shared",
-        "enhancers_lost",
-    ],
-]
+# save count of loops and enhancers in each GRN
+grn_info.to_csv(
+    path.join(RESULT_DIR, "grn-stats.tsv"),
+    sep="\t",
+    header=True,
+    index=False,
+)
 
 # ==============================================================================
 # Save data
@@ -408,14 +402,6 @@ logging.info("Exporting GRNs")
 # save GRNs with pickle
 pickle.dump(G, open(path.join(RESULT_DIR, "Graphs", "grns.p"), "wb"))
 pickle.dump(T, open(path.join(RESULT_DIR, "Graphs", "tads.p"), "wb"))
-pickle.dump(P, open(path.join(RESULT_DIR, "Graphs", "genes.p"), "wb"))
+pickle.dump(P, open(path.join(RESULT_DIR, "Graphs", "promoters.p"), "wb"))
 pickle.dump(E, open(path.join(RESULT_DIR, "Graphs", "enhancers.p"), "wb"))
 pickle.dump(L, open(path.join(RESULT_DIR, "Graphs", "loops.p"), "wb"))
-
-# save count of loops and enhancers in each GRN
-grn_info.to_csv(
-    path.join(RESULT_DIR, "grn-stats.tsv"),
-    sep="\t",
-    header=True,
-    index=False,
-)

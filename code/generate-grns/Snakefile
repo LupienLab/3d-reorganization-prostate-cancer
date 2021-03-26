@@ -28,7 +28,7 @@ rule all:
         expand(
             path.join(RESULT_DIR, "Graphs", "{name}.p"),
             name=[
-                "genes",
+                "promoters",
                 "tads",
                 "loops",
                 "enhancers",
@@ -70,7 +70,7 @@ rule generate_grns:
         expand(
             path.join(RESULT_DIR, "Graphs", "{name}.p"),
             name=[
-                "genes",
+                "promoters",
                 "tads",
                 "loops",
                 "enhancers",
