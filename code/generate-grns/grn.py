@@ -338,16 +338,13 @@ logging.info("Saving graphs as tables")
 # each row is a an edge in the GRN graphs
 G_df = genes.merge(right=P_df, on=["gene_id", "chr"], suffixes=["_gene", "_prom"])
 G_df = G_df.merge(right=E_df, on=["gene_id", "chr"], suffixes=["", "_enh"])
-# only include enhancers that have a loop identified connecting it to the gene
-G_df = G_df.loc[G_df["connecting_loop"] == True, :]
 
-# fix column labels and drop unnecessary ones
-G_df = G_df.drop(labels=["connecting_loop"], axis=1, inplace=False)
+# fix column labels
 G_df.columns = [
     "chr",
     "start_gene",
     "end_gene",
-    "strand",
+    "strand_gene",
     "gene_id",
     "gene_name",
     "start_prom",
@@ -355,6 +352,7 @@ G_df.columns = [
     "start_enh",
     "end_enh",
     "enh_ID",
+    "detected_prom_enh_loop",
 ]
 
 # reorder columns
@@ -366,15 +364,16 @@ G_df = G_df.loc[
         "chr",
         "start_gene",
         "end_gene",
-        "strand",
+        "strand_gene",
         "start_prom",
         "end_prom",
         "start_enh",
         "end_enh",
-        "enh_ID",
+        "detected_prom_enh_loop",
     ],
 ]
 
+# save full list of putative GRNs
 G_df.to_csv(
     path.join(RESULT_DIR, "putative-grns.tsv"),
     sep="\t",
@@ -382,9 +381,35 @@ G_df.to_csv(
     index=False,
 )
 
+# save putative GRNs with detected loops
+G_df.loc[
+    G_df["detected_prom_enh_loop"] == True,
+    [
+        "gene_id",
+        "gene_name",
+        "chr",
+        "start_gene",
+        "end_gene",
+        "strand_gene",
+        "start_prom",
+        "end_prom",
+        "start_enh",
+        "end_enh",
+    ],
+].to_csv(
+    path.join(RESULT_DIR, "putative-grns.filtered-by-loops.tsv"),
+    sep="\t",
+    header=True,
+    index=False,
+)
+
 logging.info("Calculating GRN Stats")
 # for each GRN, count the number gained, shared, and lost loops and enhancers
-grn_info = G_df.groupby(["gene_id", "gene_name"]).size().reset_index(name="n_enhancers")
+grn_info = (
+    G_df.groupby(["gene_id", "gene_name", "detected_prom_enh_loop"])
+    .size()
+    .reset_index(name="n_enhancers")
+)
 
 # save count of loops and enhancers in each GRN
 grn_info.to_csv(
