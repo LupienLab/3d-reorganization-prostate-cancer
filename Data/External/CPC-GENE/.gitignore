@@ -3,3 +3,4 @@ structural-variant-vcfs/*.bed
 structural-variant-vcfs/*.tsv
 RNA-files.md
 RNA-files.tsv
+structural_somatic_mutation.PRAD-CA.tsv
