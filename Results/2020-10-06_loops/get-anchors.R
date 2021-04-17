@@ -19,7 +19,7 @@ suppressMessages(library("regioneR"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("ggupset"))
 
-MIN_SAMPLES <- 3
+MIN_SAMPLES <- 2
 
 # ==============================================================================
 # Functions
