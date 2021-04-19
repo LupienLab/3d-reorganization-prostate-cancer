@@ -24,10 +24,6 @@ rule all:
 		path.join(PROC_DIR, "shared-loops.tsv"),
 		path.join(PROC_DIR, "benign-specific-loops.tsv"),
 		path.join(PROC_DIR, "tumour-specific-loops.tsv"),
-		path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
-		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
-		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
-		path.join(PLOT_DIR, "loop-calls.by-type.png"),
 		expand(
 			path.join(PROC_DIR, "by-sample", "{sample}.flat-loops.bed"),
 			sample=SAMPLES,
@@ -73,10 +69,6 @@ rule anchors:
 		path.join(PROC_DIR, "shared-loops.tsv"),
 		path.join(PROC_DIR, "benign-specific-loops.tsv"),
 		path.join(PROC_DIR, "tumour-specific-loops.tsv"),
-		path.join(PLOT_DIR, "loop-calls.by-sample.pdf"),
-		path.join(PLOT_DIR, "loop-calls.by-sample.png"),
-		path.join(PLOT_DIR, "loop-calls.by-type.pdf"),
-		path.join(PLOT_DIR, "loop-calls.by-type.png"),
 	shell:
 		"Rscript {input.script}"
 
