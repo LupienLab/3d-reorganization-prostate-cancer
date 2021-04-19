@@ -15,9 +15,6 @@ suppressMessages(library("logging"))
 loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
-suppressMessages(library("pheatmap"))
-suppressMessages(library("Matrix"))
-suppressMessages(library("UpSetR"))
 
 LOOP_DIR <- "Loops"
 PLOT_DIR <- "Plots"
@@ -26,6 +23,12 @@ PLOT_DIR <- "Plots"
 # Data
 # ==============================================================================
 loginfo("Loading data")
+
+# load metadata
+meta <- fread("config.tsv", sep = "\t", header = TRUE)
+meta <- meta[Include == "Yes"]
+
+# load loop calls
 loops_indiv <- fread(
     file.path(LOOP_DIR, "merged-loops.tsv"),
     sep = "\t",
@@ -36,20 +39,6 @@ loops <- fread(
     sep = "\t",
     header = TRUE
 )
-
-loop_jaccard <- fread(file.path(LOOP_DIR, "by-sample/loop-multi-jaccard.csv", sep=",", drop = 1)
-colnames(loop_jaccard) <- gsub(
-    "^.\\\\",
-    "",
-    gsub(
-        ".flat-loops.bed$",
-        "",
-        colnames(loop_jaccard)
-    )
-)
-
-meta <- fread("config.tsv", sep = "\t", header = TRUE)
-meta <- meta[Include == "Yes"]
 
 # ==============================================================================
 # Analysis
@@ -74,13 +63,6 @@ distance_stats <- data.table(
         loops[, as.numeric(names(which.max(table(Distance))))]
     )
 )
-
-# construct a symmetric jaccard matrix out of loop comparisons
-jaccard_mtx <- as.matrix(loop_jaccard)
-rownames(jaccard_mtx) <- colnames(jaccard_mtx)
-jaccard_mtx[is.na(jaccard_mtx)] <- 0
-jaccard_mtx <- jaccard_mtx + t(jaccard_mtx)
-diag(jaccard_mtx) <- diag(jaccard_mtx) / 2
 
 # recast inidividual loop calls for upset plot
 loops_upset <- dcast(
@@ -205,26 +187,6 @@ ggsave(
     units = "cm"
 )
 
-pheatmap(
-    mat=jaccard_mtx,
-    filename="Plots/loop-jaccard.png"
-)
-
-# Upset plot for loops across patient samples
-
-png(
-    file.path(PLOT_DIR, "loop-calls.upset.png"),
-    width = 40,
-    height = 12,
-    units = "cm",
-    res = 300
-)
-upset(
-    data = loops_upset,
-    nsets = 17,
-    nintersects = NA
-)
-dev.off()
 
 gg_calls_by_type_all <- (
     ggplot(

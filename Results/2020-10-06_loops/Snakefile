@@ -25,28 +25,33 @@ rule all:
 		path.join(PROC_DIR, "shared-loops.tsv"),
 		path.join(PROC_DIR, "benign-specific-loops.tsv"),
 		path.join(PROC_DIR, "tumour-specific-loops.tsv"),
-		# 
+		# sample-specific loop anchors and tracks
 		expand(
 			path.join(PROC_DIR, "by-sample", "{sample}.anchors.bed"),
 			sample=SAMPLES,
 		),
-		# expand(
-		# 	path.join(TRACK_DIR, "{sample}.loops.bed2ddb"),
-		# 	sample=SAMPLES,
-		# ),
+		expand(
+			path.join(TRACK_DIR, "{sample}.loops.bed2ddb"),
+			sample=SAMPLES,
+		),
 		expand(
 			path.join(TRACK_DIR, "{sample}.anchors.beddb"),
 			sample=SAMPLES,
 		),
-		# path.join(TRACK_DIR, "merged-loops.sample-counts.bed2ddb"),
-		# path.join(TRACK_DIR, "tumour-specific-loops.bed2ddb"),
-		# path.join(TRACK_DIR, "benign-specific-loops.bed2ddb"),
-		# path.join(TRACK_DIR, "shared-loops.bed2ddb"),
-		# path.join(PROC_DIR, "loop-saturation.model-estimates.tsv"),
-		# path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
-		# path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
-		# path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
-		# path.join(PLOT_DIR, "loop-saturation.All.png"),
+		path.join(TRACK_DIR, "merged-loops.sample-counts.bed2ddb"),
+		path.join(TRACK_DIR, "tumour-specific-loops.bed2ddb"),
+		path.join(TRACK_DIR, "benign-specific-loops.bed2ddb"),
+		path.join(TRACK_DIR, "shared-loops.bed2ddb"),
+		# loop saturation analysis
+		path.join(PROC_DIR, "loop-saturation.model-estimates.tsv"),
+		path.join(PROC_DIR, "loop-saturation.saturation-estimates.tsv"),
+		path.join(PROC_DIR, "loop-saturation.bootstraps.tsv"),
+		path.join(PROC_DIR, "loop-saturation.bootstrap-summary.tsv"),
+		path.join(PLOT_DIR, "loop-saturation.All.png"),
+		# plots and stats for loop calls
+		path.join(PLOT_DIR, "loop-calls.per-sample.png"),
+		path.join(PLOT_DIR, "loop-calls.per-sample.pdf"),
+		path.join(PLOT_DIR, "loop-calls.anchor-distance.png"),
 		# path.join(PLOT_DIR, "apa.pileup.samples.png"),
 		# path.join(PLOT_DIR, "apa.pileup.conditional.png"),
 		# path.join(PLOT_DIR, "apa.differential.png"),
@@ -107,6 +112,18 @@ rule loop_saturation:
 	shell:
 		"Rscript {input.script}"
 
+rule plot_loops:
+	input:
+		script = "plot-loops.R",
+		all_loops = path.join(PROC_DIR, "merged-loops.tsv"),
+		counted_loops = path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+	output:
+		path.join(PLOT_DIR, "loop-calls.per-sample.png"),
+		path.join(PLOT_DIR, "loop-calls.per-sample.pdf"),
+		path.join(PLOT_DIR, "loop-calls.anchor-distance.png"),
+	shell:
+		"Rscript {input.script}"
+
 rule clodius_2d_tsv:
 	input:
 		path.join(PROC_DIR, "{file}.tsv"),
@@ -119,7 +136,7 @@ rule clodius_2d_tsv:
 
 rule clodius_2d_anchors:
 	input:
-		path.join(PROC_DIR, "by-sample", "{file}.flat-loops.bed"),
+		path.join(PROC_DIR, "by-sample", "{file}.anchors.bed"),
 	output:
 		path.join(TRACK_DIR, "{file}.anchors.beddb"),
 	params:
