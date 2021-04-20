@@ -59,17 +59,9 @@ SAMPLES = {
 
 # load loop calls
 loops = pd.read_csv("Loops/merged-loops.sample-counts.tsv", sep="\t")
-tumour_loop_idx = loops[
-    (loops.Consistent_in_benign_or_tumour == True) & (loops.Benign == 0)
-].index
-benign_loop_idx = loops[
-    (loops.Consistent_in_benign_or_tumour == True) & (loops.Malignant == 0)
-].index
-shared_loop_idx = loops[
-    (loops.Consistent_in_benign_or_tumour == True)
-    & (loops.Malignant > 0)
-    & (loops.Benign > 0)
-].index
+tumour_loop_idx = loops[loops.Benign == 0].index
+benign_loop_idx = loops[loops.Malignant == 0].index
+shared_loop_idx = loops[(loops.Malignant > 0) & (loops.Benign > 0)].index
 
 pileup = pickle.load(open(path.join(LOOP_DIR, "pileup.obj"), "rb"))
 conditional_stack = pickle.load(
