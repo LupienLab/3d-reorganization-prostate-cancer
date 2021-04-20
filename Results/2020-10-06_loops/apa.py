@@ -77,6 +77,8 @@ loops = pd.read_csv(
     path.join(DIR["loops"], "merged-loops.sample-counts.tsv"),
     sep="\t",
 )
+# restrict to loops detected in >= 2 samples
+loops = loops.loc[loops["Benign"] + loops["Malignant"] >= 2, :]
 
 # contact matrices
 mtx = {
