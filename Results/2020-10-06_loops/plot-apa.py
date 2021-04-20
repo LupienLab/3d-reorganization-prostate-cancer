@@ -16,7 +16,7 @@ mpl.use("agg")
 
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-import scipy.stats as stats
+import matplotlib.patches as patches
 import pickle
 import pandas as pd
 from itertools import chain
@@ -43,6 +43,13 @@ SAMPLE_TYPES = ["benign", "tumour"]
 # ==============================================================================
 def filter_arr(x: np.ndarray) -> np.ndarray:
     return x[~np.isnan(x) & np.isfinite(x)]
+
+
+# Helper function for converting matrix index coordinates to spatial coordinates, relative to loop centre
+# Returns values in kbp
+def idx_to_locus(x: int, res: int = RES, shift: int = SHIFT_SIZE) -> int:
+    n_rows = (2 * SHIFT_SIZE + 1) // RES
+    return (x - n_rows // 2) * res // 1000
 
 
 # ==============================================================================
@@ -135,6 +142,49 @@ specific_apa = {
         ),
     },
 }
+
+# coordinates are (row_lo, row_hi, col_lo, col_hi)
+mtx_side_length = specific_apa["tumour"]["tumour-specific"].shape[0]
+box_side_length = 10
+annot_coords = {
+    "top left": (0, box_side_length, 0, box_side_length),
+    "top right": (
+        0,
+        box_side_length,
+        mtx_side_length - box_side_length,
+        mtx_side_length,
+    ),
+    "centre": (
+        (mtx_side_length - box_side_length) // 2,
+        (mtx_side_length + box_side_length) // 2,
+        (mtx_side_length - box_side_length) // 2,
+        (mtx_side_length + box_side_length) // 2,
+    ),
+    "bottom left": (
+        mtx_side_length - box_side_length,
+        mtx_side_length,
+        0,
+        box_side_length,
+    ),
+    "bottom right": (
+        mtx_side_length - box_side_length,
+        mtx_side_length,
+        mtx_side_length - box_side_length,
+        mtx_side_length,
+    ),
+}
+# calculate mean values over the centre and corners
+# to be added over the plots
+plot_annots = {}
+for i, sample_type in enumerate(["tumour", "benign"]):
+    plot_annots[sample_type] = {}
+    for j, loop_type in enumerate(["tumour-specific", "shared", "benign-specific"]):
+        plot_annots[sample_type][loop_type] = {}
+        for k, v in annot_coords.items():
+            plot_annots[sample_type][loop_type][k] = np.nanmean(
+                specific_apa[sample_type][loop_type][v[0] : v[1], v[2] : v[3]]
+            )
+
 
 # ==============================================================================
 # Plots
@@ -320,14 +370,40 @@ gs = GridSpec(
 # plotting options
 plt.figure(figsize=(4 * (ncols - 1), 4 * nrows))
 opts = dict(
-    extent=[-10, 10, -10, 10],
+    extent=[-300, 300, -300, 300],
     cmap="coolwarm",
-)  # vmin=-2, vmax=2,)
-# make component plots
+)
+# make subplots
 for i, sample_type in enumerate(["tumour", "benign"]):
     for j, loop_type in enumerate(["tumour-specific", "shared", "benign-specific"]):
+        # initialize axes
         ax = plt.subplot(gs[i, j])
+        # plot APA pileup
         img = ax.matshow(np.log2(specific_apa[sample_type][loop_type]), **opts)
+        # add annotation rectangles to corners and centre
+        for k, v in plot_annots[sample_type][loop_type].items():
+            xy = (
+                idx_to_locus(annot_coords[k][0]),
+                idx_to_locus(annot_coords[k][2]),
+            )
+            width = (annot_coords[k][1] - annot_coords[k][0]) * RES // 1000
+            height = (annot_coords[k][3] - annot_coords[k][2]) * RES // 1000
+            rect = patches.Rectangle(
+                xy=xy,
+                width=width,
+                height=height,
+                linewidth=1,
+                edgecolor="#000000",
+                facecolor="none",
+            )
+            ax.add_patch(rect)
+            plt.text(
+                x=xy[0] + width // 2,
+                y=xy[1] + height // 2,
+                s="{:.2f}".format(np.log2(plot_annots[sample_type][loop_type][k])),
+                ha="center",
+                va="center",
+            )
         # add x axis labels to bottom-most subplots
         ax.yaxis.tick_left()
         ax.xaxis.tick_bottom()
