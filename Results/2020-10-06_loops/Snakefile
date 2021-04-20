@@ -52,12 +52,12 @@ rule all:
 		path.join(PLOT_DIR, "loop-calls.per-sample.png"),
 		path.join(PLOT_DIR, "loop-calls.per-sample.pdf"),
 		path.join(PLOT_DIR, "loop-calls.anchor-distance.png"),
-		# path.join(PLOT_DIR, "apa.pileup.samples.png"),
-		# path.join(PLOT_DIR, "apa.pileup.conditional.png"),
-		# path.join(PLOT_DIR, "apa.differential.png"),
-		# path.join(PLOT_DIR, "apa.differential.ranked.png"),
-		# path.join(PLOT_DIR, "apa.specific-loops.png"),
-		# path.join(PLOT_DIR, "apa.specific-loops.pdf"),
+		path.join(PLOT_DIR, "apa.pileup.samples.png"),
+		path.join(PLOT_DIR, "apa.pileup.conditional.png"),
+		path.join(PLOT_DIR, "apa.differential.png"),
+		path.join(PLOT_DIR, "apa.differential.ranked.png"),
+		path.join(PLOT_DIR, "apa.specific-loops.png"),
+		path.join(PLOT_DIR, "apa.specific-loops.pdf"),
 
 
 # ==============================================================================
@@ -76,28 +76,16 @@ rule anchors:
 		path.join(PROC_DIR, "shared-loops.tsv"),
 		path.join(PROC_DIR, "benign-specific-loops.tsv"),
 		path.join(PROC_DIR, "tumour-specific-loops.tsv"),
-	shell:
-		"Rscript {input.script}"
-
-rule split_loops_by_sample:
-	input:
-		script = "split-loops.awk",
-		data = path.join(PROC_DIR, "merged-loops.tsv"),
-	output:
 		expand(
 			path.join(PROC_DIR, "by-sample", "{sample}.loops.bedpe"),
 			sample=SAMPLES,
 		),
+		expand(
+			path.join(PROC_DIR, "by-sample", "{sample}.anchors.bed"),
+			sample=SAMPLES,
+		),
 	shell:
-		"awk -f {input.script} {input.data}"
-
-rule flatten_split_loops:
-	input:
-		path.join(PROC_DIR, "by-sample", "{sample}.loops.bedpe"),
-	output:
-		path.join(PROC_DIR, "by-sample", "{sample}.anchors.bed"),
-	shell:
-		"awk '{{FS=OFS=\"\t\"}}{{ print $1, $2, $3, $7, $8, $10, $11; print $4, $5, $6, $7, $9, $10, $11; }}' {input} > {output}"
+		"Rscript {input.script}"
 
 rule loop_saturation:
 	input:
@@ -157,19 +145,26 @@ rule clodius_2d_loops:
 rule apa:
 	input:
 		script = "apa.py",
-		shared = path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+		loops = path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
 	output:
+		path.join(PROC_DIR, "snipper.obj"),
 		path.join(PROC_DIR, "stack.obj"),
+		path.join(PROC_DIR, "stack.conditional.obj"),
+		path.join(PROC_DIR, "stack.conditional.differential.obj"),
+		path.join(PROC_DIR, "pileup.obj"),
+		path.join(PROC_DIR, "pileup.conditional.obj"),
+		path.join(PROC_DIR, "differential.obj"),
 	shell:
 		"python {input.script}"
 
 rule plot_apa:
 	input:
 		script = "plot-apa.py",
-		data = expand(
-			path.join(PROC_DIR, "condition_pile.{loop_type}.obj"),
-			loop_type=["shared", "benign", "tumour"],
-		),
+		loops = path.join(PROC_DIR, "merged-loops.sample-counts.tsv"),
+		pileup = path.join(PROC_DIR, "pileup.obj"),
+		cdn_pile = path.join(PROC_DIR, "pileup.conditional.obj"),
+		cdn_stack = path.join(PROC_DIR, "stack.conditional.obj"),
+		diff = path.join(PROC_DIR, "differential.obj"),
 	output:
 		path.join(PLOT_DIR, "apa.pileup.samples.png"),
 		path.join(PLOT_DIR, "apa.pileup.conditional.png"),

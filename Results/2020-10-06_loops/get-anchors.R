@@ -21,6 +21,10 @@ suppressMessages(library("ggupset"))
 
 MIN_SAMPLES <- 2
 
+LOOP_DIR <- "Loops"
+
+CHRS <- paste0("chr", c(1:22, "X", "Y"))
+
 # ==============================================================================
 # Functions
 # ==============================================================================
@@ -147,9 +151,8 @@ loops <- loops[,
 corrected_anchors_x <- loop_anchors[loops[, anchorID_x]]
 corrected_anchors_y <- loop_anchors[loops[, anchorID_y]]
 
+# combine all loop calls together into a single table
 merged_loops <- data.table(
-    "SampleID" = loops[, SampleID],
-    "Type" = loops[, Type],
     "chr_x" = as.vector(seqnames(corrected_anchors_x)),
     "start_x" = start(corrected_anchors_x),
     "end_x" = end(corrected_anchors_x),
@@ -159,10 +162,13 @@ merged_loops <- data.table(
     "anchor_ID_x" = loops[, anchorID_x],
     "anchor_ID_y" = loops[, anchorID_y],
     "loop_ID" = loops[, loop_ID],
+    "fdr" = loops[, fdr],
     "detection_scale" = loops[, detection_scale],
-    "fdr" = loops[, fdr]
+    "SampleID" = loops[, SampleID],
+    "Type" = loops[, Type]
 )
 
+# merge loop calls into a unique catalogue of loops called across the entire cohort
 unique_loops <- merged_loops[,
     .(
         chr_x = unique(chr_x),
@@ -198,6 +204,17 @@ unique_loops <- merge(
     all = TRUE
 )
 
+# reorder columns
+unique_loops <- unique_loops[,
+    .SD,
+    .SDcols = c(
+        "chr_x", "start_x", "end_x",
+        "chr_y", "start_y", "end_y",
+        "anchor_ID_x", "anchor_ID_y", "loop_ID",
+        "fdr", "detection_scale",
+        "Benign", "Malignant"
+    )
+]
 
 # ==============================================================================
 # Save data
@@ -205,69 +222,92 @@ unique_loops <- merge(
 loginfo("Saving data")
 fwrite(
     merged_loops,
-    file.path("Loops", "merged-loops.tsv"),
-    sep = "\t",
-    col.names = TRUE
-)
-fwrite(
-    # put the columns in an order compatible with BEDPE format
-    unique_loops,
-    file.path("Loops", "merged-loops.sample-counts.tsv"),
+    file.path(LOOP_DIR, "merged-loops.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
-# save benign-specific loops
 fwrite(
-    # put the columns in an order compatible with BEDPE format
+    unique_loops,
+    file.path(LOOP_DIR, "merged-loops.sample-counts.tsv"),
+    sep = "\t",
+    col.names = TRUE
+)
+
+# save benign-specific loops called in at least 2 benign samples
+fwrite(
     unique_loops[
         Benign >= MIN_SAMPLES & Malignant == 0,
         .SD,
-        .SDcols = c(
-            "chr_x", "start_x", "end_x",
-            "chr_y", "start_y", "end_y",
-            "anchor_ID_x", "anchor_ID_y", "loop_ID",
-            "fdr", "detection_scale"
-        )
+        .SDcols = -c("Benign", "Malignant")
     ],
-    file.path("Loops", "benign-specific-loops.tsv"),
+    file.path(LOOP_DIR, "benign-specific-loops.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
-# save tumour-specific loops
+# save tumour-specific loops called in at least 2 tumour samples
 fwrite(
-    # put the columns in an order compatible with BEDPE format
     unique_loops[
         Benign == 0 & Malignant >= MIN_SAMPLES,
         .SD,
-        .SDcols = c(
-            "chr_x", "start_x", "end_x",
-            "chr_y", "start_y", "end_y",
-            "anchor_ID_x", "anchor_ID_y", "loop_ID",
-            "fdr", "detection_scale"
-        )
+        .SDcols = -c("Benign", "Malignant")
     ],
-    file.path("Loops", "tumour-specific-loops.tsv"),
+    file.path(LOOP_DIR, "tumour-specific-loops.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
-# save shared tumour-benign loops
+# save shared loops
 fwrite(
     # put the columns in an order compatible with BEDPE format
-    unique_loops[
-        Benign > 0 & Malignant > 0,
-        .SD,
-        .SDcols = c(
-            "chr_x", "start_x", "end_x",
-            "chr_y", "start_y", "end_y",
-            "anchor_ID_x", "anchor_ID_y", "loop_ID",
-            "fdr", "detection_scale",
-            "Benign", "Malignant"
-        )
-    ],
-    file.path("Loops", "shared-loops.tsv"),
+    unique_loops[(Benign > 0) & (Malignant > 0)],
+    file.path(LOOP_DIR, "shared-loops.tsv"),
     sep = "\t",
     col.names = TRUE
 )
+
+# save sample-specific loops
+for (s in merged_loops[, unique(SampleID)]) {
+    # save loop calls in BEDPE format
+    sample_loops <- merged_loops[SampleID == s, .SD, .SDcols = -c("SampleID", "Type")]
+    fwrite(
+        sample_loops,
+        file.path(LOOP_DIR, "by-sample", paste0(s, ".loops.bedpe")),
+        sep = "\t",
+        col.names = FALSE
+    )
+
+    # convert loop calls to anchors
+    sample_anchors <- rbindlist(list(
+        sample_loops[,
+            .(
+                chr = factor(chr_x, levels = CHRS, ordered = TRUE),
+                start = start_x,
+                end = end_x,
+                anchor_ID = anchor_ID_x,
+                loop_ID,
+                fdr,
+                detection_scale
+            )
+        ],
+        sample_loops[,
+            .(
+                chr = factor(chr_y, levels = CHRS, ordered = TRUE),
+                start = start_y,
+                end = end_y,
+                anchor_ID = anchor_ID_y,
+                loop_ID,
+                fdr,
+                detection_scale
+            )
+        ]
+    ))
+    # save anchors, sorted by chr + pos
+    fwrite(
+        sample_anchors[, .SD, keyby = c("chr", "start", "end")],
+        file.path(LOOP_DIR, "by-sample", paste0(s, ".anchors.bed")),
+        sep = "\t",
+        col.names = FALSE
+    )
+}
