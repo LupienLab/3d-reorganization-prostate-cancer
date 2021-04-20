@@ -65,10 +65,12 @@ SAMPLES = {
 }
 
 # load loop calls
-loops = pd.read_csv("Loops/merged-loops.sample-counts.tsv", sep="\t")
-tumour_loop_idx = loops[loops.Benign == 0].index
-benign_loop_idx = loops[loops.Malignant == 0].index
-shared_loop_idx = loops[(loops.Malignant > 0) & (loops.Benign > 0)].index
+tumour_loops = pd.read_csv(path.join(LOOP_DIR, "tumour-specific-loops.tsv"))
+tumour_loop_idx = tumour_loops.index
+benign_loops = pd.read_csv(path.join(LOOP_DIR, "benign-specific-loops.tsv"))
+benign_loop_idx = benign_loops.index
+shared_loops = pd.read_csv(path.join(LOOP_DIR, "shared-loops.tsv"))
+shared_loop_idx = shared_loops.index
 
 pileup = pickle.load(open(path.join(LOOP_DIR, "pileup.obj"), "rb"))
 conditional_stack = pickle.load(
@@ -85,6 +87,7 @@ conditional_differential = pickle.load(
 # ==============================================================================
 # Analysis
 # ==============================================================================
+logging.info("Calculating differences between contacts")
 # rank the loops by their mean differential between benign and tumour samples
 difference_stack = np.array(
     [
@@ -117,6 +120,7 @@ top_loops_idx = list(
 )
 
 
+logging.info("Calculating APA")
 # calculate APA for "tumour-specific" and "benign-specific" loops
 specific_apa = {
     "tumour": {
@@ -189,6 +193,8 @@ for i, sample_type in enumerate(["tumour", "benign"]):
 # ==============================================================================
 # Plots
 # ==============================================================================
+logging.info("Creating plots")
+
 # create heatmap for each pileup plot
 ncols = len(SAMPLES["all"]) + 1
 nrows = 1
@@ -423,3 +429,6 @@ plt.colorbar(img, cax=ax)
 plt.savefig("Plots/apa.specific-loops.png")
 plt.savefig("Plots/apa.specific-loops.pdf")
 plt.close()
+
+logging.info("Done")
+
