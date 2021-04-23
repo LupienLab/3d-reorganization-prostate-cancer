@@ -30,6 +30,33 @@ wide_e1 <- fread(
     header = TRUE
 )
 
+stat <- wide_e1[,
+    .(
+        # factorize chromosomes for plotting
+        chrom = factor(
+            chrom,
+            levels = paste0("chr", c(1:22, "X", "Y")),
+            ordered = TRUE
+        ),
+        start,
+        end,
+        diff = Malignant_Mean - Benign_Mean,
+        Malignant_N,
+        Benign_N,
+        Total_N = Malignant_N + Benign_N,
+        var_pooled = ((Malignant_N - 1) * Malignant_SD ^ 2 + (Benign_N - 1) * Benign_SD ^ 2) / (Malignant_N + Benign_N - 2)
+    )
+]
+stat[, t := diff / sqrt(var_pooled * (1 / Malignant_N + 1 / Benign_N))]
+stat[, diff_range := qt(p = 0.95, df = Total_N - 2) * sqrt(var_pooled)]
+stat[, `:=`(
+    lower = t - diff_range,
+    upper = t + diff_range,
+    p = pt(q = t, df = Total_N - 2)
+)]
+stat[, q := p.adjust(p, method = "fdr")]
+
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -255,5 +282,100 @@ ggsave(
     gg,
     width = 12,
     height = 12,
+    units = "cm"
+)
+
+gg_manhattan <- (
+    ggplot(
+        data = stat,
+        mapping = aes(
+            x = start,
+            y = diff,
+            ymin = lower,
+            ymax = upper
+        )
+    )
+    # + geom_rect(
+    #     data = stat[(q < 0.05) & (shift(q, 1) < 0.05) & (shift(q, 2) < 0.05)],
+    #     mapping = aes(
+    #         xmin = start,
+    #         xmax = end
+    #     ),
+    #     ymin = -3,
+    #     ymax = 3,
+    #     fill = "#6495ed",
+    #     alpha = 0.2
+    # )
+    # + geom_ribbon(fill = "#BDBDBD")
+    + geom_path()
+    + facet_grid(. ~ chrom, space = "free", scales = "free_x")
+    + scale_y_continuous(
+        name = "Compartmentalization Difference\n(Tumour - Benign)",
+        limits = c(-2, 2)
+    )
+    + theme_minimal()
+    + theme(
+        panel.spacing = unit(0, "lines"),
+        panel.background = element_rect(fill = NA, color = "#000000"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_blank()
+    )
+)
+ggsave(
+    file.path(PLOT_DIR, "diff.manhattan.png"),
+    gg_manhattan,
+    width = 30,
+    height = 8,
+    units = "cm"
+)
+
+gg_manhattan_p <- (
+    ggplot(
+        data = stat,
+        mapping = aes(
+            x = start,
+            y = -log10(p)
+        )
+    )
+    + geom_point()
+    + geom_hline(
+        yintercept = -log10(0.05 * stat[, .N] / stat[p < 0.05, .N]),
+        linetype = "dashed"
+    )
+    + facet_grid(. ~ chrom, space = "free", scales = "free_x")
+    + theme_minimal()
+    + theme(
+        panel.spacing = unit(0, "lines"),
+        panel.background = element_rect(fill = NA, color = "#000000"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_blank()
+    )
+)
+ggsave(
+    file.path(PLOT_DIR, "diff.manhattan.pval.png"),
+    gg_manhattan_p,
+    width = 30,
+    height = 8,
+    units = "cm"
+)
+
+gg_mean_var <- (
+    ggplot(
+        data = wide_e1,
+        mapping = aes(
+            x = Malignant_Mean,
+            y = Malignant_SD ^ 2
+        )
+    )
+    + geom_point()
+    + theme_minimal()
+)
+ggsave(
+    file.path(PLOT_DIR, "diff.mean-var.png"),
+    gg_mean_var,
+    width = 10,
+    height = 10,
     units = "cm"
 )

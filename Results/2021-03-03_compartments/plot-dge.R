@@ -63,6 +63,18 @@ so_chr19 <- readRDS(file.path(DGE_DIR, "dge.chr19-diffs.sleuth-object.rds"))
 
 dge_gene_ids <- chr19_genes[qval < 0.05, target_id]
 
+# load chrY differential expression
+chrY_genes <- fread(
+    file.path(DGE_DIR, "dge.chrY-diffs.local-genes.tsv"),
+    sep = "\t",
+    header = TRUE
+)
+chrY_tx <- fread(
+    file.path(DGE_DIR, "dge.chrY-diffs.local-transcripts.tsv"),
+    sep = "\t",
+    header = TRUE
+)
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -198,6 +210,128 @@ ggsave(
     gg_pval,
     width = 16,
     height = 12,
+    units = "cm"
+)
+
+gg_chr19_volcano <- (
+    ggplot(
+        data = chr19_tx,
+        mapping = aes(
+            x = b / log(2),
+            y = -log10(pval),
+            fill = paste(qval < 0.05, abs(b / log(2)) > 1, sign(b)),
+            label = transcript_name
+        )
+    )
+    + geom_point(shape = 21, alpha = 0.7)
+    + geom_label_repel(
+        data = subset(chr19_tx, qval < 0.05)
+    )
+    + scale_x_continuous(
+        name = bquote(log[2] * "(FC)")
+    )
+    + scale_y_continuous(
+        name = bquote(-log[10] * "(p-value)")
+    )
+    + scale_fill_manual(
+        name = NULL,
+        breaks = c(
+            "FALSE FALSE 1",
+            "FALSE FALSE -1",
+            "FALSE TRUE 1",
+            "FALSE TRUE -1",
+            "TRUE TRUE 1", 
+            "TRUE TRUE -1"
+        ),
+        labels = c(
+            "N.S.",
+            "N.S.",
+            "N.S.",
+            "N.S.",
+            "q < 0.05, log2(FC) < -1",
+            "q < 0.05, log2(FC) > 1"
+        ),
+        values = rep(
+            c("#BDBDBD", "#FFA500", "#6495ED"),
+            c(4, 1, 1)
+        )
+    )
+    + guides(fill = FALSE)
+    + theme_minimal()
+)
+ggsave(
+    file.path(PLOT_DIR, "dge.chr19.png"),
+    gg_chr19_volcano,
+    width = 8,
+    height = 6,
+    units = "cm"
+)
+ggsave(
+    file.path(PLOT_DIR, "dge.chr19.pdf"),
+    gg_chr19_volcano,
+    width = 8,
+    height = 6,
+    units = "cm"
+)
+
+gg_chrY_volcano <- (
+    ggplot(
+        data = chrY_tx,
+        mapping = aes(
+            x = b / log(2),
+            y = -log10(pval),
+            fill = paste(qval < 0.05, abs(b / log(2)) > 1, sign(b)),
+            label = transcript_name
+        )
+    )
+    + geom_point(shape = 21, alpha = 0.7)
+    + geom_label_repel(
+        data = subset(chrY_tx, qval < 0.05)
+    )
+        + scale_x_continuous(
+        name = bquote(log[2] * "(FC)")
+    )
+    + scale_y_continuous(
+        name = bquote(-log[10] * "(p-value)")
+    )
+    + scale_fill_manual(
+        name = NULL,
+        breaks = c(
+            "FALSE FALSE 1",
+            "FALSE FALSE -1",
+            "FALSE TRUE 1",
+            "FALSE TRUE -1",
+            "TRUE TRUE 1", 
+            "TRUE TRUE -1"
+        ),
+        labels = c(
+            "N.S.",
+            "N.S.",
+            "N.S.",
+            "N.S.",
+            "q < 0.05, log2(FC) < -1",
+            "q < 0.05, log2(FC) > 1"
+        ),
+        values = rep(
+            c("#BDBDBD", "#FFA500", "#6495ED"),
+            c(4, 1, 1)
+        )
+    )
+    + guides(fill = FALSE)
+    + theme_minimal()
+)
+ggsave(
+    file.path(PLOT_DIR, "dge.chrY.png"),
+    gg_chrY_volcano,
+    width = 8,
+    height = 6,
+    units = "cm"
+)
+ggsave(
+    file.path(PLOT_DIR, "dge.chrY.pdf"),
+    gg_chrY_volcano,
+    width = 8,
+    height = 6,
     units = "cm"
 )
 

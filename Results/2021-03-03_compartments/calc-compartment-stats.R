@@ -52,12 +52,23 @@ loginfo("Calculating statistics")
 # ------------------------------------------------
 # first remove regions with NA values
 compartments <- compartments[complete.cases(compartments)]
+
+# find bandwidth for appropriate determination of compartment boundaries
+bandwidth <- compartments[,
+    .(diff = E1 - shift(E1, 1)),
+    by = c("Sample_ID", "chrom")
+]
+cmpmt_diff_threshold <- 1.5 * bandwidth[, sd(diff, na.rm = TRUE)]
+
 compartments <- compartments[,
     .(
         start,
         end,
         E1,
-        new_compartment_start = sign(E1) != sign(shift(E1, 1))
+        new_compartment_start = (
+            (sign(E1) != sign(shift(E1, 1)))
+            & (abs(E1 - shift(E1, 1)) > cmpmt_diff_threshold)
+        )
     ),
     by = c("Sample_ID", "chrom")
 ]
@@ -149,8 +160,8 @@ gg_size <- (
     )
     + geom_density(aes(y = ..count..), alpha = 0.1)
     + scale_x_continuous(
-        name = "Compartment Size (kbp)",
-        limits = c(0, 1e3)
+        name = "Compartment Size (kbp)"
+        # limits = c(0, 1e3)
     )
     + scale_y_continuous(
         name = "Density"
@@ -182,7 +193,6 @@ ggsave(
     height = 8,
     units = "cm"
 )
-
 
 # ==============================================================================
 # Save Data
