@@ -4,3 +4,5 @@ structural-variant-vcfs/*.tsv
 RNA-files.md
 RNA-files.tsv
 structural_somatic_mutation.PRAD-CA.tsv
+copy_number_somatic_mutation.PRAD-CA.tsv
+exp_seq.PRAD-CA.tsv
