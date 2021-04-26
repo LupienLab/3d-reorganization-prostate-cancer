@@ -6,11 +6,13 @@
 # Description: Plot aggregate peak analyses results
 # Author: James Hawley
 
+import itertools
 import logging
 
 import os.path as path
 import numpy as np
 import matplotlib as mpl
+from tqdm import tqdm
 
 mpl.use("agg")
 
@@ -65,13 +67,22 @@ SAMPLES = {
 }
 
 # load loop calls
-tumour_loops = pd.read_csv(path.join(LOOP_DIR, "tumour-specific-loops.tsv"))
-tumour_loop_idx = tumour_loops.index
-benign_loops = pd.read_csv(path.join(LOOP_DIR, "benign-specific-loops.tsv"))
-benign_loop_idx = benign_loops.index
-shared_loops = pd.read_csv(path.join(LOOP_DIR, "shared-loops.tsv"))
-shared_loop_idx = shared_loops.index
+loops = pd.read_csv(
+    path.join(LOOP_DIR, "merged-loops.sample-counts.tsv"),
+    sep="\t",
+)
+# restrict to loops detected in >= 2 samples
+# resetting index so that the index matches the array element index of the various stack/pileup objects
+loops = loops.loc[loops["Benign"] + loops["Malignant"] >= 2, :].reset_index()
 
+tumour_loops = loops.loc[loops["Benign"] == 0, :]
+benign_loops = loops.loc[loops["Malignant"] == 0, :]
+shared_loops = loops.loc[(loops["Benign"] > 0) & (loops["Malignant"] > 0), :]
+tumour_loops_idx = tumour_loops.index
+benign_loops_idx = benign_loops.index
+shared_loops_idx = shared_loops.index
+
+stack = pickle.load(open(path.join(LOOP_DIR, "stack.obj"), "rb"))
 pileup = pickle.load(open(path.join(LOOP_DIR, "pileup.obj"), "rb"))
 conditional_stack = pickle.load(
     open(path.join(LOOP_DIR, "stack.conditional.obj"), "rb")
@@ -125,24 +136,24 @@ logging.info("Calculating APA")
 specific_apa = {
     "tumour": {
         "tumour-specific": np.nanmean(
-            conditional_stack["tumour"][tumour_loop_idx, :, :], axis=0
+            conditional_stack["tumour"][tumour_loops_idx, :, :], axis=0
         ),
         "benign-specific": np.nanmean(
-            conditional_stack["tumour"][benign_loop_idx, :, :], axis=0
+            conditional_stack["tumour"][benign_loops_idx, :, :], axis=0
         ),
         "shared": np.nanmean(
-            conditional_stack["tumour"][shared_loop_idx, :, :], axis=0
+            conditional_stack["tumour"][shared_loops_idx, :, :], axis=0
         ),
     },
     "benign": {
         "tumour-specific": np.nanmean(
-            conditional_stack["benign"][tumour_loop_idx, :, :], axis=0
+            conditional_stack["benign"][tumour_loops_idx, :, :], axis=0
         ),
         "benign-specific": np.nanmean(
-            conditional_stack["benign"][benign_loop_idx, :, :], axis=0
+            conditional_stack["benign"][benign_loops_idx, :, :], axis=0
         ),
         "shared": np.nanmean(
-            conditional_stack["benign"][shared_loop_idx, :, :], axis=0
+            conditional_stack["benign"][shared_loops_idx, :, :], axis=0
         ),
     },
 }
@@ -195,6 +206,8 @@ for i, sample_type in enumerate(["tumour", "benign"]):
 # ==============================================================================
 logging.info("Creating plots")
 
+# 1. Create a pileup heatmap of all loops for each sample
+# ------------------------------------------------
 # create heatmap for each pileup plot
 ncols = len(SAMPLES["all"]) + 1
 nrows = 1
@@ -228,8 +241,53 @@ plt.colorbar(img, cax=ax)
 plt.savefig("Plots/apa.pileup.samples.png")
 plt.close()
 
+# 2. Create a pileup heatmap for each loop
+# ------------------------------------------------
+# plotting options
+all_loop_IDs = list(
+    itertools.chain(benign_loops.loop_ID, tumour_loops.loop_ID, shared_loops.loop_ID)
+)
+ncols = len(SAMPLES["tumour"]) + 1
+nrows = 2
+opts = dict(
+    extent=[-300, 300, -300, 300],
+    cmap="coolwarm",
+)
+# create grid specification
+gs = GridSpec(
+    nrows=nrows,
+    ncols=ncols,
+    width_ratios=[20] * (ncols - 1) + [1],
+)
+for loop_id in tqdm(benign_loops.loop_ID):
+    # plotting options
+    plt.figure(figsize=(4 * (ncols - 1), 4 * nrows))
+    # make component plots
+    for j, s in enumerate(SAMPLES["tumour"]):
+        ax = plt.subplot(gs[0, j])
+        img = ax.matshow(np.log2(pileup[s]), **opts)
+        # add x axis labels to bottom-most subplots
+        ax.set_xlabel(s)
+        ax.xaxis.set_visible(True)
+        ax.xaxis.tick_bottom()
+    for j, s in enumerate(SAMPLES["benign"]):
+        ax = plt.subplot(gs[1, j])
+        img = ax.matshow(np.log2(pileup[s]), **opts)
+        # add x axis labels to bottom-most subplots
+        ax.set_xlabel(s)
+        ax.xaxis.set_visible(True)
+        ax.xaxis.tick_bottom()
+    # add colourbar
+    ax = plt.subplot(gs[:, ncols - 1])
+    ax.set_xlabel("log2(Obs / Exp)\nContact Frequency")
+    ax.yaxis.tick_right()
+    plt.colorbar(img, cax=ax)
+    plt.savefig(path.join("Plots", "interactions", loop_id + ".png"))
+    plt.close()
 
-# create heatmap for each conditional pileup plot
+
+# 3. Create a pileup heatmap of all loops for each tissue type
+# ------------------------------------------------
 # get rows and columns per loop type
 ncols = len(SAMPLE_TYPES) + 1
 nrows = 1
@@ -267,7 +325,8 @@ plt.colorbar(img, cax=ax)
 plt.savefig("Plots/apa.pileup.conditional.png")
 plt.close()
 
-# create differential heatmap
+# 4. Create a heatmap of the differences between benign and tumour tissues over all loops
+# ------------------------------------------------
 # create grid specification
 ncols = 2
 nrows = 1
@@ -304,7 +363,8 @@ plt.savefig("Plots/apa.differential.png")
 plt.close()
 
 
-# create differential heatmap for the top 5 and bottom 5 ranked loops
+# 5. Create a differential heatmap for the top 5 and bottom 5 ranked loops
+# ------------------------------------------------
 # create grid specification
 ncols = len(SAMPLE_TYPES) + 3
 nrows = n_top_loops
@@ -364,7 +424,8 @@ plt.savefig("Plots/apa.differential.ranked.png")
 plt.close()
 
 
-# create heatmap for benign-/tumour-specific loops
+# 6. Create a heatmap for benign-/tumour-specific loops
+# ------------------------------------------------
 ncols = 3 + 1
 nrows = 2
 # create grid specification
@@ -429,6 +490,3 @@ plt.colorbar(img, cax=ax)
 plt.savefig("Plots/apa.specific-loops.png")
 plt.savefig("Plots/apa.specific-loops.pdf")
 plt.close()
-
-logging.info("Done")
-

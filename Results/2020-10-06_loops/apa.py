@@ -227,9 +227,9 @@ pickle.dump(pileup, pileup_obj)
 pileup_obj.close()
 
 # save conditional pileup
-cdntl_pileup_obj = open(path.join(DIR["loops"], "pileup.conditional.obj"), "wb")
-pickle.dump(conditional_pileup, cdntl_pileup_obj)
-cdntl_pileup_obj.close()
+cdtnl_pileup_obj = open(path.join(DIR["loops"], "pileup.conditional.obj"), "wb")
+pickle.dump(conditional_pileup, cdtnl_pileup_obj)
+cdtnl_pileup_obj.close()
 
 # save differential contacts
 difftl_obj = open(path.join(DIR["loops"], "differential.obj"), "wb")
