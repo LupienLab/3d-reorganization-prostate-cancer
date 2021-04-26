@@ -78,21 +78,41 @@ gg_volcano <- (
     +
         geom_point(
             aes(
-                x = b,
-                y = -log10(qval)
+                x = b / log(2),
+                y = -log10(pval),
+                fill = paste(
+                    qval < 0.05,
+                    abs(b / log(2)) > 1,
+                    sign(b)
+                )
             ),
-            alpha = 0.1
+            shape = 21,
+            alpha = 0.01
         )
-        # + geom_point(
-        #     aes(x = condition, y = TPM, colour = condition),
-        #     position = position_jitter(height = 0, width = 0.2)
-        # )
-        # + scale_x_discrete(
-        #     breaks = c("No", "Yes"),
-        #     labels = c("T2E-", "T2E+"),
-        #     name = NULL
-        # )
-        # + guides(colour = FALSE, fill = FALSE)
+        + scale_x_continuous(
+            name = bquote(log[2] * "(Expression Fold Change) (Tumour / Benign)")
+        )
+        + scale_y_continuous(
+            name = bquote(-log[10] * "(p-value)")
+        )
+        + scale_fill_manual(
+            name = NULL,
+            breaks = c(
+                "FALSE FALSE -1",
+                "FALSE FALSE 1",
+                "FALSE TRUE -1",
+                "FALSE TRUE 1",
+                "TRUE FALSE -1",
+                "TRUE FALSE 1",
+                "TRUE TRUE -1",
+                "TRUE TRUE 1"
+            ),
+            values = rep(
+                c("#BDBDBD", "#6495ED", "#FFA500"),
+                c(6, 1, 1)
+            )
+        )
+        + guides(colour = FALSE, fill = FALSE)
         # + facet_wrap(~ target_id, drop = TRUE, scale = "free")
         +
         theme_minimal()
@@ -101,6 +121,31 @@ gg_volcano <- (
     # )
 )
 savefig(gg_volcano, "Plots/volcano.transcripts")
+
+gg_pval_hist_genes <- (
+    ggplot(
+        data = so_genes,
+        mapping = aes(x = pval)
+    )
+    + geom_histogram()
+    + theme_minimal()
+)
+savefig(
+    gg_pval_hist_genes,
+    file.path(PLOT_DIR, "pvals.genes")
+)
+gg_pval_hist_tx <- (
+    ggplot(
+        data = so_transcripts,
+        mapping = aes(x = pval)
+    )
+    + geom_histogram()
+    + theme_minimal()
+)
+savefig(
+    gg_pval_hist_tx,
+    file.path(PLOT_DIR, "pvals.transcripts")
+)
 
 gg_erg_sum <- (
     ggplot(data = erg_tpm)
