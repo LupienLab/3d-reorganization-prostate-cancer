@@ -13,10 +13,13 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 
-CHRS = paste0('chr', c(1:22, "X", "Y"))
+CHRS <- paste0("chr", c(1:22, "X", "Y"))
 
-hg38 = fread(
-    file.path("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "hg38.sizes.txt"),
+hg38 <- fread(
+    file.path(
+        "..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing",
+        "hg38.sizes.txt"
+    ),
     sep = "\t",
     header = FALSE,
     col.names = c("Chrom", "Length")
@@ -29,7 +32,9 @@ hg38[, Bins := ceiling(Length / 10^6)]
 # ==============================================================================
 # load metadata
 metadata <- fread(
-    file.path("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    file.path(
+        "..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"
+    ),
     sep = "\t",
     header = TRUE
 )
@@ -38,8 +43,16 @@ metadata[, SampleID := paste0("PCa", get("Sample ID"))]
 SAMPLES <- metadata$SampleID
 
 # load breakpoint data
-breakpoints <- fread(file.path("Graphs", "sv-breakpoints.tsv"), sep = "\t", header = TRUE)
-breakpoint_pairs <- fread(file.path("Graphs", "sv-breakpoints.paired.tsv"), sep = "\t", header = TRUE)
+breakpoints <- fread(
+    file.path("Graphs", "sv-breakpoints.tsv"),
+    sep = "\t",
+    header = TRUE
+)
+breakpoint_pairs <- fread(
+    file.path("Graphs", "sv-breakpoints.paired.tsv"),
+    sep = "\t",
+    header = TRUE
+)
 
 
 # ==============================================================================
@@ -72,12 +85,12 @@ cat("Summarizing breakpoints\n")
 breakpoints_counted <- breakpoints[, .N, keyby = c("SampleID", "T2E Status")]
 
 # convert breakpoints in genomic regions into bins
-breakpoints_binned = rbindlist(lapply(
+breakpoints_binned <- rbindlist(lapply(
     1:breakpoints[, .N],
     function(i) {
-        start_bin = breakpoints[i, StartBin]
-        end_bin = breakpoints[i, EndBin]
-        dt = data.table(
+        start_bin <- breakpoints[i, StartBin]
+        end_bin <- breakpoints[i, EndBin]
+        dt <- data.table(
             SampleID = breakpoints[i, SampleID],
             chr = breakpoints[i, chr],
             Bin = start_bin:end_bin,
@@ -87,8 +100,11 @@ breakpoints_binned = rbindlist(lapply(
     }
 ))
 # count all breakpoints in each bin
-breakpoints_summed = breakpoints_binned[, sum(Count), by = c("SampleID", "chr", "Bin")]
-colnames(breakpoints_summed) = c("SampleID", "chr", "Bin", "Count")
+breakpoints_summed <- breakpoints_binned[,
+    sum(Count),
+    by = c("SampleID", "chr", "Bin")
+]
+colnames(breakpoints_summed) <- c("SampleID", "chr", "Bin", "Count")
 fwrite(
     breakpoints_summed[order(SampleID, chr, Bin)],
     file.path("Statistics", "breakpoints.binned.tsv"),
@@ -97,8 +113,13 @@ fwrite(
 )
 
 # count breakpoints per chromosome
-breakpoints_by_chrom = breakpoints[, .N, keyby = c("SampleID", "T2E Status", "chr")]
-breakpoints_by_chrom[, N_per_mb := apply(.SD, 1, function(r) {as.numeric(r["N"]) / hg38[Chrom == r["chr"], (Length / 10^6)]})]
+breakpoints_by_chrom <- breakpoints[,
+    .N,
+    keyby = c("SampleID", "T2E Status", "chr")
+]
+breakpoints_by_chrom[, N_per_mb := apply(.SD, 1, function(r) {
+    as.numeric(r["N"]) / hg38[Chrom == r["chr"], (Length / 10^6)]
+})]
 fwrite(
     breakpoints_by_chrom[order(SampleID, chr)],
     file.path("Statistics", "breakpoints.by-chrom.tsv"),
@@ -137,7 +158,8 @@ fwrite(
 # 3. Counting SV events (simple and complex)
 # --------------------------------------
 cat("Summarizing SV events\n")
-# calculate the length of events in each sample (i.e. size of each connected component)
+# calculate the length of events in each sample
+# (i.e. size of each connected component)
 breakpoint_components <- breakpoints[,
     .(
         N_Breakpoints = .N,
@@ -170,7 +192,8 @@ fwrite(
 # 4. Hypothesis testing
 # --------------------------------------
 cat("Hypothesis tests\n")
-# perform Mann-Whitney U to test if T2E patients have more of the following than non-T2E:
+# perform Mann-Whitney U to test if T2E patients have more of
+# the following than non-T2E:
 #   a) unique breakpoints
 #   b) total events
 #   c) complex events
@@ -185,7 +208,7 @@ htests <- list(
         y = breakpoints_counted[get("T2E Status") == "Yes", N],
         alternative = "less"
     ),
-    # b) 
+    # b)
     "total" = wilcox.test(
         x = breakpoint_components_counted[get("T2E Status") == "No", N_Events],
         y = breakpoint_components_counted[get("T2E Status") == "Yes", N_Events],
@@ -193,27 +216,63 @@ htests <- list(
     ),
     # c)
     "complex" = wilcox.test(
-        x = breakpoint_components_counted[get("T2E Status") == "No", N_Complex_Events],
-        y = breakpoint_components_counted[get("T2E Status") == "Yes", N_Complex_Events],
+        x = breakpoint_components_counted[
+            get("T2E Status") == "No",
+            N_Complex_Events
+        ],
+        y = breakpoint_components_counted[
+            get("T2E Status") == "Yes",
+            N_Complex_Events
+        ],
         alternative = "less"
     ),
     # d)
     "inter" = wilcox.test(
-        x = inter_intra_counts[T2E_Status == "No" & Class == "Interchromosomal", Count],
-        y = inter_intra_counts[T2E_Status == "Yes" & Class == "Interchromosomal", Count],
+        x = inter_intra_counts[
+            T2E_Status == "No" & Class == "Interchromosomal",
+            Count
+        ],
+        y = inter_intra_counts[
+            T2E_Status == "Yes" & Class == "Interchromosomal",
+            Count
+        ],
         alternative = "less"
     ),
     # e)
     "intra" = wilcox.test(
-        x = inter_intra_counts[T2E_Status == "No" & Class == "Intrachromosomal", Count],
-        y = inter_intra_counts[T2E_Status == "Yes" & Class == "Intrachromosomal", Count],
+        x = inter_intra_counts[
+            T2E_Status == "No" & Class == "Intrachromosomal",
+            Count
+        ],
+        y = inter_intra_counts[
+            T2E_Status == "Yes" & Class == "Intrachromosomal",
+            Count
+        ],
         alternative = "less"
     ),
     # f)
     "t2e_chr" = fisher.test(
         rbind(
-            c(inter_intra_counts[Class == "Intrachromosomal" & T2E_Status == "No", sum(Count)], inter_intra_counts[Class == "Intrachromosomal" & T2E_Status == "Yes", sum(Count)]),
-            c(inter_intra_counts[Class == "Interchromosomal" & T2E_Status == "No", sum(Count)], inter_intra_counts[Class == "Interchromosomal" & T2E_Status == "Yes", sum(Count)])
+            c(
+                inter_intra_counts[
+                    Class == "Intrachromosomal" & T2E_Status == "No",
+                    sum(Count)
+                ],
+                inter_intra_counts[
+                    Class == "Intrachromosomal" & T2E_Status == "Yes",
+                    sum(Count)
+                ]
+            ),
+            c(
+                inter_intra_counts[
+                    Class == "Interchromosomal" & T2E_Status == "No",
+                    sum(Count)
+                ],
+                inter_intra_counts[
+                    Class == "Interchromosomal" & T2E_Status == "Yes",
+                    sum(Count)
+                ]
+            )
         ),
         alternative = "two.sided"
     )
