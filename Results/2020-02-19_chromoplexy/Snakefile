@@ -15,6 +15,7 @@ ACETYL_DIR = "Acetylation"
 GRAPH_DIR = "Graphs"
 PLOT_DIR = "Plots"
 TRACK_DIR = "Tracks"
+STATS_DIR = "Statistics"
 BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join("..", "2020-01-15_TAD-aggregation", "resolved-TADs")
 CHIP_DIR = path.join("..", "..", "Data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
@@ -41,11 +42,11 @@ rule all:
             sample=SAMPLES,
             track=["beddb", "bed2ddb"],
         ),
-        path.join("Statistics", "breakpoints.binned.tsv"),
-        path.join("Statistics", "breakpoints.by-chrom.tsv"),
-        path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
-        path.join("Statistics", "sv-components.tsv"),
-        path.join("Statistics", "sv-components.counts.tsv"),
+        path.join(STATS_DIR, "breakpoints.binned.tsv"),
+        path.join(STATS_DIR, "breakpoints.by-chrom.tsv"),
+        path.join(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        path.join(STATS_DIR, "sv-components.tsv"),
+        path.join(STATS_DIR, "sv-components.counts.tsv"),
         expand(
             path.join(PLOT_DIR, "Circos", "{sample}.circos.{ext}"),
             sample=SAMPLES,
@@ -69,7 +70,6 @@ rule all:
             ],
             ext=PLOT_EXTS,
         ),
-        path.join(PLOT_DIR, "chr3.pdf"),
 
 # ==============================================================================
 # Rules
@@ -92,7 +92,7 @@ rule graphs:
         path.join(GRAPH_DIR, "breakpoints.all-samples.p"),
         path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
         path.join(GRAPH_DIR, "breakpoints.all-samples.xml"),
-        path.join("Statistics", "breakpoint-components.tsv"),
+        path.join(STATS_DIR, "breakpoint-components.tsv"),
         expand(
             path.join(GRAPH_DIR, "breakpoints.{sample}.xml"),
             sample=SAMPLES
@@ -128,11 +128,12 @@ rule summarize_breaks:
         breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
         pairs = path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
     output:
-        path.join("Statistics", "breakpoints.binned.tsv"),
-        path.join("Statistics", "breakpoints.by-chrom.tsv"),
-        path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
-        path.join("Statistics", "sv-components.tsv"),
-        path.join("Statistics", "sv-components.counts.tsv"),
+        path.join(STATS_DIR, "breakpoints.binned.tsv"),
+        path.join(STATS_DIR, "breakpoints.by-chrom.tsv"),
+        path.join(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        path.join(STATS_DIR, "sv-components.tsv"),
+        path.join(STATS_DIR, "sv-components.counts.tsv"),
+        htests = path.join(STATS_DIR, "htests.rds"),
     shell:
         "Rscript {input.script}"
 
@@ -141,12 +142,12 @@ rule plot_breaks:
         script = "plot-breaks.R",
         breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
         pairs = path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
-        bp_chr = path.join("Statistics", "breakpoints.by-chrom.tsv"),
-        bp_bins = path.join("Statistics", "breakpoints.binned.tsv"),
-        pairs_chr = path.join("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
-        events = path.join("Statistics", "sv-components.tsv"),
-        event_counts = path.join("Statistics", "sv-components.counts.tsv"),
-        htests = path.join("Statistics", "htests.rds"),
+        bp_chr = path.join(STATS_DIR, "breakpoints.by-chrom.tsv"),
+        bp_bins = path.join(STATS_DIR, "breakpoints.binned.tsv"),
+        pairs_chr = path.join(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        events = path.join(STATS_DIR, "sv-components.tsv"),
+        event_counts = path.join(STATS_DIR, "sv-components.counts.tsv"),
+        htests = path.join(STATS_DIR, "htests.rds"),
     output:
         expand(
             path.join(PLOT_DIR, "Circos", "{sample}.circos.{ext}"),
@@ -173,14 +174,3 @@ rule plot_breaks:
         ),
     shell:
         "Rscript {input.script}"
-
-rule plot_chr3:
-    input:
-        path.join("..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Contacts", "PCa56413.mcool"),
-    output:
-        path.join(PLOT_DIR, "chr3.pdf"),
-    params:
-        "-b -o chr3.pdf --dpi 300 --zmin=-3.1 --zmax=-1.7 --cmap bwr"
-    shell:
-        "cooler show {params} {input}::/resolutions/400000 chr3"
-
