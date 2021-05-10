@@ -1,8 +1,0 @@
-__default__:
-    params: "--export=ALL -p all --mem 12G -c 1 -t 01:00:00"
-
-dump_mat:
-    params: "--export=all -p all --mem=12g -t 01:00:00"
-
-merge_types:
-    params: "--export=all -p himem --mem=30g -t 01:00:00"
