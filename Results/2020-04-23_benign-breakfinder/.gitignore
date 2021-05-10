@@ -1,9 +1,0 @@
-inter_expect_1Mb.hg38.txt
-intra_expect_100kb.hg38.txt
-Breakpoints/*.bias_vector.txt
-Breakpoints/*_intra.breaks.txt
-Breakpoints/*.SR.txt
-Breakpoints/*super*.txt
-Breakpoints/*_1Mb.breaks.txt
-Breakpoints/*_100kb.breaks.txt
-Breakpoints/*_10kb.breaks.txt
