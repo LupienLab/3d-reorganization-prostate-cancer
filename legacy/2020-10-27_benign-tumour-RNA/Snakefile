@@ -1,0 +1,55 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+PLOT_DIR = "Plots"
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+	input:
+		"results.genes.tsv",
+		"results.transcripts.tsv",
+		"all-samples.abundance.tsv",
+		"sleuth-object.rds",
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule tumour_dge:
+	input:
+		script = "dge.R",
+	output:
+		"results.genes.tsv",
+		"results.transcripts.tsv",
+		"all-samples.abundance.tsv",
+		"sleuth-object.rds",
+	shell:
+		"Rscript {input.script}"
+
+rule plot_dge:
+	input:
+		script = "plot-dge.R",
+		sleuth = "sleuth-object.rds",
+		genes = "results.genes.tsv",
+		tx = "results.transcripts.tsv",
+	output:
+		"results.genes.sig.bed",
+		path.join(PLOT_DIR, "volcano.transcripts.png"),
+		path.join(PLOT_DIR, "volcano.transcripts.pdf"),
+	shell:
+		"Rscript {input.script}"
+
+rule overlap_tumour_loops_dge:
+	input:
+		promoter_script = "promoter.awk",
+		bedpe_script = "bedpe2bed.awk", 
+		sig_genes = "results.genes.sig.bed",
+		loops = path.join("..", "2020-10-06_loops", "Loops", "{loop_type}-loops.tsv"),
+	output:
+		"overlap.{loop_type}.bed",
+	shell:
+		"bedtools intersect -wa -wb -a <(awk -f {input.promoter_script} {input.sig_genes}) -b <(awk -f {input.bedpe_script} {input.loops}) > {output}"

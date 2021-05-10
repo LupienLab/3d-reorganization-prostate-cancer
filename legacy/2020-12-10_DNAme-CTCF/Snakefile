@@ -1,0 +1,31 @@
+from os import path
+
+rule all:
+	input:
+		expand(
+			path.join("Overlaps", "{dmr}.local-dependency.tsv"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+		expand(
+			path.join("Overlaps", "{dmr}.local-dependency.rds"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+		expand(
+			path.join("Overlaps", "{dmr}.permutations.tsv"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+		expand(
+			path.join("Overlaps", "{dmr}.permutation-tests.rds"),
+			dmr=["all-dmrs", "pca-hyper-dmrs", "pca-hypo-dmrs"],
+		),
+
+rule dmr_enrichment_ctcf:
+	input:
+		script = "enrichment.{dmr}.R",
+	output:
+		path.join("Overlaps", "{dmr}.permutation-tests.rds"),
+		path.join("Overlaps", "{dmr}.permutations.tsv"),
+		path.join("Overlaps", "{dmr}.local-dependency.rds"),
+		path.join("Overlaps", "{dmr}.local-dependency.tsv"),
+	shell:
+		"Rscript {input.script}"

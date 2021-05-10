@@ -1,0 +1,69 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+CONFIG = pd.read_csv('config.tsv', index_col=False, sep='\t')
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+LOOP_DIR = path.join("..", "2020-10-06_loops", "Loops")
+TRACK_DIR = "Tracks"
+PLOT_DIR = "Plots"
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        "loops.nonT2E-specific.tsv",
+        "loops.T2E-specific.tsv",
+        "loops.shared.tsv",
+        path.join(TRACK_DIR, "loops.nonT2E-specific.bed2ddb"),
+        path.join(TRACK_DIR, "loops.T2E-specific.bed2ddb"),
+        path.join(TRACK_DIR, "loops.shared.bed2ddb"),
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule t2e_specific_loops:
+    input:
+        script = "t2e-difftl-loops.tsv",
+    output:
+        "loops.nonT2E-specific.tsv",
+        "loops.T2E-specific.tsv",
+        "loops.shared.tsv",
+    shell:
+        "Rscript {input.script}"
+
+rule clodius_2d:
+	input:
+		"{file}.tsv",
+	output:
+		path.join(TRACK_DIR, "{file}.bed2ddb"),
+	params:
+		"--assembly hg38 --has-header --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
+	shell:
+		"clodius aggregate bedpe {params} -o {output} {input}"
+
+rule diff_acetyl_diff_loop:
+    input:
+        script = "diff-acetyl-diff-loop.R",
+        t2e = "loops.nonT2E-specific.tsv",
+        nont2e = "loops.T2E-specific.tsv",
+        shared = "loops.shared.tsv",
+        acetyl = path.join("..", "2020-06-12_sv-disruption-acetylation", "Acetylation", "T2E", "t2e.all.tsv"),
+    output:
+        path.join(PLOT_DIR, "loops.intersected-acetyl.tsv"),
+        path.join(PLOT_DIR, "loops.intersected-sig-acetyl.tsv"),
+    shell:
+        "Rscript {input.script}"
+
+rule sig_acetyl_diff_loop:
+    input:
+        script = "acetyl-loop-exprs.R",
+        loops = "loops.intersected-sig-acetyl.tsv",
+    output:
+        ""
