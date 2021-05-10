@@ -1,5 +1,0 @@
-TMP/
-TADs/tad-calls.tsv
-TADs/w_*/*bp.chr*.domains.bed
-TADs/w_*/*.bins-signal.tsv
-TADs/w_*/*.domains.tsv
