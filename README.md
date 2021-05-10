@@ -1,8 +1,6 @@
 # Cis-Regulatory Element Hijacking Overshadows Higher-Order Topological Changes in Prostate Cancer
 
-This repository contains all data and analysis related to 
-
-Hi-C data analysis in primary prostate cancer.
+This repository contains all the data and analysis related to [_Cis_-regulatory element hijacking overshadows higher-order topological changes in prostate cancer](https://www.biorxiv.org/content/10.1101/2021.01.05.425333v1).
 
 ## Usage
 
