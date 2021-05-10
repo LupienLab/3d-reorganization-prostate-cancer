@@ -1,4 +1,0 @@
-*.beddb
-*.bed2ddb
-*.bed(2d)?db-journal
-CTCF/*.bed
