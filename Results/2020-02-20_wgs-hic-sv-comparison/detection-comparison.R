@@ -23,7 +23,10 @@ dt2gr <- function(dt) {
             end = dt[, get(end_col)],
         )
     )
-    mcols(gr) <- dt[, .SD, .SDcols = setdiff(colnames(dt), c(chr_col, start_col, end_col))]
+    mcols(gr) <- dt[,
+        .SD,
+        .SDcols = setdiff(colnames(dt), c(chr_col, start_col, end_col))
+    ]
     return(gr)
 }
 
@@ -54,14 +57,16 @@ hic_pairs <- fread(
     header = TRUE,
     sep = "\t"
 )
-hic_pairs_gr <- dt2gr(hic_pairs)
 
 # load WGS-detected breakpoints
 wgs <- rbindlist(lapply(
     SAMPLES,
     function(s) {
         dt <- fread(
-            file.path("..", "..", "Data", "External", "CPC-GENE", "structural-variant-vcfs", paste0(s, ".hg38.sorted.bed")),
+            file.path(
+                "..", "..", "Data", "External", "CPC-GENE", "structural-variant-vcfs",
+                paste0(s, ".hg38.sorted.bed")
+            ),
             header = FALSE,
             sep = "\t",
             col.names = c("chr", "start", "end", "SV_ID")
@@ -75,10 +80,18 @@ wgs_gr <- dt2gr(wgs)
 
 # load ATAC-seq TCGA peaks for all tissue types
 atac <- rbindlist(lapply(
-    list.files(file.path("..", "..", "Data", "External", "TCGA"), pattern = "peakCalls.txt", full.names = TRUE),
+    list.files(
+        file.path("..", "..", "Data", "External", "TCGA"),
+        pattern = "peakCalls.txt",
+        full.names = TRUE
+    ),
     function(f) {
         dt <- fread(f, header = TRUE, sep = "\t")
-        dt[, Tissue := substr(basename(f), 1, regexpr("_", basename(f))[[1]] - 1)]
+        dt[, Tissue := substr(
+            basename(f),
+            1,
+            regexpr("_", basename(f)
+        )[[1]] - 1)]
     }
 ))
 ATAC_TISSUES <- atac[, unique(Tissue)]
@@ -172,7 +185,7 @@ accessibility_extended_array <- array(
 
 # 2. Compare Hi-C and WGS breakpoint pair types
 # --------------------------------------
-ALL_SV_TYPES <- c("INV", "DUP", "DEL", "BND")
+ALL_SV_TYPES <- c("INV", "DUP", "DEL", "BND", "UNKNOWN")
 
 wgs_pairs <- wgs[, .(SV_Type = substr(unique(SV_ID), 1, 3)), by = "SampleID"]
 
@@ -210,10 +223,7 @@ bnd_array <- array(
 )
 
 
-# 3. Compare Hi-C and WGS breakpoint pairs by size between pairs
-# --------------------------------------
-
-# 4. Perform hypothesis tests for each of the above covariates
+# 3. Perform hypothesis tests for each of the above covariates
 # --------------------------------------
 htests <- list(
     Accessibility = mantelhaen.test(accessibility_array, alternative = "less"),
@@ -232,4 +242,16 @@ htests_dt <- rbindlist(lapply(
         Value = htests[[n]]
     )
 ))
-fwrite(htests_dt, "sv-annotation-comparisons.tsv", sep = "\t", col.names = TRUE)
+fwrite(
+    htests_dt,
+    "sv-annotation-comparisons.tsv",
+    sep = "\t",
+    col.names = TRUE
+)
+
+fwrite(
+    sv_types,
+    "sv-types-counted.tsv",
+    sep = "\t",
+    col.names = TRUE
+)

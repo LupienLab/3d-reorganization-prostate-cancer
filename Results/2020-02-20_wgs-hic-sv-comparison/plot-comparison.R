@@ -5,15 +5,17 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 source("../2020-02-19_chromoplexy/plotting-helper.R")
 
-# ==============================================================================
-# Functions
-# ==============================================================================
 
 # ==============================================================================
 # Data
 # ==============================================================================
 detections <- fread("detections.all.tsv", sep = "\t", header = TRUE)
 detections_sample <- fread("detections.per-sample.tsv", sep = "\t", header = TRUE)
+sv_types <- fread(
+    "sv-types-counted.tsv",
+    sep = "\t",
+    header = TRUE
+)
 
 # ==============================================================================
 # Analysis
@@ -85,3 +87,39 @@ gg_sample <- (
     )
 )
 savefig(gg_sample, "detections.per-patient", width = 30)
+
+gg_sv_types <- (
+    ggplot(
+        data = sv_types,
+        mapping = aes(
+            x = SV_Type,
+            y = N,
+            fill = Method
+        )
+    )
+    + geom_col(
+        position = position_dodge(),
+        colour = "#000000"
+    )
+    + facet_wrap(
+        ~ SampleID,
+        nrow = 2
+    )
+    + scale_y_continuous(
+        name = "Frequency"
+    )
+    + theme_minimal()
+    + theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(
+            angle = 90,
+            vjust = 0.5,
+            hjust = 1,
+            colour = "#000000"
+        )
+    )
+)
+savefig(
+    gg_sv_types,
+    "detections.typed"
+)
