@@ -1,0 +1,97 @@
+# =============================================================================
+# Configuration
+# =============================================================================
+import os.path as path
+
+RES_DIR = path.join("..", "..", "results", "2019-10-24_higlass")
+DATA_DIR = path.join(RES_DIR, "Data")
+ASSEMBLY = "hg38"
+TAXID = "9606"
+
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+    input:
+        path.join(DATA_DIR, ASSEMBLY, "gene-annotations-{}.beddb".format(ASSEMBLY)),
+
+# =============================================================================
+# Rules
+# =============================================================================
+# this assembly method was grabbed from the higlass documentation
+# https://docs.higlass.io/data_preparation.html#gene-annotation-tracks
+
+rule download_refGene:
+    output:
+        path.join(DATA_DIR, ASSEMBLY, "refGene.txt.gz")
+    shell:
+        "wget -N -P {DATA_DIR}/{ASSEMBLY} http://hgdownload.cse.ucsc.edu/goldenPath/{ASSEMBLY}/database/refGene.txt.gz"
+
+rule download_genbank:
+    output:
+        path.join(DATA_DIR, "gene2refSeq.gz")
+    shell:
+        "wget -N -P {DATA_DIR} ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2refseq.gz"
+    
+rule filter_genbank:
+    input:
+        path.join(DATA_DIR, "gene2refSeq.gz")
+    output:
+        path.join(DATA_DIR, ASSEMBLY, "gene2refseq")
+    shell:
+        "zcat {input} | grep ^{TAXID} > {output}"
+
+# Optional: filter out unplaced and unlocalized scaffolds (which have a "_" in the chrom name)
+# 1: chr            (chr1)
+# 2: txStart        (52301201) [9]
+# 3: txEnd          (52317145) [10]
+# 4: geneName       (ACVRL1)   [2]
+# 5: citationCount  (123) [16]
+# 6: strand         (+)  [8]
+# 7: refseqId       (NM_000020)
+# 8: geneId         (94)
+# 9: geneType       (protein-coding)
+# 10: geneDesc      (activin A receptor type II-like 1)
+# 11: cdsStart      (52306258)
+# 12: cdsEnd        (52314677)
+# 13: exonStarts    (52301201,52306253,52306882,52307342,52307757,52308222,52309008,52309819,52312768,52314542,)
+# 14: exonEnds      (52301479,52306319,52307134,52307554,52307857,52308369,52309284,52310017,52312899,52317145,)
+rule filter_sort_refGene:
+    input:
+        path.join(DATA_DIR, ASSEMBLY, "refGene.txt.gz"),
+    output:
+        path.join(DATA_DIR, ASSEMBLY, "refGene_sorted"),
+    shell:
+        "zcat {input} | awk '{{FS=OFS=\"\t\"}}{{if (!($3 ~ /_/)) print $3, $5, $6, $13, \".\", $4, $2, $2, \".\", \".\", $7, $8, $10, $11;}}' | sort -k1,1 -V -k2,2n > {output}"
+
+rule link_exons:
+    input:
+        script = "exonU.py",
+        refgene = path.join(DATA_DIR, ASSEMBLY, "refGene_sorted"),
+    output:
+        path.join(DATA_DIR, ASSEMBLY, "geneAnnotationsExonUnions.bed"),
+    shell:
+        "python {input.script} {input.refgene} > {output}"
+
+rule sort_exons:
+    input:
+        path.join(DATA_DIR, ASSEMBLY, "geneAnnotationsExonUnions.bed"),
+    output:
+        path.join(DATA_DIR, ASSEMBLY, "geneAnnotationsExonUnions.sorted.bed"),
+    shell:
+        "sort -k1,1 -V -k2,2n {input} > {output}"
+
+rule clodius:
+    input:
+        chroms = "hg38.chrom.sizes",
+        annots = path.join(DATA_DIR, ASSEMBLY, "geneAnnotationsExonUnions.sorted.bed"),
+    output:
+        path.join(DATA_DIR, ASSEMBLY, "gene-annotations-{}.beddb".format(ASSEMBLY))
+    params:
+        " ".join([
+            "--max-per-tile 10",
+            "--delimiter '\t'",
+        ])
+    shell:
+        "clodius aggregate bedfile {params} --chromsizes-filename {input.chroms} -o {output} {input.annots}"

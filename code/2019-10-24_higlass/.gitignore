@@ -1,0 +1,4 @@
+Data/*.gz
+Data/genbank/
+Data/hg38/*
+!Data/hg38/gene-annotations-hg38.beddb
