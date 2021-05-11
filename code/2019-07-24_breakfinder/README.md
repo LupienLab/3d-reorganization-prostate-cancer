@@ -1,6 +1,8 @@
 # Summary
 
 This folder contains the breakpoints for structural variants (SVs) called by `hic_breakfinder`.
+This code can not be run on CodeOcean due to the reliance on patient Hi-C BAM files and privacy concerns.
+Output from this folder, however, can be used on CodeOcean.
 
 ## Materials & Methods
 
