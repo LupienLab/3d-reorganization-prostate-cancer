@@ -1,0 +1,52 @@
+# =============================================================================
+# Configuration
+# =============================================================================
+import pandas as pd
+import os.path as path
+
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+SAMPLES = CONFIG["Sample_ID"].tolist()
+
+RES_DIR = path.join("..", "..", "results", "2021-04-08_sv-bp-H3K27ac-peak-enrichment")
+SV_DIR = path.join("..", "..", "data", "External", "CPC-GENE")
+PLOT_DIR = path.join(RES_DIR, "Plots")
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+	input:
+        path.join(PLOT_DIR, "permutation.png"),
+        path.join(PLOT_DIR, "permutation.pdf"),
+        path.join(PLOT_DIR, "local-z.png"),
+        path.join(PLOT_DIR, "local-z.pdf"),
+        path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+
+# =============================================================================
+# Rules
+# =============================================================================
+rule liftover:
+    input:
+        script = "liftover.R",
+        chain = path.join("..", "..", "data", "External", "hg19ToHg38.over.chain")
+        sv = path.join(SV_DIR, "structural_somatic_mutation.PRAD-CA.tsv"),
+    output:
+        path.join(RES_DIR, "enrichment", "sv-breakpoints.bed")
+    shell:
+        "Rscript {input.script}"
+
+rule enrichment:
+    input:
+        script = "permutation.R",
+        sv = path.join(RES_DIR, "enrichment", "sv-breakpoints.bed"),
+    output:
+        path.join(PLOT_DIR, "permutation.png"),
+        path.join(PLOT_DIR, "permutation.pdf"),
+        path.join(PLOT_DIR, "local-z.png"),
+        path.join(PLOT_DIR, "local-z.pdf"),
+        path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+        path.join(RES_DIR, "enrichment", "permutation-tests.rds"),
+        path.join(RES_DIR, "enrichment", "local-dependency.rds"),
+    shell:
+        "Rscript {input.script}"
