@@ -1,7 +1,0 @@
-chr2	115400000	115800000	chr2	127200000	127500000	.	68.1705	-	-	100kb	DUP	Type 3; lots of sparsity in the region; possibly related to rows 2, 3
-chr2	112730000	112800000	chr4	125470000	125600000	.	146.984	+	+	10kb	BND	Related to multiple undetected aberrations all along the same chr4 segment in chr2xchr4; possibly related to rows 1, 3
-chr2	114600000	115180000	chr4	125340000	125380000	.	180.728	+	-	10kb	BND	Related to multiple undetected aberrations all along the same chr4 segment in chr2xchr4; Possibly related to rows 1, 2
-chr13	30670000	30940000	chr11	32280000	32310000	.	64.821	+	+	10kb	BND	Possible translocation from chr13 to this locus on chr11
-chr14	72710000	72870000	chr4	157730000	157880000	.	270.586	+	-	10kb	BND	Related to row 6; related to nearby undetected aberration
-chr14	73000000	73120000	chr4	154870000	154930000	.	86.9914	-	+	10kb	BND	Related to row 5
-chrY	13500000	15300000	chrY	15900000	17400000	.	129.078	+	-	100kb	ARTEFACT	Sparsity
