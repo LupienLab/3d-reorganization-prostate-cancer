@@ -1,0 +1,6 @@
+__default__:
+    params: "--export=ALL -p all --mem 12G -c 1 -t 01:00:00"
+
+apa:
+    params: "--export=ALL -p himem --mem=30G -t 10:00:00"
+
