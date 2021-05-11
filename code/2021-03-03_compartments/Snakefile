@@ -9,19 +9,63 @@ CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
 SAMPLES = CONFIG["Sample_ID"].tolist()
 
 CONTACT_DIR = path.join("..", "..", "results", "2020-08-29_TADs-downsampled", "downsampled-contacts")
-CMPMT_DIR = path.join("..", "..", "results", "2021-03-03_compartments", "Compartments")
+
+RES_DIR = path.join("..", "..", "results", "2021-03-03_compartments")
+CMPMT_DIR = path.join(RES_DIR, "Compartments")
+DGE_DIR = path.join(RES_DIR, "DGE")
+PLOT_DIR = path.join(RES_DIR, "Plots")
 
 # =============================================================================
 # Meta Rules
 # =============================================================================
 rule all:
 	input:
+		# compartment calls
 		path.join(RES_DIR, "gc-content-phase.bedGraph"),
 		expand(
 			path.join(CMPMT_DIR, "{sample}.compartments.cis.{ext}"),
 			sample=SAMPLES,
 			ext=["bw", "lam.txt", "vecs.tsv"],
 		),
+		# compartment stats and QC plots
+		path.join(PLOT_DIR, "compartment-counts.png"),
+		path.join(PLOT_DIR, "compartment-counts.pdf"),
+		path.join(PLOT_DIR, "compartment-sizes.png"),
+		path.join(PLOT_DIR, "compartment-sizes.pdf"),
+		path.join(CMPMT_DIR, "compartment-counts.tsv"),
+		path.join(CMPMT_DIR, "compartment-sizes.tsv"),
+		path.join(CMPMT_DIR, "compartments.stats.tsv"),
+		# compartmentalization plots
+		path.join(PLOT_DIR, "e1.png"),
+		path.join(PLOT_DIR, "e1.pdf"),
+		path.join(PLOT_DIR, "e1-mean-sd.png"),
+		path.join(PLOT_DIR, "e1-mean-sd.pdf"),
+		path.join(PLOT_DIR, "e1-mean-diff.png"),
+		path.join(PLOT_DIR, "e1-mean-diff.pdf"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr3.png"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr3.pdf"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr19.png"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr19.pdf"),
+		path.join(PLOT_DIR, "diff.manhattan.png"),
+		path.join(PLOT_DIR, "diff.manhattan.pval.png"),
+		path.join(PLOT_DIR, "diff.mean-var.png"),
+		# DGE for chr19 and chrY
+		expand(
+			path.join(DGE_DIR, "dge.{chrom}-diffs.{file}"),
+			chrom=["chr19", "chrY"],
+			file=[
+				"all-transcripts.tsv",
+				"all-genes.tsv",
+				"local-transcripts.tsv",
+				"local-genes.tsv",
+				"sleuth-object.rds",
+			]
+		)
+		# DGE plots
+		path.join(PLOT_DIR, "dge.chr19.png"),
+		path.join(PLOT_DIR, "dge.chr19.pdf"),
+		path.join(PLOT_DIR, "dge.chrY.png"),
+		path.join(PLOT_DIR, "dge.chrY.pdf"),
 
 # =============================================================================
 # Rules
@@ -46,3 +90,80 @@ rule compartments:
 		"--bigwig",
 	shell:
 		"cooltools call-compartments {params} --reference-track {input.phase} -o {CMPMT_DIR}/{wildcards.sample}.compartments {input.cool}"
+
+rule calc_cmpmt_stats:
+	input:
+		script = "calc-compartment-stats.R",
+		cmpmts = expand(
+			path.join(CMPMT_DIR, "{sample}.compartments.cis.vecs.tsv"),
+			sample=SAMPLES,
+		),
+	output:
+		path.join(PLOT_DIR, "compartment-counts.png"),
+		path.join(PLOT_DIR, "compartment-counts.pdf"),
+		path.join(PLOT_DIR, "compartment-sizes.png"),
+		path.join(PLOT_DIR, "compartment-sizes.pdf"),
+		path.join(CMPMT_DIR, "compartment-counts.tsv"),
+		path.join(CMPMT_DIR, "compartment-sizes.tsv"),
+	shell:
+		"Rscript {input.script}"
+
+rule calc_cmpmt_difftl:
+	input:
+		script = "calc-diff-compartments.R",
+		cmpmts = expand(
+			path.join(CMPMT_DIR, "{sample}.compartments.cis.vecs.tsv"),
+			sample=SAMPLES,
+		),
+	output:
+		path.join(CMPMT_DIR, "compartments.stats.tsv"),
+	shell:
+		"Rscript {input.script}"
+
+rule plot_compartments:
+	input:
+		script = "plot-compartments.R",
+		stats = path.join(CMPMT_DIR, "compartments.stats.tsv"),
+	output:
+		path.join(PLOT_DIR, "e1.png"),
+		path.join(PLOT_DIR, "e1.pdf"),
+		path.join(PLOT_DIR, "e1-mean-sd.png"),
+		path.join(PLOT_DIR, "e1-mean-sd.pdf"),
+		path.join(PLOT_DIR, "e1-mean-diff.png"),
+		path.join(PLOT_DIR, "e1-mean-diff.pdf"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr3.png"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr3.pdf"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr19.png"),
+		path.join(PLOT_DIR, "e1-mean-diff.chr19.pdf"),
+		path.join(PLOT_DIR, "diff.manhattan.png"),
+		path.join(PLOT_DIR, "diff.manhattan.pval.png"),
+		path.join(PLOT_DIR, "diff.mean-var.png"),
+	shell:
+		"Rscript {input.script}"
+
+rule dge_specific_chrom:
+	input:
+		script = "diff-exprs.{chrom}.R",
+	output:
+		path.join(DGE_DIR, "dge.{chrom}-diffs.all-transcripts.tsv"),
+		path.join(DGE_DIR, "dge.{chrom}-diffs.all-genes.tsv"),
+		path.join(DGE_DIR, "dge.{chrom}-diffs.local-transcripts.tsv"),
+		path.join(DGE_DIR, "dge.{chrom}-diffs.local-genes.tsv"),
+		path.join(DGE_DIR, "dge.{chrom}-diffs.sleuth-object.rds"),
+	shell:
+		"Rscript {input.script}"
+
+rule plot_dge:
+	input:
+		script = "plot-dge.R",
+		chr19_tx = path.join(DGE_DIR, "dge.chr19-diffs.local-transcripts.tsv"),
+		chr19_genes = path.join(DGE_DIR, "dge.chr19-diffs.local-genes.tsv"),
+		chrY_tx = path.join(DGE_DIR, "dge.chrY-diffs.local-transcripts.tsv"),
+		chrY_genes = path.join(DGE_DIR, "dge.chrY-diffs.local-genes.tsv"),
+	output:
+		path.join(PLOT_DIR, "dge.chr19.png"),
+		path.join(PLOT_DIR, "dge.chr19.pdf"),
+		path.join(PLOT_DIR, "dge.chrY.png"),
+		path.join(PLOT_DIR, "dge.chrY.pdf"),
+	shell:
+		"Rscript {input.script}"

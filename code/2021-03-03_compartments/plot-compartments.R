@@ -16,9 +16,9 @@ loginfo("Loading packages")
 suppressWarnings(library("data.table"))
 suppressWarnings(library("ggplot2"))
 
-
-CMPMT_DIR = "Compartments"
-PLOT_DIR = "Plots"
+RES_DIR <- file.path("..", "..", "results", "2021-03-03_compartments")
+CMPMT_DIR <- file.path(RES_DIR, "Compartments")
+PLOT_DIR <- file.path(RES_DIR, "Plots")
 
 # ==============================================================================
 # Data
@@ -295,18 +295,6 @@ gg_manhattan <- (
             ymax = upper
         )
     )
-    # + geom_rect(
-    #     data = stat[(q < 0.05) & (shift(q, 1) < 0.05) & (shift(q, 2) < 0.05)],
-    #     mapping = aes(
-    #         xmin = start,
-    #         xmax = end
-    #     ),
-    #     ymin = -3,
-    #     ymax = 3,
-    #     fill = "#6495ed",
-    #     alpha = 0.2
-    # )
-    # + geom_ribbon(fill = "#BDBDBD")
     + geom_path()
     + facet_grid(. ~ chrom, space = "free", scales = "free_x")
     + scale_y_continuous(

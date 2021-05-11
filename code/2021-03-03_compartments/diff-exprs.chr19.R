@@ -4,7 +4,9 @@
 suppressMessages(library("sleuth"))
 suppressMessages(library("data.table"))
 
-KALLISTO_DIR <- file.path("..", "..", "Data", "Processed", "2020-06-17_PCa-RNA-seq")
+KALLISTO_DIR <- file.path("..", "..", "data", "Processed", "2020-06-17_PCa-RNA-seq")
+RES_DIR <- file.path("..", "..", "results", "2021-03-03_compartments")
+DGE_DIR <- file.path(RES_DIR, "DGE")
 
 # ==============================================================================
 # Data
@@ -50,13 +52,13 @@ design[sample %in% cmpmt_samples[["novel"]], condition := "novel"]
 
 # load GENCODE annotations
 transcripts <- fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
+    file.path("..", "..", "data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "ens_gene", "gene_name", "target_id", "transcript_name")
 )
 genes <- fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
+    file.path("..", "..", "data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "ens_gene", "gene_name")
@@ -116,7 +118,18 @@ so_genes <- merge(
 )
 
 # simplify column order
-so_genes <- so_genes[, .SD, keyby = "qval"][, .SD, .SDcols = c("chr", "start", "end", "strand", "target_id", "gene_name", "pval", "qval", "num_aggregated_transcripts", "sum_mean_obs_counts")]
+so_genes <- so_genes[,
+    .SD,
+    keyby = "qval"
+][,
+    .SD,
+    .SDcols = c(
+        "chr", "start", "end", "strand",
+        "target_id", "gene_name",
+        "pval", "qval",
+        "num_aggregated_transcripts", "sum_mean_obs_counts"
+    )
+]
 
 # focus only on chr19 and chrY, where recurrent changes to compartmentalization are found
 so_transcripts_cmpmt <- so_transcripts[(chr == "chr19") & (start > 20000000)]
@@ -133,33 +146,33 @@ so_genes_cmpmt[, qval := p.adjust(pval, method = "fdr")]
 # save annotated tables
 fwrite(
     so_transcripts,
-    file.path("DGE", "dge.chr19-diffs.all-transcripts.tsv"),
+    file.path(DGE_DIR, "dge.chr19-diffs.all-transcripts.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
 fwrite(
     so_genes,
-    file.path("DGE", "dge.chr19-diffs.all-genes.tsv"),
+    file.path(DGE_DIR, "dge.chr19-diffs.all-genes.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
 fwrite(
     so_genes_cmpmt,
-    file.path("DGE", "dge.chr19-diffs.local-genes.tsv"),
+    file.path(DGE_DIR, "dge.chr19-diffs.local-genes.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
 fwrite(
     so_transcripts_cmpmt,
-    file.path("DGE", "dge.chr19-diffs.local-transcripts.tsv"),
+    file.path(DGE_DIR, "dge.chr19-diffs.local-transcripts.tsv"),
     sep = "\t",
     col.names = TRUE
 )
 
 saveRDS(
     so,
-    file.path("DGE", "dge.chr19-diffs.sleuth-object.rds")
+    file.path(DGE_DIR, "dge.chr19-diffs.sleuth-object.rds")
 )

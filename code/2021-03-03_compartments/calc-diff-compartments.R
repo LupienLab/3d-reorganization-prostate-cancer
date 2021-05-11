@@ -16,9 +16,8 @@ loginfo("Loading packages")
 suppressWarnings(library("data.table"))
 suppressWarnings(library("ggplot2"))
 
-CMPMT_DIR <- file.path(
-    "..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Contacts"
-)
+RES_DIR <- file.path("..", "..", "results", "2021-03-03_compartments")
+CMPMT_DIR <- file.path(RES_DIR, "Compartments")
 
 # ==============================================================================
 # Functions

@@ -17,9 +17,10 @@ suppressWarnings(library("data.table"))
 suppressWarnings(library("ggplot2"))
 suppressWarnings(library("ggrepel"))
 
-CMPMT_DIR <- "Compartments"
-DGE_DIR <- "DGE"
-PLOT_DIR <- "Plots"
+RES_DIR <- file.path("..", "..", "results", "2021-03-03_compartments")
+CMPMT_DIR <- file.path(RES_DIR, "Compartments")
+DGE_DIR <- file.path(RES_DIR, "DGE")
+PLOT_DIR <- file.path(RES_DIR, "Plots")
 
 
 # ==============================================================================
@@ -167,52 +168,6 @@ for (gene_id in dge_gene_ids) {
     )
 }
 
-gg_pval <- (
-    ggplot(
-        data = chr19_genes,
-        mapping = aes(x = pval)
-    )
-    + geom_histogram(bins = 50)
-    + theme_minimal()
-)
-ggsave(
-    file.path(PLOT_DIR, "dge.chr19.png"),
-    gg_pval,
-    width = 16,
-    height = 12,
-    units = "cm"
-)
-ggsave(
-    file.path(PLOT_DIR, "dge.chr19.pdf"),
-    gg_pval,
-    width = 16,
-    height = 12,
-    units = "cm"
-)
-
-gg_pval <- (
-    ggplot(
-        data = chrY_genes,
-        mapping = aes(x = pval)
-    )
-    + geom_histogram(bins = 50)
-    + theme_minimal()
-)
-ggsave(
-    file.path(PLOT_DIR, "dge.chrY.png"),
-    gg_pval,
-    width = 16,
-    height = 12,
-    units = "cm"
-)
-ggsave(
-    file.path(PLOT_DIR, "dge.chrY.pdf"),
-    gg_pval,
-    width = 16,
-    height = 12,
-    units = "cm"
-)
-
 gg_chr19_volcano <- (
     ggplot(
         data = chr19_tx,
@@ -334,10 +289,3 @@ ggsave(
     height = 6,
     units = "cm"
 )
-
-
-# ==============================================================================
-# Save Data
-# ==============================================================================
-loginfo("Saving data")
-
