@@ -1,0 +1,417 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+# sample metadata
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+# various output folders
+RES_DIR = path.join("../../results/2020-08-29_TADs-downsampled")
+CONTACT_DIR = path.join(RES_DIR, "downsampled-contacts")
+TMP_DIR = path.join(RES_DIR, "TMP")
+TAD_DIR = path.join(RES_DIR, "TADs")
+AGGTAD_DIR = path.join(RES_DIR, "Aggregated-TADs")
+PLOT_DIR = path.join(RES_DIR, "Plots")
+TRACK_DIR = path.join(RES_DIR, "Tracks")
+STATS_DIR = path.join(RES_DIR, "Statistics")
+
+# variables for controlling file generation
+SAMPLES = CONFIG.SampleID.tolist()
+PRIMARY_SAMPLES = CONFIG.loc[CONFIG.Source == "Primary", "SampleID"].tolist()
+ALL_SAMPLES = CONFIG.loc[:, "SampleID"].tolist()
+COUNTS = [120000000, 300000000]
+RESOLUTIONS = [40000]
+WINDOWS = list(range(2, 41))
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
+
+wildcard_constraints:
+	w = "\d+",
+	chrom = "chr[X]?[0-9]{0,2}",
+	res = "\d+"
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+	input:
+		expand(
+			path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+			sample=SAMPLES,
+			count=120000000,
+			res=RESOLUTIONS,
+		),
+		expand(
+			path.join(AGGTAD_DIR, "{sample}.{count}.res_{res}bp.agg-domains.tsv"),
+			sample=PRIMARY_SAMPLES,
+			count=300000000,
+			res=RESOLUTIONS,
+		),
+		expand(path.join(STATS_DIR, "tad-similarity-deltas.{count}.tsv"), count=COUNTS),
+		expand(path.join(STATS_DIR, "tad-similarity-supremum.{count}.tsv"), count=COUNTS),
+		expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+			sample=SAMPLES,
+			count=120000000,
+			w=list(range(3, 33)),
+			res=RESOLUTIONS,
+		),
+		expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{count}.res_{res}bp.window_{w}.domains.tsv"),
+			sample=PRIMARY_SAMPLES,
+			count=300000000,
+			w=list(range(3, 21)),
+			res=RESOLUTIONS,
+		),
+		expand(path.join(STATS_DIR, "tad-distances.{count}.tsv"), count=COUNTS),
+		expand(
+			path.join(TRACK_DIR, "{sample}.{depth}.res_{res}bp.domains.all.bed2ddb"),
+			sample=PRIMARY_SAMPLES,
+			depth=300000000,
+			res=RESOLUTIONS,
+		),
+		expand(
+			path.join(TRACK_DIR, "{sample}.{depth}.res_{res}bp.domains.all.bed2ddb"),
+			sample=SAMPLES,
+			depth=120000000,
+			res=RESOLUTIONS,
+		),
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+
+# Miscellaneous
+# ------------------------------------------------
+rule link:
+	input:
+		"config.tsv",
+	output:
+		path.join("Contacts", "{sample}.mcool"),
+	params:
+		src = lambda wildcards: CONFIG.loc[CONFIG.SampleID == wildcards.sample, "Contact_File"].values[0]
+	shell:
+		"pushd Contacts; ln -s ../{params.src} {wildcards.sample}.mcool; popd"
+
+rule downsample:
+	input:
+		path.join("Contacts", "{sample}.mcool"),
+	output:
+		path.join(CONTACT_DIR, "{sample}.{depth}.{res}bp.cool"),
+	shell:
+		"cooltools random-sample -c {wildcards.depth} {input}::/resolutions/{wildcards.res} {output}"
+
+rule dump_mat:
+	input:
+		path.join(CONTACT_DIR, "{sample}.{depth}.{res}bp.cool"),
+	output:
+		path.join(TMP_DIR, "{sample}.{depth}.res_{res}bp.{chrom}.mtx"),
+	params:
+		"-H -b --one-based-ids --annotate chrom,start,end"
+	shell:
+		"cooler dump {params} -r {wildcards.chrom} -o {output} {input}"
+
+# TAD identification and aggregation
+# ------------------------------------------------
+rule call_chr_tads:
+	input:
+		script = "calc-tads.R",
+		topdom = "topdom.R",
+		data = path.join(TMP_DIR, "{sample}.{depth}.res_{res}bp.{chrom}.mtx"),
+	output:
+		tad = temp(path.join(TAD_DIR, "{sample}.{depth}.res_{res}bp.window_{w}.{chrom}.domains.bed")),
+		tsv = path.join(TAD_DIR, "{sample}.{depth}.res_{res}bp.window_{w}.{chrom}.domains.tsv"),
+		bins = path.join(TAD_DIR, "{sample}.{depth}.res_{res}bp.window_{w}.{chrom}.bins-signal.tsv"),
+	shell:
+		"Rscript {input.script} {input.data} -w {wildcards.w} -p {TAD_DIR}/{wildcards.sample}.{wildcards.depth}.res_{wildcards.res}bp.window_{wildcards.w}.{wildcards.chrom}"
+
+rule merge_chr_tads:
+	input:
+		expand(
+			path.join(TAD_DIR, "{{sample}}.{{depth}}.res_{{res}}bp.window_{{w}}.{chrom}.domains.bed"),
+			chrom=CHRS,
+		),
+	output:
+		path.join(TAD_DIR, "{sample}.{depth}.res_{res}bp.window_{w}.domains.bed"),
+	shell:
+		"cat {input} > {output}"
+
+rule stopping_window_primary:
+	input:
+		script = "stopping-window-size.py",
+		data = expand(
+			path.join(TAD_DIR, "{sample}.300000000.res_{res}bp.window_{w}.domains.bed"),
+			sample=PRIMARY_SAMPLES,
+			w=WINDOWS,
+			res=RESOLUTIONS,
+		),
+	output:
+		path.join(STATS_DIR, "tad-similarity-deltas.300000000.tsv"),
+		path.join(STATS_DIR, "tad-similarity-supremum.300000000.tsv"),
+	params:
+		sample_ids=" ".join(PRIMARY_SAMPLES),
+	shell:
+		"python {input.script} -c 300000000 -r 40000 -s {params.sample_ids}"
+
+rule stopping_window_all:
+	input:
+		script = "stopping-window-size.py",
+		data = expand(
+			path.join(TAD_DIR, "{sample}.120000000.res_{res}bp.window_{w}.domains.bed"),
+			sample=SAMPLES,
+			w=WINDOWS,
+			res=RESOLUTIONS,
+		),
+	output:
+		path.join(STATS_DIR, "tad-similarity-deltas.120000000.tsv"),
+		path.join(STATS_DIR, "tad-similarity-supremum.120000000.tsv"),
+	params:
+		sample_ids=" ".join(SAMPLES),
+	shell:
+		"python {input.script} -c 120000000 -r 40000 -s {params.sample_ids}"
+
+rule agg_tads_primary:
+	input:
+		script = "aggregate-TADs.R",
+		data = expand(
+			path.join(TAD_DIR, "{{sample}}.300000000.res_{{res}}bp.window_{w}.domains.bed"),
+			w=list(range(3, 21)),
+		),
+	output:
+		path.join(AGGTAD_DIR, "{sample}.300000000.res_{res}bp.agg-domains.tsv"),
+		path.join(AGGTAD_DIR, "{sample}.300000000.res_{res}bp.agg-boundaries.tsv"),
+	params:
+		"-m 3 -M 20"
+	shell:
+		"Rscript {input.script} {wildcards.sample} 300000000 {wildcards.res} -i {TAD_DIR} -p {AGGTAD_DIR}/{wildcards.sample}.300000000.res_{wildcards.res}bp {params}"
+
+rule agg_tads_all:
+	input:
+		script = "aggregate-TADs.R",
+		data = expand(
+			path.join(TAD_DIR, "{{sample}}.120000000.res_{{res}}bp.window_{w}.domains.bed"),
+			w=list(range(3, 33)),
+		),
+	output:
+		path.join(AGGTAD_DIR, "{sample}.120000000.res_{res}bp.agg-domains.tsv"),
+		path.join(AGGTAD_DIR, "{sample}.120000000.res_{res}bp.agg-boundaries.tsv"),
+	params:
+		"-m 3 -M 32"
+	shell:
+		"Rscript {input.script} {wildcards.sample} 120000000 {wildcards.res} -i {TAD_DIR} -p {AGGTAD_DIR}/{wildcards.sample}.120000000.res_{wildcards.res}bp {params}"
+
+rule separate_by_window_size_primary:
+	input:
+		path.join(AGGTAD_DIR, "{sample}.300000000.res_{res}bp.agg-domains.tsv")
+	output:
+		expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{{sample}}.300000000.res_{{res}}bp.window_{w}.domains.tsv"),
+			w=list(range(3, 21))
+		)
+	shell:
+		# using +0 to cast the w as an integer (there are some issues with \r and \n, depending on the system)
+		"awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $4, $5, $6 > \"{AGGTAD_DIR}/separated-TADs/{wildcards.sample}.300000000.res_{wildcards.res}bp.window_\"$7+0\".domains.tsv\"}}' {input}"
+
+rule separate_by_window_size_all:
+	input:
+		path.join(AGGTAD_DIR, "{sample}.120000000.res_{res}bp.agg-domains.tsv")
+	output:
+		expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{{sample}}.120000000.res_{{res}}bp.window_{w}.domains.tsv"),
+			w=list(range(3, 33))
+		)
+	shell:
+		# using +0 to cast the w as an integer (there are some issues with \r and \n, depending on the system)
+		"awk '{{FS=OFS=\"\\t\"}}{{if (NR > 1) print $1, $2, $3, $4, $5, $6 > \"{AGGTAD_DIR}/separated-TADs/{wildcards.sample}.120000000.res_{wildcards.res}bp.window_\"$7+0\".domains.tsv\"}}' {input}"
+
+# BPscore and TAD similarity
+# ------------------------------------------------
+rule bpscore_primary:
+	input:
+		script = "calc-tad-similarity.py",
+		data = expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{sample}.300000000.res_{res}bp.window_{w}.domains.tsv"),
+			sample=PRIMARY_SAMPLES,
+			w=list(range(3, 21)),
+			res=RESOLUTIONS,
+		),
+	output:
+		path.join(STATS_DIR, "tad-distances.300000000.tsv"),
+	params:
+		depth = 300000000,
+		min = 3,
+		max = 20,
+		sample_ids = " ".join(PRIMARY_SAMPLES)
+	shell:
+		"python {input.script} -c {params.depth} -m {params.min} -M {params.max} -s {params.sample_ids}"
+
+rule bpscore_all:
+	input:
+		script = "calc-tad-similarity.py",
+		data = expand(
+			path.join(AGGTAD_DIR, "separated-TADs", "{sample}.120000000.res_{res}bp.window_{w}.domains.tsv"),
+			sample=PRIMARY_SAMPLES,
+			w=list(range(3, 33)),
+			res=RESOLUTIONS,
+		),
+	output:
+		path.join(STATS_DIR, "tad-distances.120000000.tsv"),
+	params:
+		depth = 120000000,
+		min = 3,
+		max = 32,
+		sample_ids = " ".join(SAMPLES)
+	shell:
+		"python {input.script} -c {params.depth} -m {params.min} -M {params.max} -s {params.sample_ids}"
+
+rule plot_sim_primary:
+	input:
+		script = "plot-bpscore.primary.R",
+		data = path.join(STATS_DIR, "tad-distances.300000000.tsv"),
+	output:
+		path.join(PLOT_DIR, "primary", "bp-score.cluster.png"),
+		path.join(PLOT_DIR, "primary", "bp-score.cluster.pdf"),
+		path.join(PLOT_DIR, "primary", "bp-score.benign.png"),
+		path.join(PLOT_DIR, "primary", "bp-score.benign.pdf"),
+		path.join(PLOT_DIR, "primary", "bp-score.tumour.png"),
+		path.join(PLOT_DIR, "primary", "bp-score.tumour.pdf"),
+		path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.png"),
+		path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.pdf"),
+		path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.stdev.png"),
+		path.join(PLOT_DIR, "primary", "bp-score.tumour-vs-benign.stdev.pdf"),
+	shell:
+		"Rscript {input.script}"
+
+rule plot_sim_all:
+	input:
+		script = "plot-bpscore.all.R",
+		data = path.join(STATS_DIR, "tad-distances.120000000.tsv"),
+	output:
+		path.join(PLOT_DIR, "all", "bp-score.cluster.png"),
+		path.join(PLOT_DIR, "all", "bp-score.cluster.pdf"),
+		path.join(PLOT_DIR, "all", "bp-score.benign.png"),
+		path.join(PLOT_DIR, "all", "bp-score.benign.pdf"),
+		path.join(PLOT_DIR, "all", "bp-score.tumour.png"),
+		path.join(PLOT_DIR, "all", "bp-score.tumour.pdf"),
+		path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.png"),
+		path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.pdf"),
+		path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.stdev.png"),
+		path.join(PLOT_DIR, "all", "bp-score.tumour-vs-benign.stdev.pdf"),
+	shell:
+		"Rscript {input.script}"
+
+# CTCF enrichment
+# ------------------------------------------------
+rule extend_boundaries:
+	input:
+		script = "extend-boundaries.R",
+		data = path.join("Aggregated-TADs", "{sample}.{depth}.res_40000bp.agg-boundaries.tsv"),
+	output:
+		temp(path.join("CTCF", "Extended", "{sample}.{depth}.res_40000bp.agg-boundaries.extended-{dist}bp.bed")),
+	wildcard_constraints:
+		dist = "\d+"
+	shell:
+		"Rscript {input.script} {input.data} -e {wildcards.dist} -o {output}"
+
+rule boundary_prostateline_ctcf_intersection:
+	input:
+		line_ctcf = path.join("../../Data/External/ENCODE_ChIP/{line}_CTCF_Conservative.canonical.sorted.bed"),
+		bounds = path.join("CTCF", "Extended", "{sample}.120000000.res_40000bp.agg-boundaries.extended-200000bp.bed"),
+	output:
+		path.join("CTCF", "Intersection", "{sample}.{line}.CTCF-peaks.bed"),
+	shell:
+		"bedtools intersect -wa -wb -a {input.bounds} -b {input.line_ctcf} > {output}"
+
+rule boundary_prostateline_ctcf_proximity:
+	input:
+		script = "boundary-ctcf-proximity.R",
+		pairs = expand(
+			path.join("CTCF", "Intersection", "{sample}.{{line}}.CTCF-peaks.bed"),
+			sample=ALL_SAMPLES,
+		),
+	output:
+		path.join("CTCF", "Distances", "{line}.CTCF-peaks.distances.tsv"),
+	shell:
+		"Rscript {input.script} {wildcards.line}"
+
+rule ctcf_enrichment:
+	input:
+		script = "ctcf-enrichment.R",
+		data = path.join("CTCF", "Distances", "{line}.CTCF-peaks.distances.tsv"),
+	output:
+		path.join(STATS_DIR, "tad-boundary-enrichment.{line}-CTCF.tsv"),
+		path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.pdf"),
+		path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.png"),
+		path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.fold.pdf"),
+		path.join(PLOT_DIR, "boundary-counts.ctcf-proximity.{line}.fold.png"),
+	shell:
+		"Rscript {input.script}"
+
+# Plots
+# ------------------------------------------------
+rule clodius_2d:
+	input:
+		path.join(AGGTAD_DIR, "{sample}.{depth}.res_{res}bp.agg-domains.tsv"),
+	output:
+		path.join(TRACK_DIR, "{sample}.{depth}.res_{res}bp.domains.all.bed2ddb"),
+	params:
+		" ".join([
+			"-a hg38",
+			"--has-header",
+			"--chr1-col 1 --from1-col 2 --to1-col 3",
+			"--chr2-col 1 --from2-col 2 --to2-col 3",
+		])
+	shell:
+		"clodius aggregate bedpe {params} -o {output} {input}"
+
+rule clodius_1d:
+	input:
+		path.join(AGGTAD_DIR, "separated-TADs", "{sample}.{depth}.res_{res}bp.window_{w}.domains.tsv"),
+	output:
+		path.join(TRACK_DIR, "{sample}.{depth}.res_{res}bp.domains.window_{w}.beddb"),
+	params:
+		"-a hg38 --no-header"
+	shell:
+		"clodius aggregate bedfile {params} -o {output} {input}"
+
+rule plot_tads:
+	input:
+		script = "plot-TADs.R",
+		data = expand(
+			path.join(AGGTAD_DIR, "{sample}.{depth}.res_{res}bp.agg-domains.tsv"),
+			sample=SAMPLES,
+			depth=COUNTS,
+			res=RESOLUTIONS,
+		),
+	output:
+		path.join(STATS_DIR, "tad-counts.tsv"),
+		path.join(PLOT_DIR, "tad-counts.png"),
+		path.join(PLOT_DIR, "tad-counts.pdf"),
+		path.join(PLOT_DIR, "tad-counts.by-sample.png"),
+		path.join(PLOT_DIR, "tad-counts.by-sample.pdf"),
+		path.join(PLOT_DIR, "tad-counts.by-window.png"),
+		path.join(PLOT_DIR, "tad-counts.by-window.pdf"),
+	shell:
+		"Rscript {input.script}"
+
+rule plot_boundaries:
+	input:
+		script = "plot-boundaries.R",
+		data = expand(
+			path.join(AGGTAD_DIR, "{sample}.{depth}.res_{res}bp.agg-domains.tsv"),
+			sample=SAMPLES,
+			depth=COUNTS,
+			res=RESOLUTIONS,
+		),
+	output:
+		path.join(STATS_DIR, "boundary-hierarchy.tsv"),
+		path.join(PLOT_DIR, "boundary-counts.png"),
+		path.join(PLOT_DIR, "boundary-counts.pdf"),
+		path.join(PLOT_DIR, "boundary-counts.by-persistence.png"),
+		path.join(PLOT_DIR, "boundary-counts.by-persistence.pdf"),
+	shell:
+		"Rscript {input.script}"
