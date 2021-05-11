@@ -1,0 +1,10 @@
+chr1	143500000	143700000	chr1	152400000	153400000	.	104.561	+	-	100kb	ARTEFACT	Sparsity
+chr4	26400000	27500000	chr3	77400000	79100000	.	2977.75	+	-	100kb	BND	Possible chromosome arm swap between 3p and 4p
+chr7	56200000	58100000	chr7	60900000	62400000	.	52.3704	+	+	100kb	ARTEFACT	Sparsity
+chr12	108100000	108600000	chr7	113700000	116100000	.	1222.86	-	-	100kb	BND	Related to rows [4, 7] and other undetected aberrations on chr7xchr12
+chr12	128100000	129400000	chr7	138200000	139200000	.	3390.94	+	-	100kb	BND	Related to rows [4, 7] and other undetected aberrations on chr7xchr12
+chr12	129400000	130400000	chr7	106500000	108000000	.	2575.17	-	+	100kb	BND	Related to rows [4, 7] and other undetected aberrations on chr7xchr12
+chr12	106100000	106300000	chr12	130000000	130500000	.	72.4731	+	+	100kb	UNKNOWN	Related to rows [4, 7] and other undetected aberrations on chr7xchr12
+chr13	30100000	30600000	chr13	73700000	75300000	.	323.791	-	-	100kb	DEL	Deletion involving KLF5 and RB1
+chr19	36300000	37800000	chr19	43800000	44500000	.	225.654	+	+	100kb	ARTEFACT	chr19 artefacts
+chrY	13500000	15300000	chrY	16000000	17400000	.	123.453	+	-	100kb	ARTEFACT	Sparsity
