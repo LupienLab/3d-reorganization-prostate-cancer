@@ -1,0 +1,103 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(
+    path.join("..", "..", "data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t",
+    index_col=False
+)
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+SAMPLES = ["PCa" + str(i) for i in CONFIG["Sample ID"]]
+
+BAM_DIR = path.join(
+    "..", "..", "data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Aligned"
+)
+RES_DIR = "../../results/2019-07-24_breakfinder"
+BREAK_DIR = path.join(RES_DIR, "Breakpoints")
+PLOT_DIR = path.join(RES_DIR, "Plots")
+REPORT_DIR = path.join(RES_DIR, "Reports")
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join(BREAK_DIR, "{param}", "{sample}.breaks.sorted.bedpe"),
+            sample=SAMPLES,
+            param="Default"
+        ),
+        expand(
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.sorted.bed"),
+            sample=SAMPLES
+        ),
+        expand(
+            path.join(BREAK_DIR, "Default", "{sample}.breaks.{ext}"),
+            sample=SAMPLES,
+            ext=["beddb", "bed2ddb"],
+        ),
+        path.join(BREAK_DIR, "Default", "inter-intra-chromosomal-events.tsv"),
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule breakfinder_default:
+    input:
+        bam = path.join(BAM_DIR, "{sample}.agg.hicup.sorted.bam"),
+        inter = "inter_expect_1Mb.hg38.txt",
+        intra = "intra_expect_100kb.hg38.txt"
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.txt"),
+    shell:
+        "pushd {BREAK_DIR}/Default; hic_breakfinder --bam-file {input.bam} --exp-file-inter ../../{input.inter} --exp-file-intra ../../{input.intra} --name {wildcards.sample}; popd;"
+
+rule sort_breaks:
+    input:
+        path.join(BREAK_DIR, "{prefix}", "{sample}.breaks.txt")
+    output:
+        path.join(BREAK_DIR, "{prefix}", "{sample}.breaks.sorted.bedpe")
+    shell:
+        "awk '{{FS=OFS=\"\\t\"}}{{print $2, $3, $4, $6, $7, $8, \".\", $1, $5, $9, $10}}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n > {output}"
+
+rule sort_bed:
+    input:
+        "{file}.bed",
+    output:
+        "{file}.sorted.bed",
+    shell:
+        "sort -k1,1 -V -k2,2n {input} > {output}"
+
+rule bf2bed:
+    input:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.tsv")
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.bed")
+    params:
+        "-v FS='\t' -v OFS='\t'"
+    shell:
+        "awk {params} \"{{if ($12 != \"ARTEFACT\") print $1, $2, $3, "SV"NR, "\\n"$4, $5, $6, "SV"NR}}\" {input} > {output}"
+
+rule clodius_2d:
+    input:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.bedpe"),
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.bed2ddb"),
+    params:
+        "-a hg38 --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6"
+    shell:
+        # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedpe {params} -o {output} <(awk '{{FS=OFS=\"\\t\"}}{{print $1, $2, $3, $4, $5, $6; print $4, $5, $6, $1, $2, $3}}' {input})"
+
+rule clodius_1d:
+    input:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.sorted.manually-resolved.breakpoints.sorted.bed"),
+    output:
+        path.join(BREAK_DIR, "Default", "{sample}.breaks.beddb"),
+    params:
+        "-a hg38 --no-header"
+    shell:
+        # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedfile {params} -o {output} {input}"
