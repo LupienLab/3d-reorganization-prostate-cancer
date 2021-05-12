@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="annotation" attr.type="string"/>
+<graph edgedefault="undirected"><node id="chr1:105.9Mb-108.0Mb"/>
+<node id="chr11:64.0Mb-64.2Mb"/>
+<node id="chr1:230.35Mb-230.5Mb"/>
+<node id="chr11:64.26Mb-64.31Mb"/>
+<node id="chr1:230.6Mb-231.3Mb"/>
+<node id="chr17:8.2Mb-8.9Mb"/>
+<node id="chr3:151.0Mb-152.0Mb"/>
+<node id="chr3:149.82Mb-149.89Mb"/>
+<node id="chr1:108.4Mb-109.6Mb"/>
+<node id="chr8:93.0Mb-93.13Mb"/>
+<node id="chr7:155.4Mb-155.52Mb"/>
+<node id="chr8:129.47Mb-129.62Mb"/>
+<node id="chr10:49.41Mb-49.54Mb"/>
+<node id="chr1:234.33Mb-234.42Mb"/>
+<node id="chr1:223.0Mb-223.9Mb"/>
+<node id="chr10:68.6Mb-69.0Mb"/>
+<node id="chr10:69.4Mb-69.9Mb"/>
+<node id="chr10:93.4Mb-93.7Mb"/>
+<node id="chr10:79.35Mb-79.4Mb"/>
+<node id="chr12:70.48Mb-70.57Mb"/>
+<node id="chr16:13.7Mb-14.4Mb"/>
+<node id="chr16:46.8Mb-47.2Mb"/>
+<node id="chr16:14.6Mb-14.7Mb"/>
+<node id="chr16:59.1Mb-60.5Mb"/>
+<node id="chr16:48.0Mb-48.3Mb"/>
+<node id="chr16:81.2Mb-81.9Mb"/>
+<node id="chr16:48.7Mb-49.7Mb"/>
+<node id="chr16:77.6Mb-78.0Mb"/>
+<node id="chr17:5.3Mb-6.6Mb"/>
+<node id="chr17:47.5Mb-47.9Mb"/>
+<node id="chr17:9.7Mb-10.7Mb"/>
+<node id="chr17:45.6Mb-45.8Mb"/>
+<node id="chr17:11.3Mb-11.8Mb"/>
+<node id="chr17:46.3Mb-47.4Mb"/>
+<node id="chr18:55.0Mb-57.6Mb"/>
+<node id="chr17:51.72Mb-51.76Mb"/>
+<node id="chr18:67.2Mb-67.43Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr2:3.7Mb-6.89Mb"/>
+<node id="chr17:50.1Mb-50.5Mb"/>
+<node id="chr3:12.0Mb-12.3Mb"/>
+<node id="chr5:69.1Mb-69.5Mb"/>
+<node id="chr5:54.5Mb-55.8Mb"/>
+<node id="chr7:69.5Mb-70.81Mb"/>
+<node id="chr8:134.7Mb-137.7Mb"/>
+<node id="chr10:110.8Mb-112.16Mb"/>
+<node id="chr8:128.1Mb-129.2Mb"/>
+<node id="chr12:123.7Mb-126.8Mb"/>
+<edge source="chr1:105.9Mb-108.0Mb" target="chr11:64.0Mb-64.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:230.35Mb-230.5Mb" target="chr11:64.26Mb-64.31Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:230.6Mb-231.3Mb" target="chr17:8.2Mb-8.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:151.0Mb-152.0Mb" target="chr3:12.0Mb-12.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:149.82Mb-149.89Mb" target="chr3:12.0Mb-12.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:108.4Mb-109.6Mb" target="chr5:69.1Mb-69.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:93.0Mb-93.13Mb" target="chr7:155.4Mb-155.52Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:129.47Mb-129.62Mb" target="chr7:69.5Mb-70.81Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:49.41Mb-49.54Mb" target="chr1:234.33Mb-234.42Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:223.0Mb-223.9Mb" target="chr10:110.8Mb-112.16Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:68.6Mb-69.0Mb" target="chr10:110.8Mb-112.16Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:69.4Mb-69.9Mb" target="chr10:93.4Mb-93.7Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:79.35Mb-79.4Mb" target="chr10:110.8Mb-112.16Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:70.48Mb-70.57Mb" target="chr8:128.1Mb-129.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:46.8Mb-47.2Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr16:14.6Mb-14.7Mb" target="chr16:59.1Mb-60.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:48.0Mb-48.3Mb" target="chr16:81.2Mb-81.9Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:48.7Mb-49.7Mb" target="chr16:77.6Mb-78.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:5.3Mb-6.6Mb" target="chr17:47.5Mb-47.9Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:9.7Mb-10.7Mb" target="chr17:45.6Mb-45.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:11.3Mb-11.8Mb" target="chr17:50.1Mb-50.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:46.3Mb-47.4Mb" target="chr18:55.0Mb-57.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:51.72Mb-51.76Mb" target="chr18:67.2Mb-67.43Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:3.7Mb-6.89Mb" target="chr17:50.1Mb-50.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:3.7Mb-6.89Mb" target="chr5:54.5Mb-55.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.1Mb-69.5Mb" target="chr5:54.5Mb-55.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr7:69.5Mb-70.81Mb" target="chr8:134.7Mb-137.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:134.7Mb-137.7Mb" target="chr12:123.7Mb-126.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:128.1Mb-129.2Mb" target="chr12:123.7Mb-126.8Mb">
+  <data key="d0">BND</data>
+</edge>
+</graph></graphml>

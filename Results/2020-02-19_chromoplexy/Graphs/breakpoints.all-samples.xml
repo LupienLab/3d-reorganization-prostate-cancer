@@ -1,0 +1,901 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="annotation" attr.type="string"/>
+<graph edgedefault="undirected"><node id="chr4:179.1Mb-179.6Mb"/>
+<node id="chr3:73.8Mb-75.0Mb"/>
+<node id="chr4:181.68Mb-181.71Mb"/>
+<node id="chr3:76.01Mb-76.13Mb"/>
+<node id="chr6:84.3Mb-84.6Mb"/>
+<node id="chr6:127.7Mb-128.3Mb"/>
+<node id="chr1:75.46Mb-75.56Mb"/>
+<node id="chr1:79.35Mb-79.42Mb"/>
+<node id="chr1:205.0Mb-205.6Mb"/>
+<node id="chr6:109.5Mb-110.5Mb"/>
+<node id="chr2:212.7Mb-215.0Mb"/>
+<node id="chr3:23.7Mb-25.0Mb"/>
+<node id="chr2:226.0Mb-227.3Mb"/>
+<node id="chr6:165.3Mb-166.4Mb"/>
+<node id="chr6:163.1Mb-163.4Mb"/>
+<node id="chr3:25.4Mb-27.3Mb"/>
+<node id="chr4:69.2Mb-69.9Mb"/>
+<node id="chr9:98.0Mb-98.9Mb"/>
+<node id="chr5:59.0Mb-59.2Mb"/>
+<node id="chr5:172.4Mb-173.0Mb"/>
+<node id="chr10:5.97Mb-6.09Mb"/>
+<node id="chr10:96.63Mb-99.3Mb"/>
+<node id="chr20:21.0Mb-23.5Mb"/>
+<node id="chr11:104.0Mb-105.8Mb"/>
+<node id="chr2:198.3Mb-199.8Mb"/>
+<node id="chr11:123.0Mb-123.3Mb"/>
+<node id="chr11:118.5Mb-118.9Mb"/>
+<node id="chr6:160.9Mb-162.9Mb"/>
+<node id="chr13:98.7Mb-99.2Mb"/>
+<node id="chr1:201.1Mb-201.9Mb"/>
+<node id="chr13:99.4Mb-100.6Mb"/>
+<node id="chr1:151.0Mb-151.3Mb"/>
+<node id="chr13:21.4Mb-22.9Mb"/>
+<node id="chr6:168.6Mb-169.6Mb"/>
+<node id="chr13:42.1Mb-42.8Mb"/>
+<node id="chr6:165.6Mb-166.4Mb"/>
+<node id="chr13:20.0Mb-20.4Mb"/>
+<node id="chr13:39.6Mb-40.0Mb"/>
+<node id="chr13:41.7Mb-42.2Mb"/>
+<node id="chr13:88.8Mb-89.2Mb"/>
+<node id="chr13:58.9Mb-59.3Mb"/>
+<node id="chr13:106.8Mb-107.2Mb"/>
+<node id="chr18:76.34Mb-76.46Mb"/>
+<node id="chr20:57.7Mb-58.22Mb"/>
+<node id="chr14:35.44Mb-35.83Mb"/>
+<node id="chr21:41.45Mb-41.62Mb"/>
+<node id="chr21:38.4Mb-38.78Mb"/>
+<node id="chr2:115.4Mb-115.8Mb"/>
+<node id="chr2:127.2Mb-127.5Mb"/>
+<node id="chr2:112.73Mb-112.8Mb"/>
+<node id="chr4:125.47Mb-125.6Mb"/>
+<node id="chr2:114.6Mb-115.18Mb"/>
+<node id="chr4:125.34Mb-125.38Mb"/>
+<node id="chr13:30.67Mb-30.94Mb"/>
+<node id="chr11:32.28Mb-32.31Mb"/>
+<node id="chr14:72.71Mb-72.87Mb"/>
+<node id="chr4:157.73Mb-157.88Mb"/>
+<node id="chr14:73.0Mb-73.12Mb"/>
+<node id="chr4:154.87Mb-154.93Mb"/>
+<node id="chr2:73.65Mb-73.77Mb"/>
+<node id="chr3:28.29Mb-28.34Mb"/>
+<node id="chr3:121.6Mb-121.88Mb"/>
+<node id="chr3:156.14Mb-156.17Mb"/>
+<node id="chr3:123.8Mb-124.6Mb"/>
+<node id="chr3:156.3Mb-157.1Mb"/>
+<node id="chr3:79.63Mb-79.75Mb"/>
+<node id="chr9:92.03Mb-92.08Mb"/>
+<node id="chr5:69.03Mb-69.3Mb"/>
+<node id="chr3:68.97Mb-69.06Mb"/>
+<node id="chr5:73.01Mb-73.5Mb"/>
+<node id="chr3:73.08Mb-73.1Mb"/>
+<node id="chr16:4.45Mb-4.7Mb"/>
+<node id="chr8:41.51Mb-41.55Mb"/>
+<node id="chr16:4.8Mb-5.1Mb"/>
+<node id="chr16:71.1Mb-71.6Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr2:137.2Mb-137.8Mb"/>
+<node id="chr2:142.73Mb-143.1Mb"/>
+<node id="chr2:138.77Mb-138.8Mb"/>
+<node id="chr2:155.2Mb-155.32Mb"/>
+<node id="chr2:153.84Mb-153.9Mb"/>
+<node id="chr3:63.89Mb-64.0Mb"/>
+<node id="chr3:73.86Mb-73.9Mb"/>
+<node id="chr4:95.14Mb-95.46Mb"/>
+<node id="chr4:16.25Mb-17.5Mb"/>
+<node id="chr4:97.7Mb-98.2Mb"/>
+<node id="chr4:115.48Mb-115.66Mb"/>
+<node id="chr4:133.4Mb-135.0Mb"/>
+<node id="chr4:125.2Mb-125.8Mb"/>
+<node id="chr4:118.6Mb-120.1Mb"/>
+<node id="chr5:42.3Mb-42.34Mb"/>
+<node id="chr5:94.6Mb-94.67Mb"/>
+<node id="chr6:76.24Mb-76.3Mb"/>
+<node id="chr6:97.9Mb-97.96Mb"/>
+<node id="chr8:51.83Mb-52.04Mb"/>
+<node id="chr8:64.7Mb-65.65Mb"/>
+<node id="chr8:144.4Mb-145.0Mb"/>
+<node id="chr10:34.65Mb-37.1Mb"/>
+<node id="chr10:54.8Mb-55.3Mb"/>
+<node id="chr10:92.5Mb-93.1Mb"/>
+<node id="chr10:80.12Mb-80.17Mb"/>
+<node id="chr10:110.2Mb-110.3Mb"/>
+<node id="chr10:101.2Mb-101.4Mb"/>
+<node id="chr10:108.5Mb-109.3Mb"/>
+<node id="chr12:50.9Mb-51.4Mb"/>
+<node id="chr12:110.4Mb-110.7Mb"/>
+<node id="chr12:111.17Mb-111.22Mb"/>
+<node id="chr17:16.04Mb-16.21Mb"/>
+<node id="chr17:78.93Mb-79.0Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr4:114.7Mb-115.15Mb"/>
+<node id="chr8:48.3Mb-49.6Mb"/>
+<node id="chr8:58.7Mb-60.2Mb"/>
+<node id="chr16:60.2Mb-62.6Mb"/>
+<node id="chr4:94.2Mb-94.7Mb"/>
+<node id="chr7:12.4Mb-15.3Mb"/>
+<node id="chr4:94.8Mb-95.7Mb"/>
+<node id="chr1:105.9Mb-108.0Mb"/>
+<node id="chr11:64.0Mb-64.2Mb"/>
+<node id="chr1:230.35Mb-230.5Mb"/>
+<node id="chr11:64.26Mb-64.31Mb"/>
+<node id="chr1:230.6Mb-231.3Mb"/>
+<node id="chr17:8.2Mb-8.9Mb"/>
+<node id="chr3:151.0Mb-152.0Mb"/>
+<node id="chr3:12.0Mb-12.3Mb"/>
+<node id="chr3:149.82Mb-149.89Mb"/>
+<node id="chr1:108.4Mb-109.6Mb"/>
+<node id="chr5:69.1Mb-69.5Mb"/>
+<node id="chr8:93.0Mb-93.13Mb"/>
+<node id="chr7:155.4Mb-155.52Mb"/>
+<node id="chr8:129.47Mb-129.62Mb"/>
+<node id="chr7:69.5Mb-70.81Mb"/>
+<node id="chr10:49.41Mb-49.54Mb"/>
+<node id="chr1:234.33Mb-234.42Mb"/>
+<node id="chr1:223.0Mb-223.9Mb"/>
+<node id="chr10:110.8Mb-112.16Mb"/>
+<node id="chr10:68.6Mb-69.0Mb"/>
+<node id="chr10:69.4Mb-69.9Mb"/>
+<node id="chr10:93.4Mb-93.7Mb"/>
+<node id="chr10:79.35Mb-79.4Mb"/>
+<node id="chr12:70.48Mb-70.57Mb"/>
+<node id="chr8:128.1Mb-129.2Mb"/>
+<node id="chr16:13.7Mb-14.4Mb"/>
+<node id="chr16:46.8Mb-47.2Mb"/>
+<node id="chr16:14.6Mb-14.7Mb"/>
+<node id="chr16:59.1Mb-60.5Mb"/>
+<node id="chr16:48.0Mb-48.3Mb"/>
+<node id="chr16:81.2Mb-81.9Mb"/>
+<node id="chr16:48.7Mb-49.7Mb"/>
+<node id="chr16:77.6Mb-78.0Mb"/>
+<node id="chr17:5.3Mb-6.6Mb"/>
+<node id="chr17:47.5Mb-47.9Mb"/>
+<node id="chr17:9.7Mb-10.7Mb"/>
+<node id="chr17:45.6Mb-45.8Mb"/>
+<node id="chr17:11.3Mb-11.8Mb"/>
+<node id="chr17:50.1Mb-50.5Mb"/>
+<node id="chr17:46.3Mb-47.4Mb"/>
+<node id="chr18:55.0Mb-57.6Mb"/>
+<node id="chr17:51.72Mb-51.76Mb"/>
+<node id="chr18:67.2Mb-67.43Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr2:3.7Mb-6.89Mb"/>
+<node id="chr5:54.5Mb-55.8Mb"/>
+<node id="chr8:134.7Mb-137.7Mb"/>
+<node id="chr12:123.7Mb-126.8Mb"/>
+<node id="chr8:60.8Mb-61.1Mb"/>
+<node id="chr8:113.1Mb-113.6Mb"/>
+<node id="chr12:58.2Mb-59.4Mb"/>
+<node id="chr16:23.7Mb-24.3Mb"/>
+<node id="chr15:43.8Mb-44.7Mb"/>
+<node id="chr7:128.3Mb-128.7Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chr12:6.68Mb-6.84Mb"/>
+<node id="chr2:11.07Mb-11.5Mb"/>
+<node id="chr17:41.91Mb-42.19Mb"/>
+<node id="chr19:50.77Mb-51.13Mb"/>
+<node id="chr1:57.03Mb-57.08Mb"/>
+<node id="chr1:85.0Mb-85.39Mb"/>
+<node id="chr1:57.63Mb-57.75Mb"/>
+<node id="chr1:154.96Mb-155.07Mb"/>
+<node id="chr1:84.82Mb-84.96Mb"/>
+<node id="chr1:116.55Mb-116.62Mb"/>
+<node id="chr4:71.47Mb-71.61Mb"/>
+<node id="chr3:36.17Mb-36.34Mb"/>
+<node id="chr3:115.5Mb-115.62Mb"/>
+<node id="chr4:69.4Mb-69.9Mb"/>
+<node id="chr4:76.8Mb-79.0Mb"/>
+<node id="chr15:46.8Mb-47.2Mb"/>
+<node id="chr15:70.8Mb-71.0Mb"/>
+<node id="chr15:47.0Mb-48.1Mb"/>
+<node id="chr15:71.5Mb-71.7Mb"/>
+<node id="chr1:58.1Mb-60.1Mb"/>
+<node id="chr1:231.72Mb-232.65Mb"/>
+<node id="chr7:107.43Mb-107.74Mb"/>
+<node id="chr8:56.12Mb-56.26Mb"/>
+<node id="chr8:138.14Mb-138.72Mb"/>
+<node id="chr19:15.76Mb-16.04Mb"/>
+<node id="chr7:140.63Mb-141.04Mb"/>
+<node id="chr1:99.8Mb-101.6Mb"/>
+<node id="chr15:25.1Mb-29.1Mb"/>
+<node id="chr2:46.1Mb-46.9Mb"/>
+<node id="chr2:7.0Mb-8.18Mb"/>
+<node id="chr3:134.55Mb-134.57Mb"/>
+<node id="chr3:41.7Mb-42.0Mb"/>
+<node id="chr3:44.87Mb-44.96Mb"/>
+<node id="chr3:131.42Mb-131.65Mb"/>
+<node id="chr3:61.2Mb-63.6Mb"/>
+<node id="chr3:114.3Mb-114.6Mb"/>
+<node id="chr3:66.12Mb-66.2Mb"/>
+<node id="chr3:108.6Mb-109.4Mb"/>
+<node id="chr3:70.78Mb-70.84Mb"/>
+<node id="chr5:90.9Mb-91.5Mb"/>
+<node id="chr3:94.6Mb-96.8Mb"/>
+<node id="chr5:90.3Mb-90.5Mb"/>
+<node id="chrX:57.97Mb-58.06Mb"/>
+<node id="chr3:177.03Mb-177.4Mb"/>
+<node id="chrX:68.0Mb-68.14Mb"/>
+<node id="chr2:45.61Mb-45.8Mb"/>
+<node id="chr5:177.06Mb-177.12Mb"/>
+<node id="chr6:66.02Mb-66.1Mb"/>
+<node id="chr6:119.9Mb-119.95Mb"/>
+<node id="chr6:92.7Mb-93.3Mb"/>
+<node id="chr6:109.1Mb-109.4Mb"/>
+<node id="chr6:136.23Mb-136.3Mb"/>
+<node id="chr7:105.44Mb-105.52Mb"/>
+<node id="chr8:38.4Mb-38.8Mb"/>
+<node id="chr2:68.4Mb-69.9Mb"/>
+<node id="chr8:18.09Mb-18.15Mb"/>
+<node id="chr8:41.24Mb-41.54Mb"/>
+<node id="chr10:26.32Mb-26.55Mb"/>
+<node id="chr10:68.07Mb-68.1Mb"/>
+<node id="chr10:28.6Mb-28.67Mb"/>
+<node id="chr10:90.95Mb-91.1Mb"/>
+<node id="chr10:68.74Mb-68.9Mb"/>
+<node id="chr10:89.22Mb-89.26Mb"/>
+<node id="chr10:83.8Mb-84.1Mb"/>
+<node id="chr10:91.9Mb-92.5Mb"/>
+<node id="chr12:10.21Mb-10.36Mb"/>
+<node id="chr4:39.15Mb-39.46Mb"/>
+<node id="chr12:27.31Mb-27.74Mb"/>
+<node id="chr4:38.05Mb-38.18Mb"/>
+<node id="chr6:12.3Mb-13.6Mb"/>
+<node id="chr12:68.8Mb-69.87Mb"/>
+<node id="chr12:59.19Mb-59.42Mb"/>
+<node id="chr10:86.31Mb-86.37Mb"/>
+<node id="chr10:84.56Mb-84.6Mb"/>
+<node id="chr12:60.54Mb-62.7Mb"/>
+<node id="chr12:61.93Mb-62.22Mb"/>
+<node id="chr10:87.8Mb-88.0Mb"/>
+<node id="chr12:105.57Mb-106.25Mb"/>
+<node id="chr10:88.78Mb-88.83Mb"/>
+<node id="chr12:58.64Mb-58.78Mb"/>
+<node id="chr12:104.03Mb-104.06Mb"/>
+<node id="chr12:105.41Mb-105.49Mb"/>
+<node id="chr12:121.81Mb-122.02Mb"/>
+<node id="chr14:106.47Mb-106.54Mb"/>
+<node id="chr21:31.62Mb-31.66Mb"/>
+<node id="chrX:53.0Mb-53.9Mb"/>
+<node id="chr12:44.9Mb-49.3Mb"/>
+<node id="chr14:21.52Mb-21.7Mb"/>
+<node id="chr1:91.81Mb-92.02Mb"/>
+<node id="chr14:54.3Mb-54.45Mb"/>
+<node id="chr1:91.47Mb-91.56Mb"/>
+<node id="chr10:103.21Mb-103.37Mb"/>
+<node id="chr14:99.88Mb-100.2Mb"/>
+<node id="chr14:103.31Mb-103.44Mb"/>
+<node id="chr10:100.29Mb-100.51Mb"/>
+<node id="chr14:103.52Mb-103.67Mb"/>
+<node id="chr10:102.5Mb-102.66Mb"/>
+<node id="chr14:22.45Mb-22.53Mb"/>
+<node id="chr14:31.36Mb-31.48Mb"/>
+<node id="chr14:23.47Mb-23.5Mb"/>
+<node id="chr14:30.58Mb-30.73Mb"/>
+<node id="chr14:24.03Mb-24.17Mb"/>
+<node id="chr14:102.3Mb-102.36Mb"/>
+<node id="chr17:22.7Mb-28.3Mb"/>
+<node id="chr10:85.0Mb-86.0Mb"/>
+<node id="chr21:38.4Mb-38.5Mb"/>
+<node id="chr21:41.5Mb-41.62Mb"/>
+<node id="chrX:67.67Mb-67.83Mb"/>
+<node id="chrX:144.62Mb-144.74Mb"/>
+<node id="chr3:44.35Mb-44.51Mb"/>
+<node id="chr2:97.7Mb-98.6Mb"/>
+<node id="chr3:73.6Mb-75.8Mb"/>
+<node id="chr3:130.0Mb-131.1Mb"/>
+<node id="chr3:156.7Mb-157.2Mb"/>
+<node id="chr3:146.7Mb-149.3Mb"/>
+<node id="chr12:103.6Mb-104.1Mb"/>
+<node id="chr21:32.26Mb-33.2Mb"/>
+<node id="chr14:88.48Mb-90.0Mb"/>
+<node id="chr14:56.0Mb-57.4Mb"/>
+<node id="chr1:47.93Mb-48.2Mb"/>
+<node id="chr14:101.66Mb-101.8Mb"/>
+<node id="chr16:14.0Mb-15.1Mb"/>
+<node id="chr12:110.99Mb-111.8Mb"/>
+<node id="chr12:113.3Mb-114.7Mb"/>
+<node id="chr16:15.1Mb-18.0Mb"/>
+<node id="chr12:124.4Mb-125.1Mb"/>
+<node id="chr16:27.2Mb-28.3Mb"/>
+<node id="chr22:43.14Mb-43.19Mb"/>
+<node id="chr16:13.76Mb-13.8Mb"/>
+<node id="chr22:42.89Mb-42.98Mb"/>
+<node id="chr4:26.4Mb-27.5Mb"/>
+<node id="chr3:77.4Mb-79.1Mb"/>
+<node id="chr12:108.1Mb-108.6Mb"/>
+<node id="chr7:113.7Mb-116.1Mb"/>
+<node id="chr7:138.2Mb-139.2Mb"/>
+<node id="chr12:128.1Mb-130.5Mb"/>
+<node id="chr7:106.5Mb-108.0Mb"/>
+<node id="chr12:106.1Mb-106.3Mb"/>
+<node id="chr13:30.1Mb-30.6Mb"/>
+<node id="chr13:73.7Mb-75.3Mb"/>
+<edge source="chr4:179.1Mb-179.6Mb" target="chr3:73.8Mb-75.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:181.68Mb-181.71Mb" target="chr3:76.01Mb-76.13Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:84.3Mb-84.6Mb" target="chr6:127.7Mb-128.3Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr1:75.46Mb-75.56Mb" target="chr1:79.35Mb-79.42Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr1:205.0Mb-205.6Mb" target="chr6:109.5Mb-110.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:212.7Mb-215.0Mb" target="chr3:23.7Mb-25.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:226.0Mb-227.3Mb" target="chr6:165.3Mb-166.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:163.1Mb-163.4Mb" target="chr3:25.4Mb-27.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:25.4Mb-27.3Mb" target="chr11:123.0Mb-123.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:69.2Mb-69.9Mb" target="chr9:98.0Mb-98.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:59.0Mb-59.2Mb" target="chr5:172.4Mb-173.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:5.97Mb-6.09Mb" target="chr10:96.63Mb-99.3Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr10:96.63Mb-99.3Mb" target="chr20:21.0Mb-23.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:104.0Mb-105.8Mb" target="chr2:198.3Mb-199.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr11:118.5Mb-118.9Mb" target="chr6:160.9Mb-162.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:98.7Mb-99.2Mb" target="chr1:201.1Mb-201.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:99.4Mb-100.6Mb" target="chr1:151.0Mb-151.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:21.4Mb-22.9Mb" target="chr6:168.6Mb-169.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:42.1Mb-42.8Mb" target="chr6:165.6Mb-166.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:20.0Mb-20.4Mb" target="chr13:39.6Mb-40.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:41.7Mb-42.2Mb" target="chr13:88.8Mb-89.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:58.9Mb-59.3Mb" target="chr13:106.8Mb-107.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr18:76.34Mb-76.46Mb" target="chr20:57.7Mb-58.22Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:35.44Mb-35.83Mb" target="chr21:41.45Mb-41.62Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:35.44Mb-35.83Mb" target="chr21:38.4Mb-38.78Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:41.45Mb-41.62Mb" target="chr21:38.4Mb-38.78Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:115.4Mb-115.8Mb" target="chr2:127.2Mb-127.5Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr2:112.73Mb-112.8Mb" target="chr4:125.47Mb-125.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:114.6Mb-115.18Mb" target="chr4:125.34Mb-125.38Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr13:30.67Mb-30.94Mb" target="chr11:32.28Mb-32.31Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:72.71Mb-72.87Mb" target="chr4:157.73Mb-157.88Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:73.0Mb-73.12Mb" target="chr4:154.87Mb-154.93Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:73.65Mb-73.77Mb" target="chr3:28.29Mb-28.34Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:121.6Mb-121.88Mb" target="chr3:156.14Mb-156.17Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:123.8Mb-124.6Mb" target="chr3:156.3Mb-157.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:79.63Mb-79.75Mb" target="chr9:92.03Mb-92.08Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.03Mb-69.3Mb" target="chr3:68.97Mb-69.06Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:73.01Mb-73.5Mb" target="chr3:73.08Mb-73.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:4.45Mb-4.7Mb" target="chr8:41.51Mb-41.55Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:4.8Mb-5.1Mb" target="chr16:71.1Mb-71.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:137.2Mb-137.8Mb" target="chr2:142.73Mb-143.1Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:142.73Mb-143.1Mb" target="chr2:153.84Mb-153.9Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:138.77Mb-138.8Mb" target="chr2:155.2Mb-155.32Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr3:63.89Mb-64.0Mb" target="chr3:73.86Mb-73.9Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr4:95.14Mb-95.46Mb" target="chr4:16.25Mb-17.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:16.25Mb-17.5Mb" target="chr4:97.7Mb-98.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:115.48Mb-115.66Mb" target="chr4:133.4Mb-135.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:133.4Mb-135.0Mb" target="chr4:114.7Mb-115.15Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:133.4Mb-135.0Mb" target="chr4:118.6Mb-120.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:125.2Mb-125.8Mb" target="chr4:118.6Mb-120.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:118.6Mb-120.1Mb" target="chr4:114.7Mb-115.15Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr5:42.3Mb-42.34Mb" target="chr5:94.6Mb-94.67Mb">
+  <data key="d0">INV</data>
+</edge>
+<edge source="chr6:76.24Mb-76.3Mb" target="chr6:97.9Mb-97.96Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr8:51.83Mb-52.04Mb" target="chr8:64.7Mb-65.65Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:64.7Mb-65.65Mb" target="chr8:48.3Mb-49.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:64.7Mb-65.65Mb" target="chr16:60.2Mb-62.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:144.4Mb-145.0Mb" target="chr10:34.65Mb-37.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:34.65Mb-37.1Mb" target="chr17:78.93Mb-79.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:54.8Mb-55.3Mb" target="chr10:92.5Mb-93.1Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:80.12Mb-80.17Mb" target="chr10:110.2Mb-110.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:101.2Mb-101.4Mb" target="chr10:108.5Mb-109.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:50.9Mb-51.4Mb" target="chr12:110.4Mb-110.7Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr12:111.17Mb-111.22Mb" target="chr17:16.04Mb-16.21Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr8:48.3Mb-49.6Mb" target="chr8:58.7Mb-60.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:48.3Mb-49.6Mb" target="chr16:60.2Mb-62.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:58.7Mb-60.2Mb" target="chr16:60.2Mb-62.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:94.2Mb-94.7Mb" target="chr7:12.4Mb-15.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr7:12.4Mb-15.3Mb" target="chr4:94.8Mb-95.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:105.9Mb-108.0Mb" target="chr11:64.0Mb-64.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:230.35Mb-230.5Mb" target="chr11:64.26Mb-64.31Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:230.6Mb-231.3Mb" target="chr17:8.2Mb-8.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:151.0Mb-152.0Mb" target="chr3:12.0Mb-12.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:12.0Mb-12.3Mb" target="chr3:149.82Mb-149.89Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:108.4Mb-109.6Mb" target="chr5:69.1Mb-69.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr5:69.1Mb-69.5Mb" target="chr5:54.5Mb-55.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr8:93.0Mb-93.13Mb" target="chr7:155.4Mb-155.52Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:129.47Mb-129.62Mb" target="chr7:69.5Mb-70.81Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr7:69.5Mb-70.81Mb" target="chr8:134.7Mb-137.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:49.41Mb-49.54Mb" target="chr1:234.33Mb-234.42Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:223.0Mb-223.9Mb" target="chr10:110.8Mb-112.16Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:110.8Mb-112.16Mb" target="chr10:68.6Mb-69.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:110.8Mb-112.16Mb" target="chr10:79.35Mb-79.4Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr10:69.4Mb-69.9Mb" target="chr10:93.4Mb-93.7Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:70.48Mb-70.57Mb" target="chr8:128.1Mb-129.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:128.1Mb-129.2Mb" target="chr12:123.7Mb-126.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:13.7Mb-14.4Mb" target="chr16:46.8Mb-47.2Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr16:14.6Mb-14.7Mb" target="chr16:59.1Mb-60.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:48.0Mb-48.3Mb" target="chr16:81.2Mb-81.9Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:48.7Mb-49.7Mb" target="chr16:77.6Mb-78.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:5.3Mb-6.6Mb" target="chr17:47.5Mb-47.9Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:9.7Mb-10.7Mb" target="chr17:45.6Mb-45.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:11.3Mb-11.8Mb" target="chr17:50.1Mb-50.5Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:50.1Mb-50.5Mb" target="chr2:3.7Mb-6.89Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:46.3Mb-47.4Mb" target="chr18:55.0Mb-57.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:51.72Mb-51.76Mb" target="chr18:67.2Mb-67.43Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:3.7Mb-6.89Mb" target="chr5:54.5Mb-55.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:134.7Mb-137.7Mb" target="chr12:123.7Mb-126.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:60.8Mb-61.1Mb" target="chr8:113.1Mb-113.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:58.2Mb-59.4Mb" target="chr16:23.7Mb-24.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr15:43.8Mb-44.7Mb" target="chr7:128.3Mb-128.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr12:6.68Mb-6.84Mb" target="chr2:11.07Mb-11.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr17:41.91Mb-42.19Mb" target="chr19:50.77Mb-51.13Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:57.03Mb-57.08Mb" target="chr1:85.0Mb-85.39Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:85.0Mb-85.39Mb" target="chr1:58.1Mb-60.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:57.63Mb-57.75Mb" target="chr1:154.96Mb-155.07Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:154.96Mb-155.07Mb" target="chr4:71.47Mb-71.61Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:84.82Mb-84.96Mb" target="chr1:116.55Mb-116.62Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:36.17Mb-36.34Mb" target="chr3:115.5Mb-115.62Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr4:69.4Mb-69.9Mb" target="chr4:76.8Mb-79.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr4:76.8Mb-79.0Mb" target="chr1:58.1Mb-60.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr15:46.8Mb-47.2Mb" target="chr15:70.8Mb-71.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr15:47.0Mb-48.1Mb" target="chr15:71.5Mb-71.7Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr1:231.72Mb-232.65Mb" target="chr7:107.43Mb-107.74Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:56.12Mb-56.26Mb" target="chr8:138.14Mb-138.72Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr19:15.76Mb-16.04Mb" target="chr7:140.63Mb-141.04Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr1:99.8Mb-101.6Mb" target="chr15:25.1Mb-29.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:46.1Mb-46.9Mb" target="chr2:7.0Mb-8.18Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr2:7.0Mb-8.18Mb" target="chr5:177.06Mb-177.12Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:134.55Mb-134.57Mb" target="chr3:41.7Mb-42.0Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:41.7Mb-42.0Mb" target="chr3:130.0Mb-131.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:41.7Mb-42.0Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:44.87Mb-44.96Mb" target="chr3:131.42Mb-131.65Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:131.42Mb-131.65Mb" target="chr3:70.78Mb-70.84Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:61.2Mb-63.6Mb" target="chr3:114.3Mb-114.6Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:66.12Mb-66.2Mb" target="chr3:108.6Mb-109.4Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:108.6Mb-109.4Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:108.6Mb-109.4Mb" target="chr3:146.7Mb-149.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr5:90.9Mb-91.5Mb" target="chr3:94.6Mb-96.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:94.6Mb-96.8Mb" target="chr5:90.3Mb-90.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chrX:57.97Mb-58.06Mb" target="chr3:177.03Mb-177.4Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:177.03Mb-177.4Mb" target="chrX:68.0Mb-68.14Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr2:45.61Mb-45.8Mb" target="chr5:177.06Mb-177.12Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:66.02Mb-66.1Mb" target="chr6:119.9Mb-119.95Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr6:92.7Mb-93.3Mb" target="chr6:109.1Mb-109.4Mb">
+  <data key="d0">INV</data>
+</edge>
+<edge source="chr6:136.23Mb-136.3Mb" target="chr7:105.44Mb-105.52Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:38.4Mb-38.8Mb" target="chr2:68.4Mb-69.9Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr8:18.09Mb-18.15Mb" target="chr8:41.24Mb-41.54Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:26.32Mb-26.55Mb" target="chr10:68.07Mb-68.1Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr10:28.6Mb-28.67Mb" target="chr10:90.95Mb-91.1Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr10:68.74Mb-68.9Mb" target="chr10:89.22Mb-89.26Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chr10:83.8Mb-84.1Mb" target="chr10:91.9Mb-92.5Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chr12:10.21Mb-10.36Mb" target="chr4:39.15Mb-39.46Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:27.31Mb-27.74Mb" target="chr4:38.05Mb-38.18Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr6:12.3Mb-13.6Mb" target="chr12:68.8Mb-69.87Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:68.8Mb-69.87Mb" target="chr14:106.47Mb-106.54Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:59.19Mb-59.42Mb" target="chr10:86.31Mb-86.37Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:84.56Mb-84.6Mb" target="chr12:60.54Mb-62.7Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:60.54Mb-62.7Mb" target="chr12:103.6Mb-104.1Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:60.54Mb-62.7Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:61.93Mb-62.22Mb" target="chr10:87.8Mb-88.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:87.8Mb-88.0Mb" target="chr12:103.6Mb-104.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:87.8Mb-88.0Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:105.57Mb-106.25Mb" target="chr10:88.78Mb-88.83Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:58.64Mb-58.78Mb" target="chr12:104.03Mb-104.06Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:105.41Mb-105.49Mb" target="chr12:121.81Mb-122.02Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:121.81Mb-122.02Mb" target="chr21:31.62Mb-31.66Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chrX:53.0Mb-53.9Mb" target="chr12:44.9Mb-49.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:44.9Mb-49.3Mb" target="chr14:88.48Mb-90.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:21.52Mb-21.7Mb" target="chr1:91.81Mb-92.02Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:54.3Mb-54.45Mb" target="chr1:91.47Mb-91.56Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr10:103.21Mb-103.37Mb" target="chr14:99.88Mb-100.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:99.88Mb-100.2Mb" target="chr1:47.93Mb-48.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:103.31Mb-103.44Mb" target="chr10:100.29Mb-100.51Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:103.52Mb-103.67Mb" target="chr10:102.5Mb-102.66Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:22.45Mb-22.53Mb" target="chr14:31.36Mb-31.48Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr14:23.47Mb-23.5Mb" target="chr14:30.58Mb-30.73Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr14:24.03Mb-24.17Mb" target="chr14:102.3Mb-102.36Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr17:22.7Mb-28.3Mb" target="chr10:85.0Mb-86.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr21:38.4Mb-38.5Mb" target="chr21:41.5Mb-41.62Mb">
+  <data key="d0">DEL</data>
+</edge>
+<edge source="chrX:67.67Mb-67.83Mb" target="chrX:144.62Mb-144.74Mb">
+  <data key="d0">DUP</data>
+</edge>
+<edge source="chrX:144.62Mb-144.74Mb" target="chr14:88.48Mb-90.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:44.35Mb-44.51Mb" target="chr2:97.7Mb-98.6Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:44.35Mb-44.51Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr2:97.7Mb-98.6Mb" target="chr3:73.6Mb-75.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr3:130.0Mb-131.1Mb" target="chr3:156.7Mb-157.2Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr3:156.7Mb-157.2Mb" target="chr3:146.7Mb-149.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr12:103.6Mb-104.1Mb" target="chr21:32.26Mb-33.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:56.0Mb-57.4Mb" target="chr1:47.93Mb-48.2Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr14:56.0Mb-57.4Mb" target="chr14:101.66Mb-101.8Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr16:14.0Mb-15.1Mb" target="chr12:110.99Mb-111.8Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:110.99Mb-111.8Mb" target="chr22:43.14Mb-43.19Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:113.3Mb-114.7Mb" target="chr16:15.1Mb-18.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:124.4Mb-125.1Mb" target="chr16:27.2Mb-28.3Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr16:13.76Mb-13.8Mb" target="chr22:42.89Mb-42.98Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr4:26.4Mb-27.5Mb" target="chr3:77.4Mb-79.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:108.1Mb-108.6Mb" target="chr7:113.7Mb-116.1Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr7:138.2Mb-139.2Mb" target="chr12:128.1Mb-130.5Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:128.1Mb-130.5Mb" target="chr7:106.5Mb-108.0Mb">
+  <data key="d0">BND</data>
+</edge>
+<edge source="chr12:128.1Mb-130.5Mb" target="chr12:106.1Mb-106.3Mb">
+  <data key="d0">UNKNOWN</data>
+</edge>
+<edge source="chr13:30.1Mb-30.6Mb" target="chr13:73.7Mb-75.3Mb">
+  <data key="d0">DEL</data>
+</edge>
+</graph></graphml>
