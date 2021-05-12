@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000144681.10	STAC	2	7.2384533100766	0.134551863365892	0.999999989389318	chr3	36380344	36548007	+

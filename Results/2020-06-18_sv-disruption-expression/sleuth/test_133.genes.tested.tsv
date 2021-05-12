@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000158321.18	AUTS2	23	78.4555157859529	0.99156340185887	0.999999949879931	chr7	69598296	70793506	+

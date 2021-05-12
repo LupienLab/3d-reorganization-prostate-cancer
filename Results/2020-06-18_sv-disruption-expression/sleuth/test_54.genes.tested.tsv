@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000184937.15	WT1	2	5.21107823486019	0.432774933837988	0.999999212395811	chr11	32387775	32435564	-

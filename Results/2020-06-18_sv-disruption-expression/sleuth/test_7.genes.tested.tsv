@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000162618.15	ADGRL4	1	6.9106634410086	0.552466178649325	0.999999965222706	chr1	78889764	79282124	-

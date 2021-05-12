@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000139263.11	LRIG3	9	39.8854224331815	0.0323009010173929	0.217248048148633	chr12	58872149	58920522	-

@@ -1,0 +1,2 @@
+target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
+ENSG00000164796.18	CSMD3	6	24.4143417639737	0.145562938011952	0.482231540460943	chr8	112222928	113436939	-
