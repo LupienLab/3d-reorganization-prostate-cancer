@@ -23,10 +23,10 @@ It is unclear how to interpret this particular event, and what it may be in real
 377 unique breakpoints were identified in the WGS data, and 317 in the Hi-C data.
 However, only ~ 20% of breakpoints from either source were similarly identified in the other source.
 
-![Similarity of Hi-C and WGS breakpoint calls](detections.all.png)
+![Similarity of Hi-C and WGS breakpoint calls](../../results/2020-02-20_wgs-hic-sv-comparison/Plots/detections.all.png)
 
 This observation isn't an effect of individual patients, since the proportion of overlap between the two sources for each patient is small.
 
-![Similarity of Hi-C and WGS breakpoint calls per patient](detections.per-patient.png)
+![Similarity of Hi-C and WGS breakpoint calls per patient](../../results/2020-02-20_wgs-hic-sv-comparison/Plots/detections.per-patient.png)
 
 This implies that these two methods are largely detecting different events.
