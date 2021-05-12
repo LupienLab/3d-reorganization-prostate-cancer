@@ -8,7 +8,10 @@ source(
     file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
 )
 
-RES_DIR <- file.path("..", "..", "results", "2020-06-12_sv-disruption-acetylation")
+RES_DIR <- file.path(
+    "..", "..", "results",
+    "2020-06-12_sv-disruption-acetylation"
+)
 PLOT_DIR <- file.path(RES_DIR, "Plots", "exprs-acetyl")
 
 QVAL_THRESH <- 0.05
