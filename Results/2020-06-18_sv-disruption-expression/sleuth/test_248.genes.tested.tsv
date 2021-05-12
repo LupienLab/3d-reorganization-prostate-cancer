@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000182771.19	GRID1	2	7.91567882410787	0.940277858050456	0.999999853817904	chr10	85599552	86366795	-

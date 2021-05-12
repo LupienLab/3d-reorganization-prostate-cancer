@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000185008.17	ROBO2	6	19.2497752323707	0.703764214774314	0.9999978980913	chr3	75906695	77649964	+

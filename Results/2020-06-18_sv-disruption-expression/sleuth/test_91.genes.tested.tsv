@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000112964.14	GHR	12	63.6361624448334	0.684274813181816	0.999993264763522	chr5	42423439	42721878	+

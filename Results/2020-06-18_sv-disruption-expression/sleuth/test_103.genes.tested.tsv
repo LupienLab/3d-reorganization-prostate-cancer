@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000166167.18	BTRC	7	34.7631231230614	0.840821055762871	0.999993264763522	chr10	101354033	101557321	+

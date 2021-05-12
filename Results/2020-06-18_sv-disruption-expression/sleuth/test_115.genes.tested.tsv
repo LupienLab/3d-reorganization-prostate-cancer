@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000150394.14	CDH8	4	11.5413405691198	0.503961627962698	0.999997347862234	chr16	61647242	62037035	-

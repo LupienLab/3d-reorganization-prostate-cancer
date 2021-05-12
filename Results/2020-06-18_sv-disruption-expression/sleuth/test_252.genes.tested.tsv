@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000184719.12	RNLS	5	20.0498267708508	0.700393093759033	0.999999853817904	chr10	88273864	88584530	-

@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000175497.17	DPP10	2	5.20261149769553	0.489330280359687	0.999999212395811	chr2	114442299	115845780	+

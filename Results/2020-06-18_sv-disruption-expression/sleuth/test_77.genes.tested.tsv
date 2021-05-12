@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000144229.12	THSD7B	1	4.45158092610391	0.538415354146659	0.999993264763522	chr2	136765545	137677718	+

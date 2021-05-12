@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000172020.12	GAP43	1	2.54056687882766	0.412505974444724	0.99999999945561	chr3	115623324	115721490	+

@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000150275.18	PCDH15	1	1.75674550030384	0.0289067472920751	0.999993264763522	chr10	53802771	55627942	-

@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000254535.4	PABPC4L	1	6.47250318929815	0.165235862402334	0.999993264763522	chr4	134196333	134201789	-

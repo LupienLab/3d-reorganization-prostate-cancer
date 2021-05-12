@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000171451.14	DSEL	1	7.94321922937794	0.139433007465041	0.999999949879931	chr18	67506587	67516720	-

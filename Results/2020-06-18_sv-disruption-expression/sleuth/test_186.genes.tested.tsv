@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000080493.17	SLC4A4	7	37.8876392054532	0.064372149199827	0.999999989389318	chr4	71062667	71572087	+

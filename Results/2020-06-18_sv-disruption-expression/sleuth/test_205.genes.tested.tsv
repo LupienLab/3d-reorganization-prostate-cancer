@@ -1,2 +1,0 @@
-target_id	gene_name	num_aggregated_transcripts	sum_mean_obs_counts	pval	qval	chr	start	end	strand
-ENSG00000151692.15	RNF144A	6	23.4477404441145	0.529887296289932	0.999999388645247	chr2	6917412	7068286	+
