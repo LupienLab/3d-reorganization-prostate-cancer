@@ -73,8 +73,9 @@ chrom_colours = [
 
 chrom_colour_map = {c: v for c, v in zip(chroms, chrom_colours)}
 
-GRAPH_DIR = "Graphs"
-PLOT_DIR = path.join("Plots", "breakpoint-graphs")
+RES_DIR = path.join("..", "..", "results", "2020-02-19_chromoplexy")
+GRAPH_DIR = path.join(RES_DIR, "Graphs")
+PLOT_DIR = path.join(RES_DIR, "Plots", "breakpoint-graphs")
 
 # ==============================================================================
 # Functions
@@ -201,18 +202,39 @@ def plot_graph(
 # data
 # ==============================================================================
 # load graphs
-G_all = pickle.load(open(path.join(GRAPH_DIR, "breakpoints.all-samples.p"), "rb"))
-G_sample = pickle.load(open(path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"), "rb"))
+G_all = pickle.load(
+    open(
+        path.join(GRAPH_DIR, "breakpoints.all-samples.p"),
+        "rb"
+    )
+)
+G_sample = pickle.load(
+    open(
+        path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"),
+        "rb"
+    )
+)
 SAMPLES = list(G_sample.keys())
 
 # ==============================================================================
 # Plots
 # ==============================================================================
-plot_graph(G_all, path.join(PLOT_DIR, "all-breakpoints"), dpi=400, bbox_inches="tight")
+plot_graph(
+    G_all,
+    path.join(PLOT_DIR, "all-breakpoints"),
+    dpi=400,
+    bbox_inches="tight"
+)
 
 random.seed(42)
 for s in tqdm(SAMPLES):
-    plot_graph(G_sample[s], path.join(PLOT_DIR, s), node_labels=True, dpi=96, bbox_inches="tight")
+    plot_graph(
+        G_sample[s],
+        path.join(PLOT_DIR, s),
+        node_labels=True,
+        dpi=96,
+        bbox_inches="tight"
+    )
 
 # figure for chromosome colour legend
 fig_leg, ax_leg = plt.subplots()
@@ -228,4 +250,8 @@ for i, c in enumerate(chroms):
     ax_leg.annotate(c, cols[i], ha="center", va="center")
 
 plt.axis("off")
-savefig(fig_leg, path.join("Plots", "chrom-colour-map"), bbox_inches="tight")
+savefig(
+    fig_leg,
+    path.join(PLOT_DIR, "chrom-colour-map"),
+    bbox_inches="tight"
+)

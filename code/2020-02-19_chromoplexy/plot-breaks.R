@@ -19,6 +19,10 @@ suppressMessages(library("RCircos"))
 suppressMessages(library("scales"))
 source("plotting-helper.R")
 
+RES_DIR <- file.path("..", "..", "results", "2020-02-19_chromoplexy")
+GRAPH_DIR <- file.path(RES_DIR, "Graphs")
+STATS_DIR <- file.path(RES_DIR, "Statistics")
+PLOT_DIR <- file.path(RES_DIR, "Plots")
 
 # ==============================================================================
 # Data
@@ -28,7 +32,7 @@ loginfo("Loading data")
 CHRS <- paste0("chr", c(1:22, "X", "Y"))
 hg38 <- fread(
     file.path(
-        "..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing",
+        "..", "..", "data", "Processed", "2019-06-18_PCa-LowC-sequencing",
         "hg38.sizes.txt"
     ),
     sep = "\t",
@@ -37,13 +41,10 @@ hg38 <- fread(
 )
 hg38[, Bins := ceiling(Length / 10^6)]
 
-STATS_DIR <- "Statistics"
-PLOT_DIR <- "Plots"
-
 # load metadata
 metadata <- fread(
     file.path(
-        "..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"
+        "..", "..", "data", "External", "LowC_Samples_Data_Available.tsv"
     ),
     sep = "\t",
     header = TRUE
@@ -54,7 +55,7 @@ SAMPLES <- metadata$SampleID
 
 # load breakpoint data
 breakpoints <- fread(
-    file.path("Graphs", "sv-breakpoints.tsv"),
+    file.path(GRAPH_DIR, "sv-breakpoints.tsv"),
     sep = "\t",
     header = TRUE
 )
@@ -62,7 +63,7 @@ breakpoints <- fread(
 breakpoints[, chr := factor(chr, levels = CHRS, ordered = TRUE)]
 
 breakpoint_pairs <- fread(
-    file.path("Graphs", "sv-breakpoints.paired.tsv"),
+    file.path(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
     sep = "\t",
     header = TRUE
 )
@@ -127,7 +128,7 @@ RCircos.Set.Core.Components(
 for (s in SAMPLES) {
     cat(s, "\n")
     png(
-        paste0("Plots/circos/", s, ".circos.png"),
+        file.path(PLOT_DIR, "circos", paste0(s, ".circos.png")),
         width = 12,
         height = 12,
         units = "cm",
@@ -145,7 +146,7 @@ for (s in SAMPLES) {
     )
     dev.off()
     pdf(
-        paste0("Plots/circos/", s, ".circos.pdf"),
+        file.path(PLOT_DIR, "circos", paste0(s, ".circos.pdf")),
         width = 12,
         height = 12
     )
@@ -188,7 +189,10 @@ gg_breakpoints <- (
         axis.text.x = element_text(angle = 90, vjust = 0, hjust = 0.5)
     )
 )
-savefig(gg_breakpoints, "Plots/breakpoint-stats/breakpoint-counts")
+savefig(
+    gg_breakpoints,
+    file.path(PLOT_DIR, "breakpoint-stats", "breakpoint-counts")
+)
 
 gg_breakpoints_per_chrom <- (
     ggplot(data = breakpoints_by_chrom)

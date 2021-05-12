@@ -20,11 +20,12 @@ import natsort as ns
 # ==============================================================================
 # Constants
 # ==============================================================================
-BREAK_DIR = path.join("..", "2019-07-24_breakfinder", "Breakpoints", "Default")
+BREAK_DIR = path.join("..", "..", "results", "2019-07-24_breakfinder", "Breakpoints", "Default")
 TAD_DIR = path.join(
-    "..", "2020-01-15_TAD-aggregation", "resolved-TADs", "separated-TADs"
+    "..", "..", "results", "2020-08-29_TADs-downsampled", "Aggregated-TADs", "separated-TADs"
 )
-GRAPH_DIR = "Graphs"
+RES_DIR = path.join("..", "..", "results", "2020-02-19_chromoplexy")
+GRAPH_DIR = path.join(RES_DIR, "Graphs")
 # distance tolerance for comparisons
 TOL = 50000
 
@@ -160,7 +161,7 @@ def compatible_svs(a: GenomicInterval, b: GenomicInterval, a_nbrs: nx.classes.co
 # ==============================================================================
 # load sample metadata
 CONFIG = pd.read_csv(
-    path.join("..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"),
+    path.join("..", "..", "data", "External", "LowC_Samples_Data_Available.tsv"),
     sep="\t",
     index_col=False,
 )
@@ -602,12 +603,42 @@ component_counts = pd.DataFrame({
 })
 
 for s in SAMPLES:
-    component_counts.at[component_counts.SampleID == s, "Events"] = len([cc for cc in nx.connected_components(G_sample[s])])
-    component_counts.at[component_counts.SampleID == s, "Complex_Events"] = len([cc for cc in nx.connected_components(G_sample[s]) if len(cc) > 2])
-    component_counts.at[component_counts.SampleID == s, "Smallest_Component_Size"] = np.min([len(cc) for cc in nx.connected_components(G_sample[s])])
-    component_counts.at[component_counts.SampleID == s, "Largest_Component_Size"] = np.max([len(cc) for cc in nx.connected_components(G_sample[s])])
-    component_counts.at[component_counts.SampleID == s, "Smallest_Component_ID"] = np.argmin([len(cc) for cc in nx.connected_components(G_sample[s])])
-    component_counts.at[component_counts.SampleID == s, "Largest_Component_ID"] = np.argmax([len(cc) for cc in nx.connected_components(G_sample[s])])
+    component_counts.at[
+        component_counts.SampleID == s,
+        "Events"
+    ] = len([
+        cc for cc in nx.connected_components(G_sample[s])
+    ])
+    component_counts.at[
+        component_counts.SampleID == s,
+        "Complex_Events"
+    ] = len([
+        cc for cc in nx.connected_components(G_sample[s]) if len(cc) > 2
+    ])
+    component_counts.at[
+        component_counts.SampleID == s,
+        "Smallest_Component_Size"
+    ] = np.min([
+        len(cc) for cc in nx.connected_components(G_sample[s])
+    ])
+    component_counts.at[
+        component_counts.SampleID == s,
+        "Largest_Component_Size"
+    ] = np.max([
+        len(cc) for cc in nx.connected_components(G_sample[s])
+    ])
+    component_counts.at[
+        component_counts.SampleID == s,
+        "Smallest_Component_ID"
+    ] = np.argmin([
+        len(cc) for cc in nx.connected_components(G_sample[s])
+    ])
+    component_counts.at[
+        component_counts.SampleID == s,
+        "Largest_Component_ID"
+    ] = np.argmax([
+        len(cc) for cc in nx.connected_components(G_sample[s])
+    ])
 
 
 # ==============================================================================
@@ -615,12 +646,16 @@ for s in SAMPLES:
 # ==============================================================================
 print("Exporting graphs to GraphML")
 # export to GraphML format
-nx.write_graphml(G_all, "Graphs/breakpoints.all-samples.xml")
+nx.write_graphml(G_all, path.join(GRAPH_DIR, "breakpoints.all-samples.xml"))
 for s in SAMPLES:
-    nx.write_graphml(G_sample[s], "Graphs/breakpoints." + s + ".xml")
+    nx.write_graphml(G_sample[s], path.join(GRAPH_DIR, "breakpoints." + s + ".xml"))
 
 component_counts.to_csv(
-    path.join("Statistics", "breakpoint-components.tsv"),
+    path.join(
+        RES_DIR,
+        "Statistics",
+        "breakpoint-components.tsv"
+    ),
     sep="\t",
     index=False
 )

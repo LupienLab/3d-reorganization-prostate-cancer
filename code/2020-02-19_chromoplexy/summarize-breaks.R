@@ -17,7 +17,7 @@ CHRS <- paste0("chr", c(1:22, "X", "Y"))
 
 hg38 <- fread(
     file.path(
-        "..", "..", "Data", "Processed", "2019-06-18_PCa-LowC-sequencing",
+        "..", "..", "data", "Processed", "2019-06-18_PCa-LowC-sequencing",
         "hg38.sizes.txt"
     ),
     sep = "\t",
@@ -26,6 +26,10 @@ hg38 <- fread(
 )
 hg38[, Bins := ceiling(Length / 10^6)]
 
+RES_DIR <- file.path("..", "..", "results", "2020-02-19_chromoplexy")
+GRAPH_DIR <- file.path(RES_DIR, "Graphs")
+STATS_DIR <- file.path(RES_DIR, "Statistics")
+
 
 # ==============================================================================
 # Data
@@ -33,7 +37,7 @@ hg38[, Bins := ceiling(Length / 10^6)]
 # load metadata
 metadata <- fread(
     file.path(
-        "..", "..", "Data", "External", "LowC_Samples_Data_Available.tsv"
+        "..", "..", "data", "External", "LowC_Samples_Data_Available.tsv"
     ),
     sep = "\t",
     header = TRUE
@@ -44,12 +48,12 @@ SAMPLES <- metadata$SampleID
 
 # load breakpoint data
 breakpoints <- fread(
-    file.path("Graphs", "sv-breakpoints.tsv"),
+    file.path(GRAPH_DIR, "sv-breakpoints.tsv"),
     sep = "\t",
     header = TRUE
 )
 breakpoint_pairs <- fread(
-    file.path("Graphs", "sv-breakpoints.paired.tsv"),
+    file.path(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
     sep = "\t",
     header = TRUE
 )
@@ -107,7 +111,7 @@ breakpoints_summed <- breakpoints_binned[,
 colnames(breakpoints_summed) <- c("SampleID", "chr", "Bin", "Count")
 fwrite(
     breakpoints_summed[order(SampleID, chr, Bin)],
-    file.path("Statistics", "breakpoints.binned.tsv"),
+    file.path(STATS_DIR, "breakpoints.binned.tsv"),
     sep = "\t",
     col.names = TRUE
 )
@@ -122,7 +126,7 @@ breakpoints_by_chrom[, N_per_mb := apply(.SD, 1, function(r) {
 })]
 fwrite(
     breakpoints_by_chrom[order(SampleID, chr)],
-    file.path("Statistics", "breakpoints.by-chrom.tsv"),
+    file.path(STATS_DIR, "breakpoints.by-chrom.tsv"),
     sep = "\t",
     col.names = TRUE
 )
@@ -149,7 +153,7 @@ inter_intra_counts <- melt(
 )
 fwrite(
     inter_intra_counts,
-    file.path("Statistics", "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+    file.path(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
     sep = "\t",
     col.names = TRUE
 )
@@ -169,7 +173,7 @@ breakpoint_components <- breakpoints[,
 ]
 fwrite(
     breakpoint_components,
-    file.path("Statistics", "sv-components.tsv"),
+    file.path(STATS_DIR, "sv-components.tsv"),
     sep = "\t",
     col.names = TRUE
 )
@@ -184,7 +188,7 @@ breakpoint_components_counted <- breakpoint_components[,
 ]
 fwrite(
     breakpoint_components_counted,
-    file.path("Statistics", "sv-components.counts.tsv"),
+    file.path(STATS_DIR, "sv-components.counts.tsv"),
     sep = "\t",
     col.names = TRUE
 )
@@ -278,7 +282,7 @@ htests <- list(
     )
 )
 # save hypothesis test results
-saveRDS(htests, file.path("Statistics", "htests.rds"))
+saveRDS(htests, file.path(STATS_DIR, "htests.rds"))
 
 cat("----\n\tTotal breakpoints:\n")
 print(htests$breakpoints)
