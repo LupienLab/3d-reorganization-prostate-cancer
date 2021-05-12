@@ -1,0 +1,97 @@
+import pandas as pd
+import os.path as path
+
+# ==============================================================================
+# Configuration
+# ==============================================================================
+CONFIG = pd.read_csv(
+    path.join("..", "..", "data", "External", "LowC_Samples_Data_Available.tsv"),
+    index_col=False, sep="\t"
+)
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes"]
+CONFIG["SampleID"] = ["PCa" + str(i) for i in CONFIG["Sample ID"]]
+SAMPLES = CONFIG["SampleID"].tolist()
+
+RES_DIR = path.join("..", "..", "results", "2020-02-20_wgs-hic-sv-comparison")
+PLOT_DIR = path.join(RES_DIR, "Plots")
+
+PLOT_EXTS=["png", "pdf"]
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        expand(
+            path.join(RES_DIR, "detections.{type}.tsv"),
+            type=["all", "per-sample", "hic", "wgs"]
+        ),
+        expand(
+            path.join(PLOT_DIR, "detections.all.{ext}"),
+            ext=PLOT_EXTS
+        ),
+        expand(
+            path.join(PLOT_DIR, "detections.per-patient.{ext}"),
+            ext=PLOT_EXTS
+        ),
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule process:
+    input:
+        script = "compare-sv.py",
+        wgs = expand(
+            path.join(
+                "..", "..", "data", "External", "CPC-GENE",
+                "structural-variant-vcfs", "{sample}.hg38.sorted.bed"
+            ),
+            sample=SAMPLES
+        ),
+        hic = path.join(
+            "..", "..", "results", "2020-02-19_chromoplexy",
+            "Graphs", "sv-breakpoints.tsv"
+        ),
+    output:
+        expand(
+            path.join(RES_DIR, "detections.{type}.tsv"),
+            type=["all", "per-sample", "hic", "wgs"]
+        ),
+    shell:
+        "python {input.script}"
+
+rule detection_comparison:
+    input:
+        script = "detection-comparison.R",
+        hic = path.join(
+            "..", "..", "results", "2020-02-19_chromoplexy",
+            "Graphs", "sv-breakpoints.tsv"
+        ),
+        hic_pairs = path.join(
+            "..", "..", "results", "2020-02-19_chromoplexy",
+            "Graphs", "sv-breakpoints.paired.tsv"
+        ),
+    output:
+        path.join(RES_DIR, "sv-annotation-comparisons.tsv"),
+        path.join(RES_DIR, "sv-types-counted.tsv"),
+    shell:
+        "python {input.script}"
+
+rule plot:
+    input:
+        script = "plot-comparison.R",
+        data = expand(
+            path.join(RES_DIR, "detections.{type}.tsv"),
+            type=["all", "per-sample", "hic", "wgs"]
+        ),
+    output:
+        expand(
+            path.join(PLOT_DIR, "detections.all.{ext}"),
+            ext=PLOT_ EXTS
+        ),
+        expand(
+            path.join(PLOT_DIR, "detections.per-patient.{ext}"),
+            ext=PLOT_EXTS
+        ),
+    shell:
+        "Rscript {input.script}"
