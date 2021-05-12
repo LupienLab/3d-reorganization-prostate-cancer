@@ -1,0 +1,178 @@
+# ==============================================================================
+# Environment
+# ==============================================================================
+import os.path as path
+import pandas as pd
+
+CONFIG = pd.read_csv(
+    path.join("..", "..", "data", "External", "LowC_Samples_Data_Available.tsv"),
+    sep="\t",
+    header=0
+)
+SAMPLES = ["PCa" + str(i) for i in CONFIG.loc[CONFIG.Include == "Yes", "Sample ID"]]
+
+BREAK_DIR = path.join("..", "..", "results", "2019-07-24_breakfinder", "Breakpoints", "Default")
+TAD_DIR = path.join("..", "..", "results", "2020-08-29_TADs-downsampled", "Aggregated-TADs")
+CHIP_DIR = path.join("..", "..", "data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "BAMs")
+
+RES_DIR = path.join("..", "..", "results", "2020-02-19_chromoplexy")
+ACETYL_DIR = path.join(RES_DIR, "Acetylation")
+GRAPH_DIR = path.join(RES_DIR, "Graphs")
+PLOT_DIR = path.join(RES_DIR, "Plots")
+TRACK_DIR = path.join(RES_DIR, "Tracks")
+STATS_DIR = path.join(RES_DIR, "Statistics")
+
+PLOT_EXTS = ["png", "pdf"]
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+    input:
+        path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"),
+        path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+        path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+        path.join(GRAPH_DIR, "breakpoints.all-samples.p"),
+        path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+        path.join(GRAPH_DIR, "breakpoints.all-samples.xml"),
+        expand(
+            path.join(GRAPH_DIR, "breakpoints.{sample}.xml"),
+            sample=SAMPLES
+        ),
+        expand(
+            path.join(TRACK_DIR, "{sample}.breaks.{track}"),
+            sample=SAMPLES,
+            track=["beddb", "bed2ddb"],
+        ),
+        path.join(STATS_DIR, "breakpoints.binned.tsv"),
+        path.join(STATS_DIR, "breakpoints.by-chrom.tsv"),
+        path.join(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        path.join(STATS_DIR, "sv-components.tsv"),
+        path.join(STATS_DIR, "sv-components.counts.tsv"),
+        expand(
+            path.join(PLOT_DIR, "Circos", "{sample}.circos.{ext}"),
+            sample=SAMPLES,
+            ext=PLOT_EXTS,
+        ),
+        expand(
+            path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
+            plot=[
+                "breakpoint-counts",
+                "breakpoint-counts.by-chrom",
+                "breakpoint-counts.by-chrom.labelled",
+                "breakpoint-pairs.distance-distribution",
+                "breakpoint-pairs.inter-intra-chromosomal",
+                "breakpoint-pairs.inter-intra-chromosomal.T2E-total",
+                "breakpoint-pairs.inter-intra-chromosomal.T2E-comparison",
+                "breakpoint-recurrence",
+                "sv-events.chromosomes",
+                "sv-events.complex.T2E-comparison",
+                "sv-events.size",
+                "sv-events.total.T2E-comparison",
+            ],
+            ext=PLOT_EXTS,
+        ),
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule graphs:
+    input:
+        script = "breakpoint-components.py",
+        breaks = expand(
+            path.join(BREAK_DIR, "{sample}.breaks.sorted.manually-resolved.tsv"),
+            sample=SAMPLES
+        ),
+        tads = expand(
+            path.join(TAD_DIR, "separated-TADs", "{sample}.40000bp.w_3.domains.bed"),
+            sample=SAMPLES
+        ),
+    output:
+        path.join(GRAPH_DIR, "breakpoints.per-sample.merged-breakpoints.p"),
+        path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+        path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+        path.join(GRAPH_DIR, "breakpoints.all-samples.p"),
+        path.join(GRAPH_DIR, "sv-disruption-tests.tsv"),
+        path.join(GRAPH_DIR, "breakpoints.all-samples.xml"),
+        path.join(STATS_DIR, "breakpoint-components.tsv"),
+        expand(
+            path.join(GRAPH_DIR, "breakpoints.{sample}.xml"),
+            sample=SAMPLES
+        ),
+    shell:
+        "python {input.script}"
+
+rule clodius_1d:
+    input:
+        path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+    output:
+        path.join(TRACK_DIR, "{sample}.breaks.beddb"),
+    params:
+        "-a hg38 --no-header"
+    shell:
+        # printing liens twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedfile {params} -o {output} <(awk '{{FS=OFS=\"\\t\"}}{{if ($4 == \"{wildcards.sample}\") print}}' {input})"
+
+rule clodius_2d:
+    input:
+        path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+    output:
+        path.join(TRACK_DIR, "{sample}.breaks.bed2ddb"),
+    params:
+        "-a hg38 --chr1-col 1 --from1-col 2 --to1-col 3 --chr2-col 4 --from2-col 5 --to2-col 6 --has-header"
+    shell:
+        # printing lines twice with columns switched means regions will be highlighted both above and below the diagonal in the contact matrix
+        "clodius aggregate bedpe {params} -o {output} <(awk '{{FS=OFS=\"\\t\"}}{{if ($11 == \"{wildcards.sample}\") {{print $1, $2, $3, $4, $5, $6; print $4, $5, $6, $1, $2, $3}} }}' {input})"
+
+rule summarize_breaks:
+    input:
+        script = "summarize-breaks.R",
+        breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+        pairs = path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+    output:
+        path.join(STATS_DIR, "breakpoints.binned.tsv"),
+        path.join(STATS_DIR, "breakpoints.by-chrom.tsv"),
+        path.join(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        path.join(STATS_DIR, "sv-components.tsv"),
+        path.join(STATS_DIR, "sv-components.counts.tsv"),
+        htests = path.join(STATS_DIR, "htests.rds"),
+    shell:
+        "Rscript {input.script}"
+
+rule plot_breaks:
+    input:
+        script = "plot-breaks.R",
+        breaks = path.join(GRAPH_DIR, "sv-breakpoints.tsv"),
+        pairs = path.join(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
+        bp_chr = path.join(STATS_DIR, "breakpoints.by-chrom.tsv"),
+        bp_bins = path.join(STATS_DIR, "breakpoints.binned.tsv"),
+        pairs_chr = path.join(STATS_DIR, "breakpoint-pairs.inter-intra-chromosomal.tsv"),
+        events = path.join(STATS_DIR, "sv-components.tsv"),
+        event_counts = path.join(STATS_DIR, "sv-components.counts.tsv"),
+        htests = path.join(STATS_DIR, "htests.rds"),
+    output:
+        expand(
+            path.join(PLOT_DIR, "Circos", "{sample}.circos.{ext}"),
+            sample=SAMPLES,
+            ext=PLOT_EXTS,
+        ),
+        expand(
+            path.join(PLOT_DIR, "breakpoint-stats", "{plot}.{ext}"),
+            plot=[
+                "breakpoint-counts",
+                "breakpoint-counts.by-chrom",
+                "breakpoint-counts.by-chrom.labelled",
+                "breakpoint-pairs.distance-distribution",
+                "breakpoint-pairs.inter-intra-chromosomal",
+                "breakpoint-pairs.inter-intra-chromosomal.T2E-total",
+                "breakpoint-pairs.inter-intra-chromosomal.T2E-comparison",
+                "breakpoint-recurrence",
+                "sv-events.chromosomes",
+                "sv-events.complex.T2E-comparison",
+                "sv-events.size",
+                "sv-events.total.T2E-comparison",
+            ],
+            ext=PLOT_EXTS,
+        ),
+    shell:
+        "Rscript {input.script}"
