@@ -1,0 +1,3 @@
+chr	start	end	width	strand	Conc	Conc_Mutated	Conc_Nonmutated	Fold	p.value	FDR
+chr4	96408015	96408516	501	*	4.55	4.28	4.59	-0.31	0.611	0.814
+chr4	96784301	96784802	501	*	3.72	3.93	3.69	0.24	0.814	0.814
