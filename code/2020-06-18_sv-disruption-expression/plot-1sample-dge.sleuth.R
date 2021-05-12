@@ -8,13 +8,20 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
 suppressMessages(library("gridExtra"))
-source("../2020-02-19_chromoplexy/plotting-helper.R")
+source(
+    file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
+)
+
+GRAPH_DIR <- file.path(
+    "..", "..", "results", "2020-02-19_chromoplexy", "Graphs"
+),
+RES_DIR <- file.path(
+    "..", "..", "results", "2020-06-18_sv-disruption-expression"
+)
+PLOT_DIR <- file.path(RES_DIR, "Plots")
 
 QVAL_THRESH <- 0.05
 LOG2FOLD_THRESH <- 1
-
-PLOT_DIR <- "Plots"
-
 
 # ==============================================================================
 # Functions
@@ -39,7 +46,7 @@ loginfo("Loading data")
 
 # load tests
 sv_tests <- fread(
-    "../2020-02-19_chromoplexy/Graphs/sv-disruption-tests.tsv",
+    file.path(GRAPH_DIR, "sv-disruption-tests.tsv"),
     sep = "\t",
     header = TRUE
 )
@@ -49,20 +56,22 @@ sv_tests$nonmut_samples <- split_comma_col(sv_tests$nonmut_samples)
 SAMPLES <- sv_tests[, sort(unique(unlist(mut_samples)))]
 
 sv_bp_pairs <- fread(
-    "../2020-02-19_chromoplexy/Graphs/sv-breakpoints.paired.tsv",
+    file.path(GRAPH_DIR, "sv-breakpoints.paired.tsv"),
     sep = "\t",
     header = TRUE
 )
 
 # load TAD disruption test results
 tad_tests <- fread(
-    file.path("..", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"),
+    file.path(
+        "..", "..", "results", "2020-02-19_sv-disruption-TADs", "sv-disruption-tests.TADs.tsv"
+    ),
     sep = "\t",
     header = TRUE
 )
 
 gencode <- fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
+    file.path("..", "..", "data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "gene_id", "gene_name", "target_id", "transcript_name")
@@ -73,7 +82,11 @@ tested_genes <- rbindlist(lapply(
     sv_tests$test_ID,
     function(tid) {
         dt <- fread(
-            paste0("sleuth/test_", tid, ".genes.tested.tsv"),
+            file.path(
+                RES_DIR,
+                "sleuth",
+                paste0("test_", tid, ".genes.tested.tsv")
+            ),
             sep = "\t",
             header = TRUE,
             fill = TRUE
@@ -87,7 +100,11 @@ tested_transcripts <- rbindlist(lapply(
     sv_tests$test_ID,
     function(tid) {
         dt <- fread(
-            paste0("sleuth/test_", tid, ".transcripts.tested.tsv"),
+            file.path(
+                RES_DIR,
+                "sleuth",
+                paste0("test_", tid, ".transcripts.tested.tsv")
+            ),
             sep = "\t",
             header = TRUE
         )
@@ -96,7 +113,10 @@ tested_transcripts <- rbindlist(lapply(
     }
 ))
 
-transcript_table <- fread("all-samples.abundance.tsv", sep = "\t")
+transcript_table <- fread(
+    file.path(RES_DIR, "all-samples.abundance.tsv"),
+    sep = "\t"
+)
 
 
 # ==============================================================================
@@ -230,7 +250,11 @@ merged_gene_tpm_multi_IDs <- merge(
     all.x = TRUE
 )
 
-fwrite(merged_gene_tpm_multi_IDs, "summary-sv-disruption.tsv", sep = "\t")
+fwrite(
+    merged_gene_tpm_multi_IDs,
+    file.path(RES_DIR, "summary-sv-disruption.tsv"),
+    sep = "\t"
+)
 
 # ==============================================================================
 # Plots
@@ -420,7 +444,7 @@ savefig(gp, "Plots/event-changes")
 # ==============================================================================
 fwrite(
     counted_gene_tpm,
-    "1sample-results.tsv",
+    file.path(RES_DIR, "1sample-results.tsv"),
     sep = "\t",
     col.names = TRUE
 )

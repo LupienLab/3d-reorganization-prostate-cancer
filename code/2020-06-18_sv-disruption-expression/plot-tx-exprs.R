@@ -17,6 +17,10 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
 
+RES_DIR <- file.path(
+    "..", "..", "results", "2020-06-18_sv-disruption-expression"
+)
+PLOT_DIR <- file.path(RES_DIR, "Plots")
 
 # ==============================================================================
 # Functions
@@ -89,7 +93,7 @@ savefig <- function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, 
 loginfo("Loading data")
 
 # load Kallisto/Sleuth object
-so <- readRDS(file.path("sleuth", "test_201.sleuth-object.rds"))
+so <- readRDS(file.path(RES_DIR, "sleuth", "test_201.sleuth-object.rds"))
 
 mut_samples <- "PCa53687"
 
@@ -103,13 +107,13 @@ nonmut_samples <- setdiff(
 
 # load GENCODE annotations
 gencode_genes <- fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
+    file.path("..", "..", "data", "External", "GENCODE", "gencode.v33.all-genes.bed"),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "ens_gene", "gene_name")
 )
 gencode_tx <- fread(
-    file.path("..", "..", "Data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
+    file.path("..", "..", "data", "External", "GENCODE", "gencode.v33.all-transcripts.bed"),
     sep = "\t",
     header = FALSE,
     col.names = c("chr", "start", "end", "strand", "ens_gene", "gene_name", "ens_transcript", "transcript_name")
@@ -187,4 +191,4 @@ gg <- (
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
     )
 )
-savefig(gg, "Plots/tx-exprs.BRAF", height = 10, width = 6)
+savefig(gg, file.path(PLOT_DIR, "tx-exprs.BRAF"), height = 10, width = 6)
