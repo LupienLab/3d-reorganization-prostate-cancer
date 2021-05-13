@@ -4,10 +4,6 @@
 import pandas as pd
 import os.path as path
 
-CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
-CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
-SAMPLES = CONFIG["Sample_ID"].tolist()
-
 RES_DIR = path.join("..", "..", "results", "2021-04-08_sv-bp-H3K27ac-peak-enrichment")
 SV_DIR = path.join("..", "..", "data", "External", "CPC-GENE")
 PLOT_DIR = path.join(RES_DIR, "Plots")
