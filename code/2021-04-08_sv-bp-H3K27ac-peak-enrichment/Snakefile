@@ -19,8 +19,6 @@ rule all:
 	input:
         path.join(PLOT_DIR, "permutation.png"),
         path.join(PLOT_DIR, "permutation.pdf"),
-        path.join(PLOT_DIR, "local-z.png"),
-        path.join(PLOT_DIR, "local-z.pdf"),
         path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
 
 # =============================================================================
@@ -29,7 +27,7 @@ rule all:
 rule liftover:
     input:
         script = "liftover.R",
-        chain = path.join("..", "..", "data", "External", "hg19ToHg38.over.chain")
+        chain = path.join("..", "..", "data", "External", "hg19ToHg38.over.chain"),
         sv = path.join(SV_DIR, "structural_somatic_mutation.PRAD-CA.tsv"),
     output:
         path.join(RES_DIR, "enrichment", "sv-breakpoints.bed")
