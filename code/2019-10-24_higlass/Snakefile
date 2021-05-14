@@ -22,12 +22,6 @@ rule all:
 # this assembly method was grabbed from the higlass documentation
 # https://docs.higlass.io/data_preparation.html#gene-annotation-tracks
 
-rule download_refGene:
-    output:
-        path.join(DATA_DIR, ASSEMBLY, "refGene.txt.gz")
-    shell:
-        "wget -N -P {DATA_DIR}/{ASSEMBLY} http://hgdownload.cse.ucsc.edu/goldenPath/{ASSEMBLY}/database/refGene.txt.gz"
-
 rule download_genbank:
     output:
         path.join(DATA_DIR, "gene2refSeq.gz")
@@ -59,7 +53,7 @@ rule filter_genbank:
 # 14: exonEnds      (52301479,52306319,52307134,52307554,52307857,52308369,52309284,52310017,52312899,52317145,)
 rule filter_sort_refGene:
     input:
-        path.join(DATA_DIR, ASSEMBLY, "refGene.txt.gz"),
+        path.join("..", "..", "data", "External", "Ensembl", "refGene.txt.gz"),
     output:
         path.join(DATA_DIR, ASSEMBLY, "refGene_sorted"),
     shell:
