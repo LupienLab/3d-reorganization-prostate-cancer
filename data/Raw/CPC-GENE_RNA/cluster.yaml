@@ -1,0 +1,8 @@
+__default__:
+    params: "--export=ALL -p long"
+
+fastqc:
+    params: "--export=ALL -p himem --mem=30G -t 1-00:00:00"
+
+kallisto_quant:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
