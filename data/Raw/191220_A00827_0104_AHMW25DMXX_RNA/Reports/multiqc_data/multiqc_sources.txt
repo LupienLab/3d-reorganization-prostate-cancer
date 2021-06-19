@@ -1,0 +1,11 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	Benign-Prostate-3330581_L002_R2	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-3330581_L002_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-3320942_L002_R1	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-3320942_L002_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1664855_L002_R2	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-1664855_L002_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1648133_L002_R1	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-1648133_L002_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1595983_L002_R2	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-1595983_L002_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-3320942_L002_R2	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-3320942_L002_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1664855_L002_R1	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-1664855_L002_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1648133_L002_R2	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-1648133_L002_R2_fastqc.zip
+FastQC	all_sections	Benign-Prostate-3330581_L002_R1	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-3330581_L002_R1_fastqc.zip
+FastQC	all_sections	Benign-Prostate-1595983_L002_R1	/mnt/work1/users/lupiengroup/Projects/RawData/RNA-seq/191220_A00827_0104_AHMW25DMXX/Reports/Benign-Prostate-1595983_L002_R1_fastqc.zip

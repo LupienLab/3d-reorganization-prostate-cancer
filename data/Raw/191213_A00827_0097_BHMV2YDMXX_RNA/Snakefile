@@ -1,0 +1,62 @@
+# ========================================================================================
+# Configuration
+# ========================================================================================
+import pandas as pd
+import os.path as path
+import numpy as np
+
+CONFIG = pd.read_csv("config.tsv", sep="\t", index_col=False)
+SAMPLES = np.unique(CONFIG["SampleID"].tolist())
+
+REPORT_DIR = "Reports"
+FASTQ_DIR = "FASTQs"
+ALIGN_DIR = "Aligned"
+
+# ========================================================================================
+# Meta Rules
+# ========================================================================================
+rule all:
+	input:
+		expand(
+			path.join(REPORT_DIR, "{sample}_L00{lane}_R{mate}_fastqc.{ext}"),
+			sample=SAMPLES,
+			ext=["html", "zip"],
+			lane=[1, 2],
+			mate=[1, 2],
+		),
+		expand(
+			path.join(ALIGN_DIR, "{sample}", "{file}"),
+			sample=SAMPLES,
+			file=["abundance.h5", "abundance.tsv", "pseudoalignments.bam"],
+		),
+
+# ========================================================================================
+# Rules
+# ========================================================================================
+rule fastqc:
+	input:
+		path.join(FASTQ_DIR, "{file}.fastq.gz"),
+	output:
+		path.join(REPORT_DIR, "{file}_fastqc.html"),
+		path.join(REPORT_DIR, "{file}_fastqc.zip"),
+	shell:
+		"fastqc -o {REPORT_DIR} {input}"
+
+rule kallisto_quant:
+	input:
+		fastqs = expand(
+			path.join(FASTQ_DIR, "{{sample}}_L00{lane}_R{mate}.fastq.gz"),
+			lane=[1, 2],
+			mate=[1, 2],
+		),
+		index = path.join("..", "Kallisto_GRCh38_Index", "transcriptome.idx"),
+	output:
+		expand(
+			path.join(ALIGN_DIR, "{{sample}}", "{file}"),
+			file=["abundance.h5", "abundance.tsv", "pseudoalignments.bam"],
+		),
+	params:
+		"-b 100 -t 8 --verbose --pseudobam"
+	shell:
+		"kallisto quant {params} -i {input.index} -o {ALIGN_DIR}/{wildcards.sample} {input.fastqs}"
+
