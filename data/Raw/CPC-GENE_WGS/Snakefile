@@ -1,0 +1,109 @@
+# ========================================================================================
+# Configuration
+# ========================================================================================
+import pandas as pd
+import os.path as path
+import numpy as np
+
+CONFIG = pd.read_csv("config.tsv", sep="\t", index_col=False)
+
+REPORT_DIR = "Reports"
+FASTQ_DIR = "FASTQs"
+ALIGN_DIR = "Aligned"
+SV_DIR = "SVs"
+
+BWT2_IDX = "/mnt/work1/data/genomes/human/hg38/iGenomes/Sequence/Bowtie2Index/genome"
+WG_IDX = "/mnt/work1/data/genomes/human/hg38/iGenomes/Sequence/WholeGenomeFasta/genome.fa"
+
+# ========================================================================================
+# Functions
+# ========================================================================================
+def get_all_files(wildcards):
+    return {"fastq": CONFIG.loc[CONFIG.SampleID == wildcards.sample, "Path"].tolist()}
+
+
+def get_section_files(wildcards):
+    this_sample = CONFIG.loc[(CONFIG.SampleID == wildcards.sample) & (CONFIG.Section == int(wildcards.section)), :]
+    return {
+        "R1": this_sample.loc[this_sample.Mate == 1, "Path"].values[0],
+        "R2": this_sample.loc[this_sample.Mate == 2, "Path"].values[0],
+    }
+
+# ========================================================================================
+# Meta Rules
+# ========================================================================================
+rule all:
+    input:
+        expand(
+            path.join(REPORT_DIR, "{file}_fastqc.{ext}"),
+            file=[path.basename(f)[:-9] for f in CONFIG["Path"]],
+            ext=["html", "zip"],
+        ),
+        expand(
+            path.join(ALIGN_DIR, "{sample}_{section}.dedup.sorted.bam"),
+            zip,
+            sample=CONFIG["SampleID"].tolist(),
+            section=CONFIG["Section"].tolist(),
+        ),
+        expand(
+            path.join(SV_DIR, "{sample}_{section}.bcf"),
+            zip,
+            sample=CONFIG["SampleID"].tolist(),
+            section=CONFIG["Section"].tolist(),
+        ),
+
+# ========================================================================================
+# Rules
+# ========================================================================================
+rule fastqc:
+    input:
+        path.join(FASTQ_DIR, "{file}.fastq.gz"),
+    output:
+        path.join(REPORT_DIR, "{file}_fastqc.html"),
+        path.join(REPORT_DIR, "{file}_fastqc.zip"),
+    shell:
+        "fastqc -o {REPORT_DIR} {input}"
+
+rule align:
+    input:
+        unpack(get_section_files),
+    output:
+        bam = protected(path.join(ALIGN_DIR, "{sample}_{section}.bam")),
+        rpt = path.join(REPORT_DIR, "{sample}_{section}.alignment_report.txt")
+    params:
+        "-x {}".format(BWT2_IDX),
+    shell:
+        "bowtie2 {params} -1 {input.R1} -2 {input.R2} 2> {output.rpt} | samtools view -bS - > {output.bam}"
+
+rule position_sort_bam:
+    input:
+        "{file}.bam",
+    output:
+        "{file}.sorted.bam",
+        "{file}.sorted.bam.bai",
+    params:
+        "-p -t 8"
+    shell:
+        "sambamba sort {params} {input}"
+
+rule dedup:
+    input:
+        "{file}.bam",
+    output:
+        "{file}.dedup.bam",
+    params:
+        "-p -t 8 -r"
+    shell:
+        "sambamba markdup {params} {input} {output}"
+
+rule delly:
+    input:
+        bam = path.join(ALIGN_DIR, "{sample}_{section}.dedup.sorted.bam"),
+        bai = path.join(ALIGN_DIR, "{sample}_{section}.dedup.sorted.bam.bai"),
+        ref = WG_IDX,
+        excl = "hg38-excluded-regions.tsv",
+    output:
+        path.join(SV_DIR, "{sample}_{section}.bcf"),
+    shell:
+        "delly call -x {input.excl} -o {output} -g {input.ref} {input.bam}"
+

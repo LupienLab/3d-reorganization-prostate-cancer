@@ -1,0 +1,17 @@
+__default__:
+    params: "--export=ALL -p long"
+
+fastqc:
+    params: "--export=ALL -p himem --mem=30G -t 1-00:00:00"
+
+align:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+position_sort_bam:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+dedup:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
+
+delly:
+    params: "--export=ALL -p himem --mem=30G -c 8 -t 4-00:00:00"
