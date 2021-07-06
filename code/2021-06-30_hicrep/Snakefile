@@ -11,11 +11,27 @@ DIR = {
 	),
 	"res": path.join("..", "..", "results", "2021-06-30_hicrep"),
 }
+DIR["plot"] = path.join(DIR["res"], "Plots")
 
+CONFIG = pd.read_csv(
+	"config.tsv",
+	sep = "\t",
+)
+CONFIG = CONFIG.loc[(CONFIG.Include == "Yes") & (CONFIG.Source == "Primary"), :]
+SAMPLES = CONFIG["SampleID"].tolist()
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
+rule all:
+	input:
+		expand(
+			path.join(DIR["res"], "{sample1}.{sample2}.scc.txt"),
+			sample1 = SAMPLES,
+			sample2 = SAMPLES,
+		),
+		path.join(DIR["res"], "scc.tsv"),
+		path.join(DIR["plot"], "scc.heatmap.png"),
 
 # ==============================================================================
 # Rules
@@ -30,5 +46,27 @@ rule scc:
 		# subsample each file to 300 M contacts
 		"-s 300000000"
 	shell:
-		"hicreppy scc {params} {input.cool1} {input.cool2} > {output}"
+		"hicreppy scc {params} {input.cool1}::/resolutions/40000 {input.cool2}::/resolutions/40000 > {output}"
+
+rule combine_scc:
+	input:
+		script = "combine-scc.R",
+		data = expand(
+			path.join(DIR["res"], "{sample1}.{sample2}.scc.txt"),
+			sample1 = SAMPLES,
+			sample2 = SAMPLES,
+		),
+	output:
+		path.join(DIR["res"], "scc.tsv"),
+	shell:
+		"Rscript {input.script}"
+
+rule plot_scc:
+	input:
+		script = "plot-scc.R",
+		data = path.join(DIR["res"], "scc.tsv"),
+	output:
+		path.join(DIR["plot"], "scc.heatmap.png"),
+	shell:
+		"Rscript {input.script}"
 
