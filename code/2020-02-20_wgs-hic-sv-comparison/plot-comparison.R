@@ -4,7 +4,7 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 source(
-    file.path("..", "..", "results", "2020-02-19_chromoplexy", "plotting-helper.R")
+    file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
 )
 
 RES_DIR <- file.path("..", "..", "results", "2020-02-20_wgs-hic-sv-comparison")
@@ -13,6 +13,14 @@ PLOT_DIR <- file.path(RES_DIR, "Plots")
 # ==============================================================================
 # Data
 # ==============================================================================
+# laod metadata
+meta <- fread(
+    file.path("..", "config.tsv"),
+    sep = "\t"
+)
+# retain primary tumour samples
+meta <- meta[(Source == "Primary") & (Type == "Malignant")]
+
 detections <- fread(
     file.path(RES_DIR, "detections.all.tsv"),
     sep = "\t",
@@ -104,6 +112,18 @@ savefig(
     width = 30
 )
 
+# helper function for nicely plotting facets
+map_to_label <- function(s) {
+    plot_label <- meta[Sample_ID == s, Label]
+    ifelse(
+        # if no label, return a blank value
+        nchar(plot_label) == 0,
+        "",
+        # otherwise return the "Label"
+        plot_label
+    )
+}
+
 gg_sv_types <- (
     ggplot(
         data = sv_types,
@@ -119,7 +139,8 @@ gg_sv_types <- (
     )
     + facet_wrap(
         ~ SampleID,
-        nrow = 2
+        nrow = 2,
+        labeller = labeller(SampleID = map_to_label)
     )
     + scale_y_continuous(
         name = "Frequency"
@@ -132,7 +153,17 @@ gg_sv_types <- (
             vjust = 0.5,
             hjust = 1,
             colour = "#000000"
-        )
+        ),
+        axis.ticks.x = element_blank(),
+        axis.ticks.length.y = unit(4, "pt"),
+        axis.ticks.y = element_line(
+            colour = "#000000"
+        ),
+        axis.line.y.left = element_line(
+            colour = "#000000"
+        ),
+        axis.line.x.bottom = element_blank(),
+        panel.grid = element_blank()
     )
 )
 savefig(
