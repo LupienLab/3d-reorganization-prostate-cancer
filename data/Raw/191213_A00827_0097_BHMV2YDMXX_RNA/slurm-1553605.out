@@ -1,0 +1,41 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	kallisto_quant
+	1
+
+[Tue Oct 27 18:16:51 2020]
+rule kallisto_quant:
+    input: FASTQs/Benign-Prostate-1664855_L001_R1.fastq.gz, FASTQs/Benign-Prostate-1664855_L001_R2.fastq.gz, FASTQs/Benign-Prostate-1664855_L002_R1.fastq.gz, FASTQs/Benign-Prostate-1664855_L002_R2.fastq.gz, ../Kallisto_GRCh38_Index/transcriptome.idx
+    output: Aligned/Benign-Prostate-1664855/abundance.h5, Aligned/Benign-Prostate-1664855/abundance.tsv, Aligned/Benign-Prostate-1664855/pseudoalignments.bam
+    jobid: 0
+    wildcards: sample=Benign-Prostate-1664855
+
+kallisto quant -b 100 -t 8 --verbose --pseudobam -i ../Kallisto_GRCh38_Index/transcriptome.idx -o Aligned/Benign-Prostate-1664855 FASTQs/Benign-Prostate-1664855_L001_R1.fastq.gz FASTQs/Benign-Prostate-1664855_L001_R2.fastq.gz FASTQs/Benign-Prostate-1664855_L002_R1.fastq.gz FASTQs/Benign-Prostate-1664855_L002_R2.fastq.gz
+
+[quant] fragment length distribution will be estimated from the data
+[index] k-mer length: 31
+[index] number of targets: 188,753
+[index] number of k-mers: 109,544,288
+[index] number of equivalence classes: 760,757
+[quant] running in paired-end mode
+[quant] will process pair 1: FASTQs/Benign-Prostate-1664855_L001_R1.fastq.gz
+                             FASTQs/Benign-Prostate-1664855_L001_R2.fastq.gz
+[quant] will process pair 2: FASTQs/Benign-Prostate-1664855_L002_R1.fastq.gz
+                             FASTQs/Benign-Prostate-1664855_L002_R2.fastq.gz
+[quant] finding pseudoalignments for the reads ...
+
+[quant] done 
+[quant] processed 41,026,507 reads, 26,985,785 reads pseudoaligned
+[quant] estimated average fragment length: 189.19
+[   em] quantifying the abundances ... done
+[   em] the Expectation-Maximization algorithm ran for 1,349 rounds
+[bstrp] number of EM bootstraps complete: 1[bstrp] number of EM bootstraps complete: 2[bstrp] number of EM bootstraps complete: 3[bstrp] number of EM bootstraps complete: 4[bstrp] number of EM bootstraps complete: 5[bstrp] number of EM bootstraps complete: 6[bstrp] number of EM bootstraps complete: 7[bstrp] number of EM bootstraps complete: 8[bstrp] number of EM bootstraps complete: 9[bstrp] number of EM bootstraps complete: 10[bstrp] number of EM bootstraps complete: 11[bstrp] number of EM bootstraps complete: 12[bstrp] number of EM bootstraps complete: 13[bstrp] number of EM bootstraps complete: 14[bstrp] number of EM bootstraps complete: 15[bstrp] number of EM bootstraps complete: 16[bstrp] number of EM bootstraps complete: 17[bstrp] number of EM bootstraps complete: 18[bstrp] number of EM bootstraps complete: 19[bstrp] number of EM bootstraps complete: 20[bstrp] number of EM bootstraps complete: 21[bstrp] number of EM bootstraps complete: 22[bstrp] number of EM bootstraps complete: 23[bstrp] number of EM bootstraps complete: 24[bstrp] number of EM bootstraps complete: 25[bstrp] number of EM bootstraps complete: 26[bstrp] number of EM bootstraps complete: 27[bstrp] number of EM bootstraps complete: 28[bstrp] number of EM bootstraps complete: 29[bstrp] number of EM bootstraps complete: 30[bstrp] number of EM bootstraps complete: 31[bstrp] number of EM bootstraps complete: 32[bstrp] number of EM bootstraps complete: 33[bstrp] number of EM bootstraps complete: 34[bstrp] number of EM bootstraps complete: 35[bstrp] number of EM bootstraps complete: 36[bstrp] number of EM bootstraps complete: 37[bstrp] number of EM bootstraps complete: 38[bstrp] number of EM bootstraps complete: 39[bstrp] number of EM bootstraps complete: 40[bstrp] number of EM bootstraps complete: 41[bstrp] number of EM bootstraps complete: 42[bstrp] number of EM bootstraps complete: 43[bstrp] number of EM bootstraps complete: 44[bstrp] number of EM bootstraps complete: 45[bstrp] number of EM bootstraps complete: 46[bstrp] number of EM bootstraps complete: 47[bstrp] number of EM bootstraps complete: 48[bstrp] number of EM bootstraps complete: 49[bstrp] number of EM bootstraps complete: 50[bstrp] number of EM bootstraps complete: 51[bstrp] number of EM bootstraps complete: 52[bstrp] number of EM bootstraps complete: 53[bstrp] number of EM bootstraps complete: 54[bstrp] number of EM bootstraps complete: 55[bstrp] number of EM bootstraps complete: 56[bstrp] number of EM bootstraps complete: 57[bstrp] number of EM bootstraps complete: 58[bstrp] number of EM bootstraps complete: 59[bstrp] number of EM bootstraps complete: 60[bstrp] number of EM bootstraps complete: 61[bstrp] number of EM bootstraps complete: 62[bstrp] number of EM bootstraps complete: 63[bstrp] number of EM bootstraps complete: 64[bstrp] number of EM bootstraps complete: 65[bstrp] number of EM bootstraps complete: 66[bstrp] number of EM bootstraps complete: 67[bstrp] number of EM bootstraps complete: 68[bstrp] number of EM bootstraps complete: 69[bstrp] number of EM bootstraps complete: 70[bstrp] number of EM bootstraps complete: 71[bstrp] number of EM bootstraps complete: 72[bstrp] number of EM bootstraps complete: 73[bstrp] number of EM bootstraps complete: 74[bstrp] number of EM bootstraps complete: 75[bstrp] number of EM bootstraps complete: 76[bstrp] number of EM bootstraps complete: 77[bstrp] number of EM bootstraps complete: 78[bstrp] number of EM bootstraps complete: 79[bstrp] number of EM bootstraps complete: 80[bstrp] number of EM bootstraps complete: 81[bstrp] number of EM bootstraps complete: 82[bstrp] number of EM bootstraps complete: 83[bstrp] number of EM bootstraps complete: 84[bstrp] number of EM bootstraps complete: 85[bstrp] number of EM bootstraps complete: 86[bstrp] number of EM bootstraps complete: 87[bstrp] number of EM bootstraps complete: 88[bstrp] number of EM bootstraps complete: 89[bstrp] number of EM bootstraps complete: 90[bstrp] number of EM bootstraps complete: 91[bstrp] number of EM bootstraps complete: 92[bstrp] number of EM bootstraps complete: 93[bstrp] number of EM bootstraps complete: 94[bstrp] number of EM bootstraps complete: 95[bstrp] number of EM bootstraps complete: 96[bstrp] number of EM bootstraps complete: 97[bstrp] number of EM bootstraps complete: 98[bstrp] number of EM bootstraps complete: 99[bstrp] number of EM bootstraps complete: 100
+[  bam] writing pseudoalignments to BAM format .. done
+
+[Tue Oct 27 18:50:19 2020]
+Finished job 0.
+1 of 1 steps (100%) done

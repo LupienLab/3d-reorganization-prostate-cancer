@@ -1,0 +1,6 @@
+encrypt:
+    params: "-c 8 -t 4:00:00 -p all --mem=12G"
+
+upload:
+    params: "-c 1 -t 1-00:00:00 -p download --mem=4G"
+

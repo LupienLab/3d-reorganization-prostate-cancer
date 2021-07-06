@@ -13,8 +13,12 @@ This repository is structured as follows:
     ├── Raw/         # raw data generated for this specific project along with pre-processing scripts and data
     └── Processed/   # data from `Raw/` that has been aggregated or processed in some other way beyond the standard raw pre-processing
 └── code/
-    ├── Result1/     # analysis scripts, logs, and results for `result1`
-    ├── Result2/     # analysis scripts, logs, and results for `result2`
+    ├── Result1/     # analysis scripts and logs for `result1`
+    ├── Result2/     # analysis scripts and logs for `result2`
+    └── ...
+└── results/
+    ├── Result1/     # results for `result1`
+    ├── Result2/     # results for `result2`
     └── ...
 ├── README.md        # this file
 └── environment.yaml # Anaconda environment YAML file for the entire project
@@ -32,3 +36,4 @@ To re-run any of the analyses in the `code/` folders:
 
 That should regenerate the entire set of results for that specific folder.
 You can preview that needs to be run by running `snakemake -n` before running the analyses.
+

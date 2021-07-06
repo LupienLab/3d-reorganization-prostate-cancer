@@ -1,0 +1,34 @@
+# ==============================================================================
+# Environment
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+DIR = {
+	"mtx": path.join(
+		"..", "..", "data", "Processed", "2019-06-18_PCa-LowC-sequencing",
+		"Contacts"
+	),
+	"res": path.join("..", "..", "results", "2021-06-30_hicrep"),
+}
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule scc:
+	input:
+		cool1 = path.join(DIR["mtx"], "{sample1}.mcool"),
+		cool2 = path.join(DIR["mtx"], "{sample2}.mcool"),
+	output:
+		path.join(DIR["res"], "{sample1}.{sample2}.scc.txt"),
+	params:
+		# subsample each file to 300 M contacts
+		"-s 300000000"
+	shell:
+		"hicreppy scc {params} {input.cool1} {input.cool2} > {output}"
+

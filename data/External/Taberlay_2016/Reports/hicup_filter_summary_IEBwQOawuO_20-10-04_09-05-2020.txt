@@ -1,0 +1,2 @@
+File	Total_pairs	Valid_pairs	Cis_<10kbp	Cis_>10kbp	Trans	Invalid_pairs	Same_circularised	Same_dangling_ends	Same_internal	Re-ligation	Contiguous_sequence	Wrong_size
+SRR2566799_R1_2.pair.bam	2216918	1116288	141145	164513	810630	1100630	4023	46862	1015256	34489	0	0

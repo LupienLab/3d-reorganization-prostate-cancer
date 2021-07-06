@@ -1,0 +1,13 @@
+{
+	"n_targets": 188753,
+	"n_bootstraps": 100,
+	"n_processed": 35547879,
+	"n_pseudoaligned": 25353225,
+	"n_unique": 7598578,
+	"p_pseudoaligned": 71.3,
+	"p_unique": 21.4,
+	"kallisto_version": "0.46.2",
+	"index_version": 10,
+	"start_time": "Tue Oct 27 17:02:34 2020",
+	"call": "kallisto quant -b 100 -p -t 8 --verbose --pseudobam -i ../Kallisto_GRCh38_Index/transcriptome.idx -o Aligned/Benign-Prostate-1595983 FASTQs/Benign-Prostate-1595983_L002_R1.fastq.gz FASTQs/Benign-Prostate-1595983_L002_R2.fastq.gz"
+}

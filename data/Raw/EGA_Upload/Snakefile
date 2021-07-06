@@ -1,0 +1,58 @@
+# =============================================================================
+# Configuration
+# =============================================================================
+import pandas as pd
+import os.path as path
+
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+SAMPLES = CONFIG["File_ID"].tolist()
+OUTPUTS = CONFIG["Output_File_Prefix"].tolist()
+REPORT_DIR = "Reports"
+
+# =============================================================================
+# Meta Rules
+# =============================================================================
+rule all:
+	input:
+		expand(
+			path.join("{prefix}.{ext}"),
+			prefix=OUTPUTS,
+			ext=["md5", "gpg", "gpg.md5"],
+		),
+		expand(
+			path.join(REPORT_DIR, "{id}.txt"),
+			id=SAMPLES,
+		),
+
+# =============================================================================
+# Rules
+# =============================================================================
+rule encrypt:
+	input:
+		fq = path.join("{batch}", "{file}.fastq.gz"),
+		ega = "ega-cryptor-2.0.0.jar",
+	output:
+		path.join("{batch}", "encrypted", "{file}.fastq.gz.md5"),
+		path.join("{batch}", "encrypted", "{file}.fastq.gz.gpg"),
+		path.join("{batch}", "encrypted", "{file}.fastq.gz.gpg.md5"),
+	threads: 8
+	shell:
+		"java -jar {input.ega} -t {threads} -i {input.fq} -o {wildcards.batch}/encrypted/"
+
+rule upload:
+	input:
+		expand(
+			path.join("{prefix}.{ext}"),
+			prefix=OUTPUTS,
+			ext=["md5", "gpg", "gpg.md5"],
+		),
+	output:
+		path.join(REPORT_DIR, "{id}.txt"),
+	params:
+		box = "ega-box-1802",
+		pw = "t8i5HWfG",
+		url = "ftp.ega.ebi.ac.uk",
+		prefix = lambda wildcards: CONFIG.loc[CONFIG.File_ID == wildcards.id, "Output_File_Prefix"].values[0],
+	shell:
+		"lftp -c 'open -u {params.box},{params.pw} {params.url}; mput {params.prefix}.*' && touch {output}"
+
