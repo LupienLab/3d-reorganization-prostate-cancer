@@ -1,0 +1,3 @@
+__default__:
+    params: "--export=ALL -p himem --mem 30G -t 1-00:00:00"
+
