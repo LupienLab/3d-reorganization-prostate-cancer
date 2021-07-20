@@ -12,20 +12,24 @@ CONFIG = pd.read_csv(
 
 TEST_IDS = CONFIG.test_ID.tolist()
 
-PLOT_DIR = "Plots"
+DIR = {
+    "res": path.join("..", "..", "results", "2020-06-19_sv-disruption-expression")
+}
+DIR["plot"] = path.join(DIR["res"], "Plots")
+DIR["sleuth"] = path.join(DIR["res"], "sleuth")
 
 # ==============================================================================
 # Meta Rules
 # ==============================================================================
 rule all:
     input:
-        "results.genes.tsv",
-        "results.transcripts.tsv",
-        "t2e-comparison.genes.tsv",
-        "t2e-comparison.transcripts.tsv",
-        "sleuth-object.rds",
+        path.join(DIR["res"], "results.genes.tsv"),
+        path.join(DIR["res"], "results.transcripts.tsv"),
+        path.join(DIR["res"], "t2e-comparison.genes.tsv"),
+        path.join(DIR["res"], "t2e-comparison.transcripts.tsv"),
+        path.join(DIR["res"], "sleuth-object.rds"),
         expand(
-            path.join("sleuth", "test_{test_ID}.{ext}"),
+            path.join(DIR["sleuth"], "test_{test_ID}.{ext}"),
             test_ID=TEST_IDS,
             ext=[
                 "genes.all.tsv",
@@ -35,23 +39,23 @@ rule all:
                 "sleuth-object.rds"
             ],
         ),
-        path.join(PLOT_DIR, "expression.png"),
-        path.join(PLOT_DIR, "expression.pdf"),
-        path.join(PLOT_DIR, "event-changes.png"),
-        path.join(PLOT_DIR, "event-changes.pdf"),
-        path.join(PLOT_DIR, "event-changes.labelled.png"),
-        path.join(PLOT_DIR, "event-changes.labelled.pdf"),
-        "1sample-results.tsv",
-        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.png"),
-        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.pdf"),
-        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.png"),
-        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.pdf"),
-        path.join(PLOT_DIR, "tx-exprs.BRAF.png"),
-        path.join(PLOT_DIR, "tx-exprs.BRAF.pdf"),
-        path.join(PLOT_DIR, "event-changes.summary.png"),
-        path.join(PLOT_DIR, "event-changes.summary.pdf"),
-        path.join(PLOT_DIR, "event-changes.contact.png"),
-        path.join(PLOT_DIR, "event-changes.contact.pdf"),
+        path.join(DIR["plot"], "expression.png"),
+        path.join(DIR["plot"], "expression.pdf"),
+        path.join(DIR["plot"], "event-changes.png"),
+        path.join(DIR["plot"], "event-changes.pdf"),
+        path.join(DIR["plot"], "event-changes.labelled.png"),
+        path.join(DIR["plot"], "event-changes.labelled.pdf"),
+        path.join(DIR["res"], "1sample-results.tsv"),
+        path.join(DIR["plot"], "gene-exprs.ERG-TMPRSS2.png"),
+        path.join(DIR["plot"], "gene-exprs.ERG-TMPRSS2.pdf"),
+        path.join(DIR["plot"], "gene-exprs.ZNF516-PMEPA1.png"),
+        path.join(DIR["plot"], "gene-exprs.ZNF516-PMEPA1.pdf"),
+        path.join(DIR["plot"], "tx-exprs.BRAF.png"),
+        path.join(DIR["plot"], "tx-exprs.BRAF.pdf"),
+        path.join(DIR["plot"], "event-changes.summary.png"),
+        path.join(DIR["plot"], "event-changes.summary.pdf"),
+        path.join(DIR["plot"], "event-changes.contact.png"),
+        path.join(DIR["plot"], "event-changes.contact.pdf"),
 
 # ==============================================================================
 # Rules
@@ -60,21 +64,26 @@ rule t2e_comp:
     input:
         script = "t2e-dge.R",
     output:
-        "results.genes.tsv",
-        "results.transcripts.tsv",
-        "t2e-comparison.genes.tsv",
-        "t2e-comparison.transcripts.tsv",
-        "sleuth-object.rds",
+        path.join(DIR["res"], "results.genes.tsv"),
+        path.join(DIR["res"], "results.transcripts.tsv"),
+        path.join(DIR["res"], "t2e-comparison.genes.tsv"),
+        path.join(DIR["res"], "t2e-comparison.transcripts.tsv"),
+        path.join(DIR["res"], "sleuth-object.rds"),
     shell:
         "Rscript {input.script}"
 
 rule plot_erg:
     input:
         script = "plot-t2e.R",
-        sleuth = "sleuth-object.rds",
-        data = "t2e-comparison.transcripts.tsv"
+        sleuth = path.join(DIR["res"], "sleuth-object.rds"),
+        data = path.join(DIR["res"], "t2e-comparison.transcripts.tsv"),
     output:
-        "outfile"
+        path.join(DIR["plot"], "ERG-expression.png"),
+        path.join(DIR["plot"], "ERG-expression.pdf"),
+        path.join(DIR["plot"], "ERG-expression.gene-level.png"),
+        path.join(DIR["plot"], "ERG-expression.gene-level.pdf"),
+        path.join(DIR["plot"], "ZNF516-expression.gene-level.png"),
+        path.join(DIR["plot"], "ZNF516-expression.gene-level.pdf"),
     shell:
         "python {input.script} {input.data} -o {output}"
 
@@ -82,11 +91,11 @@ rule sv_test_comp:
     input:
         script = "1sample-dge.sleuth.R",
     output:
-        path.join("sleuth", "test_{test_ID}.genes.all.tsv"),
-        path.join("sleuth", "test_{test_ID}.transcripts.all.tsv"),
-        path.join("sleuth", "test_{test_ID}.genes.tested.tsv"),
-        path.join("sleuth", "test_{test_ID}.transcripts.tested.tsv"),
-        path.join("sleuth", "test_{test_ID}.sleuth-object.rds"),
+        path.join(DIR["sleuth"], "test_{test_ID}.genes.all.tsv"),
+        path.join(DIR["sleuth"], "test_{test_ID}.transcripts.all.tsv"),
+        path.join(DIR["sleuth"], "test_{test_ID}.genes.tested.tsv"),
+        path.join(DIR["sleuth"], "test_{test_ID}.transcripts.tested.tsv"),
+        path.join(DIR["sleuth"], "test_{test_ID}.sleuth-object.rds"),
     shell:
         "Rscript {input.script} {wildcards.test_ID}"
 
@@ -94,7 +103,7 @@ rule plot_dge_1samp:
     input:
         script = "plot-1sample-dge.sleuth.R",
         data = expand(
-            path.join("sleuth", "test_{test_ID}.{ext}"),
+            path.join(DIR["sleuth"], "test_{test_ID}.{ext}"),
             test_ID=TEST_IDS,
             ext=[
                 "genes.all.tsv",
@@ -105,13 +114,13 @@ rule plot_dge_1samp:
             ],
         ),
     output:
-        path.join(PLOT_DIR, "expression.png"),
-        path.join(PLOT_DIR, "expression.pdf"),
-        path.join(PLOT_DIR, "event-changes.png"),
-        path.join(PLOT_DIR, "event-changes.pdf"),
-        path.join(PLOT_DIR, "event-changes.labelled.png"),
-        path.join(PLOT_DIR, "event-changes.labelled.pdf"),
-        "1sample-results.tsv",
+        path.join(DIR["plot"], "expression.png"),
+        path.join(DIR["plot"], "expression.pdf"),
+        path.join(DIR["plot"], "event-changes.png"),
+        path.join(DIR["plot"], "event-changes.pdf"),
+        path.join(DIR["plot"], "event-changes.labelled.png"),
+        path.join(DIR["plot"], "event-changes.labelled.pdf"),
+        path.join(DIR["res"], "1sample-results.tsv"),
     shell:
         "Rscript {input.script}"
 
@@ -119,7 +128,7 @@ rule plot_znf516_pmepa1_t2e:
     input:
         script = "plot-gene-exprs.R",
         data = expand(
-            path.join("sleuth", "test_{test_ID}.{ext}"),
+            path.join(DIR["sleuth"], "test_{test_ID}.{ext}"),
             test_ID=[42, 43, 45, 46],
             ext=[
                 "genes.all.tsv",
@@ -130,10 +139,14 @@ rule plot_znf516_pmepa1_t2e:
             ],
         ),
     output:
-        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.png"),
-        path.join(PLOT_DIR, "gene-exprs.ERG-TMPRSS2.pdf"),
-        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.png"),
-        path.join(PLOT_DIR, "gene-exprs.ZNF516-PMEPA1.pdf"),
+        path.join(DIR["plot"], "gene-exprs.ERG-TMPRSS2.pdf"),
+        path.join(DIR["plot"], "gene-exprs.ZNF516-PMEPA1.png"),
+        path.join(DIR["plot"], "gene-exprs.ERG-TMPRSS2.png"),
+        path.join(DIR["plot"], "gene-exprs.ERG-TMPRSS2.pdf"),
+        path.join(DIR["plot"], "gene-exprs.ZNF516-PMEPA1.png"),
+        path.join(DIR["plot"], "gene-exprs.ZNF516-PMEPA1.pdf"),
+        path.join(DIR["res"], "quant.ERG-TMPRSS2.tsv"),
+        path.join(DIR["res"], "quant.ZNF516-PMEPA1.tsv"),
     shell:
         "Rscript {input.script}"
 
@@ -152,8 +165,9 @@ rule plot_braf:
             ],
         ),
     output:
-        path.join(PLOT_DIR, "tx-exprs.BRAF.png"),
-        path.join(PLOT_DIR, "tx-exprs.BRAF.pdf"),
+        path.join(DIR["plot"], "tx-exprs.BRAF.png"),
+        path.join(DIR["plot"], "tx-exprs.BRAF.pdf"),
+        path.join(DIR["res"], "quant.BRAF.tsv"),
     shell:
         "Rscript {input.script}"
 
@@ -162,9 +176,9 @@ rule sv_annotation:
         script = "plot-sv-changes.R",
         data = "summary-sv-disruption-annotation.tsv",
     output:
-        path.join(PLOT_DIR, "event-changes.summary.png"),
-        path.join(PLOT_DIR, "event-changes.summary.pdf"),
-        path.join(PLOT_DIR, "event-changes.contact.png"),
-        path.join(PLOT_DIR, "event-changes.contact.pdf"),
+        path.join(DIR["plot"], "event-changes.summary.png"),
+        path.join(DIR["plot"], "event-changes.summary.pdf"),
+        path.join(DIR["plot"], "event-changes.contact.png"),
+        path.join(DIR["plot"], "event-changes.contact.pdf"),
     shell:
         "Rscript {input.script}"

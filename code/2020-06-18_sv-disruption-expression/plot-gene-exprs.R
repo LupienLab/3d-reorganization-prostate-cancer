@@ -16,76 +16,13 @@ loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
+source("helper-functions.R")
 
 RES_DIR <- file.path(
     "..", "..", "results", "2020-06-18_sv-disruption-expression"
 )
 PLOT_DIR <- file.path(RES_DIR, "Plots")
 
-# ==============================================================================
-# Functions
-# ==============================================================================
-get_important_sleuth_info <- function(path, alt_gene, offset = 0.5, base = exp(1)) {
-    print(alt_gene)
-    # extract annotations for these genes
-    gene <- gencode_genes[gene_name == alt_gene]
-    gene_tx <- gencode_tx[gene_name == alt_gene]
-
-    # get kallisto/sleuth normalized counts
-    sleuth_obj <- readRDS(path)
-    norm_counts <- as.data.table(sleuth_obj$obs_norm)
-    # keep only the counts related to this gene and its transcripts
-    tx_counts <- norm_counts[target_id %in% gene_tx$ens_transcript]
-    # merge annotation with count information
-    tx_counts <- merge(
-        x = gene_tx,
-        y = tx_counts,
-        by.x = "ens_transcript",
-        by.y = "target_id"
-    )
-    # get scaling factors for each sample and merge into the table
-    sf <- data.table(
-        "sample" = names(sleuth_obj$est_counts_sf),
-        "sf" = sleuth_obj$est_counts_sf
-    )
-    tx_counts <- merge(
-        x = tx_counts,
-        y = sf,
-        by = "sample"
-    )
-    gene_counts <- tx_counts[,
-        .(
-            est_counts = log(
-                median(eff_len) / sf * sum(est_counts / eff_len) + offset,
-                base = base
-            )
-        ),
-        keyby = c("sample", "ens_gene", "gene_name")
-    ]
-    return(list(
-        "tx" = tx_counts,
-        "gene" = gene_counts
-    ))
-}
-
-#' Save figures in multiple formats
-#'
-#' @param gg ggplot object
-#' @param prefix Prefix for output file
-#' @param ext Output extensions
-#' @param dpi DPI resolution
-savefig <- function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
-    for (e in ext) {
-        ggsave(
-            paste(prefix, e, sep = "."),
-            gg,
-            height = height,
-            width = width,
-            units = "cm",
-            dpi = dpi
-        )
-    }
-}
 
 # ==============================================================================
 # Data
@@ -145,7 +82,11 @@ ALT_GENES <- names(so)
 so_counts <- lapply(
     ALT_GENES,
     function(alt_gene) {
-        get_important_sleuth_info(so[[alt_gene]], alt_gene)
+        get_important_sleuth_info(
+            path = so[[alt_gene]],
+            alt_gene = alt_gene,
+            base = 2
+        )
     }
 )
 names(so_counts) <- ALT_GENES
@@ -161,34 +102,62 @@ gene_pairs <- list(
 )
 
 for (gp in gene_pairs) {
-    dt <- unique(rbindlist(lapply(gp, function(alt_gene) so_counts[[alt_gene]]$gene)))
+    # get the estimated gene counts for each gene in the pair
+    quant <- unique(rbindlist(lapply(gp, function(alt_gene) so_counts[[alt_gene]]$gene_counts)))
+    dge <- unique(rbindlist(lapply(gp, function(alt_gene) so_counts[[alt_gene]]$gene_de)))
+    # save this particular table for posterity
+    fwrite(
+        quant,
+        file.path(
+            RES_DIR,
+            paste0("quant.", paste(gp, collapse= "-"), ".tsv")
+        ),
+        sep = "\t",
+        col.names = TRUE
+    )
+    fwrite(
+        dge,
+        file.path(
+            RES_DIR,
+            paste0("test.", paste(gp, collapse= "-"), ".tsv")
+        ),
+        sep = "\t",
+        col.names = TRUE
+    )
     # combined mut samples
     ms <- unique(unlist(mut_samples[gp]))
     nms <- unique(unlist(nonmut_samples[gp]))
     gg <- (
         ggplot()
         + geom_boxplot(
-            data = dt[sample %in% nms],
+            data = quant[sample %in% nms],
             mapping = aes(x = gene_name, y = est_counts),
             outlier.shape = NA
         )
         + geom_point(
-            data = dt[sample %in% nms],
+            data = quant[sample %in% nms],
             mapping = aes(x = gene_name, y = est_counts),
-            colour = "#BDBDBD",
+            fill = "#BDBDBD",
+            colour = "#000000",
+            shape = 21,
+            size = 4,
             position = position_jitter(height = 0, width = 0.3)
         )
         + geom_point(
-            data = dt[sample %in% ms],
+            data = quant[sample %in% ms],
             mapping = aes(x = gene_name, y = est_counts),
-            colour = "#ff6347",
+            fill = "#ff6347",
+            colour = "#000000",
+            shape = 21,
+            size = 4,
             position = position_jitter(height = 0, width = 0.3)
         )
-        + labs(x = "Gene", y = expression("Estimated mRNA count (" * log[2] * ")"))
-        + theme_minimal()
-        + theme(
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+        + labs(
+            x = "Gene",
+            y = expression("Estimated mRNA count (" * log[2] * ")")
         )
+        + theme_minimal()
+        + jrh_theme()
     )
     savefig(
         gg,
