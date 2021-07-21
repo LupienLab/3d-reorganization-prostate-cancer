@@ -14,19 +14,19 @@ suppressMessages(library("logging"))
 suppressMessages(library("argparse"))
 
 if (!interactive()) {
-    PARSER <- argparse::ArgumentParser(
-        description = "Take 2D loop calls and identify the unique anchors"
-    )
-    PARSER$add_argument(
-        "prefix",
-        type = "character",
-        help = "File prefix, used for both input and output"
-    )
-    ARGS <- PARSER$parse_args()
+	PARSER <- argparse::ArgumentParser(
+		description = "Take 2D loop calls and identify the unique anchors"
+	)
+	PARSER$add_argument(
+		"prefix",
+		type = "character",
+		help = "File prefix, used for both input and output"
+	)
+	ARGS <- PARSER$parse_args()
 } else {
-    ARGS <- list(
-        "prefix" = file.path("..", "..", "results", "Loops", "PCa13266"),
-    )
+	ARGS <- list(
+		"prefix" = file.path("..", "..", "results", "Loops", "PCa13266"),
+	)
 }
 
 
