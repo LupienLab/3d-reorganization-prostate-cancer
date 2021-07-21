@@ -32,6 +32,7 @@ rule all:
 		),
 		path.join(DIR["res"], "scc.tsv"),
 		path.join(DIR["plot"], "scc.heatmap.png"),
+		path.join(DIR["plot"], "scc.heatmap.pdf"),
 
 # ==============================================================================
 # Rules
@@ -67,6 +68,7 @@ rule plot_scc:
 		data = path.join(DIR["res"], "scc.tsv"),
 	output:
 		path.join(DIR["plot"], "scc.heatmap.png"),
+		path.join(DIR["plot"], "scc.heatmap.pdf"),
 	shell:
 		"Rscript {input.script}"
 

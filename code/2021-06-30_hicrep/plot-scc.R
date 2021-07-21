@@ -14,6 +14,7 @@ suppressMessages(library("logging"))
 
 loginfo("Loading packages")
 suppressMessages(library("data.table"))
+suppressMessages(library("Matrix"))
 suppressMessages(library("pheatmap"))
 
 DIR <- list(
@@ -39,9 +40,19 @@ scc <- fread(
 	header = TRUE
 )
 
+# convert the values into a matrix for plotting
 scc_mat <- as.matrix(scc[, .SD, .SDcols = -"SampleID"])
 rownames(scc_mat) <- SAMPLES
 colnames(scc_mat) <- SAMPLES
+
+# the SCC values will not be exactly equal because of the downsampling
+# to make sure the clustering is the same for the rows and columns, we
+# symmetrize the matrix. The true differences between the two are
+# negligible, compared to the differences between samples
+# (i.e. ||skew_mat|| < 1e-4)
+symm_mat <- symmpart(scc_mat)
+skew_mat <- skewpart(scc_mat)
+
 
 # ==============================================================================
 # Plots
@@ -49,22 +60,18 @@ colnames(scc_mat) <- SAMPLES
 loginfo("Plotting heatmap")
 
 pheatmap(
-	mat = scc_mat,
+	mat = symm_mat,
 	cluster_rows = TRUE,
 	cluster_cols = TRUE,
+	labels_row = meta[, Label],
+	labels_col = meta[, Label],
 	filename = file.path(DIR[["plot"]], "scc.heatmap.png")
 )
-
-
-# ==============================================================================
-# Save data
-# ==============================================================================
-loginfo("Saving data")
-fwrite(
-	agg_data,
-	file.path(DIR[["res"]], "scc.tsv"),
-	sep = "\t",
-	col.names = TRUE
+pheatmap(
+	mat = symm_mat,
+	cluster_rows = TRUE,
+	cluster_cols = TRUE,
+	labels_row = meta[, Label],
+	labels_col = meta[, Label],
+	filename = file.path(DIR[["plot"]], "scc.heatmap.pdf")
 )
-
-
