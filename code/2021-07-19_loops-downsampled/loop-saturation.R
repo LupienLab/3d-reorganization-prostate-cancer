@@ -39,70 +39,22 @@ set.seed(42)
 
 RES_DIR <- file.path("..", "..", "results", "2021-07-19_loops-downsampled")
 LOOP_DIR <- file.path(RES_DIR, "Loops")
+SAT_DIR <- file.path(RES_DIR, "Saturation")
 PLOT_DIR <- file.path(RES_DIR, "Plots")
+
+DEPTHS <- as.integer(50000000 * (1:6))
 
 # ==============================================================================
 # Functions
 # ==============================================================================
-#' Use bootstraps and an exponential fit to estimate the total number of loops
-#' present in a batch of samples
+#' Fit exponential model to the loop counts to estimate the total number of loops
+#' present at a given sequencing depth
 #'
-#' @param sample_loops Loops (or IDs for the loops) present in each sample
-#' @param n_iters Number of bootstraps to generate
-#' @param max_samples maximum number of samples to estimate the model out to
+#' @param loop_counts Loop counts
+#' @param max_depth maximum sequencing depth to estimate the model out to
 #' @return structured list
-estimate_saturation <- function(sample_loops, n_iters = 100, max_samples = 200) {
-    # 1. Generate bootstraps
-    # ---------------------------------
-    sample_names <- names(sample_loops)
-    n_loops <- lengths(sample_loops)
-    # number of samples
-    n_samples = length(sample_loops)
-    # create the results list
-    data_iter = matrix(ncol = n_iters, nrow = n_samples)
-
-    for (j in 1:n_iters) {
-        # randomly order the samples
-        reordered_loops <- sample_loops[sample(1:n_samples)]
-
-        # create cumulative set of loop IDs
-        reordered_loop_IDs <- vector("list", length = n_samples)
-        reordered_loop_IDs[[1]] <- reordered_loops[[1]]
-        # find union of loop IDs from the combined set of i samples
-        # doing this in the for loop has a "cumulative union" effect
-        for (i in 2:n_samples) {
-            reordered_loop_IDs[[i]] <- union(
-                reordered_loop_IDs[[i - 1]],
-                reordered_loops[[i]]
-            )
-        }
-        # count how many there are in this iteration
-        reordered_loop_ID_counts <- lengths(reordered_loop_IDs)
-
-        # store data in saturation curve matrix as the j-th column
-        data_iter[, j] <- reordered_loop_ID_counts
-    }
-
-    # 2. Calculate summary statistics
-    # ---------------------------------
-    bootstrap_summary <- data.table(
-        N_Samples = 1:n_samples,
-        N_Loops_Mean = rowMeans(data_iter),
-        N_Loops_SEM = rowSds(data_iter) / sqrt(n_iters)
-    )
-
-    # coerce into a data.table for plotting the bootstrap results themselves
-    bootstraps <- as.data.table(cbind(1:n_samples, data_iter))
-    colnames(bootstraps) <- c("N_Samples", 1:n_iters)
-    bootstraps_long <- melt(
-        bootstraps,
-        id.vars = "N_Samples",
-        variable.name = "Iteration",
-        value.name = "N_Loops"
-    )
-    bootstraps_long[, Iteration := as.numeric(Iteration)]
-
-    # 3. Fit exponential model to the bootstraps
+estimate_saturation <- function(loop_counts, max_depth = 1e9) {
+    # 1. Fit the exponential
     # ---------------------------------
     # use self starting model for asymptotic data SSasymp
     # it follows the formula: y = Asym + (R0 - Asym) * exp(-exp(lrc) * x) where
@@ -111,19 +63,21 @@ estimate_saturation <- function(sample_loops, n_iters = 100, max_samples = 200) 
     # R0    a numeric parameter for the response when input is zero
     # lrc	a numeric parameter for the natural log of the rate constant
     nlsfitSS <- nls(
-        N_Loops_Mean ~ SSasymp(N_Samples, Asym, R0, lrc),
-        data = bootstrap_summary,
-        control = list(maxiter = 10000)
+        N ~ SSasymp(Seq_Depth, Asym, R0, lrc),
+        data = loop_counts
     )
 
     # predict the future values with increasing numbers of samples
-    pred <- predict(nlsfitSS, list(N_Samples = seq(1, max_samples)))
+    pred <- predict(
+        nlsfitSS,
+        list(N = seq(50000000, max_depth, 50000000))
+    )
 
     # check that the model is a good fit for the data
     #   Residual sum of squares
     RSS <- sum(residuals(nlsfitSS)^2)
     #   Total sum of squares
-    TSS <- bootstrap_summary[, sum((N_Loops_Mean - mean(N_Loops_Mean))^2)]
+    TSS <- loop_counts[, sum((N - mean(N))^2)]
     #   R-squared measure (this should be close to 1)
     r2 <- 1 - (RSS/TSS)
 
@@ -132,10 +86,10 @@ estimate_saturation <- function(sample_loops, n_iters = 100, max_samples = 200) 
     R0 = summary(nlsfitSS)$coefficients[2]
     lrc = summary(nlsfitSS)$coefficients[3]
 
-    # 4. Derive estimates from the model
+    # 2. Derive estimates from the model
     # ---------------------------------
     # current fraction of saturation achieved
-    total_loops <- bootstrap_summary[N_Samples == n_samples, N_Loops_Mean]
+    total_loops <- loop_counts[is.na(Replicate), N]
     cur_sat_frac <- total_loops / Asym
 
     # get model-predicted loop and sample numbers at various levels of saturation
@@ -143,19 +97,20 @@ estimate_saturation <- function(sample_loops, n_iters = 100, max_samples = 200) 
         Frac_Saturation = c(0.5, 0.9, 0.95, 0.99)
     )
     saturation_ests[, N_Loops := Asym * Frac_Saturation]
-    saturation_ests[, N_Samples := -log((Frac_Saturation - 1) * Asym / (R0 - Asym)) / exp(lrc) ]
+    saturation_ests[, Seq_Depth := -log((Frac_Saturation - 1) * Asym / (R0 - Asym)) / exp(lrc) ]
 
     # get model-predicted loop and saturation numbers based on the number samples
-    sample_ests <- data.table(
-        N_Samples = 1:max_samples
+    depth_ests <- data.table(
+        Seq_Depth = seq(50000000, max_depth, 50000000)
     )
-    sample_ests[, Est_N_Loops := Asym + (R0 - Asym) * exp(-exp(lrc) * N_Samples)]
-    sample_ests[, Frac_Saturation := Est_N_Loops / Asym]
+    depth_ests[, Est_N_Loops := pmax(
+        Asym + (R0 - Asym) * exp(-exp(lrc) * Seq_Depth),
+        0
+    )]
+    depth_ests[, Frac_Saturation := Est_N_Loops / Asym]
 
     # return all objects in a structured list
     return(list(
-        "bootstraps" = bootstraps_long,
-        "bootstrap_summary" = bootstrap_summary,
         "model" = list(
             "Asym" = Asym,
             "R0" = R0,
@@ -170,7 +125,7 @@ estimate_saturation <- function(sample_loops, n_iters = 100, max_samples = 200) 
         ),
         "estimates" = list(
             "saturation" = saturation_ests,
-            "samples" = sample_ests
+            "depth" = depth_ests
         )
     ))
 }
@@ -187,50 +142,124 @@ SAMPLES <- list(
     "all" = metadata[, SampleID],
     "benign" = metadata[Type == "Benign", SampleID],
     "tumour" = metadata[Type == "Malignant", SampleID],
+    "primary" = metadata[Source == "Primary", SampleID],
     "T2E" = metadata[Type == "Malignant" & T2E == "Yes", SampleID],
     "NonT2E" = metadata[Type == "Malignant" & T2E == "No", SampleID]
 )
 
 # load loop calls
-loops <- fread(
-    file.path(LOOP_DIR, "merged-loops.tsv"),
-    sep = "\t",
-    header = TRUE
+sim_loops <- rbindlist(lapply(
+    SAMPLES[["primary"]],
+    function(s) {
+        dt1 <- fread(
+            file.path(
+                LOOP_DIR,
+                paste0(s, ".all-iterations.loops.tsv")
+            ),
+            sep = "\t",
+            header = TRUE
+        )
+        dt1[, SampleID := s]
+        return(dt1)
+    }
+))
+
+sim_loops[, `:=`(
+    SampleID = factor(SampleID, levels = SAMPLES[["primary"]]),
+    Seq_Depth = factor(Seq_Depth, levels = DEPTHS, ordered = TRUE),
+    Replicate = factor(Replicate, levels = 1:10, ordered = TRUE)
+)]
+
+# load full-depth loop calls
+full_loops <- rbindlist(lapply(
+    SAMPLES[["primary"]],
+    function(s) {
+        dt1 <- fread(
+            file.path(
+                "..", "..", "results", "2020-10-06_loops", "Loops", "by-sample",
+                paste0(s, ".loops.bedpe")
+            ),
+            sep = "\t",
+            header = FALSE,
+            col.names = c(
+                "chr_x", "start_x", "end_x",
+                "chr_y", "start_y", "end_y",
+                "anchor_ID_x", "anchor_ID_y", "loop_ID",
+                "fdr", "detection_scale"
+            )
+        )
+        dt1[, SampleID := s]
+        return(dt1)
+    }
+))
+
+# merge in sequencing depth information that's stored in the metadata
+full_loops <- merge(
+    x = full_loops,
+    y = metadata[, .SD, .SDcols = c("SampleID", "Seq_Depth")],
+    by = "SampleID"
 )
 
 
 # ==============================================================================
 # Analysis
 # ==============================================================================
-loginfo("Generating bootstraps and fitting models")
-# create peaks list
-loops_per_sample <- lapply(
-    SAMPLES$all,
-    function(s) {
-        loops[SampleID == s, loop_ID]
-    }
-)
-names(loops_per_sample) <- SAMPLES$all
+loginfo("Counting interaction calls")
+# set the keys for a cross-join operations that includes all factors,
+# even the ones without loops
+setkeyv(sim_loops, c("SampleID", "Seq_Depth", "Replicate"))
+# count the loops in a given (sample, depth, replicate) tuple
+sim_loop_counts <- sim_loops[,
+    .N,
+    by = c("SampleID", "Seq_Depth", "Replicate")
+][
+    # ensure that tuples with N = 0 are still counted
+    CJ(levels(SampleID), levels(Seq_Depth), levels(Replicate))
+]
+# previous CJ(...) command returns NA when the tuple isn't found
+# switch these to 0 for proper counting
+sim_loop_counts[is.na(N), N := 0]
 
-loops_tumour <- loops_per_sample[SAMPLES[["tumour"]]]
-loops_benign <- loops_per_sample[SAMPLES[["benign"]]]
-loops_t2e <- loops_per_sample[SAMPLES[["T2E"]]]
-loops_nont2e <- loops_per_sample[SAMPLES[["NonT2E"]]]
+# marking the full depth samples as Replicate = NA for easy identification in
+# saturation analysis
+full_loop_counts <- full_loops[,
+    .(
+        Replicate = NA,
+        N = .N
+    ),
+    by = c("SampleID", "Seq_Depth")
+]
+
+# count all interactions called in each sample
+all_loop_counts <- rbindlist(list(
+    sim_loop_counts,
+    full_loop_counts
+))
+
+# set Seq_Depth to a numeric value instead of a factor
+# (if this isn't done, there's a problem with the SSasymp function)
+all_loop_counts[, Seq_Depth := as.integer(Seq_Depth)]
 
 # perform the saturation analyses
-saturation_models <- list(
-    "All" = estimate_saturation(loops_per_sample),
-    "Tumour_Only" = estimate_saturation(loops_tumour),
-    "Benign_Only" = estimate_saturation(loops_benign),
-    "T2E_Tumour_Only" = estimate_saturation(loops_t2e),
-    "NonT2E_Tumour_Only" = estimate_saturation(loops_nont2e)
+# exclude Benign-Prostate-1664855 from this saturation analysis
+# for some reason (that I have yet to figure out), there is a singular gradient
+# for this sample when fitting the nls model.
+# To avoid this issue for now, just use the other 16 samples.
+nls_samples <- setdiff(SAMPLES[["primary"]], "Benign-Prostate-1664855")
+saturation_models <- lapply(
+    nls_samples,
+    function(s) {
+        estimate_saturation(all_loop_counts[SampleID == s])
+    }
 )
+names(saturation_models) <- nls_samples
 
 # combine tables to be saved into a major table for each model
-sample_ests <- rbindlist(lapply(
+depth_ests <- rbindlist(lapply(
     names(saturation_models),
     function(model) {
-        dt <- saturation_models[[model]]$estimates$samples
+        dt <- saturation_models[[model]]$estimates$depth
+        dt[, Seq_Depth := as.integer(Seq_Depth)]
         dt[, Model := model]
         return(dt)
     }
@@ -239,35 +268,21 @@ saturation_ests <- rbindlist(lapply(
     names(saturation_models),
     function(model) {
         dt <- saturation_models[[model]]$estimates$saturation
+        dt[, Seq_Depth := as.integer(Seq_Depth)]
         dt[, Model := model]
         return(dt)
     }
 ))
-bootstrap_summaries <- rbindlist(lapply(
-    names(saturation_models),
-    function(model) {
-        dt <- saturation_models[[model]]$bootstrap_summary
-        dt[, Model := model]
-        return(dt)
-    }
-))
-bootstraps_long <- rbindlist(lapply(
-    names(saturation_models),
-    function(model) {
-        dt <- saturation_models[[model]]$bootstraps
-        dt[, Model := model]
-        return(dt)
-    }
-))
+
 
 # ==============================================================================
 # Save tables
 # ==============================================================================
 loginfo("Saving tables")
 fwrite(
-    sample_ests,
+    depth_ests,
     file.path(
-        LOOP_DIR,
+        SAT_DIR,
         "loop-saturation.model-estimates.tsv"
     ),
     sep = "\t",
@@ -276,26 +291,17 @@ fwrite(
 fwrite(
     saturation_ests,
     file.path(
-        LOOP_DIR,
+        SAT_DIR,
         "loop-saturation.saturation-estimates.tsv"
     ),
     sep = "\t",
     col.names = TRUE
 )
 fwrite(
-    bootstrap_summaries,
+    all_loop_counts,
     file.path(
-        LOOP_DIR,
-        "loop-saturation.bootstrap-summary.tsv"
-    ),
-    sep = "\t",
-    col.names = TRUE
-)
-fwrite(
-    bootstraps_long,
-    file.path(
-        LOOP_DIR,
-        "loop-saturation.bootstraps.tsv"
+        SAT_DIR,
+        "loop-saturation.iterations.tsv"
     ),
     sep = "\t",
     col.names = TRUE
@@ -309,27 +315,27 @@ for (model in names(saturation_models)) {
     gg <- (
         ggplot()
         + geom_point(
-            data = bootstraps_long[Model == model],
-            mapping = aes(x = N_Samples, y = N_Loops, colour = N_Samples),
+            data = all_loop_counts[SampleID == model],
+            mapping = aes(x = Seq_Depth, y = N, colour = Seq_Depth),
             position = position_jitter(width = 0.2, height = 0),
             alpha = 0.1
         )
         + geom_boxplot(
-            data = bootstraps_long[Model == model],
-            mapping = aes(x = N_Samples, y = N_Loops, group = N_Samples, fill = N_Samples),
+            data = all_loop_counts[SampleID == model],
+            mapping = aes(x = Seq_Depth, y = N, group = Seq_Depth, fill = Seq_Depth),
             outlier.shape = NA,
             alpha = 0.5
         )
         # asymptotic curve fit
         + geom_path(
-            data = sample_ests[Model == model],
-            aes(x = N_Samples, y = Est_N_Loops),
+            data = depth_ests[Model == model],
+            aes(x = Seq_Depth, y = Est_N_Loops),
             linetype = "dashed"
         )
         # label for model
         + geom_text(
             aes(
-                x = saturation_models[[ model ]]$estimates$saturation[Frac_Saturation >= 0.95, mean(N_Samples)],
+                x = saturation_models[[ model ]]$estimates$saturation[Frac_Saturation >= 0.95, mean(Seq_Depth)],
                 y = 0.9 * saturation_models[[ model ]]$model$Asym,
                 label = "Model Fit"
             ),
@@ -356,12 +362,12 @@ for (model in names(saturation_models)) {
                 ),
                 label = c(
                     paste0(
-                        "Loops Detected: ",
+                        "Interactions Detected: ",
                         saturation_models[[ model ]]$loops$identified,
                         " (", 100 * round(saturation_models[[ model ]]$loops$saturation, 3),
                         "%)"
                     ),
-                    paste("Estimated Number of Loops:", round(saturation_models[[ model ]]$model$Asym))
+                    paste("Estimated Number of Interactions:", round(saturation_models[[ model ]]$model$Asym))
                 )
             ),
             vjust = -1,
@@ -370,7 +376,7 @@ for (model in names(saturation_models)) {
         )
         # add bars for number of samples required to reach saturation
         + geom_vline(
-            aes(xintercept = saturation_models[[ model ]]$estimates$saturation[, round(N_Samples)]),
+            aes(xintercept = saturation_models[[ model ]]$estimates$saturation[, round(Seq_Depth)]),
             linetype = "dashed",
             colour = "#66cdaa"
         )
@@ -378,13 +384,12 @@ for (model in names(saturation_models)) {
         + geom_text(
             data = saturation_models[[ model ]]$estimates$saturation,
             aes(
-                x = round(N_Samples),
+                x = round(Seq_Depth),
                 y = 0,
                 label = paste0(
                     100 * Frac_Saturation,
                     "%: ",
-                    round(N_Samples),
-                    " samples"
+                    round(Seq_Depth)
                 )
             ),
             vjust = -0.5,
@@ -395,18 +400,20 @@ for (model in names(saturation_models)) {
         + scale_fill_viridis_c()
         + scale_colour_viridis_c()
         + scale_x_continuous(
-            name = "Number of samples",
+            name = "Sequencing Depth (M)",
             limits = c(
                 0,
                 # estimated number of samples required to reach 99% saturation of loop calls
                 saturation_models[[ model ]]$estimates$saturation[
                     Frac_Saturation == 0.99,
-                    round(N_Samples) + 1
+                    round(Seq_Depth) + 1
                 ]
-            )
+            ),
+            breaks = seq(500000000, 2e9, 500000000),
+            labels = seq(500, 2e3, 500)
         )
         + scale_y_continuous(
-            name = "Number of loops",
+            name = "Number of interactions",
             limits = c(0, 1.05 * saturation_models[[ model ]]$model$Asym)
         )
         + guides(fill = FALSE, colour = FALSE)
@@ -414,3 +421,31 @@ for (model in names(saturation_models)) {
     )
     savefig(gg, file.path(PLOT_DIR, paste0("loop-saturation.", model)))
 }
+
+gg <- (
+    ggplot()
+    # asymptotic curve fit
+    + geom_path(
+        data = depth_ests,
+        aes(x = Seq_Depth, y = Est_N_Loops, colour = Model),
+        linetype = "dashed"
+    )
+    # # add asymptotic value
+    # + geom_hline(
+    #     aes(yintercept = c(
+    #         saturation_models[[ model ]]$model$Asym,
+    #         saturation_models[[ model ]]$loops$identified
+    #     )),
+    #     linetype = "dashed",
+    #     colour = "#1e90ff"
+    # )
+    + scale_x_continuous(
+        name = "Sequencing Depth"
+    )
+    + scale_y_continuous(
+        name = "Number of interactions"
+    )
+    # + guides(fill = FALSE, colour = FALSE)
+    + theme_minimal()
+)
+savefig(gg, file.path(PLOT_DIR, "loop-saturation.all"))
