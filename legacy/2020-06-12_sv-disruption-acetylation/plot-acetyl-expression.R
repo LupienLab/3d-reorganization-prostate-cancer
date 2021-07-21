@@ -4,9 +4,7 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("ggrepel"))
-source(
-    file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
-)
+source(file.path("..", "src", "savefig.R"))
 
 RES_DIR <- file.path(
     "..", "..", "results",
@@ -16,6 +14,7 @@ PLOT_DIR <- file.path(RES_DIR, "Plots", "exprs-acetyl")
 
 QVAL_THRESH <- 0.05
 FC_THRESH <- 1
+
 
 # ==============================================================================
 # Data

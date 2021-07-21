@@ -18,6 +18,7 @@ suppressMessages(library("GenomicRanges"))
 suppressMessages(library("regioneR"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("ggupset"))
+source(file.path("..", "src", "savefig.R"))
 
 MIN_SAMPLES <- 2
 CHRS <- paste0("chr", c(1:22, "X", "Y"))
@@ -25,28 +26,6 @@ CHRS <- paste0("chr", c(1:22, "X", "Y"))
 RES_DIR <- file.path("..", "..", "results", "2020-10-06_loops")
 LOOP_DIR <- file.path(RES_DIR, "Loops")
 
-
-# ==============================================================================
-# Functions
-# ==============================================================================
-#' Save figures in multiple formats
-#'
-#' @param gg ggplot object
-#' @param prefix Prefix for output file
-#' @param ext Output extensions
-#' @param dpi DPI resolution
-savefig <- function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
-    for (e in ext) {
-        ggsave(
-            paste(prefix, e, sep = "."),
-            gg,
-            height = height,
-            width = width,
-            units = "cm",
-            dpi = dpi
-        )
-    }
-}
 
 # ==============================================================================
 # Data

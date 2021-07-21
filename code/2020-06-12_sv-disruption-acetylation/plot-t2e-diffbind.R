@@ -4,9 +4,7 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("DiffBind"))
 suppressMessages(library("ggplot2"))
-source(
-    file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
-)
+source(file.path("..", "src", "savefig.R"))
 
 RES_DIR <- file.path("..", "..", "results", "2020-06-12_sv-disruption-acetylation")
 TEST_DIR <- file.path(RES_DIR, "Acetylation", "T2E")

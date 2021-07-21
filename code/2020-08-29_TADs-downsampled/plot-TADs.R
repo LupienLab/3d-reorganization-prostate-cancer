@@ -4,34 +4,13 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("scales"))
 suppressMessages(library("ggplot2"))
+source(file.path("..", "src", "savefig.R"))
 
 MAX_WINDOW <- 23
 MIN_WINDOW <- 3
 RESOLUTION <- 40000
 MAX_PERSISTENCE <- MAX_WINDOW - MIN_WINDOW + 1
 PLOT_DIR <- "Plots"
-
-# ==============================================================================
-# Functions
-# ==============================================================================
-#' Save figures in multiple formats
-#'
-#' @param gg ggplot object
-#' @param prefix Prefix for output file
-#' @param ext Output extensions
-#' @param dpi DPI resolution
-savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
-    for (e in ext) {
-        ggsave(
-            paste(prefix, e, sep = "."),
-            gg,
-            height = height,
-            width = width,
-            units = "cm",
-            dpi = dpi
-        )
-    }
-}
 
 
 # ==============================================================================

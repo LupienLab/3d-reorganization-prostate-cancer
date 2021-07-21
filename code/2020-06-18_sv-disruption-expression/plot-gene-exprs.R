@@ -16,6 +16,7 @@ loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
+source(file.path("..", "src", "savefig.R"))
 source("helper-functions.R")
 
 RES_DIR <- file.path(
