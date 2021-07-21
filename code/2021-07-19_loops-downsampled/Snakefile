@@ -1,0 +1,134 @@
+# ==============================================================================
+# Configuration
+# ==============================================================================
+import pandas as pd
+import os.path as path
+
+# sample metadata
+CONFIG = pd.read_csv("config.tsv", index_col=False, sep="\t")
+CONFIG = CONFIG.loc[CONFIG.Include == "Yes", :]
+
+# various output folders
+DIR = {
+	"res": path.join("..", "..", "results", "2021-07-19_loops-downsampled"),
+}
+DIR["ctx"]   = path.join(DIR["res"], "downsampled-contacts")
+DIR["tmp"]   = path.join(DIR["res"], "TMP")
+DIR["tad"]   = path.join(DIR["res"], "TADs")
+DIR["plot"]  = path.join(DIR["res"], "Plots")
+DIR["loop"]  = path.join(DIR["res"], "Loops")
+DIR["stats"] = path.join(DIR["res"], "Stats")
+DIR["track"] = path.join(DIR["res"], "Tracks")
+
+# variables for controlling file generation
+SAMPLES = CONFIG.SampleID.tolist()
+
+PRIMARY_SAMPLES = CONFIG.loc[CONFIG.Source == "Primary", "SampleID"].tolist()
+ALL_SAMPLES = CONFIG.loc[:, "SampleID"].tolist()
+
+CHRS = ["chr" + str(i) for i in list(range(1, 23)) + ["X"]]
+DEPTHS = [i * 50000000 for i in range(1, 7)]
+
+wildcard_constraints:
+	chrom = "chr[X]?[0-9]{0,2}",
+	res = "\d+",
+	rep = "\d+",
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+	input:
+		# loop calls for each sample, each depth, and each replicate
+		# expand(
+		# 	path.join(DIR["loop"], "{sample}.depth_{depth}.res_{res}bp.rep_{rep}.loops.tsv"),
+		# 	sample=PRIMARY_SAMPLES,
+		# 	depth=DEPTHS,
+		# 	res=10000,
+		# 	rep=range(1, 11),
+		# ),
+		# aggregated loop calls across all depths and replicates for a single sample
+		expand(
+			path.join(DIR["loop"], "{sample}.all-iterations.loops.tsv"),
+			sample=PRIMARY_SAMPLES,
+		),
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+
+# Miscellaneous
+# ------------------------------------------------
+rule link:
+	input:
+		"config.tsv",
+	output:
+		path.join(DIR["ctx"], "{sample}.mcool"),
+	params:
+		src = lambda wildcards: CONFIG.loc[CONFIG.SampleID == wildcards.sample, "Contact_File"].values[0]
+	shell:
+		"pushd {DIR['ctx']}; ln -s ../{params.src} {wildcards.sample}.mcool; popd"
+
+rule downsample:
+	input:
+		path.join(DIR["ctx"], "{sample}.mcool"),
+	output:
+		temp(path.join(DIR["ctx"], "{sample}.depth_{depth}.res_{res}bp.rep_{rep}.cool")),
+	shell:
+		"cooltools random-sample -c {wildcards.depth} {input}::/resolutions/{wildcards.res} {output}"
+
+# Chromatin interaction calling
+# ------------------------------------------------
+rule call_loops:
+	input:
+		path.join(DIR["ctx"], "{sample}.depth_{depth}.res_{res}bp.rep_{rep}.cool"),
+	output:
+		temp(path.join(DIR["loop"], "{sample}.depth_{depth}.res_{res}bp.rep_{rep}.chrom_{chrom}.loops.tsv")),
+	threads: 8
+	shell:
+		"mustache -f {input} -r {wildcards.res} -ch {wildcards.chrom} -p {threads} -o {output}"
+
+rule merge_loops:
+	input:
+		expand(
+			path.join(DIR["loop"], "{{sample}}.depth_{{depth}}.res_{{res}}bp.rep_{{rep}}.chrom_{chrom}.loops.tsv"),
+			chrom=CHRS,
+		),
+	output:
+		path.join(DIR["loop"], "{sample}.depth_{depth}.res_{res}bp.rep_{rep}.loops.tsv"),
+	shell:
+		"""
+		echo -e 'chr_x\tstart_x\tend_x\tchr_y\tstart_y\tend_y\tfdr\tdetection_scale' > {output};
+		awk '{{FS=OFS=\"\\t\"}}{{ if ($1 != \"BIN1_CHR\") print }}' {input} | sort -k1,1 -V -k4,4 -V -k2,2n -k5,5n >> {output}
+		"""
+
+# Saturation analysis
+# ------------------------------------------------
+rule unify_loops:
+	input:
+		script = "unify-loops.R",
+		data = expand(
+			path.join(DIR["loop"], "{{sample}}.depth_{depth}.res_{res}bp.rep_{rep}.loops.tsv"),
+			depth=DEPTHS,
+			res=10000,
+			rep=range(1, 11),
+		),
+	output:
+		path.join(DIR["loop"], "{sample}.all-iterations.loops.tsv"),
+	shell:
+		"Rscript {input.script} {DIR[loop]}/{wildcards.sample}"
+
+rule saturation:
+	input:
+		script = "saturation-analysis.R",
+		data = expand(
+			path.join(DIR["loop"], "{sample}.all-iterations.loops.tsv"),
+			sample=PRIMARY_SAMPLES,
+		),
+	output:
+		
+	shell:
+		"Rscript {input.script}"
+
