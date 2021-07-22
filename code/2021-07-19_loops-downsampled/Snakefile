@@ -13,12 +13,9 @@ DIR = {
 	"res": path.join("..", "..", "results", "2021-07-19_loops-downsampled"),
 }
 DIR["ctx"]   = path.join(DIR["res"], "downsampled-contacts")
-DIR["tmp"]   = path.join(DIR["res"], "TMP")
-DIR["tad"]   = path.join(DIR["res"], "TADs")
 DIR["plot"]  = path.join(DIR["res"], "Plots")
 DIR["loop"]  = path.join(DIR["res"], "Loops")
-DIR["stats"] = path.join(DIR["res"], "Stats")
-DIR["track"] = path.join(DIR["res"], "Tracks")
+DIR["sat"] = path.join(DIR["res"], "Saturation")
 
 # variables for controlling file generation
 SAMPLES = CONFIG.SampleID.tolist()
@@ -40,18 +37,26 @@ wildcard_constraints:
 # ==============================================================================
 rule all:
 	input:
-		# loop calls for each sample, each depth, and each replicate
-		# expand(
-		# 	path.join(DIR["loop"], "{sample}.depth_{depth}.res_{res}bp.rep_{rep}.loops.tsv"),
-		# 	sample=PRIMARY_SAMPLES,
-		# 	depth=DEPTHS,
-		# 	res=10000,
-		# 	rep=range(1, 11),
-		# ),
 		# aggregated loop calls across all depths and replicates for a single sample
 		expand(
 			path.join(DIR["loop"], "{sample}.all-iterations.loops.tsv"),
 			sample=PRIMARY_SAMPLES,
+		),
+		# saturation analysis
+		path.join(DIR["sat"], "loop-saturation.depth-estimates.tsv"),
+        path.join(DIR["sat"], "loop-saturation.saturation-estimates.tsv"),
+        path.join(DIR["sat"], "loop-saturation.observed-saturation.tsv"),
+        path.join(DIR["sat"], "loop-saturation.iterations.tsv"),
+		# saturation plots
+		expand(
+			path.join(DIR["plot"], "loop-saturation.{sample}.{ext}"),
+			sample=PRIMARY_SAMPLES,
+			ext=["png", "pdf"],
+		),
+		expand(
+			path.join(DIR["plot"], "loop-saturation.all.{ext}"),
+			sample=PRIMARY_SAMPLES,
+			ext=["png", "pdf"],
 		),
 
 
@@ -128,7 +133,20 @@ rule saturation:
 			sample=PRIMARY_SAMPLES,
 		),
 	output:
-		
+        path.join(DIR["sat"], "loop-saturation.depth-estimates.tsv"),
+        path.join(DIR["sat"], "loop-saturation.saturation-estimates.tsv"),
+        path.join(DIR["sat"], "loop-saturation.observed-saturation.tsv"),
+        path.join(DIR["sat"], "loop-saturation.iterations.tsv"),
+		expand(
+			path.join(DIR["plot"], "loop-saturation.{sample}.{ext}"),
+			sample=PRIMARY_SAMPLES,
+			ext=["png", "pdf"],
+		),
+		expand(
+			path.join(DIR["plot"], "loop-saturation.all.{ext}"),
+			sample=PRIMARY_SAMPLES,
+			ext=["png", "pdf"],
+		),
 	shell:
 		"Rscript {input.script}"
 
