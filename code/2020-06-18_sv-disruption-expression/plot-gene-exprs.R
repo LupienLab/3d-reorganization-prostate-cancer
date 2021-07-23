@@ -160,6 +160,15 @@ for (gp in gene_pairs) {
         )
         + theme_minimal()
         + jrh_theme()
+        + theme(
+            axis.text.x = element_text(
+                angle = 90,
+                vjust = 0.5,
+                hjust = 1,
+                face = "italic",
+                colour = "#000000"
+            ),
+        )
     )
     savefig(
         gg,
