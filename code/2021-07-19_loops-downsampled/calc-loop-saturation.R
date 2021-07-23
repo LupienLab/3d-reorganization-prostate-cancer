@@ -3,25 +3,8 @@
 # ==============================================================================
 # loop-saturation
 # --------------------------------------
-# Description: Calculate and plot the loop call saturation estimates
+# Description: Calculate the loop call saturation estimates
 # Author: James Hawley
-# Steps:
-#   1. On a cohort of samples, the sample order is randomised and the number of
-#      peaks/regions identified in the first sample is plotted at x=1
-#   2. The peaks identified in the second sample are compared to those found in
-#      the first and only those which are new/unique are kept.
-#      The sum of these new Sample2-only peaks and the Sample1-peaks is then
-#      plotted for x=2
-#   3. For every following sample, the number of NEW peaks identified in that
-#      sample is added to the cumulative sum of unique peaks identified in all
-#      preceding samples and plotted at x=sample number
-#   4. Steps 1-3 are repeated n times. n should be defined by the user.
-#   5. The final plot displays the cumulative peak number at each sample number
-#      averaged over the n iterations, as well as standard error of the mean
-#      error bars.
-#   6. A self-starting non-linear regression model is fitted to the data and is
-#      used to predict at what sample number saturation will be reached and what
-#      level of saturation has been reached at the current sample size.
 
 
 # ==============================================================================
@@ -242,6 +225,7 @@ all_loop_counts <- rbindlist(list(
 # (if this isn't done, there's a problem with the SSasymp function)
 all_loop_counts[, Seq_Depth := as.integer(Seq_Depth)]
 
+loginfo("Calculating saturation")
 # perform the saturation analyses
 # exclude Benign-Prostate-1664855 from this saturation analysis
 # for some reason (that I have yet to figure out), there is a singular gradient
@@ -297,7 +281,7 @@ obs_saturation_ests <- rbindlist(lapply(
 # ==============================================================================
 # Save tables
 # ==============================================================================
-loginfo("Saving tables")
+loginfo("Saving data")
 fwrite(
     depth_ests,
     file.path(
@@ -335,138 +319,7 @@ fwrite(
     col.names = TRUE
 )
 
-# ==============================================================================
-# Plots
-# ==============================================================================
-loginfo("Generating plots")
-for (s in names(saturation_models)) {
-    gg <- (
-        ggplot()
-        + geom_point(
-            data = all_loop_counts[SampleID == s],
-            mapping = aes(x = Seq_Depth, y = N, colour = Seq_Depth),
-            position = position_jitter(width = 0.2, height = 0),
-            alpha = 0.1
-        )
-        + geom_boxplot(
-            data = all_loop_counts[SampleID == s],
-            mapping = aes(x = Seq_Depth, y = N, group = Seq_Depth, fill = Seq_Depth),
-            outlier.shape = NA,
-            alpha = 0.5
-        )
-        # asymptotic curve fit
-        + geom_path(
-            data = depth_ests[SampleID == s],
-            aes(x = Seq_Depth, y = Est_N_Loops),
-            linetype = "dashed"
-        )
-        # label for sample
-        + geom_text(
-            aes(
-                x = saturation_models[[ s ]]$estimates$saturation[Frac_Saturation >= 0.95, mean(Seq_Depth)],
-                y = 0.9 * saturation_models[[ s ]]$model$Asym,
-                label = "Model Fit"
-            ),
-            vjust = 0,
-            hjust = 0.5
-        )
-        # add asymptotic value
-        + geom_hline(
-            aes(yintercept = c(
-                saturation_models[[ s ]]$model$Asym,
-                saturation_models[[ s ]]$interactions$identified
-            )),
-            linetype = "dashed",
-            colour = "#1e90ff"
-
-        )
-        # labels for horizontal lines
-        + geom_text(
-            aes(
-                x = c(0, 0),
-                y = c(
-                    saturation_models[[ s ]]$interactions$identified,
-                    saturation_models[[ s ]]$model$Asym
-                ),
-                label = c(
-                    paste0(
-                        "Interactions Detected: ",
-                        saturation_models[[ s ]]$interactions$identified,
-                        " (", 100 * round(saturation_models[[ s ]]$interactions$saturation, 3),
-                        "%)"
-                    ),
-                    paste(
-                        "Estimated Number of Interactions:",
-                        round(saturation_models[[ s ]]$model$Asym)
-                    )
-                )
-            ),
-            vjust = -1,
-            hjust = 0,
-            colour = "#1e90ff"
-        )
-        # add bars for number of samples required to reach saturation
-        + geom_vline(
-            aes(xintercept = saturation_models[[ s ]]$estimates$saturation[, round(Seq_Depth)]),
-            linetype = "dashed",
-            colour = "#66cdaa"
-        )
-        # labels for vertical lines
-        + geom_text(
-            data = saturation_models[[ s ]]$estimates$saturation,
-            aes(
-                x = round(Seq_Depth),
-                y = 0,
-                label = paste0(
-                    100 * Frac_Saturation,
-                    "%: ",
-                    round(Seq_Depth)
-                )
-            ),
-            vjust = -0.5,
-            hjust = 0,
-            angle = 90,
-            colour = "#66cdaa"
-        )
-        + scale_fill_viridis_c()
-        + scale_colour_viridis_c()
-        + scale_x_continuous(
-            name = "Sequencing Depth (M)",
-            limits = c(
-                0,
-                # estimated number of samples required to reach 99% saturation of loop calls
-                saturation_models[[ s ]]$estimates$saturation[
-                    Frac_Saturation == 0.99,
-                    round(Seq_Depth) + 1
-                ]
-            ),
-            breaks = seq(500000000, 2e9, 500000000),
-            labels = seq(500, 2e3, 500)
-        )
-        + scale_y_continuous(
-            name = "Number of interactions",
-            limits = c(0, 1.05 * saturation_models[[ s ]]$model$Asym)
-        )
-        + guides(fill = FALSE, colour = FALSE)
-        + theme_minimal()
-    )
-    savefig(gg, file.path(PLOT_DIR, paste0("loop-saturation.", s)))
-}
-
-gg <- (
-    ggplot()
-    # asymptotic curve fit
-    + geom_path(
-        data = depth_ests,
-        aes(x = Seq_Depth, y = Est_N_Loops, colour = SampleID),
-        linetype = "dashed"
-    )
-    + scale_x_continuous(
-        name = "Sequencing Depth"
-    )
-    + scale_y_continuous(
-        name = "Number of interactions"
-    )
-    + theme_minimal()
+saveRDS(
+    saturation_models,
+    file.path(SAT_DIR, "loop-saturation.models.rds")
 )
-savefig(gg, file.path(PLOT_DIR, "loop-saturation.all"))

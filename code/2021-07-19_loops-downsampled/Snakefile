@@ -125,9 +125,9 @@ rule unify_loops:
 	shell:
 		"Rscript {input.script} {DIR[loop]}/{wildcards.sample}"
 
-rule saturation:
+rule calc_saturation:
 	input:
-		script = "saturation-analysis.R",
+		script = "calc-saturation-analysis.R",
 		data = expand(
 			path.join(DIR["loop"], "{sample}.all-iterations.loops.tsv"),
 			sample=PRIMARY_SAMPLES,
@@ -137,6 +137,19 @@ rule saturation:
         path.join(DIR["sat"], "loop-saturation.saturation-estimates.tsv"),
         path.join(DIR["sat"], "loop-saturation.observed-saturation.tsv"),
         path.join(DIR["sat"], "loop-saturation.iterations.tsv"),
+        path.join(DIR["sat"], "loop-saturation.models.rds"),
+	shell:
+		"Rscript {input.script}"
+
+rule plot_saturation:
+	input:
+		script = "plot-saturation-analysis.R",
+		depth = path.join(DIR["sat"], "loop-saturation.depth-estimates.tsv"),
+        sat = path.join(DIR["sat"], "loop-saturation.saturation-estimates.tsv"),
+        obs = path.join(DIR["sat"], "loop-saturation.observed-saturation.tsv"),
+        iters = path.join(DIR["sat"], "loop-saturation.iterations.tsv"),
+        models = path.join(DIR["sat"], "loop-saturation.models.rds"),
+	output:
 		expand(
 			path.join(DIR["plot"], "loop-saturation.{sample}.{ext}"),
 			sample=PRIMARY_SAMPLES,
@@ -149,4 +162,3 @@ rule saturation:
 		),
 	shell:
 		"Rscript {input.script}"
-
