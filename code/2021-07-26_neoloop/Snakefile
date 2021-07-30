@@ -54,12 +54,12 @@ rule all:
 			sample=SAMPLES,
 			res=10000,
 		),
-		# copy number segmentation
-		expand(
-			path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-segs.tsv"),
-			sample=SAMPLES,
-			res=10000,
-		),
+		# # copy number segmentation
+		# expand(
+		# 	path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-segs.tsv"),
+		# 	sample=SAMPLES,
+		# 	res=10000,
+		# ),
 		# add "sweight" column to correct for copy number in ICE correction
 		expand(
 			path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
@@ -136,20 +136,9 @@ rule correct_cnv:
 		correct-cnv -H {output.cool} --cnv-file {input.cnv} --nproc {threads} --logFile {output.log}
 		"""
 
-rule reformat_svs:
-	input:
-		script = "reformat-SVs.R",
-		data = "sv-breakpoints.paired.oriented.tsv",
-	output:
-		expand(
-			path.join(DIR["assembly"], "{sample}.rearrangements.tsv"),
-			sample=SAMPLES,
-		),
-	shell:
-		"Rscript {input.script}"
-
 rule create_assembly:
 	input:
+		# manually annotated breaks to match assemble-complexSVs required format
 		breaks = path.join(DIR["assembly"], "{sample}.rearrangements.tsv"),
 		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
 	output:
