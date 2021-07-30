@@ -1,0 +1,183 @@
+# ==============================================================================
+# Environment
+# ==============================================================================
+import pandas as pd
+from os import path as path
+
+# load sample metadata
+meta = pd.read_csv(
+	"config.tsv",
+	sep = "\t",
+)
+
+# filter out samples that should not be included
+meta = meta.loc[meta["Include"] == "Yes", :]
+
+# extract sample IDs
+SAMPLES = meta["SampleID"].tolist()
+
+# important directories
+DIR = {
+	"ctx_pri": path.join("..", "..", "data", "Processed", "2019-06-18_PCa-LowC-sequencing", "Contacts"),
+	"ctx_4dn": path.join("..", "..", "data", "External", "4DNucleome", "Contacts"),
+	"ctx_srr": path.join("..", "..", "data", "External", "Rhie_2019", "Contacts"),
+	"res": path.join("..", "..", "results", "2021-07-26_neoloop"),
+	"log": "Logs",
+}
+DIR["cool"] = path.join(DIR["res"], "cooler")
+DIR["cnv"] = path.join(DIR["res"], "cnv-calls")
+DIR["cache"] = path.join(DIR["res"], "cnv-cache")
+DIR["assembly"] = path.join(DIR["res"], "assembled-SVs")
+DIR["loop"] = path.join(DIR["res"], "neoloops")
+DIR["tad"] = path.join(DIR["res"], "neotads")
+
+wildcard_constraints:
+	sample_pri = "^(PCa|Benign-Prostate-)\d+",
+	sample_4dn = "^4DN\w+",
+	sample_srr = "^SRR\w+",
+
+
+# ==============================================================================
+# Meta Rules
+# ==============================================================================
+rule all:
+	input:
+		# copied 10 kbp cooler files for correction
+		expand(
+			path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+			sample=SAMPLES,
+			res=10000,
+		),
+		# copy number calls
+		expand(
+			path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-calls.bedGraph"),
+			sample=SAMPLES,
+			res=10000,
+		),
+		# copy number segmentation
+		expand(
+			path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-segs.tsv"),
+			sample=SAMPLES,
+			res=10000,
+		),
+		# add "sweight" column to correct for copy number in ICE correction
+		expand(
+			path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
+			sample=SAMPLES,
+			res=10000,
+		),
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+rule extract_cool_primary:
+	input:
+		path.join(DIR["ctx_pri"], "{sample}.mcool"),
+	output:
+		path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+	shell:
+		"cooler cp {input}::/resolutions/{wildcards.res} {output}"
+
+rule extract_cool_4dn:
+	input:
+		path.join(DIR["ctx_4dn"], "{sample}.mcool"),
+	output:
+		path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+	shell:
+		"cooler cp {input}::/resolutions/{wildcards.res} {output}"
+
+rule extract_cool_srr:
+	input:
+		path.join(DIR["ctx_srr"], "{sample}.mcool"),
+	output:
+		path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+	shell:
+		"cooler cp {input}::/resolutions/{wildcards.res} {output}"
+
+rule calc_cnv:
+	input:
+		path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+	output:
+		cnv = path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-calls.bedGraph"),
+		log = path.join(DIR["log"], "{sample}.res_{res}bp.cnv-calls.log"),
+	params:
+		" ".join([
+			"-g hg38",
+			"-e MboI",
+			"--cachefolder {}".format(DIR["cache"]),
+		])
+	threads: 8
+	shell:
+		"calculate-cnv {params} -H {input} --output {output.cnv} --logFile {output.log}"
+
+rule segment_cnv:
+	input:
+		path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-calls.bedGraph"),
+	output:
+		seg = path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-segs.tsv"),
+		log = path.join(DIR["log"], "{sample}.res_{res}bp.cnv-segs.log"),
+	threads: 8
+	shell:
+		"segment-cnv --cnv-file {input} --binsize {wildcards.res} --output {output.seg} --nproc {threads} --logFile {output.log}"
+
+rule correct_cnv:
+	input:
+		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+		cnv = path.join(DIR["cnv"], "{sample}.res_{res}bp.cnv-calls.bedGraph"),
+	output:
+		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
+		log = path.join(DIR["log"], "{sample}.res_{res}bp.correct-cnv.log"),
+	threads: 8
+	shell:
+		# this command modifies the original file, so we have to duplicate it first
+		"""
+		cp {input.cool} {output.cool}
+		correct-cnv -H {output.cool} --cnv-file {input.cnv} --nproc {threads} --logFile {output.log}
+		"""
+
+rule reformat_svs:
+	input:
+		script = "reformat-SVs.R",
+		data = "sv-breakpoints.paired.oriented.tsv",
+	output:
+		expand(
+			path.join(DIR["assembly"], "{sample}.rearrangements.tsv"),
+			sample=SAMPLES,
+		),
+	shell:
+		"Rscript {input.script}"
+
+rule create_assembly:
+	input:
+		breaks = path.join(DIR["assembly"], "{sample}.rearrangements.tsv"),
+		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
+	output:
+		assembly = path.join(DIR["assembly"], "{sample}.assemblies.txt"),
+		log = path.join(DIR["log"], "{sample}.assembly.log"),
+	threads: 8
+	shell:
+		"assemble-complexSVs --output {DIR.assembly}/{wildcards.sample} --break-points {input.breaks} --hic {input.cool} --nproc {threads} --logFile {output.log}"
+
+rule call_neoloop:
+	input:
+		assembly = path.join(DIR["assembly"], "{sample}.assemblies.txt"),
+		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
+	output:
+		loops = path.join(DIR["loop"], "{sample}.neoloops.tsv"),
+		log = path.join(DIR["log"], "{sample}.neoloops.log"),
+	threads: 8
+	shell:
+		"neoloop-caller --output {DIR.loop}/{wildcards.sample}.neoloops.tsv --hic {input.cool} --assembly {input.assembly} --nproc {threads} --logFile {output.log}"
+
+rule call_neotad:
+	input:
+		assembly = path.join(DIR["assembly"], "{sample}.assemblies.txt"),
+		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
+	output:
+		tads = path.join(DIR["tad"], "{sample}.neotads.tsv"),
+		log = path.join(DIR["log"], "{sample}.neotads.log"),
+	threads: 8
+	shell:
+		"neotad-caller --output {DIR.tad}/{wildcards.sample}.neotads.tsv --hic {input.cool} --assembly {input.assembly} --nproc {threads} --logFile {output.log}"
+
