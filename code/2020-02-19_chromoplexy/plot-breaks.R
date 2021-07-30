@@ -17,7 +17,7 @@ suppressWarnings(library("data.table"))
 suppressWarnings(library("ggplot2"))
 suppressMessages(library("RCircos"))
 suppressMessages(library("scales"))
-source("plotting-helper.R")
+source(file.path("..", "src", "savefig.R"))
 
 RES_DIR <- file.path("..", "..", "results", "2020-02-19_chromoplexy")
 GRAPH_DIR <- file.path(RES_DIR, "Graphs")

@@ -15,9 +15,7 @@ suppressMessages(library("logging"))
 loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
-source(
-    file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
-)
+source(file.path("..", "src", "savefig.R"))
 
 RES_DIR <- file.path(
     "..", "..", "results", "2020-06-18_sv-disruption-expression"

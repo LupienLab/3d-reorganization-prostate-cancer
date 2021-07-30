@@ -3,7 +3,7 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
-source("../2020-02-19_chromoplexy/plotting-helper.R")
+source(file.path("..", "src", "savefig.R"))
 
 PLOT_DIR <- "Plots"
 

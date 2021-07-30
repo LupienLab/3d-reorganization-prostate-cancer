@@ -8,9 +8,7 @@ suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
 suppressMessages(library("gridExtra"))
-source(
-    file.path("..", "2020-02-19_chromoplexy", "plotting-helper.R")
-)
+source(file.path("..", "src", "savefig.R"))
 
 GRAPH_DIR <- file.path(
     "..", "..", "results", "2020-02-19_chromoplexy", "Graphs"

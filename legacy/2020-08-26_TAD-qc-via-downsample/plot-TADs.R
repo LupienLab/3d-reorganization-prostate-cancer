@@ -4,6 +4,7 @@
 suppressMessages(library("data.table"))
 suppressMessages(library("scales"))
 suppressMessages(library("ggplot2"))
+source(file.path("..", "src", "savefig.R"))
 
 MAX_WINDOW <- 24
 MIN_WINDOW <- 3
@@ -19,25 +20,6 @@ split_comma_col <- function(v, f=identity) {
     # remove various non-informative characters (spaces, braces)
     splitv <- lapply(splitv, function(x) {gsub("[][ ]", "", x)})
     return(lapply(splitv, f))
-}
-
-#' Save figures in multiple formats
-#'
-#' @param gg ggplot object
-#' @param prefix Prefix for output file
-#' @param ext Output extensions
-#' @param dpi DPI resolution
-savefig = function(gg, prefix, ext = c("png", "pdf"), width = 20, height = 12, dpi = 400) {
-    for (e in ext) {
-        ggsave(
-            paste(prefix, e, sep = "."),
-            gg,
-            height = height,
-            width = width,
-            units = "cm",
-            dpi = dpi
-        )
-    }
 }
 
 

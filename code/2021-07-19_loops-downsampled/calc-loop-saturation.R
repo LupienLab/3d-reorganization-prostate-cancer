@@ -1,0 +1,325 @@
+# ==============================================================================
+# Meta
+# ==============================================================================
+# loop-saturation
+# --------------------------------------
+# Description: Calculate the loop call saturation estimates
+# Author: James Hawley
+
+
+# ==============================================================================
+# Environment
+# ==============================================================================
+suppressMessages(library("logging"))
+
+loginfo("Loading packages")
+suppressMessages(library("data.table"))
+suppressMessages(library("ggplot2"))
+suppressMessages(library("matrixStats"))
+source(file.path("..", "src", "savefig.R"))
+
+set.seed(42)
+
+RES_DIR <- file.path("..", "..", "results", "2021-07-19_loops-downsampled")
+LOOP_DIR <- file.path(RES_DIR, "Loops")
+SAT_DIR <- file.path(RES_DIR, "Saturation")
+PLOT_DIR <- file.path(RES_DIR, "Plots")
+
+DEPTHS <- as.integer(50000000 * (1:6))
+
+# ==============================================================================
+# Functions
+# ==============================================================================
+#' Fit exponential model to the loop counts to estimate the total number of loops
+#' present at a given sequencing depth
+#'
+#' @param loop_counts Loop counts
+#' @param max_depth maximum sequencing depth to estimate the model out to
+#' @return structured list
+estimate_saturation <- function(loop_counts, max_depth = 1e9) {
+    # 1. Fit the exponential
+    # ---------------------------------
+    # use self starting model for asymptotic data SSasymp
+    # it follows the formula: y = Asym + (R0 - Asym) * exp(-exp(lrc) * x) where
+    # x     a numeric vector of values at which to evaluate the model
+    # Asym  a numeric parameter for the upper asymptotic value of the model.
+    # R0    a numeric parameter for the response when input is zero
+    # lrc	a numeric parameter for the natural log of the rate constant
+    nlsfitSS <- nls(
+        N ~ SSasymp(Seq_Depth, Asym, R0, lrc),
+        data = loop_counts
+    )
+
+    # predict the future values with increasing numbers of samples
+    pred <- predict(
+        nlsfitSS,
+        list(N = seq(50000000, max_depth, 50000000))
+    )
+
+    # check that the model is a good fit for the data
+    #   Residual sum of squares
+    RSS <- sum(residuals(nlsfitSS)^2)
+    #   Total sum of squares
+    TSS <- loop_counts[, sum((N - mean(N))^2)]
+    #   R-squared measure (this should be close to 1)
+    r2 <- 1 - (RSS/TSS)
+
+    # extract key parameters from the model
+    Asym = summary(nlsfitSS)$coefficients[1]
+    R0 = summary(nlsfitSS)$coefficients[2]
+    lrc = summary(nlsfitSS)$coefficients[3]
+
+    # 2. Derive estimates from the model
+    # ---------------------------------
+    # current fraction of saturation achieved
+    total_depth <- loop_counts[is.na(Replicate), Seq_Depth]
+    total_loops <- loop_counts[is.na(Replicate), N]
+    cur_sat_frac <- total_loops / Asym
+
+    # get model-predicted loop and sample numbers at various levels of saturation
+    saturation_ests <- data.table(
+        Frac_Saturation = c(0.5, 0.9, 0.95, 0.99, 0.999)
+    )
+    saturation_ests[, N_Loops := Asym * Frac_Saturation]
+    saturation_ests[, Seq_Depth := -log((Frac_Saturation - 1) * Asym / (R0 - Asym)) / exp(lrc) ]
+
+    # get model-predicted loop and saturation numbers based on the number samples
+    depth_ests <- data.table(
+        Seq_Depth = seq(50000000, max_depth, 50000000)
+    )
+    depth_ests[, Est_N_Loops := pmax(
+        Asym + (R0 - Asym) * exp(-exp(lrc) * Seq_Depth),
+        0
+    )]
+    depth_ests[, Frac_Saturation := Est_N_Loops / Asym]
+
+    # return all objects in a structured list
+    return(list(
+        "model" = list(
+            "Asym" = Asym,
+            "R0" = R0,
+            "lrc" = lrc,
+            "RSS" = RSS,
+            "TSS" = TSS,
+            "R_Squared" = r2
+        ),
+        "interactions" = list(
+            "depth" = total_depth,
+            "identified" = total_loops,
+            "saturation" = cur_sat_frac
+        ),
+        "estimates" = list(
+            "saturation" = saturation_ests,
+            "depth" = depth_ests
+        )
+    ))
+}
+
+
+# ==============================================================================
+# Data
+# ==============================================================================
+loginfo("Loading data")
+# load metadata
+metadata <- fread("config.tsv", sep = "\t", header = TRUE)
+metadata <- metadata[Include == "Yes", .SD]
+SAMPLES <- list(
+    "all" = metadata[, SampleID],
+    "benign" = metadata[Type == "Benign", SampleID],
+    "tumour" = metadata[Type == "Malignant", SampleID],
+    "primary" = metadata[Source == "Primary", SampleID],
+    "T2E" = metadata[Type == "Malignant" & T2E == "Yes", SampleID],
+    "NonT2E" = metadata[Type == "Malignant" & T2E == "No", SampleID]
+)
+
+# load loop calls
+sim_loops <- rbindlist(lapply(
+    SAMPLES[["primary"]],
+    function(s) {
+        dt1 <- fread(
+            file.path(
+                LOOP_DIR,
+                paste0(s, ".all-iterations.loops.tsv")
+            ),
+            sep = "\t",
+            header = TRUE
+        )
+        dt1[, SampleID := s]
+        return(dt1)
+    }
+))
+
+sim_loops[, `:=`(
+    SampleID = factor(SampleID, levels = SAMPLES[["primary"]]),
+    Seq_Depth = factor(Seq_Depth, levels = DEPTHS, ordered = TRUE),
+    Replicate = factor(Replicate, levels = 1:10, ordered = TRUE)
+)]
+
+# load full-depth loop calls
+full_loops <- rbindlist(lapply(
+    SAMPLES[["primary"]],
+    function(s) {
+        dt1 <- fread(
+            file.path(
+                "..", "..", "results", "2020-10-06_loops", "Loops", "by-sample",
+                paste0(s, ".loops.bedpe")
+            ),
+            sep = "\t",
+            header = FALSE,
+            col.names = c(
+                "chr_x", "start_x", "end_x",
+                "chr_y", "start_y", "end_y",
+                "anchor_ID_x", "anchor_ID_y", "loop_ID",
+                "fdr", "detection_scale"
+            )
+        )
+        dt1[, SampleID := s]
+        return(dt1)
+    }
+))
+
+# merge in sequencing depth information that's stored in the metadata
+full_loops <- merge(
+    x = full_loops,
+    y = metadata[, .SD, .SDcols = c("SampleID", "Seq_Depth")],
+    by = "SampleID"
+)
+
+
+# ==============================================================================
+# Analysis
+# ==============================================================================
+loginfo("Counting interaction calls")
+# set the keys for a cross-join operations that includes all factors,
+# even the ones without loops
+setkeyv(sim_loops, c("SampleID", "Seq_Depth", "Replicate"))
+# count the loops in a given (sample, depth, replicate) tuple
+sim_loop_counts <- sim_loops[,
+    .N,
+    by = c("SampleID", "Seq_Depth", "Replicate")
+][
+    # ensure that tuples with N = 0 are still counted
+    CJ(levels(SampleID), levels(Seq_Depth), levels(Replicate))
+]
+# previous CJ(...) command returns NA when the tuple isn't found
+# switch these to 0 for proper counting
+sim_loop_counts[is.na(N), N := 0]
+
+# marking the full depth samples as Replicate = NA for easy identification in
+# saturation analysis
+full_loop_counts <- full_loops[,
+    .(
+        Replicate = NA,
+        N = .N
+    ),
+    by = c("SampleID", "Seq_Depth")
+]
+
+# count all interactions called in each sample
+all_loop_counts <- rbindlist(list(
+    sim_loop_counts,
+    full_loop_counts
+))
+
+# set Seq_Depth to a numeric value instead of a factor
+# (if this isn't done, there's a problem with the SSasymp function)
+all_loop_counts[, Seq_Depth := as.integer(Seq_Depth)]
+
+loginfo("Calculating saturation")
+# perform the saturation analyses
+# exclude Benign-Prostate-1664855 from this saturation analysis
+# for some reason (that I have yet to figure out), there is a singular gradient
+# for this sample when fitting the nls model.
+# To avoid this issue for now, just use the other 16 samples.
+nls_samples <- setdiff(SAMPLES[["primary"]], "Benign-Prostate-1664855")
+saturation_models <- lapply(
+    nls_samples,
+    function(s) {
+        estimate_saturation(all_loop_counts[SampleID == s])
+    }
+)
+names(saturation_models) <- nls_samples
+
+# combine tables to be saved into a major table for each model
+depth_ests <- rbindlist(lapply(
+    names(saturation_models),
+    function(s) {
+        dt1 <- saturation_models[[s]]$estimates$depth
+        dt1[, `:=`(
+            SampleID = s,
+            Asym = saturation_models[[s]]$model$Asym,
+            R0 = saturation_models[[s]]$model$R0,
+            lrc = saturation_models[[s]]$model$lrc
+        )]
+        return(dt1)
+    }
+))
+
+saturation_ests <- rbindlist(lapply(
+    names(saturation_models),
+    function(s) {
+        dt1 <- saturation_models[[s]]$estimates$saturation
+        dt1[, SampleID := s]
+        return(dt1)
+    }
+))
+
+obs_saturation_ests <- rbindlist(lapply(
+    names(saturation_models),
+    function(s) {
+        dt1 <- data.table(
+            SampleID = s,
+            Seq_Depth = saturation_models[[s]]$interactions$depth,
+            N_Loops = saturation_models[[s]]$interactions$identified,
+            Est_Saturation = saturation_models[[s]]$interactions$saturation
+        )
+        return(dt1)
+    }
+))
+
+
+# ==============================================================================
+# Save tables
+# ==============================================================================
+loginfo("Saving data")
+fwrite(
+    depth_ests,
+    file.path(
+        SAT_DIR,
+        "loop-saturation.depth-estimates.tsv"
+    ),
+    sep = "\t",
+    col.names = TRUE
+)
+fwrite(
+    saturation_ests,
+    file.path(
+        SAT_DIR,
+        "loop-saturation.saturation-estimates.tsv"
+    ),
+    sep = "\t",
+    col.names = TRUE
+)
+fwrite(
+    obs_saturation_ests,
+    file.path(
+        SAT_DIR,
+        "loop-saturation.observed-saturation.tsv"
+    ),
+    sep = "\t",
+    col.names = TRUE
+)
+fwrite(
+    all_loop_counts,
+    file.path(
+        SAT_DIR,
+        "loop-saturation.iterations.tsv"
+    ),
+    sep = "\t",
+    col.names = TRUE
+)
+
+saveRDS(
+    saturation_models,
+    file.path(SAT_DIR, "loop-saturation.models.rds")
+)

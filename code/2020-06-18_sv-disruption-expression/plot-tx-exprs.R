@@ -16,6 +16,8 @@ loginfo("Loading packages")
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("sleuth"))
+source(file.path("..", "src", "savefig.R"))
+source(file.path("..", "src", "theme.R"))
 source("helper-functions.R")
 
 RES_DIR <- file.path(
@@ -125,6 +127,15 @@ gg <- (
     )
     + theme_minimal()
     + jrh_theme()
+    + theme(
+        axis.text.x = element_text(
+            angle = 90,
+            vjust = 0.5,
+            hjust = 1,
+            face = "italic",
+            colour = "#000000"
+        ),
+    )
 )
 savefig(gg, file.path(PLOT_DIR, "tx-exprs.BRAF"), height = 10, width = 6)
 
