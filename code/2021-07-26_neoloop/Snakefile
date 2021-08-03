@@ -23,6 +23,7 @@ DIR = {
 	"ctx_srr": path.join("..", "..", "data", "External", "Rhie_2019", "Contacts"),
 	"res": path.join("..", "..", "results", "2021-07-26_neoloop"),
 	"log": "Logs",
+	"H3K27ac": path.join("..", "..", "data", "Processed", "2019-05-03_PCa-H3k27ac-peaks", "Tracks"),
 }
 DIR["cool"] = path.join(DIR["res"], "cooler")
 DIR["cnv"] = path.join(DIR["res"], "cnv-calls")
@@ -30,9 +31,10 @@ DIR["cache"] = path.join(DIR["res"], "cnv-cache")
 DIR["assembly"] = path.join(DIR["res"], "assembled-SVs")
 DIR["loop"] = path.join(DIR["res"], "neoloops")
 DIR["tad"] = path.join(DIR["res"], "neotads")
+DIR["plot"] = path.join(DIR["res"], "Plots")
 
 wildcard_constraints:
-	sample_pri = "^(PCa|Benign-Prostate-)\d+",
+	sample_pri = "^PCa\d+",
 	sample_4dn = "^4DN\w+",
 	sample_srr = "^SRR\w+",
 
@@ -66,6 +68,12 @@ rule all:
 			sample=SAMPLES,
 			res=10000,
 		),
+		expand(
+			path.join(DIR["plot"], "{sample}.res_{res}bp.C0.pdf"),
+			sample=["PCa13848", "PCa19121", "PCa3023", "PCa51852", "PCa53687", "PCa56413",],
+			res=10000,
+		),
+		
 
 
 # ==============================================================================
@@ -81,17 +89,17 @@ rule extract_cool_primary:
 
 rule extract_cool_4dn:
 	input:
-		path.join(DIR["ctx_4dn"], "{sample}.mcool"),
+		path.join(DIR["ctx_4dn"], "{sample_4dn}.mcool"),
 	output:
-		path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+		path.join(DIR["cool"], "{sample_4dn}.res_{res}bp.cool"),
 	shell:
 		"cooler cp {input}::/resolutions/{wildcards.res} {output}"
 
 rule extract_cool_srr:
 	input:
-		path.join(DIR["ctx_srr"], "{sample}.mcool"),
+		path.join(DIR["ctx_srr"], "{sample_srr}.mcool"),
 	output:
-		path.join(DIR["cool"], "{sample}.res_{res}bp.cool"),
+		path.join(DIR["cool"], "{sample_srr}.res_{res}bp.cool"),
 	shell:
 		"cooler cp {input}::/resolutions/{wildcards.res} {output}"
 
@@ -142,31 +150,44 @@ rule create_assembly:
 		breaks = path.join(DIR["assembly"], "{sample}.rearrangements.tsv"),
 		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
 	output:
-		assembly = path.join(DIR["assembly"], "{sample}.assemblies.txt"),
-		log = path.join(DIR["log"], "{sample}.assembly.log"),
+		assembly = path.join(DIR["assembly"], "{sample}.res_{res}bp.assemblies.txt"),
+		log = path.join(DIR["log"], "{sample}.res_{res}bp.assembly.log"),
 	threads: 8
 	shell:
-		"assemble-complexSVs --output {DIR.assembly}/{wildcards.sample} --break-points {input.breaks} --hic {input.cool} --nproc {threads} --logFile {output.log}"
+		"assemble-complexSVs --output {DIR[assembly]}/{wildcards.sample}.res_{wildcards.res}bp --break-points {input.breaks} --hic {input.cool} --nproc {threads} --logFile {output.log}"
 
 rule call_neoloop:
 	input:
-		assembly = path.join(DIR["assembly"], "{sample}.assemblies.txt"),
+		assembly = path.join(DIR["assembly"], "{sample}.res_{res}bp.assemblies.txt"),
 		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
 	output:
-		loops = path.join(DIR["loop"], "{sample}.neoloops.tsv"),
-		log = path.join(DIR["log"], "{sample}.neoloops.log"),
+		loops = path.join(DIR["loop"], "{sample}.res_{res}bp.neoloops.tsv"),
+		log = path.join(DIR["log"], "{sample}.res_{res}bp.neoloops.log"),
 	threads: 8
 	shell:
-		"neoloop-caller --output {DIR.loop}/{wildcards.sample}.neoloops.tsv --hic {input.cool} --assembly {input.assembly} --nproc {threads} --logFile {output.log}"
+		"neoloop-caller --output {output.loops} --hic {input.cool} --assembly {input.assembly} --nproc {threads} --logFile {output.log}"
 
 rule call_neotad:
 	input:
 		assembly = path.join(DIR["assembly"], "{sample}.assemblies.txt"),
 		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
 	output:
-		tads = path.join(DIR["tad"], "{sample}.neotads.tsv"),
-		log = path.join(DIR["log"], "{sample}.neotads.log"),
+		tads = path.join(DIR["tad"], "{sample}.res_{res}bp.neotads.tsv"),
+		log = path.join(DIR["log"], "{sample}.res_{res}bp.neotads.log"),
 	threads: 8
 	shell:
-		"neotad-caller --output {DIR.tad}/{wildcards.sample}.neotads.tsv --hic {input.cool} --assembly {input.assembly} --nproc {threads} --logFile {output.log}"
+		"neotad-caller --output {output.tads} --hic {input.cool} --assembly {input.assembly} --nproc {threads} --logFile {output.log}"
 
+rule plot_assembly:
+	input:
+		script = "plot-novel-assemblies.py",
+		assembly = path.join(DIR["assembly"], "{sample}.res_{res}bp.assemblies.txt"),
+		cool = path.join(DIR["cool"], "{sample}.res_{res}bp.cnv-corrected.cool"),
+		chip = path.join(DIR["H3K27ac"], "{sample}_FE.sorted.filtered.bw"),
+		loops = path.join(DIR["loop"], "{sample}.res_{res}bp.neoloops.tsv"),
+	output:
+		# can't guarantee how many assemblies aside from 1
+		path.join(DIR["plot"], "{sample}.res_{res}bp.C0.png"),
+		path.join(DIR["plot"], "{sample}.res_{res}bp.C0.pdf"),
+	shell:
+		"python {input.script} {wildcards.sample}"
