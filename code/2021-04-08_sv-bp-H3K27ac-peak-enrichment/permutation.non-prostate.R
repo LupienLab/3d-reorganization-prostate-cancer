@@ -7,12 +7,6 @@
 # Author: James Hawley
 
 
-
-# ==============================================================================
-# Save data
-# ==============================================================================
-loginfo("Saving data")
-
 # ==============================================================================
 # Environment
 # ==============================================================================
@@ -35,35 +29,35 @@ PLOT_DIR <- file.path(RES_DIR, "Plots", "non-prostate")
 loginfo("Loading data")
 # load SV breakpoints from non-prostate cancers
 breakpoints <- fread(
-    file.path("..", "..", "data", "External", "ICGC", "sv-breakpoints.non-prostate.hg38.unpaired.tsv"),
-    sep = "\t"
+	file.path("..", "..", "data", "External", "ICGC", "sv-breakpoints.non-prostate.hg38.unpaired.tsv"),
+	sep = "\t"
 )
 
 bp_gr <- breakpoints[, GRanges(
-    seqnames = seqnames,
-    ranges = IRanges(
-        start = start,
-        width = 1
-    ),
-    strand = strand,
-    seqinfo = seqinfo(characterToBSGenome("hg38"))
+	seqnames = seqnames,
+	ranges = IRanges(
+		start = start,
+		width = 1
+	),
+	strand = strand,
+	seqinfo = seqinfo(characterToBSGenome("hg38"))
 )]
 
 # load H3K27ac peaks
 h3k27ac <- fread(
-    file.path(PEAK_DIR, "catalogue-peaks.bed"),
-    sep = "\t",
-    header = FALSE,
-    col.names = c("chr", "start", "end")
+	file.path(PEAK_DIR, "catalogue-peaks.bed"),
+	sep = "\t",
+	header = FALSE,
+	col.names = c("chr", "start", "end")
 )
 h3k27ac_gr <- toGRanges(h3k27ac, genome = "hg38")
 
 # load ENCODE blacklist
 blacklist <- fread(
-    file.path(ENCODE_DIR, "ENCODE-blacklist.bed"),
-    sep = "\t",
-    header = FALSE,
-    col.names = c("chr", "start", "end")
+	file.path(ENCODE_DIR, "ENCODE-blacklist.bed"),
+	sep = "\t",
+	header = FALSE,
+	col.names = c("chr", "start", "end")
 )
 blacklist_gr <- toGRanges(blacklist, genome = "hg38")
 
@@ -81,32 +75,35 @@ loginfo("Performing permutations")
 
 # permutation test for number of overlaps between SV breakpoints and H3K27ac peaks
 perm_test <- overlapPermTest(
-    A = bp_gr,
-    B = h3k27ac_gr,
-    genome = hg38_canonical,
-    ntimes = 10,
-    alternative = "greater",
-    mask = hg38_mask
+	A = bp_gr,
+	B = h3k27ac_gr,
+	genome = hg38_canonical,
+	ntimes = 100,
+	alternative = "greater",
+	mask = hg38_mask,
+	force.parallel = TRUE,
+	min.parallel = 8,
+	verbose = TRUE
 )
 
 loginfo("Local permutation adjustment")
 # local positioning adjustment to assess sensitivity to exact placement
 lz <- localZScore(
-    pt = perm_test,
-    A = bp_gr,
-    B = h3k27ac_gr,
-    ntimes = 100,
-    window = 10000,
-    step = 1000
+	pt = perm_test,
+	A = bp_gr,
+	B = h3k27ac_gr,
+	ntimes = 100,
+	window = 10000,
+	step = 1000
 )
 
 perm_test_data <- data.table(
-    N_Iterations = perm_test$numOverlaps$ntimes,
-    observed_intersections = perm_test$numOverlaps$observed,
-    mean_permuted_intersections = mean(perm_test$numOverlaps$permuted),
-    sd_permuted_intersections = sd(perm_test$numOverlaps$permuted),
-    z = perm_test$numOverlaps$zscore,
-    p = perm_test$numOverlaps$pval
+	N_Iterations = perm_test$numOverlaps$ntimes,
+	observed_intersections = perm_test$numOverlaps$observed,
+	mean_permuted_intersections = mean(perm_test$numOverlaps$permuted),
+	sd_permuted_intersections = sd(perm_test$numOverlaps$permuted),
+	z = perm_test$numOverlaps$zscore,
+	p = perm_test$numOverlaps$pval
 )
 
 # ==============================================================================
@@ -115,35 +112,35 @@ perm_test_data <- data.table(
 loginfo("Saving plots")
 
 png(
-    file.path(PLOT_DIR, "permutation.png"),
-    width = 20,
-    height = 12,
-    units = "cm",
-    res = 300
+	file.path(PLOT_DIR, "permutation.png"),
+	width = 20,
+	height = 12,
+	units = "cm",
+	res = 300
 )
 plot(perm_test)
 dev.off()
 pdf(
-    file.path(PLOT_DIR, "permutation.pdf"),
-    width = 20,
-    height = 12
+	file.path(PLOT_DIR, "permutation.pdf"),
+	width = 20,
+	height = 12
 )
 plot(perm_test)
 dev.off()
 
 png(
-    file.path(PLOT_DIR, "local-z.png"),
-    width = 20,
-    height = 12,
-    units = "cm",
-    res = 300
+	file.path(PLOT_DIR, "local-z.png"),
+	width = 20,
+	height = 12,
+	units = "cm",
+	res = 300
 )
 plot(lz)
 dev.off()
 pdf(
-    file.path(PLOT_DIR, "local-z.pdf"),
-    width = 20,
-    height = 12
+	file.path(PLOT_DIR, "local-z.pdf"),
+	width = 20,
+	height = 12
 )
 plot(lz)
 dev.off()
@@ -154,17 +151,18 @@ dev.off()
 loginfo("Saving data")
 
 fwrite(
-    perm_test_data,
-    file.path(RES_DIR, "enrichment", "non-prostate", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
-    sep = "\t",
-    col.names = TRUE
+	perm_test_data,
+	file.path(RES_DIR, "enrichment", "non-prostate", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+	sep = "\t",
+	col.names = TRUE
 )
 
 saveRDS(
-    perm_test,
-    file.path(RES_DIR, "enrichment", "non-prostate", "permutation-tests.rds")
+	perm_test,
+	file.path(RES_DIR, "enrichment", "non-prostate", "permutation-tests.rds")
 )
 saveRDS(
-    lz,
-    file.path(RES_DIR, "enrichment", "non-prostate", "local-dependency.rds")
+	lz,
+	file.path(RES_DIR, "enrichment", "non-prostate", "local-dependency.rds")
 )
+

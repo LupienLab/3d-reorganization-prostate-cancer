@@ -13,36 +13,59 @@ PLOT_DIR = path.join(RES_DIR, "Plots")
 # =============================================================================
 rule all:
 	input:
-        path.join(PLOT_DIR, "permutation.png"),
-        path.join(PLOT_DIR, "permutation.pdf"),
-        path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+		path.join(PLOT_DIR, "permutation.png"),
+		path.join(PLOT_DIR, "permutation.pdf"),
+		path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+		path.join(PLOT_DIR, "non-prostate", "permutation.png"),
+		path.join(PLOT_DIR, "non-prostate", "permutation.pdf"),
+		path.join(RES_DIR, "enrichment", "non-prostate", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
 
 # =============================================================================
 # Rules
 # =============================================================================
 rule liftover:
-    input:
-        script = "liftover.R",
-        chain = path.join("..", "..", "data", "External", "hg19ToHg38.over.chain"),
-        sv = path.join(SV_DIR, "structural_somatic_mutation.PRAD-CA.tsv"),
-    output:
-        path.join(RES_DIR, "enrichment", "sv-breakpoints.bed")
-    shell:
-        "Rscript {input.script}"
+	input:
+		script = "liftover.R",
+		chain = path.join("..", "..", "data", "External", "hg19ToHg38.over.chain"),
+		sv = path.join(SV_DIR, "structural_somatic_mutation.PRAD-CA.tsv"),
+	output:
+		path.join(RES_DIR, "enrichment", "sv-breakpoints.bed")
+	shell:
+		"Rscript {input.script}"
 
 rule enrichment:
-    input:
-        script = "permutation.R",
-        sv = path.join(RES_DIR, "enrichment", "sv-breakpoints.bed"),
-        peaks = path.join("..", "..", "data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "catalogue-peaks.bed"),
-        blacklist = path.join("..", "..", "data", "External", "ENCODE_ChIP", "ENCODE-blacklist.bed"),
-    output:
-        path.join(PLOT_DIR, "permutation.png"),
-        path.join(PLOT_DIR, "permutation.pdf"),
-        path.join(PLOT_DIR, "local-z.png"),
-        path.join(PLOT_DIR, "local-z.pdf"),
-        path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
-        path.join(RES_DIR, "enrichment", "permutation-tests.rds"),
-        path.join(RES_DIR, "enrichment", "local-dependency.rds"),
-    shell:
-        "Rscript {input.script}"
+	input:
+		script = "permutation.R",
+		sv = path.join(RES_DIR, "enrichment", "sv-breakpoints.bed"),
+		peaks = path.join("..", "..", "data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "catalogue-peaks.bed"),
+		blacklist = path.join("..", "..", "data", "External", "ENCODE_ChIP", "ENCODE-blacklist.bed"),
+	output:
+		path.join(PLOT_DIR, "permutation.png"),
+		path.join(PLOT_DIR, "permutation.pdf"),
+		path.join(PLOT_DIR, "local-z.png"),
+		path.join(PLOT_DIR, "local-z.pdf"),
+		path.join(RES_DIR, "enrichment", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+		path.join(RES_DIR, "enrichment", "permutation-tests.rds"),
+		path.join(RES_DIR, "enrichment", "local-dependency.rds"),
+	threads: 8
+	shell:
+		"Rscript {input.script}"
+
+rule enrichment_nonprostate:
+	input:
+		script = "permutation.non-prostate.R",
+		sv = path.join("..", "..", "data", "External", "ICGC", "sv-breakpoints.non-prostate.hg38.unpaired.tsv"),
+		peaks = path.join("..", "..", "data", "Processed", "2019-05-03_PCa-H3K27ac-peaks", "Peaks", "catalogue-peaks.bed"),
+		blacklist = path.join("..", "..", "data", "External", "ENCODE_ChIP", "ENCODE-blacklist.bed"),
+	output:
+		path.join(PLOT_DIR, "non-prostate", "permutation.png"),
+		path.join(PLOT_DIR, "non-prostate", "permutation.pdf"),
+		path.join(PLOT_DIR, "non-prostate", "local-z.png"),
+		path.join(PLOT_DIR, "non-prostate", "local-z.pdf"),
+		path.join(RES_DIR, "enrichment", "non-prostate", "sv-breakpoints.H3K27ac-catalogue.permutations.tsv"),
+		path.join(RES_DIR, "enrichment", "non-prostate", "permutation-tests.rds"),
+		path.join(RES_DIR, "enrichment", "non-prostate", "local-dependency.rds"),
+	threads: 8
+	shell:
+		"Rscript {input.script}"
+

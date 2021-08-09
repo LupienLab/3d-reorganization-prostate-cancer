@@ -1,0 +1,9 @@
+__default__:
+    params: "--export ALL -p all --mem 6G -c 1 -t 01:00:00"
+
+enrichment:
+    params: "--export ALL -p himem --mem 30G -c 8 -t 1-00:00:00"
+
+enrichment_nonprostate:
+    params: "--export ALL -p himem --mem 30G -c 8 -t 1-00:00:00"
+
