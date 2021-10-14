@@ -1,8 +1,42 @@
-# Cis-Regulatory Element Hijacking Overshadows Higher-Order Topological Changes in Prostate Cancer
+# Reorganization of the 3D genome pinpoints non-coding drivers of primary prostate tumors
 
-This repository contains all the data and analysis related to [_Cis_-regulatory element hijacking overshadows higher-order topological changes in prostate cancer](https://www.biorxiv.org/content/10.1101/2021.01.05.425333v2).
+This repository contains all the data and analysis related to [Reorganization of the 3D genome pinpoints non-coding drivers of primary prostate tumors](https://cancerres.aacrjournals.org/content/early/2021/10/11/0008-5472.CAN-21-2056).
+A preprint version of this article is available on [bioRxiv](https://www.biorxiv.org/content/10.1101/2021.01.05.425333v2).
+A reproducible run of this work can be found on [CodeOcean](https://codeocean.com/capsule/5232537).
 
 ## Usage
+
+To download all the code, scripts, and results, use `git clone`:
+
+```shell
+git clone https://github.com/LupienLab/3d-reorganization-prostate-cancer.git
+```
+
+This does not download the raw sequencing data.
+There are placeholder folders for the raw data, but the FASTQ files are available from the [European Genome-Phenome Archive](https://ega-archive.org/).
+
+| Data Type               | EGA Accession Number |
+| ----------------------- | -------------------- |
+| Whole genome sequencing | EGAS00001000900      |
+| RNA-seq                 | EGAS00001000900      |
+| ChIP-seq (H3K27ac)      | EGAS00001002496      |
+| Hi-C                    | EGAS00001005014      |
+
+Processed data from the Hi-C sequencing data can be found on the [Gene Expression Omnibus (Accession GSE164347)](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164347).
+
+Raw Hi-C data from other studies can be found with the links and accession numbers below.
+
+| Data | Repository | Accession Number |
+| ---- | ---------- | ---------------- |
+| 22Rv1, RWPE1, and C4-2B | [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE118629) | GSE118629 |
+| H1-hESC (Rep 1) | [4D Nucleome](https://4dnucleome.org/) | 4DNFI6HDY7WZ |
+| H1-hESC (Rep 2) | [4D Nucleome](https://4dnucleome.org/) | 4DNFITH978XV |
+| HAP-1 (Rep 1) | [4D Nucleome](https://4dnucleome.org/) | 4DNFIT64Q7A3  |
+| HAP-1 (Rep 2) | [4D Nucleome](https://4dnucleome.org/) | 4DNFINSKEZND  |
+| GM12878 (Rep 1) | [4D Nucleome](https://4dnucleome.org/) | 4DNFIIV4M7TF  |
+| GM12878 (Rep 2) | [4D Nucleome](https://4dnucleome.org/) | 4DNFIXVAKX9Q  |
+
+## Project Structure
 
 This repository is structured as follows:
 
@@ -36,4 +70,3 @@ To re-run any of the analyses in the `code/` folders:
 
 That should regenerate the entire set of results for that specific folder.
 You can preview that needs to be run by running `snakemake -n` before running the analyses.
-

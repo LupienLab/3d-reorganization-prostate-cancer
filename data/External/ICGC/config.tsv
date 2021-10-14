@@ -1,0 +1,23 @@
+project_code	cancer_type	cancer_subtype
+BOCA-FR	bone	Ewing sarcoma
+BOCA-UK	bone	
+BRCA-EU	breast	ER+ and HER2-
+BRCA-FR	breast	
+BRCA-UK	breast	triple negative and lobular
+CLLE-ES	chronic lymphocytic leukemia	
+EOPC-DE	prostate	early onset
+LIRI-JP	liver	
+MALY-DE	lymphoma	malignant
+MELA-AU	melanoma	
+OV-AU	ovarian	
+PACA-AU	pancreatic	
+PACA-CA	pancreatic	
+PAEN-AU	pancreatic	endocrine neoplasm
+PAEN-IT	pancreatic	endocrine neoplasm
+PBCA-DE	brain	pediatric
+PRAD-CA	prostate	
+PRAD-FR	prostate	
+PRAD-UK	prostate	
+SKCA-BR	skin	adenocarcinoma
+UTCA-FR	uterine	
+
