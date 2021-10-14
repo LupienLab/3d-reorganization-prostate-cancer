@@ -1,6 +1,7 @@
 # Reorganization of the 3D genome pinpoints non-coding drivers of primary prostate tumors
 
 This repository contains all the data and analysis related to [Reorganization of the 3D genome pinpoints non-coding drivers of primary prostate tumors](https://cancerres.aacrjournals.org/content/early/2021/10/11/0008-5472.CAN-21-2056).
+
 A preprint version of this article is available on [bioRxiv](https://www.biorxiv.org/content/10.1101/2021.01.05.425333v2).
 A reproducible run of this work can be found on [CodeOcean](https://codeocean.com/capsule/5232537).
 
@@ -26,15 +27,15 @@ Processed data from the Hi-C sequencing data can be found on the [Gene Expressio
 
 Raw Hi-C data from other studies can be found with the links and accession numbers below.
 
-| Data | Repository | Accession Number |
-| ---- | ---------- | ---------------- |
-| 22Rv1, RWPE1, and C4-2B | [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE118629) | GSE118629 |
-| H1-hESC (Rep 1) | [4D Nucleome](https://4dnucleome.org/) | 4DNFI6HDY7WZ |
-| H1-hESC (Rep 2) | [4D Nucleome](https://4dnucleome.org/) | 4DNFITH978XV |
-| HAP-1 (Rep 1) | [4D Nucleome](https://4dnucleome.org/) | 4DNFIT64Q7A3  |
-| HAP-1 (Rep 2) | [4D Nucleome](https://4dnucleome.org/) | 4DNFINSKEZND  |
-| GM12878 (Rep 1) | [4D Nucleome](https://4dnucleome.org/) | 4DNFIIV4M7TF  |
-| GM12878 (Rep 2) | [4D Nucleome](https://4dnucleome.org/) | 4DNFIXVAKX9Q  |
+| Data                    | Repository                                                               | Accession Number |
+| ----------------------- | ------------------------------------------------------------------------ | ---------------- |
+| 22Rv1, RWPE1, and C4-2B | [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE118629)      | GSE118629        |
+| H1-hESC (Rep 1)         | [4D Nucleome](https://data.4dnucleome.org/files-processed/4DNFI6HDY7WZ/) | 4DNFI6HDY7WZ     |
+| H1-hESC (Rep 2)         | [4D Nucleome](https://data.4dnucleome.org/files-processed/4DNFITH978XV/) | 4DNFITH978XV     |
+| HAP-1 (Rep 1)           | [4D Nucleome](https://data.4dnucleome.org/files-processed/4DNFIT64Q7A3/) | 4DNFIT64Q7A3     |
+| HAP-1 (Rep 2)           | [4D Nucleome](https://data.4dnucleome.org/files-processed/4DNFINSKEZND/) | 4DNFINSKEZND     |
+| GM12878 (Rep 1)         | [4D Nucleome](https://data.4dnucleome.org/files-processed/4DNFIIV4M7TF/) | 4DNFIIV4M7TF     |
+| GM12878 (Rep 2)         | [4D Nucleome](https://data.4dnucleome.org/files-processed/4DNFIXVAKX9Q/) | 4DNFIXVAKX9Q     |
 
 ## Project Structure
 
