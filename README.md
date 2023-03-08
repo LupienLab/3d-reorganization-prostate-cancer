@@ -2,8 +2,10 @@
 
 This repository contains all the data and analysis related to [Reorganization of the 3D genome pinpoints non-coding drivers of primary prostate tumors](https://cancerres.aacrjournals.org/content/early/2021/10/11/0008-5472.CAN-21-2056).
 
-Published version of the paper is available on [Cancer Res](https://aacrjournals.org/cancerres/article/81/23/5833/674850/Reorganization-of-the-3D-Genome-Pinpoints)
+Published version of the paper is available on [Cancer Res](https://aacrjournals.org/cancerres/article/81/23/5833/674850/Reorganization-of-the-3D-Genome-Pinpoints).
+
 A preprint version of this article is available on [bioRxiv](https://www.biorxiv.org/content/10.1101/2021.01.05.425333v2).
+
 A reproducible run of this work can be found on [CodeOcean](https://codeocean.com/capsule/3837124/tree).
 
 ## Usage
